@@ -1,0 +1,9 @@
+.phone-input {
+    display: flex;
+    align-items: center;
+}
+  
+.phone-input img {
+    width: 24px;
+    margin-right: 8px;
+}
