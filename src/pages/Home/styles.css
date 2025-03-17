@@ -1,0 +1,133 @@
+.statistics-container {
+    padding: 20px;
+  }
+  
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+  
+  .filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .filters button {
+    padding: 8px 16px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .filters button.active {
+    background-color: #000;
+    color: #fff;
+  }
+  
+  .statistics-card {
+    background-color: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  
+  .statistics-header {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+  
+  .statistics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .stat-label {
+    font-size: 14px;
+    color: #777;
+  }
+  
+  .stat-value {
+    font-size: 32px;
+    font-weight: bold;
+  }
+  
+  .stat-change {
+    font-size: 14px;
+    color: #999;
+  }
+  
+  .chart-container {
+    width: 100%;
+    height: 200px;
+    margin-bottom: 20px;
+    margin-left: -20px;
+  }
+  
+  .client-stats {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .client-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .client-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+  
+  .purple {
+    background-color: #8884d8;
+  }
+  
+  .light-purple {
+    background-color: #ffc658;
+  }
+  
+  .green {
+    background-color: #82ca9d;
+  }
+  
+  .client-label {
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .client-value {
+    margin-left: auto;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  @media (max-width: 768px) {
+    .statistics-container {
+        padding: 0;
+    }
+
+    .statistics-grid {
+        grid-template-columns: 1fr;
+    }
+  
+    .stat-item {
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: row;
+    }
+  }
+  

@@ -16,6 +16,11 @@ html, body {
   height: 100%;
 }
 
+h1, h2, h3, h4, h5, h6, p {
+  margin: 0;
+  padding: 0;
+}
+
 .main {
   display: flex;
   height: 100%;
@@ -32,19 +37,8 @@ form {
   flex-direction: column;
 }
 
-input, select, button {
-  padding: 12px;
-  margin-bottom: 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-button {
-  background-color: #000;
-  color: #fff;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #333;
+@media (max-width: 768px) {
+  .page-content {
+    padding: 20px;
+  }
 }
