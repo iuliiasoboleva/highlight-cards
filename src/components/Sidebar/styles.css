@@ -8,8 +8,9 @@
     gap: 50px;
     align-items: center;
     height: 100vh;
-    position: absolute;
+    position: fixed;
     left: 0;
+    top: 0;
 }
 
 .sidebar-link {

@@ -1,62 +1,111 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { faComments, faUser } from '@fortawesome/free-regular-svg-icons';
 import { faCog, faMapMarkerAlt, faUsers, faMobile, faHome } from '@fortawesome/free-solid-svg-icons';
+import IconButton from '../IconButton';
 
 import './styles.css';
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNavigate = (path) => () => navigate(path);
+
+  const isActive = (path) => location.pathname === path;
+
   return (
     <>
       {/* Десктопная версия */}
       <nav className="sidebar">
-        <Link to="/" className="sidebar-link">
-          <FontAwesomeIcon icon={faHome} />
-        </Link>
-        <Link to="/phone" className="sidebar-link">
-          <FontAwesomeIcon icon={faMobile} />
-        </Link>
-        <Link to="/users" className="sidebar-link">
-          <FontAwesomeIcon icon={faUsers} />
-        </Link>
-        <Link to="/messages" className="sidebar-link">
-          <FontAwesomeIcon icon={faComments} />
-        </Link>
-        <Link to="/locations" className="sidebar-link">
-          <FontAwesomeIcon icon={faMapMarkerAlt} />
-        </Link>
-        <Link to="/profile" className="sidebar-link">
-          <FontAwesomeIcon icon={faUser} />
-        </Link>
-        <Link to="/settings" className="sidebar-link">
-          <FontAwesomeIcon icon={faCog} />
-        </Link>
+        <IconButton 
+          icon={faHome} 
+          onClick={handleNavigate('/')} 
+          title="Главная" 
+          className={isActive('/') ? 'active' : ''}
+        />
+        <IconButton 
+          icon={faMobile} 
+          onClick={handleNavigate('/cards')} 
+          title="Карты" 
+          className={isActive('/cards') ? 'active' : ''}
+        />
+        <IconButton 
+          icon={faUsers} 
+          onClick={handleNavigate('/users')} 
+          title="Пользователи" 
+          className={isActive('/users') ? 'active' : ''}
+        />
+        <IconButton 
+          icon={faComments} 
+          onClick={handleNavigate('/messages')} 
+          title="Сообщения" 
+          className={isActive('/messages') ? 'active' : ''}
+        />
+        <IconButton 
+          icon={faMapMarkerAlt} 
+          onClick={handleNavigate('/locations')} 
+          title="Локации" 
+          className={isActive('/locations') ? 'active' : ''}
+        />
+        <IconButton 
+          icon={faUser} 
+          onClick={handleNavigate('/profile')} 
+          title="Профиль" 
+          className={isActive('/profile') ? 'active' : ''}
+        />
+        <IconButton 
+          icon={faCog} 
+          onClick={handleNavigate('/settings')} 
+          title="Настройки" 
+          className={isActive('/settings') ? 'active' : ''}
+        />
       </nav>
 
       {/* Мобильная версия */}
       <nav className="bottom-nav">
-        <Link to="/" className="bottom-nav-link">
-          <FontAwesomeIcon icon={faHome} />
-        </Link>
-        <Link to="/phone" className="bottom-nav-link">
-          <FontAwesomeIcon icon={faMobile} />
-        </Link>
-        <Link to="/users" className="bottom-nav-link">
-          <FontAwesomeIcon icon={faUsers} />
-        </Link>
-        <Link to="/messages" className="bottom-nav-link">
-          <FontAwesomeIcon icon={faComments} />
-        </Link>
-        <Link to="/locations" className="bottom-nav-link">
-          <FontAwesomeIcon icon={faMapMarkerAlt} />
-        </Link>
-        <Link to="/profile" className="bottom-nav-link">
-          <FontAwesomeIcon icon={faUser} />
-        </Link>
-        <Link to="/settings" className="bottom-nav-link">
-          <FontAwesomeIcon icon={faCog} />
-        </Link>
+        <IconButton 
+          icon={faHome} 
+          onClick={handleNavigate('/')} 
+          title="Главная" 
+          className={isActive('/') ? 'active' : ''}
+        />
+        <IconButton 
+          icon={faMobile} 
+          onClick={handleNavigate('/cards')} 
+          title="Карты" 
+          className={isActive('/cards') ? 'active' : ''}
+        />
+        <IconButton 
+          icon={faUsers} 
+          onClick={handleNavigate('/users')} 
+          title="Пользователи" 
+          className={isActive('/users') ? 'active' : ''}
+        />
+        <IconButton 
+          icon={faComments} 
+          onClick={handleNavigate('/messages')} 
+          title="Сообщения" 
+          className={isActive('/messages') ? 'active' : ''}
+        />
+        <IconButton 
+          icon={faMapMarkerAlt} 
+          onClick={handleNavigate('/locations')} 
+          title="Локации" 
+          className={isActive('/locations') ? 'active' : ''}
+        />
+        <IconButton 
+          icon={faUser} 
+          onClick={handleNavigate('/profile')} 
+          title="Профиль" 
+          className={isActive('/profile') ? 'active' : ''}
+        />
+        <IconButton 
+          icon={faCog} 
+          onClick={handleNavigate('/settings')} 
+          title="Настройки" 
+          className={isActive('/settings') ? 'active' : ''}
+        />
       </nav>
     </>
   );

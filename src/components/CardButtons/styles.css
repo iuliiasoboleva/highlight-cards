@@ -1,0 +1,52 @@
+.card-buttons-block {
+    display: flex;
+    gap: 8px;
+}
+
+.card-buttons-block div {
+    cursor: pointer;
+    font-size: 24px;
+    color: #87879c;
+    transition: color 0.2s ease;
+}
+
+.card-buttons-block div:hover {
+    color: #1dcd27;
+}
+
+.card-buttons,
+.card-buttons-block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+}
+
+.card-buttons button,
+.card-buttons-block button {
+    background-color: #2e2e2e;
+    color: white;
+    border-radius: 6px;
+    padding: 11px;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 18px;
+    border: 1.6px solid transparent;
+    margin: 0;
+    min-width: 64px;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+    max-width: 268px;
+    width: 100%;
+}
+
+.icon-buttons {
+    display: flex;
+    gap: 4px;
+}

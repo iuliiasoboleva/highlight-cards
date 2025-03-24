@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Home from './pages/Home';
 import Settings from './pages/Settings';
+import Cards from './pages/Cards';
 import NotFound from './components/NotFound';
 import AuthLayout from './layouts/AuthLayout';
 import Tabs from './components/Tabs';
@@ -58,6 +59,7 @@ const App = () => {
 
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/cards" element={<Cards />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Route>
