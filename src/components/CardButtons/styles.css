@@ -46,6 +46,12 @@
     width: 100%;
 }
 
+.card-buttons button:hover,
+.card-buttons-block button:hover {
+    color: #1dcd27;
+    background-color: rgba(29, 205, 39, 0.1);
+}
+
 .icon-buttons {
     display: flex;
     gap: 4px;

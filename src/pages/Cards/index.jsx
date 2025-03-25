@@ -49,7 +49,7 @@ const Cards = () => {
                         {card.id !== 'fixed' && <CardInfo card={card} />}
                     </div>
                     <h2>{card.name}</h2>
-                    <CardButtons isFixed={card.id === 'fixed'} />
+                    <CardButtons isFixed={card.id === 'fixed'} cardId={card.id} />
                 </div>
             ))}
         </div>

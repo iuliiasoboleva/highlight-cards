@@ -12,98 +12,103 @@ const Sidebar = () => {
 
   const handleNavigate = (path) => () => navigate(path);
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => {
+    if (path === '/') {
+      return location.pathname === path;
+    }
+    return location.pathname.startsWith(path);
+  };
 
   return (
     <>
       {/* Десктопная версия */}
       <nav className="sidebar">
-        <IconButton 
-          icon={faHome} 
-          onClick={handleNavigate('/')} 
-          title="Главная" 
+        <IconButton
+          icon={faHome}
+          onClick={handleNavigate('/')}
+          title="Главная"
           className={isActive('/') ? 'active' : ''}
         />
-        <IconButton 
-          icon={faMobile} 
-          onClick={handleNavigate('/cards')} 
-          title="Карты" 
+        <IconButton
+          icon={faMobile}
+          onClick={handleNavigate('/cards')}
+          title="Карты"
           className={isActive('/cards') ? 'active' : ''}
         />
-        <IconButton 
-          icon={faUsers} 
-          onClick={handleNavigate('/users')} 
-          title="Пользователи" 
+        <IconButton
+          icon={faUsers}
+          onClick={handleNavigate('/users')}
+          title="Пользователи"
           className={isActive('/users') ? 'active' : ''}
         />
-        <IconButton 
-          icon={faComments} 
-          onClick={handleNavigate('/messages')} 
-          title="Сообщения" 
+        <IconButton
+          icon={faComments}
+          onClick={handleNavigate('/messages')}
+          title="Сообщения"
           className={isActive('/messages') ? 'active' : ''}
         />
-        <IconButton 
-          icon={faMapMarkerAlt} 
-          onClick={handleNavigate('/locations')} 
-          title="Локации" 
+        <IconButton
+          icon={faMapMarkerAlt}
+          onClick={handleNavigate('/locations')}
+          title="Локации"
           className={isActive('/locations') ? 'active' : ''}
         />
-        <IconButton 
-          icon={faUser} 
-          onClick={handleNavigate('/profile')} 
-          title="Профиль" 
+        <IconButton
+          icon={faUser}
+          onClick={handleNavigate('/profile')}
+          title="Профиль"
           className={isActive('/profile') ? 'active' : ''}
         />
-        <IconButton 
-          icon={faCog} 
-          onClick={handleNavigate('/settings')} 
-          title="Настройки" 
+        <IconButton
+          icon={faCog}
+          onClick={handleNavigate('/settings')}
+          title="Настройки"
           className={isActive('/settings') ? 'active' : ''}
         />
       </nav>
 
       {/* Мобильная версия */}
       <nav className="bottom-nav">
-        <IconButton 
-          icon={faHome} 
-          onClick={handleNavigate('/')} 
-          title="Главная" 
+        <IconButton
+          icon={faHome}
+          onClick={handleNavigate('/')}
+          title="Главная"
           className={isActive('/') ? 'active' : ''}
         />
-        <IconButton 
-          icon={faMobile} 
-          onClick={handleNavigate('/cards')} 
-          title="Карты" 
+        <IconButton
+          icon={faMobile}
+          onClick={handleNavigate('/cards')}
+          title="Карты"
           className={isActive('/cards') ? 'active' : ''}
         />
-        <IconButton 
-          icon={faUsers} 
-          onClick={handleNavigate('/users')} 
-          title="Пользователи" 
+        <IconButton
+          icon={faUsers}
+          onClick={handleNavigate('/users')}
+          title="Пользователи"
           className={isActive('/users') ? 'active' : ''}
         />
-        <IconButton 
-          icon={faComments} 
-          onClick={handleNavigate('/messages')} 
-          title="Сообщения" 
+        <IconButton
+          icon={faComments}
+          onClick={handleNavigate('/messages')}
+          title="Сообщения"
           className={isActive('/messages') ? 'active' : ''}
         />
-        <IconButton 
-          icon={faMapMarkerAlt} 
-          onClick={handleNavigate('/locations')} 
-          title="Локации" 
+        <IconButton
+          icon={faMapMarkerAlt}
+          onClick={handleNavigate('/locations')}
+          title="Локации"
           className={isActive('/locations') ? 'active' : ''}
         />
-        <IconButton 
-          icon={faUser} 
-          onClick={handleNavigate('/profile')} 
-          title="Профиль" 
+        <IconButton
+          icon={faUser}
+          onClick={handleNavigate('/profile')}
+          title="Профиль"
           className={isActive('/profile') ? 'active' : ''}
         />
-        <IconButton 
-          icon={faCog} 
-          onClick={handleNavigate('/settings')} 
-          title="Настройки" 
+        <IconButton
+          icon={faCog}
+          onClick={handleNavigate('/settings')}
+          title="Настройки"
           className={isActive('/settings') ? 'active' : ''}
         />
       </nav>
