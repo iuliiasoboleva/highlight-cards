@@ -1,0 +1,62 @@
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    width: 100%;
+  }
+  
+  .stat-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 16px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100px;
+  }
+  
+  .stat-value {
+    font-size: 36px;
+    font-weight: bold;
+    color: #000;
+  }
+  
+  .stat-icon {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: #fff2e1;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    line-height: 24px;
+    color: #d48b00;
+    font-weight: bold;
+  }
+  
+  .stat-footer {
+    margin-top: auto;
+    font-size: 14px;
+    color: #d48b00;
+  }
+  
+  .stat-label {
+    font-size: 14px;
+    color: #666;
+    margin-top: 8px;
+  }
+  
+  .loyalty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .stars {
+    font-size: 24px;
+    color: #ccc;
+    margin-bottom: 8px;
+  }
+  
