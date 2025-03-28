@@ -5,27 +5,30 @@
     width: 100%;
   }
   
-  .stat-card {
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 6px;
-    padding: 16px;
+  .dashboard-stat-card {
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: #fff;
+    border-radius: .4rem;
+    border: .1rem solid #D5D5DD;
+    padding: 1.5rem;
     position: relative;
     display: flex;
-    flex-direction: column;
-    min-height: 100px;
   }
   
-  .stat-value {
+  .dashboard-stat-value {
     font-size: 36px;
     font-weight: bold;
     color: #000;
   }
+
+  .dashboard-stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
   
-  .stat-icon {
-    position: absolute;
-    top: 16px;
-    right: 16px;
+  .dashboard-stat-icon {
     background: #fff2e1;
     border-radius: 50%;
     width: 24px;
@@ -36,27 +39,71 @@
     font-weight: bold;
   }
   
-  .stat-footer {
+  .dashboard-stat-footer {
     margin-top: auto;
     font-size: 14px;
     color: #d48b00;
+    margin-right: 8px;
+  }
+
+  .dashboard-stat-block {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
   }
   
-  .stat-label {
+  .dashboard-stat-label {
     font-size: 14px;
     color: #666;
-    margin-top: 8px;
   }
   
-  .loyalty {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .stars {
+  .dashboard-stars {
     font-size: 24px;
     color: #ccc;
     margin-bottom: 8px;
   }
   
+  .tooltip-icon {
+    display: inline-block;
+    margin-left: 6px;
+    background-color: #f0f0f0;
+    color: #555;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    text-align: center;
+    line-height: 18px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: help;
+    position: relative;
+  }
+  
+  .tooltip-icon::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 1;
+  }
+  
+  .tooltip-icon:hover::after {
+    opacity: 1;
+  }
+  
+  @media (max-width: 768px) {
+    .dashboard-stats {
+      grid-template-columns: 1fr;
+    }
+  }

@@ -8,6 +8,8 @@ html, body {
   color: #000;
   padding: 0;
   height: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 #root {
@@ -27,7 +29,6 @@ h1, h2, h3, h4, h5, h6, p {
 .page-content {
   padding: 20px 20px 20px 80px;
   flex-grow: 1;
-  overflow-y: auto;
 }
 
 form {
@@ -37,6 +38,6 @@ form {
 
 @media (max-width: 768px) {
   .page-content {
-    padding: 20px;
+    padding: 20px 20px 80px 20px;
   }
 }

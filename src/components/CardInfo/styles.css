@@ -39,12 +39,6 @@
     text-align: left;
 }
 
-.card-image {
-    max-width: 280px;
-    height: auto;
-    object-fit: cover;
-}
-
 .card-info-main-img {
     max-width: 190px;
 }

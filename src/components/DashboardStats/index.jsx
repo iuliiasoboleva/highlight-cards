@@ -15,21 +15,29 @@ const DashboardStats = () => {
   return (
     <div className="dashboard-stats">
       {stats.map((stat, index) => (
-        <div key={index} className="stat-card">
-          <div className="stat-value">{stat.value}</div>
-          <div className="stat-icon">−</div>
-          <div className="stat-footer">{stat.value}</div>
-          <div className="stat-label">{stat.label}</div>
+        <div key={index} className="dashboard-stat-card">
+          <div className="dashboard-stat-row">
+            <div className="dashboard-stat-value">{stat.value}</div>
+            <div className="dashboard-stat-icon">−</div>
+          </div>
+          <div className="dashboard-stat-row">
+            <div className="dashboard-stat-label">{stat.label}</div>
+            <div className="dashboard-stat-footer">{stat.value}</div>
+          </div>
         </div>
       ))}
-      <div className="stat-card loyalty">
-        <div className="stars">
+      <div className="dashboard-stat-card">
+        <div className="dashboard-stars">
           {Array.from({ length: 5 }).map((_, i) => (
             <span key={i}>☆</span>
           ))}
         </div>
-        <div className="stat-label">Уровень лояльности</div>
+        <div className="dashboard-stat-block">
+          <p className="dashboard-stat-label">Уровень лояльности</p>
+          <span className="tooltip-icon" data-tooltip="Показатель активности и вовлеченности клиентов.">?</span>
+        </div>
       </div>
+
     </div>
   );
 };
