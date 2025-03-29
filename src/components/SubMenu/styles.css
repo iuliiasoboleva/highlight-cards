@@ -1,12 +1,26 @@
 .sub-menu {
     background-color: #2e2e2e;
-    color: #fff;
     padding: 10px;
     z-index: 9999;
     position: relative;
-    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.sub-menu button.active {
+    background-color: #666;
+    color: #fff;
+}
+
+.sub-menu::-webkit-scrollbar {
+    display: none;
+}
+
+.sub-menu-scroll {
+    display: inline-flex;
     gap: 10px;
-    width: -webkit-fill-available;
+    min-width: 100%;
 }
 
 .sub-menu button {
@@ -18,8 +32,42 @@
     cursor: pointer;
     font-size: 14px;
     transition: background-color 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .sub-menu button:hover {
     background-color: #555;
+}
+
+.sub-menu-link {
+    all: unset; /* Полный сброс стилей */
+    display: inline-block;
+    background-color: #444;
+    color: #fff !important; /* Приоритет для цвета */
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+    text-decoration: none !important; /* Гарантированно убираем подчеркивание */
+}
+
+.sub-menu-link:hover {
+    background-color: #555;
+}
+
+.sub-menu-link.active {
+    background-color: #666;
+}
+
+/* Убираем стандартные состояния ссылок */
+.sub-menu-link:visited,
+.sub-menu-link:active,
+.sub-menu-link:focus {
+    color: #fff !important;
+    outline: none !important;
+    box-shadow: none !important;
 }

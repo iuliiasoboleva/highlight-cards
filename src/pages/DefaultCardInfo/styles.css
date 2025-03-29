@@ -83,7 +83,6 @@
     box-sizing: border-box;
   }
   
-
 @media (max-width: 1200px) {
     .card-image-wrapper {
         flex-direction: column;
@@ -101,5 +100,9 @@
 
     .card-image-container {
         width: auto;
+    }
+
+    .card-info-title h1 {
+        font-size: 18px;
     }
 }

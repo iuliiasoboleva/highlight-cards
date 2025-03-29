@@ -6,6 +6,10 @@ import Home from './pages/Home';
 import Settings from './pages/Settings';
 import Cards from './pages/Cards';
 import CardDetails from './pages/CardDetails';
+import DefaultCardInfo from './pages/DefaultCardInfo';
+import ClientsTab from './pages/ClientsTab';
+import PushTab from './pages/PushTab';
+import StatsTab from './pages/StatsTab';
 import NotFound from './components/NotFound';
 import AuthLayout from './layouts/AuthLayout';
 import Tabs from './components/Tabs';
@@ -16,7 +20,7 @@ const MainLayout = () => {
   const location = useLocation();
 
   const hideLayout = ['/login', '/register'].includes(location.pathname);
-  const isCardDetails = matchPath('/cards/:id', location.pathname);
+  const isCardDetails = matchPath('/cards/:id/*', location.pathname);
 
   if (hideLayout) {
     return <Outlet />;
@@ -60,11 +64,17 @@ const App = () => {
             </AuthLayout>
           }
         />
-
         <Route element={<MainLayout />}>
-          <Route path="/" element={<Home />} />
+          <Route index element={<Home />} />
           <Route path="/cards" element={<Cards />} />
-          <Route path="/cards/:id" element={<CardDetails />} />
+          <Route path="/cards/:id" element={<CardDetails />}>
+            <Route index element={<DefaultCardInfo />} />
+            <Route path="info" element={<DefaultCardInfo />} />
+            <Route path="clients" element={<ClientsTab />} />
+            <Route path="push" element={<PushTab />} />
+            <Route path="stats" element={<StatsTab />} />
+          </Route>
+
           <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Route>

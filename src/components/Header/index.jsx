@@ -17,13 +17,13 @@ const Header = () => {
             <header className="header">
                 {/* Бургер и логотип в мобильной версии */}
                 <div className="mobile-header">
-                    <div className="logo">LOYAL<span>CLUB</span></div>
+                    <img src='/logoLight.png' alt='Logo' className='logo' />
                     <FontAwesomeIcon icon={faBars} className="burger-icon" onClick={toggleMobileMenu} />
                 </div>
 
                 {/* Десктопная версия */}
                 <div className="desktop-header">
-                    <div className="logo">LOYAL<span>CLUB</span></div>
+                    <img src='/logoLight.png' alt='Logo' className='logo'/>
                     <div className="user-section" onClick={toggleMenu}>
                         <span>Привет, {userName}</span>
                         <FontAwesomeIcon icon={faChevronDown} className={`chevron ${isMenuOpen ? 'open' : ''}`} />
@@ -68,7 +68,7 @@ const Header = () => {
             {/* Мобильное меню */}
             <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
                 <div className="mobile-menu-header">
-                    <div className="logo">LOYAL<span>CLUB</span></div>
+                    <img src='/logoLight.png' alt='Logo' className='logo'/>
                     <FontAwesomeIcon icon={faTimes} className="close-icon" onClick={toggleMobileMenu} />
                 </div>
                 <div className="mobile-menu-content">
