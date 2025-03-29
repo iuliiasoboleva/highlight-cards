@@ -15,13 +15,11 @@ const Header = () => {
     return (
         <>
             <header className="header">
-                {/* Бургер и логотип в мобильной версии */}
                 <div className="mobile-header">
                     <img src='/logoLight.png' alt='Logo' className='logo' />
                     <FontAwesomeIcon icon={faBars} className="burger-icon" onClick={toggleMobileMenu} />
                 </div>
 
-                {/* Десктопная версия */}
                 <div className="desktop-header">
                     <img src='/logoLight.png' alt='Logo' className='logo'/>
                     <div className="user-section" onClick={toggleMenu}>

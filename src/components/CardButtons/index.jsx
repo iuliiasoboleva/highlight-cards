@@ -7,18 +7,14 @@ import './styles.css';
 const CardButtons = ({ isFixed, cardId }) => {
     const navigate = useNavigate();
 
-    const handleNavigate = () => {
-        navigate(`/cards/${cardId}`);
-    };
-
     return isFixed ? (
         <div className='card-buttons'>
-            <button>На шаблоне</button>
-            <button>Без шаблона</button>
+            <button onClick={() => navigate('/cards/create')}>На шаблоне</button>
+            <button onClick={() => navigate('/cards/create')}>Без шаблона</button>
         </div>
     ) : (
         <div className='card-buttons-block'>
-            <button onClick={handleNavigate}>Перейти</button>
+            <button onClick={() => navigate(`/cards/${cardId}`)}>Перейти</button>
             <div className='icon-buttons'>
                 <IconButton icon={faToggleOn} onClick={() => console.log('Включить/выключить')} title="Включить/выключить" />
                 <IconButton icon={faDownload} onClick={() => console.log('Скачать')} title="Скачать" />

@@ -27,7 +27,7 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 .page-content {
-  padding: 20px 20px 20px 80px;
+  padding: 0 0 0 80px;
   flex-grow: 1;
   width: -webkit-fill-available;
 }
@@ -39,6 +39,6 @@ form {
 
 @media (max-width: 768px) {
   .page-content {
-    padding: 20px 20px 80px 20px;
+    padding: 0 0 80px 0;
   }
 }
