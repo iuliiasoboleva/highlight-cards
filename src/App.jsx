@@ -26,7 +26,7 @@ const MainLayout = () => {
   const location = useLocation();
   const { id } = useParams();
 
-  const hideLayout = ['/login', '/register'].includes(location.pathname);
+  const hideLayout = ['/login', '/register', '/scan'].includes(location.pathname);
   const matchCreate = matchPath('/cards/create', location.pathname);
   const matchEdit = matchPath('/cards/:id/edit/*', location.pathname);
   const matchCardDetails = matchPath('/cards/:id/*', location.pathname);
