@@ -18,7 +18,7 @@ const YandexMapPicker = ({ onSelect }) => {
         (position) => {
           const userCoords = [position.coords.latitude, position.coords.longitude];
           setCoords(userCoords);
-          onSelect({ coords: userCoords });
+          onSelect({ coords: { lat: userCoords[0], lon: userCoords[1] } });
         },
         (error) => {
           console.warn('Геолокация недоступна:', error.message);
@@ -30,20 +30,23 @@ const YandexMapPicker = ({ onSelect }) => {
   const handleMapClick = (e) => {
     const newCoords = e.get('coords');
     setCoords(newCoords);
-    onSelect({ coords: newCoords });
+    onSelect({ coords: { lat: newCoords[0], lon: newCoords[1] } });
   };
 
   return (
     <div className="map-placeholder">
-      <YMaps query={{ lang: 'ru_RU', apikey: 'ваш_API_ключ' }}>
+      <YMaps query={{ lang: 'ru_RU', apikey: 'a886f296-c974-43b3-aa06-a94c782939c2' }}>
         <Map
           state={{ center: coords, zoom: 15 }}
           width="100%"
           height="300px"
           onClick={handleMapClick}
           instanceRef={mapRef}
-          onLoad={() => setMapReady(true)}
-        >
+          onLoad={(ymaps) => {
+            window.ymaps = ymaps; // нужно для geocode
+            setMapReady(true);
+          }}
+                  >
           <GeolocationControl options={{ float: 'left' }} />
           <SearchControl options={{ float: 'right' }} />
           {mapReady && (
@@ -53,7 +56,7 @@ const YandexMapPicker = ({ onSelect }) => {
               onDragEnd={(e) => {
                 const newCoords = e.get('target').geometry.getCoordinates();
                 setCoords(newCoords);
-                onSelect({ coords: newCoords });
+                onSelect({ coords: { lat: newCoords[0], lon: newCoords[1] } });
               }}
             />
           )}

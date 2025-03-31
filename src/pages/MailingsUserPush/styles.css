@@ -1,0 +1,18 @@
+.automation-item-status.on {
+    color: green;
+    font-weight: 500;
+  }
+  
+  .automation-item-status.off {
+    color: #888;
+    font-weight: 400;
+  }
+  
+  .automation-item {
+    background: #fafafa;
+    padding: 16px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  

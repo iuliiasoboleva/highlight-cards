@@ -140,7 +140,6 @@
     padding: 20px;
     transition: left 0.3s ease;
     z-index: 999;
-    box-sizing: border-box;
 }
 
 .mobile-menu.open {

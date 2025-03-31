@@ -1,9 +1,12 @@
 @import '@fontsource/manrope';
 
+* {
+  box-sizing: border-box;
+}
+
 html, body {
   margin: 0;
   font-family: 'Manrope', system-ui;
-  box-sizing: border-box;
   background-color: #f5f5f5;
   color: #000;
   padding: 0;

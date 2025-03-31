@@ -2,10 +2,9 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './styles.css';
 
-const SubMenu = ({ menuItems, basePath, showNameInput, onNameChange, initialName }) => {
+const SubMenu = ({ menuItems, showNameInput, onNameChange, initialName }) => {
   const location = useLocation();
   const [name, setName] = React.useState(initialName || '');
-  const isCreateMode = basePath === '/cards/create';
 
   const handleNameChange = (e) => {
     const newName = e.target.value;
@@ -29,24 +28,24 @@ const SubMenu = ({ menuItems, basePath, showNameInput, onNameChange, initialName
         )}
 
         {menuItems.map((item) => {
-          const fullPath = isCreateMode
-            ? basePath
-            : `${basePath}/${item.path}`.replace('//', '/');
+          const isActive = location.pathname === item.to;
 
-          const isActive = location.pathname === fullPath;
+          if (item.disabled) {
+            return (
+              <button
+                key={item.label}
+                className={`sub-menu-link ${isActive ? 'active' : ''} static`}
+                disabled
+              >
+                {item.label}
+              </button>
+            );
+          }
 
-          return isCreateMode ? (
-            <button
-              key={item.path}
-              className={`sub-menu-link ${isActive ? 'active' : ''} static`}
-              disabled
-            >
-              {item.label}
-            </button>
-          ) : (
+          return (
             <Link
-              key={item.path}
-              to={fullPath}
+              key={item.to}
+              to={item.to}
               className={`sub-menu-link ${isActive ? 'active' : ''}`}
             >
               {item.label}

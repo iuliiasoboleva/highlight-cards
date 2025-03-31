@@ -22,7 +22,6 @@
     border-radius: 8px;
     outline: none;
     transition: border-color 0.2s;
-    box-sizing: border-box;
 }
   
 .custom-input:focus,

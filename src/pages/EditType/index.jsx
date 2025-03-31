@@ -27,7 +27,7 @@ const cardTypes = [
   { id: 'certificate', name: 'Сертификат', icon: faMoneyCheckDollar, tag: 'shop' }
 ];
 
-const EditType = ({ setType }) => {
+const EditType = ({ setType, cardType }) => {
   const [selectedType, setSelectedType] = useState('');
   const navigate = useNavigate();
 

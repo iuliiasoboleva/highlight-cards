@@ -22,7 +22,7 @@ const ScanPage = () => {
 
         const user = findUserByQr(decodedText);
         if (user) {
-            navigate(`/users/${user.id}`);
+            navigate(`/clients/${user.id}`);
         } else {
             setMessage('Пользователь не найден');
         }

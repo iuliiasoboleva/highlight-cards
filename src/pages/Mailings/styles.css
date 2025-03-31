@@ -1,0 +1,9 @@
+.mailings-container {
+    padding: 20px 20px 20px 0;
+}
+
+@media (max-width: 768px) {
+    .mailings-container {
+        padding: 20px 20px 0 20px;
+    }
+}

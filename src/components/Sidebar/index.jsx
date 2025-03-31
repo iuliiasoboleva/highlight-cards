@@ -37,15 +37,15 @@ const Sidebar = () => {
         />
         <IconButton
           icon={faUsers}
-          onClick={handleNavigate('/users')}
+          onClick={handleNavigate('/clients')}
           title="Пользователи"
-          className={isActive('/users') ? 'active' : ''}
+          className={isActive('/clients') ? 'active' : ''}
         />
         <IconButton
           icon={faComments}
-          onClick={handleNavigate('/messages')}
+          onClick={handleNavigate('/mailings/info')}
           title="Сообщения"
-          className={isActive('/messages') ? 'active' : ''}
+          className={isActive('/mailings') ? 'active' : ''}
         />
         <IconButton
           icon={faMapMarkerAlt}
@@ -55,9 +55,9 @@ const Sidebar = () => {
         />
         <IconButton
           icon={faUser}
-          onClick={handleNavigate('/profile')}
+          onClick={handleNavigate('/managers')}
           title="Профиль"
-          className={isActive('/profile') ? 'active' : ''}
+          className={isActive('/managers') ? 'active' : ''}
         />
         <IconButton
           icon={faCog}
@@ -83,15 +83,15 @@ const Sidebar = () => {
         />
         <IconButton
           icon={faUsers}
-          onClick={handleNavigate('/users')}
+          onClick={handleNavigate('/clients')}
           title="Пользователи"
-          className={isActive('/users') ? 'active' : ''}
+          className={isActive('/clients') ? 'active' : ''}
         />
         <IconButton
           icon={faComments}
-          onClick={handleNavigate('/messages')}
+          onClick={handleNavigate('/mailings/info')}
           title="Сообщения"
-          className={isActive('/messages') ? 'active' : ''}
+          className={isActive('/mailings') ? 'active' : ''}
         />
         <IconButton
           icon={faMapMarkerAlt}
@@ -101,9 +101,9 @@ const Sidebar = () => {
         />
         <IconButton
           icon={faUser}
-          onClick={handleNavigate('/profile')}
+          onClick={handleNavigate('/managers')}
           title="Профиль"
-          className={isActive('/profile') ? 'active' : ''}
+          className={isActive('/managers') ? 'active' : ''}
         />
         <IconButton
           icon={faCog}

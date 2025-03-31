@@ -159,7 +159,7 @@
   
 @media (max-width: 768px) {
     .statistics-container {
-        padding: 0;
+        padding: 20px 20px 0 20px;
     }
 
     .statistics-grid {
