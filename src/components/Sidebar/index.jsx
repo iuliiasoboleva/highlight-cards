@@ -1,7 +1,15 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+
 import { faComments, faUser } from '@fortawesome/free-regular-svg-icons';
-import { faCog, faMapMarkerAlt, faUsers, faMobile, faHome } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCog,
+  faHome,
+  faMapMarkerAlt,
+  faMobile,
+  faUsers,
+} from '@fortawesome/free-solid-svg-icons';
+
 import IconButton from '../IconButton';
 
 import './styles.css';

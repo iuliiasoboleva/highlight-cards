@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import './styles.css';
+
 import AgreementModal from '../../components/AgreementModal';
+
+import './styles.css';
 
 const mockTariff = {
   name: 'Start (Пробный)',
@@ -8,7 +10,7 @@ const mockTariff = {
   price: 25,
   nextPaymentDate: '10/04/2025',
   nextPaymentTime: '00:33',
-  daysLeft: 10
+  daysLeft: 10,
 };
 
 const tariffPlans = [
@@ -17,41 +19,41 @@ const tariffPlans = [
     prices: {
       year: 19,
       quarter: 22,
-      month: 25
+      month: 25,
     },
     integrations: '—',
     customFields: false,
-    permissions: false
+    permissions: false,
   },
   {
     name: 'GROW',
     prices: {
       year: 35,
       quarter: 39,
-      month: 45
+      month: 45,
     },
     integrations: '—',
     customFields: true,
-    permissions: false
+    permissions: false,
   },
   {
     name: 'BUSINESS',
     prices: {
       year: 69,
       quarter: 79,
-      month: 85
+      month: 85,
     },
     integrations: '3 интеграции',
     customFields: true,
-    permissions: true
-  }
+    permissions: true,
+  },
 ];
 
 const Settings = () => {
   const [period, setPeriod] = useState({
     START: 'Год',
     GROW: 'Год',
-    BUSINESS: 'Год'
+    BUSINESS: 'Год',
   });
   const [showModal, setShowModal] = useState(false);
 
@@ -87,8 +89,10 @@ const Settings = () => {
             <p>Дней осталось</p>
           </div>
         </div>
-        <button className="btn-dark" onClick={() => setShowModal(true)}>Продлить</button>
-        </div>
+        <button className="btn-dark" onClick={() => setShowModal(true)}>
+          Продлить
+        </button>
+      </div>
 
       <h3>Полный функционал</h3>
 
@@ -97,7 +101,7 @@ const Settings = () => {
           <thead>
             <tr>
               <th>ФУНКЦИОНАЛ</th>
-              {tariffPlans.map(plan => (
+              {tariffPlans.map((plan) => (
                 <th key={plan.name}>{plan.name}</th>
               ))}
             </tr>
@@ -105,36 +109,61 @@ const Settings = () => {
           <tbody>
             <tr>
               <td>
-                <strong>Стоимость в месяц</strong><br />
-                <small>при оплате за год<br />/ за квартал<br />/ за месяц</small>
+                <strong>Стоимость в месяц</strong>
+                <br />
+                <small>
+                  при оплате за год
+                  <br />/ за квартал
+                  <br />/ за месяц
+                </small>
               </td>
-              {tariffPlans.map(plan => (
+              {tariffPlans.map((plan) => (
                 <td key={plan.name}>
                   {plan.prices.year} $<br />/ {plan.prices.quarter} $<br />/ {plan.prices.month} $
                 </td>
               ))}
             </tr>
             <tr>
-              <td><strong>Интеграции</strong><br />Интеграция с ПО для автоматического начисления</td>
-              {tariffPlans.map(plan => (
+              <td>
+                <strong>Интеграции</strong>
+                <br />
+                Интеграция с ПО для автоматического начисления
+              </td>
+              {tariffPlans.map((plan) => (
                 <td key={plan.name}>
                   {plan.integrations === '—' ? <span className="red">−</span> : plan.integrations}
                 </td>
               ))}
             </tr>
             <tr>
-              <td><strong>Пользовательские поля</strong><br />Добавьте собственное наполнение без шаблона</td>
-              {tariffPlans.map(plan => (
+              <td>
+                <strong>Пользовательские поля</strong>
+                <br />
+                Добавьте собственное наполнение без шаблона
+              </td>
+              {tariffPlans.map((plan) => (
                 <td key={plan.name}>
-                  {plan.customFields ? <span className="green">+</span> : <span className="red">−</span>}
+                  {plan.customFields ? (
+                    <span className="green">+</span>
+                  ) : (
+                    <span className="red">−</span>
+                  )}
                 </td>
               ))}
             </tr>
             <tr>
-              <td><strong>Customizable manager’s permissions</strong><br />Granular control over manager access</td>
-              {tariffPlans.map(plan => (
+              <td>
+                <strong>Customizable manager’s permissions</strong>
+                <br />
+                Granular control over manager access
+              </td>
+              {tariffPlans.map((plan) => (
                 <td key={plan.name}>
-                  {plan.permissions ? <span className="green">+</span> : <span className="red">−</span>}
+                  {plan.permissions ? (
+                    <span className="green">+</span>
+                  ) : (
+                    <span className="red">−</span>
+                  )}
                 </td>
               ))}
             </tr>
@@ -142,12 +171,15 @@ const Settings = () => {
         </table>
 
         <div className="tariff-selectors">
-          {tariffPlans.map(plan => (
+          {tariffPlans.map((plan) => (
             <div key={plan.name} className="tariff-selector">
               <select
                 value={period[plan.name]}
-                onChange={e =>
-                  setPeriod(prev => ({ ...prev, [plan.name]: e.target.value }))
+                onChange={(e) =>
+                  setPeriod((prev) => ({
+                    ...prev,
+                    [plan.name]: e.target.value,
+                  }))
                 }
               >
                 <option>Год</option>
@@ -160,14 +192,14 @@ const Settings = () => {
         </div>
       </div>
       {showModal && (
-  <AgreementModal
-    onClose={() => setShowModal(false)}
-    onConfirm={() => {
-      setShowModal(false);
-      alert('Переход к оплате'); // или переход на страницу оплаты
-    }}
-  />
-)}
+        <AgreementModal
+          onClose={() => setShowModal(false)}
+          onConfirm={() => {
+            setShowModal(false);
+            alert('Переход к оплате'); // или переход на страницу оплаты
+          }}
+        />
+      )}
     </div>
   );
 };

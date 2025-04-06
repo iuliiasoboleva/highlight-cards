@@ -1,50 +1,49 @@
-  .mailings-search {
-    width: 100%;
-    padding: 10px;
-    margin: 16px 0;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-  }
-  
-  .mailings-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 16px;
-  }
-  
-  .mailings-card {
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 10px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  
-  .mailings-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .mailings-card-icon {
-    height: 32px;
-  }
-  
-  .btn-dark {
-    background: #000;
-    color: #fff;
-    padding: 10px 16px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 12px;
-  }
-  
-  .instruction {
-    font-size: 13px;
-    margin-top: 8px;
-  }
-  
+.mailings-search {
+  width: 100%;
+  padding: 10px;
+  margin: 16px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.mailings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.mailings-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.mailings-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mailings-card-icon {
+  height: 32px;
+}
+
+.btn-dark {
+  background: #000;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.instruction {
+  font-size: 13px;
+  margin-top: 8px;
+}

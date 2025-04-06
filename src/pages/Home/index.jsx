@@ -1,8 +1,10 @@
 import React from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
-import { generateData, overallStats } from '../../mocks/chartData';
+
 import Chart from '../../components/Chart';
 import ClientPortraitCard from '../../components/ClientPortraitCard';
+import { generateData, overallStats } from '../../mocks/chartData';
+
 import './styles.css';
 
 const periods = {
@@ -25,7 +27,7 @@ const periodLabels = {
 
 const Home = () => {
   return (
-    <div className='statistics-container'>
+    <div className="statistics-container">
       <Chart
         title="Статистика пользователей"
         generateData={generateData}
@@ -34,23 +36,11 @@ const Home = () => {
         periods={periods}
       />
       <h2 className="title">Лояльность</h2>
-      <div className='portrait-chart'>
-        <ClientPortraitCard
-          title="Уровень лояльности"
-          value=""
-        />
-        <ClientPortraitCard
-          title="Недовольные клиенты"
-          value=""
-        />
-        <ClientPortraitCard
-          title="Гендерное соотношение"
-          value=""
-        />
-        <ClientPortraitCard
-          title="Устройства"
-          value=""
-        />
+      <div className="portrait-chart">
+        <ClientPortraitCard title="Уровень лояльности" value="" />
+        <ClientPortraitCard title="Недовольные клиенты" value="" />
+        <ClientPortraitCard title="Гендерное соотношение" value="" />
+        <ClientPortraitCard title="Устройства" value="" />
       </div>
     </div>
   );

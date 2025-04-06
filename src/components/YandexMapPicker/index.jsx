@@ -1,11 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  YMaps,
-  Map,
-  Placemark,
-  GeolocationControl,
-  SearchControl
-} from '@pbe/react-yandex-maps';
+
+import { GeolocationControl, Map, Placemark, SearchControl, YMaps } from '@pbe/react-yandex-maps';
 
 const YandexMapPicker = ({ onSelect }) => {
   const [coords, setCoords] = useState([55.751574, 37.573856]);
@@ -22,7 +17,7 @@ const YandexMapPicker = ({ onSelect }) => {
         },
         (error) => {
           console.warn('Геолокация недоступна:', error.message);
-        }
+        },
       );
     }
   }, []);
@@ -35,7 +30,12 @@ const YandexMapPicker = ({ onSelect }) => {
 
   return (
     <div className="map-placeholder">
-      <YMaps query={{ lang: 'ru_RU', apikey: 'a886f296-c974-43b3-aa06-a94c782939c2' }}>
+      <YMaps
+        query={{
+          lang: 'ru_RU',
+          apikey: 'a886f296-c974-43b3-aa06-a94c782939c2',
+        }}
+      >
         <Map
           state={{ center: coords, zoom: 15 }}
           width="100%"
@@ -43,10 +43,10 @@ const YandexMapPicker = ({ onSelect }) => {
           onClick={handleMapClick}
           instanceRef={mapRef}
           onLoad={(ymaps) => {
-            window.ymaps = ymaps; // нужно для geocode
+            window.ymaps = ymaps;
             setMapReady(true);
           }}
-                  >
+        >
           <GeolocationControl options={{ float: 'left' }} />
           <SearchControl options={{ float: 'right' }} />
           {mapReady && (

@@ -1,33 +1,33 @@
 .icon-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
-    color: #87879c;
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: color 0.2s ease;
-    border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  color: #87879c;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  border-radius: 50%;
 }
 
 .icon-button:hover {
-    color: #1dcd27;
-    background-color: rgba(29, 205, 39, 0.1);
+  color: #1dcd27;
+  background-color: rgba(29, 205, 39, 0.1);
 }
 
 .icon-button:active {
-    transform: scale(0.95);
+  transform: scale(0.95);
 }
 
 .icon-button.active {
-    color: #1dcd27;
-    background-color: rgba(29, 205, 39, 0.1);
-    box-shadow: 0 0 8px rgba(29, 205, 39, 0.3);
+  color: #1dcd27;
+  background-color: rgba(29, 205, 39, 0.1);
+  box-shadow: 0 0 8px rgba(29, 205, 39, 0.3);
 }
 
 .icon-button:active {
-    transform: scale(0.95);
+  transform: scale(0.95);
 }

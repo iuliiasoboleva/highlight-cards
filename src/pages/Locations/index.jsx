@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+
 import CardInfo from '../../components/CardInfo';
 import YandexMapPicker from '../../components/YandexMapPicker';
+
 import './styles.css';
 
 const MAX_LOCATIONS = 10;
@@ -20,11 +22,12 @@ const Locations = () => {
 
     try {
       const res = await fetch(
-        `https://geocode-maps.yandex.ru/1.x/?apikey=${API_KEY}&geocode=${lon},${lat}&format=json`
+        `https://geocode-maps.yandex.ru/1.x/?apikey=${API_KEY}&geocode=${lon},${lat}&format=json`,
       );
       const data = await res.json();
       const address =
-        data.response.GeoObjectCollection.featureMember[0]?.GeoObject?.metaDataProperty?.GeocoderMetaData?.text;
+        data.response.GeoObjectCollection.featureMember[0]?.GeoObject?.metaDataProperty
+          ?.GeocoderMetaData?.text;
 
       if (address) {
         setCurrentAddress(address);
@@ -76,7 +79,9 @@ const Locations = () => {
 
         {currentAddress && (
           <div className="location-preview">
-            <p><strong>Выбранный адрес:</strong> {currentAddress}</p>
+            <p>
+              <strong>Выбранный адрес:</strong> {currentAddress}
+            </p>
             <button
               className="btn-dark"
               onClick={handleAddLocation}

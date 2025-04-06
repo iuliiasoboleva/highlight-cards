@@ -1,7 +1,9 @@
 import React from 'react';
-import './styles.css';
+
 import TransactionsTable from '../../components/TransactionsTable';
 import { mailingsHeaders, mockMailings } from '../../mocks/mockMailings';
+
+import './styles.css';
 
 const cards = [
   { value: '0', label: 'Клиентов в базе' },
@@ -27,15 +29,12 @@ const MailingsInfo = () => {
       </div>
 
       <div className="alert">
-        Для создания рассылок необходимо подключить провайдера SMS или Email в настройках. <a href="#">Подключить</a>
+        Для создания рассылок необходимо подключить провайдера SMS или Email в настройках.{' '}
+        <a href="#">Подключить</a>
       </div>
 
       <div className="table-wrapper">
-        <TransactionsTable
-          title=""
-          headers={mailingsHeaders}
-          data={mockMailings}
-        />
+        <TransactionsTable title="" headers={mailingsHeaders} data={mockMailings} />
       </div>
     </>
   );

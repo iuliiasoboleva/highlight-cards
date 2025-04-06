@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import './styles.css';
 
 const initialManagers = [
@@ -14,7 +15,11 @@ const ManagersPage = () => {
   const [managers, setManagers] = useState(initialManagers);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newManager, setNewManager] = useState({ name: '', location: '', shift: '' });
+  const [newManager, setNewManager] = useState({
+    name: '',
+    location: '',
+    shift: '',
+  });
 
   const handleAdd = () => {
     setManagers([...managers, { ...newManager, id: Date.now() }]);
@@ -27,7 +32,7 @@ const ManagersPage = () => {
   };
 
   const filteredManagers = managers.filter((m) =>
-    m.name.toLowerCase().includes(searchQuery.toLowerCase())
+    m.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -38,7 +43,9 @@ const ManagersPage = () => {
       </div>
 
       <div className="managers-controls">
-        <button className="btn-dark" onClick={() => setShowAddModal(true)}>Добавить менеджера</button>
+        <button className="btn-dark" onClick={() => setShowAddModal(true)}>
+          Добавить менеджера
+        </button>
         <input
           className="search-input"
           placeholder="Введите имя менеджера"
@@ -51,7 +58,8 @@ const ManagersPage = () => {
         <div className="manager-card create-card" onClick={() => setShowAddModal(true)}>
           <h3>Создать менеджера</h3>
           <p>
-            Создайте менеджеров для раздельного отслеживания эффективности выдачи карт и начисления штампов. Менеджеры могут быть распределены по торговым точкам или же по сменам.
+            Создайте менеджеров для раздельного отслеживания эффективности выдачи карт и начисления
+            штампов. Менеджеры могут быть распределены по торговым точкам или же по сменам.
           </p>
           <span className="emoji">🧑‍💼</span>
         </div>
@@ -59,7 +67,8 @@ const ManagersPage = () => {
         <div className="manager-card scanner-card">
           <h3>Приложение-сканер</h3>
           <p>
-            Установите приложение-сканер карт своим менеджерам в точках продаж. С помощью приложения они смогут пробивать штампы клиентам и выдавать награды.
+            Установите приложение-сканер карт своим менеджерам в точках продаж. С помощью приложения
+            они смогут пробивать штампы клиентам и выдавать награды.
           </p>
           <img className="scanner-icon" src="/scanner.png" alt="scanner" />
           <button className="btn-dark">Открыть</button>
@@ -69,10 +78,16 @@ const ManagersPage = () => {
           <div className="manager-card" key={m.id}>
             <div className="manager-card-header">
               <h4>{m.name}</h4>
-              <button className="remove-btn" onClick={() => handleRemove(m.id)}>🗑</button>
+              <button className="remove-btn" onClick={() => handleRemove(m.id)}>
+                🗑
+              </button>
             </div>
-            <p><strong>Локация:</strong> {m.location}</p>
-            <p><strong>Смена:</strong> {m.shift}</p>
+            <p>
+              <strong>Локация:</strong> {m.location}
+            </p>
+            <p>
+              <strong>Смена:</strong> {m.shift}
+            </p>
           </div>
         ))}
       </div>
@@ -100,8 +115,12 @@ const ManagersPage = () => {
               onChange={(e) => setNewManager({ ...newManager, shift: e.target.value })}
             />
             <div className="modal-buttons">
-              <button className="btn-dark" onClick={handleAdd}>Добавить</button>
-              <button className="btn-light" onClick={() => setShowAddModal(false)}>Отмена</button>
+              <button className="btn-dark" onClick={handleAdd}>
+                Добавить
+              </button>
+              <button className="btn-light" onClick={() => setShowAddModal(false)}>
+                Отмена
+              </button>
             </div>
           </div>
         </div>

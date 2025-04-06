@@ -1,18 +1,18 @@
 .statistics-container {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    padding: 20px 20px 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 20px 20px 20px 0;
 }
 
 .portrait-chart {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
 }
 
 @media (max-width: 768px) {
-    .portrait-chart {
-        grid-template-columns: 1fr;
-    }
+  .portrait-chart {
+    grid-template-columns: 1fr;
+  }
 }

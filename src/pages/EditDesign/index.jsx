@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
 import CardInfo from '../../components/CardInfo';
+
 import './styles.css';
 
 const EditDesign = () => {
@@ -25,7 +27,7 @@ const EditDesign = () => {
   };
 
   const handleColorChange = (key, value) => {
-    setColors(prev => ({ ...prev, [key]: value }));
+    setColors((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleSaveDesign = () => {
@@ -34,7 +36,7 @@ const EditDesign = () => {
   };
 
   return (
-    <div className='edit-type-main-container'>
+    <div className="edit-type-main-container">
       <div className="edit-type-page">
         <h2>Дизайн</h2>
         <hr />
@@ -48,10 +50,19 @@ const EditDesign = () => {
                 ) : (
                   <div className="upload-placeholder">📁</div>
                 )}
-                <input type="file" id="logo" hidden onChange={(e) => handleImageChange(e, setLogo)} />
-                <label htmlFor="logo" className="upload-button">Выбрать файл</label>
+                <input
+                  type="file"
+                  id="logo"
+                  hidden
+                  onChange={(e) => handleImageChange(e, setLogo)}
+                />
+                <label htmlFor="logo" className="upload-button">
+                  Выбрать файл
+                </label>
               </div>
-              <p className="upload-description">Рекомендуемый размер: 480x150 пикселей. Только PNG. 3 МБ</p>
+              <p className="upload-description">
+                Рекомендуемый размер: 480x150 пикселей. Только PNG. 3 МБ
+              </p>
             </div>
 
             <div className="upload-box">
@@ -62,10 +73,19 @@ const EditDesign = () => {
                 ) : (
                   <div className="upload-placeholder">📁</div>
                 )}
-                <input type="file" id="icon" hidden onChange={(e) => handleImageChange(e, setIcon)} />
-                <label htmlFor="icon" className="upload-button">Выбрать файл</label>
+                <input
+                  type="file"
+                  id="icon"
+                  hidden
+                  onChange={(e) => handleImageChange(e, setIcon)}
+                />
+                <label htmlFor="icon" className="upload-button">
+                  Выбрать файл
+                </label>
               </div>
-              <p className="upload-description">Рекомендуемый размер: 512x512 пикселей. Только PNG. 3 МБ</p>
+              <p className="upload-description">
+                Рекомендуемый размер: 512x512 пикселей. Только PNG. 3 МБ
+              </p>
             </div>
           </div>
 
@@ -77,8 +97,15 @@ const EditDesign = () => {
               ) : (
                 <div className="upload-placeholder">📁</div>
               )}
-              <input type="file" id="background" hidden onChange={(e) => handleImageChange(e, setBackground)} />
-              <label htmlFor="background" className="upload-button">Выбрать файл</label>
+              <input
+                type="file"
+                id="background"
+                hidden
+                onChange={(e) => handleImageChange(e, setBackground)}
+              />
+              <label htmlFor="background" className="upload-button">
+                Выбрать файл
+              </label>
             </div>
             <p className="upload-description">Минимальный размер: 1125x432. Только PNG. 3 МБ</p>
           </div>

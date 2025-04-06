@@ -1,39 +1,49 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, useLocation, Outlet, matchPath, useParams, Navigate } from 'react-router-dom';
-import AuthLayout from './layouts/AuthLayout';
-import NotFound from './components/NotFound';
-import Tabs from './components/Tabs';
+import {
+  Navigate,
+  Outlet,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+  matchPath,
+  useLocation,
+  useParams,
+} from 'react-router-dom';
+
 import AuthForm from './components/AuthForm';
-import SubMenu from './components/SubMenu';
 import Header from './components/Header';
+import NotFound from './components/NotFound';
 import Sidebar from './components/Sidebar';
+import SubMenu from './components/SubMenu';
+import Tabs from './components/Tabs';
+import AuthLayout from './layouts/AuthLayout';
 import { mockCards } from './mocks/cardData';
-import Home from './pages/Home';
-import Settings from './pages/Settings';
-import SettingsPersonal from './pages/SettingsPersonal';
-import SettingsRFMSegment from './pages/SettingsRFMSegment';
-import Cards from './pages/Cards';
 import CardDetails from './pages/CardDetails';
-import DefaultCardInfo from './pages/DefaultCardInfo';
+import Cards from './pages/Cards';
+import Clients from './pages/Clients';
 import ClientsTab from './pages/ClientsTab';
-import PushTab from './pages/PushTab';
-import StatsTab from './pages/StatsTab';
-import EditType from './pages/EditType';
-import EditSettings from './pages/EditSettings';
+import DefaultCardInfo from './pages/DefaultCardInfo';
 import EditDesign from './pages/EditDesign';
 import EditInfo from './pages/EditInfo';
-import ScanPage from './pages/ScanPage';
-import Mailings from './pages/Mailings';
-import MailingsInfo from './pages/MailingsInfo';
-import MailingsInbox from './pages/MailingsInbox';
-import MailingsPush from './pages/MailingsPush';
-import MailingsAutoPush from './pages/MailingsAutoPush';
-import MailingsUserPush from './pages/MailingsUserPush';
-import MailingsSettings from './pages/MailingsSettings';
-import SettingsLayout from './pages/SettingsLayout';
-import Managers from './pages/Managers';
+import EditSettings from './pages/EditSettings';
+import EditType from './pages/EditType';
+import Home from './pages/Home';
 import Locations from './pages/Locations';
-import Clients from './pages/Clients';
+import Mailings from './pages/Mailings';
+import MailingsAutoPush from './pages/MailingsAutoPush';
+import MailingsInbox from './pages/MailingsInbox';
+import MailingsInfo from './pages/MailingsInfo';
+import MailingsPush from './pages/MailingsPush';
+import MailingsSettings from './pages/MailingsSettings';
+import MailingsUserPush from './pages/MailingsUserPush';
+import Managers from './pages/Managers';
+import PushTab from './pages/PushTab';
+import ScanPage from './pages/ScanPage';
+import Settings from './pages/Settings';
+import SettingsLayout from './pages/SettingsLayout';
+import SettingsPersonal from './pages/SettingsPersonal';
+import SettingsRFMSegment from './pages/SettingsRFMSegment';
+import StatsTab from './pages/StatsTab';
 
 const MainLayout = () => {
   const location = useLocation();
@@ -46,7 +56,7 @@ const MainLayout = () => {
   const matchMailings = matchPath('/mailings/*', location.pathname);
   const matchSettings = matchPath('/settings/*', location.pathname);
 
-  const currentCard = mockCards.find(c => c.id === parseInt(matchEdit?.params?.id));
+  const currentCard = mockCards.find((c) => c.id === parseInt(matchEdit?.params?.id));
 
   if (hideLayout) {
     return <Outlet />;
@@ -59,7 +69,7 @@ const MainLayout = () => {
         { to: `${base}`, label: 'Тип карты' },
         { to: `${base}/settings`, label: 'Настройки', disabled: true },
         { to: `${base}/design`, label: 'Дизайн', disabled: true },
-        { to: `${base}/info`, label: 'Информация', disabled: true }
+        { to: `${base}/info`, label: 'Информация', disabled: true },
       ];
     }
 
@@ -69,7 +79,7 @@ const MainLayout = () => {
         { to: `${base}/type`, label: 'Тип карты' },
         { to: `${base}/settings`, label: 'Настройки' },
         { to: `${base}/design`, label: 'Дизайн' },
-        { to: `${base}/info`, label: 'Информация' }
+        { to: `${base}/info`, label: 'Информация' },
       ];
     }
 
@@ -79,7 +89,7 @@ const MainLayout = () => {
         { to: `${base}/info`, label: 'Информация' },
         { to: `${base}/clients`, label: 'Клиенты' },
         { to: `${base}/push`, label: 'Отправить push' },
-        { to: `${base}/stats`, label: 'Статистика' }
+        { to: `${base}/stats`, label: 'Статистика' },
       ];
     }
 
@@ -90,7 +100,7 @@ const MainLayout = () => {
         { to: `/mailings/push`, label: 'Отправить push' },
         { to: `/mailings/auto-push`, label: 'Автоматизация push' },
         { to: `/mailings/user-push`, label: 'Пользовательские авто-push' },
-        { to: `/mailings/settings`, label: 'Настройки' }
+        { to: `/mailings/settings`, label: 'Настройки' },
       ];
     }
 
@@ -98,7 +108,7 @@ const MainLayout = () => {
       return [
         { to: `/settings`, label: 'Тарифный план' },
         { to: `/settings/personal`, label: 'Персональные настройки' },
-        { to: `/settings/rfm-segment`, label: 'RFM' }
+        { to: `/settings/rfm-segment`, label: 'RFM' },
       ];
     }
 
@@ -158,7 +168,10 @@ const App = () => {
           <Route path="/cards" element={<Cards />} />
           <Route path="/scan" element={<ScanPage />} />
 
-          <Route path="/cards/create" element={<EditType setType={setNewCardType} cardType={newCardType} />} />
+          <Route
+            path="/cards/create"
+            element={<EditType setType={setNewCardType} cardType={newCardType} />}
+          />
           <Route path="/mailings" element={<Mailings />}>
             <Route path="info" element={<MailingsInfo />} />
             <Route path="inbox" element={<MailingsInbox />} />
@@ -168,7 +181,10 @@ const App = () => {
             <Route path="settings" element={<MailingsSettings />} />
           </Route>
           <Route path="/cards/:id/edit" element={<CardEditGuard />}>
-            <Route path="type" element={<EditType setType={setNewCardType} cardType={newCardType} />} />
+            <Route
+              path="type"
+              element={<EditType setType={setNewCardType} cardType={newCardType} />}
+            />
             <Route path="settings" element={<EditSettings cardType={newCardType} />} />
             <Route path="design" element={<EditDesign />} />
             <Route path="info" element={<EditInfo />} />

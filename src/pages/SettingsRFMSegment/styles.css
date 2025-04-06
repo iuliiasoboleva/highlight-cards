@@ -1,70 +1,69 @@
 .rfm-settings-page {
-    padding: 24px;
-  }
-  
-  .rfm-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-    gap: 16px;
-  }
-  
-  .rfm-card {
-    background: #fff;
-    border: 1px solid #ddd;
-    padding: 16px;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  
-  .rfm-card-title {
-    font-weight: 600;
-    margin-bottom: 16px;
-  }
-  
-  .rfm-field-row {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 12px;
-    flex-wrap: wrap;
-  }
-  
-  .rfm-field {
-    flex: 1;
-    min-width: 0; /* важно для избежания переполнения */
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .rfm-field label {
-    font-size: 13px;
-    margin-bottom: 6px;
-    color: #333;
-  }
-  
-  .rfm-field input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
-    width: 100%;         /* ключевой момент */
-    max-width: 100%;     /* не даст выйти за пределы */
-  }
-  
-  .btn-dark {
-    width: 100%;
-    background: #1a1a1a;
-    color: white;
-    border: none;
-    padding: 10px;
-    font-weight: 500;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-top: 12px;
-  }
-  
-  .btn-dark:hover {
-    background: #333;
-  }
-  
+  padding: 24px;
+}
+
+.rfm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+.rfm-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 16px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.rfm-card-title {
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.rfm-field-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.rfm-field {
+  flex: 1;
+  min-width: 0; /* важно для избежания переполнения */
+  display: flex;
+  flex-direction: column;
+}
+
+.rfm-field label {
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.rfm-field input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%; /* ключевой момент */
+  max-width: 100%; /* не даст выйти за пределы */
+}
+
+.btn-dark {
+  width: 100%;
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+.btn-dark:hover {
+  background: #333;
+}

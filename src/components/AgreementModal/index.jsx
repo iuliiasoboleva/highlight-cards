@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import './styles.css';
 
 const AgreementModal = ({ onClose, onConfirm }) => {
@@ -9,7 +10,9 @@ const AgreementModal = ({ onClose, onConfirm }) => {
       <div className="agreement-modal">
         <div className="modal-header">
           <h3>Договор-оферта</h3>
-          <button className="close-btn" onClick={onClose}>×</button>
+          <button className="close-btn" onClick={onClose}>
+            ×
+          </button>
         </div>
 
         <div className="modal-content">
@@ -22,8 +25,12 @@ const AgreementModal = ({ onClose, onConfirm }) => {
         </label>
 
         <div className="modal-actions">
-          <button className="btn-dark" disabled={!agreed} onClick={onConfirm}>Перейти к оплате</button>
-          <button className="btn-light" onClick={onClose}>Отменить</button>
+          <button className="btn-dark" disabled={!agreed} onClick={onConfirm}>
+            Перейти к оплате
+          </button>
+          <button className="btn-light" onClick={onClose}>
+            Отменить
+          </button>
         </div>
       </div>
     </div>

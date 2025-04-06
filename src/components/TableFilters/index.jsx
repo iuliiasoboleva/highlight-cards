@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+
 import PropTypes from 'prop-types';
+
 import './styles.css';
 
 const TableFilters = ({ headers, onFilterChange }) => {
@@ -31,10 +33,10 @@ TableFilters.propTypes = {
   headers: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.string.isRequired,
-      label: PropTypes.string.isRequired
-    })
+      label: PropTypes.string.isRequired,
+    }),
   ).isRequired,
-  onFilterChange: PropTypes.func.isRequired
+  onFilterChange: PropTypes.func.isRequired,
 };
 
 export default TableFilters;

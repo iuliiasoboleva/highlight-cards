@@ -1,81 +1,81 @@
 .sidebar {
-    width: 60px;
-    background-color: #EAEAED;
-    padding: 10px 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 50px;
-    align-items: center;
-    height: 100vh;
-    position: fixed;
-    left: 0;
-    top: 0;
+  width: 60px;
+  background-color: #eaeaed;
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 30px;
+  align-items: center;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
 }
 
 .sidebar-link {
-    font-size: 24px;
-    color: #666;
-    text-decoration: none;
-    transition: 0.2s;
+  font-size: 24px;
+  color: #666;
+  text-decoration: none;
+  transition: 0.2s;
 }
 
 .sidebar-link:hover {
-    color: #000;
+  color: #000;
 }
 
 .sidebar-link svg {
+  stroke: currentColor;
+  fill: none;
+  width: 24px;
+  height: 24px;
+}
+
+.sidebar-link:hover svg {
+  color: red;
+}
+
+.bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+
+  .bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #eaeaed;
+    padding: 10px 0;
+    z-index: 1000;
+  }
+
+  .bottom-nav-link {
+    font-size: 24px;
+    color: #666;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .bottom-nav-link:hover {
+    color: #000;
+  }
+
+  .bottom-nav-link svg {
     stroke: currentColor;
     fill: none;
     width: 24px;
     height: 24px;
-}
+  }
 
-.sidebar-link:hover svg {
+  .bottom-nav-link:hover svg {
     color: red;
-}
-
-.bottom-nav {
-    display: none;
-}
-
-@media (max-width: 768px) {
-    .sidebar {
-        display: none;
-    }
-
-    .bottom-nav {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background-color: #EAEAED;
-        padding: 10px 0;
-        z-index: 1000;
-    }
-
-    .bottom-nav-link {
-        font-size: 24px;
-        color: #666;
-        text-decoration: none;
-        transition: color 0.2s ease;
-    }
-
-    .bottom-nav-link:hover {
-        color: #000;
-    }
-
-    .bottom-nav-link svg {
-        stroke: currentColor;
-        fill: none;
-        width: 24px;
-        height: 24px;
-    }
-
-    .bottom-nav-link:hover svg {
-        color: red;
-    }
+  }
 }

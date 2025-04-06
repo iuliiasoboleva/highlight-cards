@@ -1,16 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
+import { ru } from 'date-fns/locale';
 import {
-  LineChart,
+  CartesianGrid,
   Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
 } from 'recharts';
-import DatePicker from 'react-datepicker';
-import { ru } from 'date-fns/locale';
-import 'react-datepicker/dist/react-datepicker.css';
+
 import './styles.css';
 
 const Chart = ({
@@ -123,21 +125,13 @@ const Chart = ({
         <div className="statistics-grid">
           <div className="stat-item">
             <div className="stat-label">Всего визитов</div>
-            <div className="stat-value">
-              {chartData[chartData.length - 1]?.visits || 0}
-            </div>
-            <div className="stat-change neutral">
-              {overallStats.totalVisits.change}
-            </div>
+            <div className="stat-value">{chartData[chartData.length - 1]?.visits || 0}</div>
+            <div className="stat-change neutral">{overallStats.totalVisits.change}</div>
           </div>
           <div className="stat-item">
             <div className="stat-label">Повторные клиенты</div>
-            <div className="stat-value">
-              {chartData[chartData.length - 1]?.repeatClients || 0}
-            </div>
-            <div className="stat-change neutral">
-              {overallStats.repeatClients.change}
-            </div>
+            <div className="stat-value">{chartData[chartData.length - 1]?.repeatClients || 0}</div>
+            <div className="stat-change neutral">{overallStats.repeatClients.change}</div>
           </div>
         </div>
 

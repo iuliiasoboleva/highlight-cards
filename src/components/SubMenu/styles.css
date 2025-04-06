@@ -1,62 +1,62 @@
 .sub-menu {
-    background-color: #2e2e2e;
-    padding: 10px;
-    z-index: 9999;
-    position: relative;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+  background-color: #2e2e2e;
+  padding: 10px;
+  z-index: 9999;
+  position: relative;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
 
 .sub-menu::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 .sub-menu-scroll {
-    display: inline-flex;
-    gap: 10px;
-    min-width: 100%;
-    align-items: center;
+  display: inline-flex;
+  gap: 10px;
+  min-width: 100%;
+  align-items: center;
 }
 
 .sub-menu-link {
-    all: unset;
-    display: inline-block;
-    background-color: #444;
-    color: #fff !important;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.2s;
-    white-space: nowrap;
-    flex-shrink: 0;
-    text-decoration: none !important;
+  all: unset;
+  display: inline-block;
+  background-color: #444;
+  color: #fff !important;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-decoration: none !important;
 }
 
 .sub-menu-link:hover {
-    background-color: #555;
+  background-color: #555;
 }
 
 .sub-menu-link.active {
-    background-color: #666;
+  background-color: #666;
 }
 
 .name-editor {
-    flex-shrink: 0;
-    margin-right: 20px;
+  flex-shrink: 0;
+  margin-right: 20px;
 }
 
 .name-input {
-    padding: 6px 12px;
-    border: 1px solid #555;
-    border-radius: 4px;
-    background: #3a3a3a;
-    color: #fff;
-    width: 200px;
+  padding: 6px 12px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #3a3a3a;
+  color: #fff;
+  width: 200px;
 }
 
 .name-input:focus {
-    outline: none;
-    border-color: #666;
+  outline: none;
+  border-color: #666;
 }

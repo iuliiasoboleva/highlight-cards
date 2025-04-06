@@ -1,111 +1,110 @@
 .settings-container {
-    padding: 24px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  .tariff-boxes {
-    display: flex;
-    gap: 24px;
-    margin-bottom: 24px;
-  }
-  
-  .tariff-box {
-    flex: 1;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 16px;
-  }
-  
-  .tariff-name {
-    font-size: 22px;
-    font-weight: 600;
-  }
-  
-  .tariff-sub {
-    color: #666;
-    font-size: 14px;
-    margin-top: 4px;
-  }
-  
-  .tariff-price {
-    font-size: 26px;
-    font-weight: 600;
-  }
-  
-  .tariff-due {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 32px;
-  }
-  
-  .tariff-due-grid {
-    display: flex;
-    justify-content: space-between;
-    margin: 16px 0;
-  }
-  
-  .tariff-due-date,
-  .tariff-due-time,
-  .tariff-due-days {
-    font-size: 26px;
-    font-weight: 600;
-    text-align: center;
-  }
-  
-  .btn-dark {
-    background: #000;
-    color: #fff;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  
-  .tariff-table-wrapper {
-    margin-top: 24px;
-    overflow-x: auto;
-  }
-  
-  .tariff-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: center;
-  }
-  
-  .tariff-table th,
-  .tariff-table td {
-    padding: 16px;
-    border: 1px solid #ddd;
-  }
-  
-  .green {
-    color: green;
-    font-weight: 600;
-    font-size: 18px;
-  }
-  
-  .red {
-    color: red;
-    font-weight: 600;
-    font-size: 18px;
-  }
-  
-  .tariff-selectors {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 16px;
-    gap: 16px;
-  }
-  
-  .tariff-selector select {
-    padding: 8px;
-    margin-bottom: 8px;
-    width: 100%;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-  }
-  
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.tariff-boxes {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.tariff-box {
+  flex: 1;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.tariff-name {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.tariff-sub {
+  color: #666;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.tariff-price {
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.tariff-due {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 32px;
+}
+
+.tariff-due-grid {
+  display: flex;
+  justify-content: space-between;
+  margin: 16px 0;
+}
+
+.tariff-due-date,
+.tariff-due-time,
+.tariff-due-days {
+  font-size: 26px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.btn-dark {
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.tariff-table-wrapper {
+  margin-top: 24px;
+  overflow-x: auto;
+}
+
+.tariff-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.tariff-table th,
+.tariff-table td {
+  padding: 16px;
+  border: 1px solid #ddd;
+}
+
+.green {
+  color: green;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.red {
+  color: red;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.tariff-selectors {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 16px;
+  gap: 16px;
+}
+
+.tariff-selector select {
+  padding: 8px;
+  margin-bottom: 8px;
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}

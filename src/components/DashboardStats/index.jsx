@@ -1,14 +1,15 @@
-import React from "react";
-import "./styles.css";
+import React from 'react';
+
+import './styles.css';
 
 const stats = [
-  { label: "Установленных карт", value: 0 },
-  { label: "Клиентов в базе", value: 0 },
-  { label: "Штампов начислено", value: 0 },
-  { label: "Транзакций", value: 0 },
-  { label: "Наград заработано", value: 0 },
-  { label: "Отзывов", value: 0 },
-  { label: "Наград получено", value: 0 },
+  { label: 'Установленных карт', value: 0 },
+  { label: 'Клиентов в базе', value: 0 },
+  { label: 'Штампов начислено', value: 0 },
+  { label: 'Транзакций', value: 0 },
+  { label: 'Наград заработано', value: 0 },
+  { label: 'Отзывов', value: 0 },
+  { label: 'Наград получено', value: 0 },
 ];
 
 const DashboardStats = () => {
@@ -34,10 +35,14 @@ const DashboardStats = () => {
         </div>
         <div className="dashboard-stat-block">
           <p className="dashboard-stat-label">Уровень лояльности</p>
-          <span className="tooltip-icon" data-tooltip="Показатель активности и вовлеченности клиентов.">?</span>
+          <span
+            className="tooltip-icon"
+            data-tooltip="Показатель активности и вовлеченности клиентов."
+          >
+            ?
+          </span>
         </div>
       </div>
-
     </div>
   );
 };

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { mockFilters, mockDialogs } from '../../mocks/mockInbox';
+
+import { mockDialogs, mockFilters } from '../../mocks/mockInbox';
+
 import './styles.css';
 
 const MailingsInbox = () => {
@@ -51,7 +53,9 @@ const MailingsInbox = () => {
         <section className="mailing-inbox-dialogs-panel">
           <h3 className="mailing-inbox-panel-title">Ваши диалоги</h3>
           {mockDialogs.length === 0 ? (
-            <div className="mailing-inbox-empty-state">💬<p>Нет диалогов</p></div>
+            <div className="mailing-inbox-empty-state">
+              💬<p>Нет диалогов</p>
+            </div>
           ) : (
             <ul className="mailing-inbox-dialogs-list">
               {mockDialogs.map((dialog) => (
@@ -83,7 +87,9 @@ const MailingsInbox = () => {
               <p>{selectedDialog.message}</p>
             </div>
           ) : (
-            <div className="mailing-inbox-empty-state">💬<p>Выберите диалог</p></div>
+            <div className="mailing-inbox-empty-state">
+              💬<p>Выберите диалог</p>
+            </div>
           )}
         </section>
       )}
@@ -93,12 +99,18 @@ const MailingsInbox = () => {
           {selectedDialog ? (
             <div>
               <h4>Детали</h4>
-              <p><b>Время:</b> {selectedDialog.time}</p>
-              <p><b>Теги:</b> {selectedDialog.tags.join(', ')}</p>
+              <p>
+                <b>Время:</b> {selectedDialog.time}
+              </p>
+              <p>
+                <b>Теги:</b> {selectedDialog.tags.join(', ')}
+              </p>
             </div>
           ) : (
             !isMobileView && (
-              <div className="mailing-inbox-empty-state">💬<p>Нет деталей</p></div>
+              <div className="mailing-inbox-empty-state">
+                💬<p>Нет деталей</p>
+              </div>
             )
           )}
         </section>
