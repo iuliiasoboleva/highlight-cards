@@ -14,7 +14,7 @@ const ScanPage = () => {
   const [status, setStatus] = useState('initializing');
 
   const handleScanSuccess = (decodedText) => {
-    setMessage(`QR-код: ${decodedText}`);
+    setMessage(`Найден QR-код: ${decodedText}`);
 
     if (isScannerRunning.current && scannerRef.current) {
       scannerRef.current
@@ -23,12 +23,17 @@ const ScanPage = () => {
         .catch(console.warn);
     }
 
-    const user = findUserByQr(decodedText);
-    if (user) {
-      navigate(`/clients/${user.id}`);
-    } else {
-      setMessage('Пользователь не найден');
-    }
+    // В демонстрационных целях перенаправляем всегда на /customers/10
+    // В реальном приложении здесь будет поиск пользователя по QR
+    navigate('/customer/10');
+
+    // Пример реальной реализации:
+    // const user = findUserByQr(decodedText);
+    // if (user) {
+    //   navigate(`/customers/${user.id}`);
+    // } else {
+    //   setMessage('Пользователь не найден');
+    // }
   };
 
   const findUserByQr = (qrCode) => {
@@ -115,7 +120,7 @@ const ScanPage = () => {
         <div
           id="qr-reader"
           style={{
-            width: '100%',
+            width: '80%',
             maxWidth: '500px',
             aspectRatio: '1',
             margin: '0 auto',

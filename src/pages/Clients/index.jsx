@@ -7,11 +7,11 @@ const Clients = () => {
   const [clients, setClients] = useState([
     {
       id: 1,
-      name: 'ss',
-      surname: 'ss',
+      name: 'Иван',
+      surname: 'Иванов',
       phone: '+71111111111',
       createdAt: '30/03/2025 21:26',
-      birthday: '04/03/2025',
+      birthday: '04/03/1985',
     },
   ]);
   const [newClient, setNewClient] = useState({
@@ -32,99 +32,137 @@ const Clients = () => {
   };
 
   return (
-    <div className="clients-page">
-      <h2>Клиентская база</h2>
+    <div className="clients-container">
+      <h2 className="clients-title">Клиентская база</h2>
 
-      <div className="clients-statistics">
-        <div className="stat-box">
-          <strong>{clients.length}</strong>
-          <p>Клиентов в базе</p>
+      <div className="clients-stats-grid">
+        <div className="clients-stat-card">
+          <span className="stat-value">{clients.length}</span>
+          <span className="stat-label">Клиентов в базе</span>
         </div>
-        <div className="stat-box">
-          <strong>0</strong>
-          <p>Транзакций по картам</p>
+        <div className="clients-stat-card">
+          <span className="stat-value">0</span>
+          <span className="stat-label">Транзакций по картам</span>
         </div>
-        <div className="stat-box">
-          <strong>0</strong>
-          <p>Карт установлено</p>
+        <div className="clients-stat-card">
+          <span className="stat-value">0</span>
+          <span className="stat-label">Карт установлено</span>
         </div>
-        <div className="stat-box">
-          <p>Уровень лояльности</p>
-          <div className="stars">{'\u2606'.repeat(5)}</div>
+        <div className="clients-stat-card">
+          <span className="stat-label">Уровень лояльности</span>
+          <div className="loyalty-stars">{'\u2605'.repeat(3) + '\u2606'.repeat(2)}</div>
         </div>
       </div>
 
-      <div className="clients-actions">
-        <button onClick={() => setShowModal(true)}>Добавить клиента</button>
+      <div className="clients-actions-bar">
+        <button className="clients-add-button" onClick={() => setShowModal(true)}>
+          + Добавить клиента
+        </button>
       </div>
 
-      <div className="clients-list">
+      <div className="clients-list-container">
         {clients.map((client) => (
           <div key={client.id} className="client-card">
-            <div className="client-initials">
+            <div className="client-avatar">
               {client.name[0]}
               {client.surname[0]}
             </div>
-            <div className="client-info">
-              <div>
-                <strong>
-                  {client.name} {client.surname}
-                </strong>
+            <div className="client-details">
+              <h3 className="client-name">
+                {client.surname} {client.name}
+              </h3>
+              <div className="client-meta">
+                <span className="client-meta-item">
+                  <i className="icon-calendar"></i> {client.createdAt}
+                </span>
+                <span className="client-meta-item">
+                  <i className="icon-phone"></i> {client.phone}
+                </span>
+                <span className="client-meta-item">
+                  <i className="icon-birthday"></i> {client.birthday}
+                </span>
               </div>
-              <div>📅 {client.createdAt}</div>
-              <div>📞 {client.phone}</div>
-              <div>🎂 {client.birthday} - Дата рождения</div>
             </div>
           </div>
         ))}
       </div>
 
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h3>Добавить клиента</h3>
-            <input
-              placeholder="Фамилия"
-              value={newClient.surname}
-              onChange={(e) => setNewClient({ ...newClient, surname: e.target.value })}
-            />
-            <input
-              placeholder="Имя"
-              value={newClient.name}
-              onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
-            />
-            <input
-              placeholder="Телефон"
-              value={newClient.phone}
-              onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
-            />
-            <input
-              placeholder="Email"
-              value={newClient.email}
-              onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
-            />
-            <input
-              type="date"
-              value={newClient.birthday}
-              onChange={(e) => setNewClient({ ...newClient, birthday: e.target.value })}
-            />
-            <button onClick={handleAddClient}>Добавить клиента</button>
-            <button onClick={() => setShowModal(false)}>Отменить</button>
+        <div className="clients-modal-overlay">
+          <div className="clients-modal">
+            <h3 className="modal-title">Добавить клиента</h3>
+            <div className="modal-form-group">
+              <input
+                className="modal-input"
+                placeholder="Фамилия"
+                value={newClient.surname}
+                onChange={(e) => setNewClient({ ...newClient, surname: e.target.value })}
+              />
+            </div>
+            <div className="modal-form-group">
+              <input
+                className="modal-input"
+                placeholder="Имя"
+                value={newClient.name}
+                onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
+              />
+            </div>
+            <div className="modal-form-group">
+              <input
+                className="modal-input"
+                placeholder="Телефон"
+                value={newClient.phone}
+                onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
+              />
+            </div>
+            <div className="modal-form-group">
+              <input
+                className="modal-input"
+                placeholder="Email"
+                value={newClient.email}
+                onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
+              />
+            </div>
+            <div className="modal-form-group">
+              <input
+                className="modal-input"
+                type="date"
+                value={newClient.birthday}
+                onChange={(e) => setNewClient({ ...newClient, birthday: e.target.value })}
+              />
+            </div>
+            <div className="modal-actions">
+              <button className="modal-button modal-button-primary" onClick={handleAddClient}>
+                Добавить клиента
+              </button>
+              <button
+                className="modal-button modal-button-secondary"
+                onClick={() => setShowModal(false)}
+              >
+                Отменить
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      <div className="clients-footer">
-        <div className="import-box">
-          <h4>Импорт клиентов</h4>
-          <p>Импортируйте клиентов в систему с помощью xlsx шаблона</p>
-          <button>Скачать шаблон импорта</button>
-          <button>Импортировать клиентов</button>
+      <div className="clients-footer-grid">
+        <div className="footer-card">
+          <h4 className="footer-card-title">Импорт клиентов</h4>
+          <p className="footer-card-description">
+            Импортируйте клиентов в систему с помощью xlsx шаблона
+          </p>
+          <div className="footer-card-actions">
+            <button className="footer-button">Скачать шаблон импорта</button>
+            <button className="footer-button footer-button-secondary">
+              Импортировать клиентов
+            </button>
+          </div>
         </div>
-        <div className="push-box">
-          <h4>Рассылка push</h4>
-          <p>Отправляйте своим клиентам push-уведомления</p>
-          <button>Создать рассылку</button>
+        <div className="footer-card">
+          <h4 className="footer-card-title">Рассылка push</h4>
+          <p className="footer-card-description">Отправляйте своим клиентам push-уведомления</p>
+          <button className="footer-button">Создать рассылку</button>
         </div>
       </div>
     </div>

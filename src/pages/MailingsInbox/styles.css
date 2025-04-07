@@ -1,7 +1,6 @@
 .mailing-inbox-container {
   display: flex;
   height: 100%;
-  font-family: sans-serif;
 }
 
 .mailing-inbox-sidebar {

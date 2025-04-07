@@ -22,6 +22,7 @@ import CardDetails from './pages/CardDetails';
 import Cards from './pages/Cards';
 import Clients from './pages/Clients';
 import ClientsTab from './pages/ClientsTab';
+import CustomerPage from './pages/CustomerPage';
 import DefaultCardInfo from './pages/DefaultCardInfo';
 import EditDesign from './pages/EditDesign';
 import EditInfo from './pages/EditInfo';
@@ -172,6 +173,7 @@ const App = () => {
             path="/cards/create"
             element={<EditType setType={setNewCardType} cardType={newCardType} />}
           />
+          <Route path="/cards/template" element={<Cards />} />
           <Route path="/mailings" element={<Mailings />}>
             <Route path="info" element={<MailingsInfo />} />
             <Route path="inbox" element={<MailingsInbox />} />
@@ -206,6 +208,7 @@ const App = () => {
           <Route path="/clients" element={<Clients />} />
           <Route path="*" element={<NotFound />} />
         </Route>
+        <Route path="/customer/:id" element={<CustomerPage />} />
       </Routes>
     </Router>
   );

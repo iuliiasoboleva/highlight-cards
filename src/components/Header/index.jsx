@@ -26,12 +26,12 @@ const Header = () => {
     <>
       <header className="header">
         <div className="mobile-header">
-          <img src="/logoLight.png" alt="Logo" className="logo" />
+          <img src="/logoColored.png" alt="Logo" className="logo" />
           <FontAwesomeIcon icon={faBars} className="burger-icon" onClick={toggleMobileMenu} />
         </div>
 
         <div className="desktop-header">
-          <img src="/logoLight.png" alt="Logo" className="logo" />
+          <img src="/logoColored.png" alt="Logo" className="logo" />
           <div className="user-section" onClick={toggleMenu}>
             <span>Привет, {userName}</span>
             <FontAwesomeIcon
@@ -81,7 +81,7 @@ const Header = () => {
       {/* Мобильное меню */}
       <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
         <div className="mobile-menu-header">
-          <img src="/logoLight.png" alt="Logo" className="logo" />
+          <img src="/logoColored.png" alt="Logo" className="logo" />
           <FontAwesomeIcon icon={faTimes} className="close-icon" onClick={toggleMobileMenu} />
         </div>
         <div className="mobile-menu-content">

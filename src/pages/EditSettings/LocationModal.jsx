@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 
 import YandexMapPicker from '../../components/YandexMapPicker';
 
+import './styles.css';
+
 const LocationModal = ({ onClose, onSave }) => {
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
@@ -15,52 +17,56 @@ const LocationModal = ({ onClose, onSave }) => {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <div className="modal-header">
-          <h3>Добавить локацию</h3>
-          <button className="close-btn" onClick={onClose}>
+    <div className="location-modal-overlay">
+      <div className="location-modal">
+        <div className="location-modal-header">
+          <h3 className="location-modal-title">Добавить локацию</h3>
+          <button className="location-modal-close" onClick={onClose}>
             ×
           </button>
         </div>
 
         <input
           type="text"
+          className="location-modal-input"
           placeholder="Название локации"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
+
         <input
           type="text"
+          className="location-modal-input"
           placeholder="Введите адрес локации"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
         />
 
-        <YandexMapPicker
-          onSelect={({ coords }) => {
-            console.log('Выбранные координаты:', coords);
-            // можно сохранять в state адрес или координаты
-          }}
-        />
+        <div className="location-modal-map">
+          <YandexMapPicker
+            onSelect={({ coords }) => {
+              console.log('Выбранные координаты:', coords);
+            }}
+          />
+        </div>
 
         <textarea
+          className="location-modal-textarea"
           placeholder="Текст push-уведомления"
           value={pushText}
           onChange={(e) => setPushText(e.target.value)}
         />
-
-        <label className="toggle-container">
-          Отображать
-          <input type="checkbox" checked={visible} onChange={(e) => setVisible(e.target.checked)} />
-          <span className="slider" />
-        </label>
-
-        <div className="modal-actions">
-          <button className="btn btn-black" onClick={handleSubmit}>
+        <div className="location-modal-actions">
+          <button
+            className="location-modal-button location-modal-button-primary"
+            onClick={handleSubmit}
+          >
             Добавить
           </button>
-          <button className="btn btn-white" onClick={onClose}>
+          <button
+            className="location-modal-button location-modal-button-secondary"
+            onClick={onClose}
+          >
             Отменить
           </button>
         </div>

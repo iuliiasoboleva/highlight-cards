@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 import './styles.css';
 
@@ -53,7 +54,17 @@ const STATUS_CONFIG = {
 };
 
 const CardInfo = ({ card }) => {
+  // Получаем текущий дизайн из Redux store
+  const design = useSelector((state) => state.cardDesign);
+
   const fields = STATUS_CONFIG[card.status] || [];
+
+  // Объединяем пропсы карты с настройками дизайна
+  const mergedCard = {
+    ...card,
+    cardImg: design.background || card.cardImg,
+    ...design.colors,
+  };
 
   const renderInlineValues = () => {
     const inlineFields = fields.filter(({ valueKey }) =>
@@ -61,7 +72,7 @@ const CardInfo = ({ card }) => {
     );
 
     return inlineFields.map(({ label, valueKey, suffix = '', defaultValue = '' }) => {
-      const value = card[valueKey] ?? defaultValue;
+      const value = mergedCard[valueKey] ?? defaultValue;
 
       const shortLabel = label.length > 15 ? `${label.slice(0, 15)}...` : label;
 
@@ -75,19 +86,42 @@ const CardInfo = ({ card }) => {
   };
 
   return (
-    <div className="card-info">
-      <div className="card-info-header">
+    <div
+      className="card-info"
+      style={{
+        backgroundColor: mergedCard.cardBackground,
+        color: mergedCard.textColor,
+      }}
+    >
+      <div
+        className="card-info-header"
+        style={{
+          backgroundColor: mergedCard.centerBackground,
+        }}
+      >
         <p className="card-name">
-          {card.name.length > 15 ? `${card.name.slice(0, 15)}...` : card.name}
+          {mergedCard.name.length > 15 ? `${mergedCard.name.slice(0, 15)}...` : mergedCard.name}
         </p>
         <div className="card-inline-values">{renderInlineValues()}</div>
       </div>
 
-      <img className="card-info-main-img" src={card.cardImg} alt="Card background" />
+      <img
+        className="card-info-main-img"
+        src={mergedCard.cardImg}
+        alt="Card background"
+        style={{
+          backgroundColor: mergedCard.centerBackground,
+        }}
+      />
 
-      <div className="card-info-header">
+      <div
+        className="card-info-header"
+        style={{
+          backgroundColor: mergedCard.centerBackground,
+        }}
+      >
         {fields.map(({ label, valueKey, suffix = '', defaultValue = '' }) => {
-          const value = card[valueKey] ?? defaultValue;
+          const value = mergedCard[valueKey] ?? defaultValue;
 
           const shortLabel = label.length > 15 ? `${label.slice(0, 15)}...` : label;
 
@@ -108,7 +142,7 @@ const CardInfo = ({ card }) => {
         })}
       </div>
 
-      <img className="card-info-qr-img" src={card.pdfImg} alt="QR scanner" />
+      <img className="card-info-qr-img" src={mergedCard.pdfImg} alt="QR scanner" />
       <p className="card-details">Tap ••• for details</p>
     </div>
   );

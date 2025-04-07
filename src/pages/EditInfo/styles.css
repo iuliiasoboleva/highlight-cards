@@ -1,0 +1,56 @@
+.info-input,
+.info-textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.info-textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.save-button {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.edit-type-tabs {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+}
+
+.edit-type-tab {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.edit-type-tab.active {
+  border-bottom: 2px solid #4caf50;
+  font-weight: bold;
+}
+
+@media (min-width: 1025px) {
+  .edit-type-main-container {
+    display: flex;
+  }
+
+  .edit-type-page {
+    flex: 1;
+    padding: 20px;
+  }
+
+  .type-card-image-container {
+    width: 400px;
+    padding: 20px;
+  }
+}

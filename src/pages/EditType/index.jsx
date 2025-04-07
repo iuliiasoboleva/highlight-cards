@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -107,7 +107,9 @@ const EditType = ({ setType, cardType }) => {
                   >
                     <FontAwesomeIcon icon={type.icon} className="icon" />
                     <div className="edit-type-name">{type.name}</div>
-                    <div className={`edit-type-tag ${type.tag === 'high' ? 'edit-type-green' : 'edit-type-purple'}`}>
+                    <div
+                      className={`edit-type-tag ${type.tag === 'high' ? 'edit-type-green' : 'edit-type-purple'}`}
+                    >
                       {type.tag === 'high' ? 'Высокий уровень удержания' : 'Лучшее для покупок'}
                     </div>
                   </div>
@@ -144,7 +146,9 @@ const EditType = ({ setType, cardType }) => {
                 >
                   <FontAwesomeIcon icon={type.icon} className="icon" />
                   <div className="edit-type-name">{type.name}</div>
-                  <div className={`edit-type-tag ${type.tag === 'high' ? 'edit-type-green' : 'edit-type-purple'}`}>
+                  <div
+                    className={`edit-type-tag ${type.tag === 'high' ? 'edit-type-green' : 'edit-type-purple'}`}
+                  >
                     {type.tag === 'high' ? 'Высокий уровень удержания' : 'Лучшее для покупок'}
                   </div>
                 </div>
