@@ -24,7 +24,7 @@ const MailingsSettings = () => {
               </div>
               <p>{service.description}</p>
               {service.link && (
-                <p className="instruction">
+                <p className="mailing-instruction">
                   Инструкция:{' '}
                   <a href={service.link} target="_blank" rel="noreferrer">
                     {service.link}

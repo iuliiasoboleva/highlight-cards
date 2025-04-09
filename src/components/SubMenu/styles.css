@@ -1,7 +1,7 @@
 .sub-menu {
   background-color: #2e2e2e;
   padding: 10px;
-  z-index: 9999;
+  z-index: 9;
   position: relative;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;

@@ -28,9 +28,6 @@ const AgreementModal = ({ onClose, onConfirm }) => {
           <button className="btn-dark" disabled={!agreed} onClick={onConfirm}>
             Перейти к оплате
           </button>
-          <button className="btn-light" onClick={onClose}>
-            Отменить
-          </button>
         </div>
       </div>
     </div>

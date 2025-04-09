@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import {
   faBars,
@@ -15,7 +16,7 @@ import { menuData } from '../../mocks/menuData';
 import './styles.css';
 
 const Header = () => {
-  const userName = 'userName' || 'Гость';
+  const user = useSelector((state) => state.user);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -33,7 +34,7 @@ const Header = () => {
         <div className="desktop-header">
           <img src="/logoColored.png" alt="Logo" className="logo" />
           <div className="user-section" onClick={toggleMenu}>
-            <span>Привет, {userName}</span>
+            <span> Привет, {user.firstName} </span>
             <FontAwesomeIcon
               icon={faChevronDown}
               className={`chevron ${isMenuOpen ? 'open' : ''}`}
@@ -86,7 +87,7 @@ const Header = () => {
         </div>
         <div className="mobile-menu-content">
           <p>
-            Привет, <strong>{userName}</strong>
+            Привет, <strong>{user.firstName}</strong>
           </p>
           <div className="features">
             <div className="available">

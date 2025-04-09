@@ -1,6 +1,6 @@
 import React from 'react';
 
-import TransactionsTable from '../../components/TransactionsTable';
+import CustomTable from '../../components/CustomTable';
 import { mailingsHeaders, mockMailings } from '../../mocks/mockMailings';
 
 import './styles.css';
@@ -13,6 +13,41 @@ const cards = [
 ];
 
 const MailingsInfo = () => {
+  // Преобразуем заголовки в формат для CustomTable
+  const columns = mailingsHeaders.map((header) => ({
+    key: header.key,
+    title: header.label,
+    className: 'text-left',
+    cellClassName: 'text-left',
+  }));
+
+  // Добавляем обработку статуса
+  const statusColumnIndex = columns.findIndex((col) => col.key === 'status');
+  if (statusColumnIndex !== -1) {
+    columns[statusColumnIndex].render = (row) => {
+      let statusClass = '';
+      switch (row.status) {
+        case 'Запланирована':
+          statusClass = 'status-planned';
+          break;
+        case 'Отправлена':
+          statusClass = 'status-sent';
+          break;
+        case 'Черновик':
+          statusClass = 'status-draft';
+          break;
+        case 'Ошибка':
+          statusClass = 'status-error';
+          break;
+        default:
+          statusClass = '';
+      }
+      return <span className={`status-badge ${statusClass}`}>{row.status}</span>;
+    };
+    columns[statusColumnIndex].className = 'text-center';
+    columns[statusColumnIndex].cellClassName = 'text-center';
+  }
+
   return (
     <>
       <h2 className="page-title">Рассылки</h2>
@@ -34,7 +69,7 @@ const MailingsInfo = () => {
       </div>
 
       <div className="table-wrapper">
-        <TransactionsTable title="" headers={mailingsHeaders} data={mockMailings} />
+        <CustomTable columns={columns} rows={mockMailings} />
       </div>
     </>
   );

@@ -1,5 +1,5 @@
 .managers-page {
-  padding: 24px;
+  padding: 20px 20px 20px 0;
 }
 
 .managers-header {
@@ -24,50 +24,6 @@
   align-items: center;
   gap: 12px;
   margin: 24px 0;
-}
-
-.dropdown {
-  position: relative;
-}
-
-.dropdown-btn {
-  padding: 10px 16px;
-  background: #f2f2f2;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-radius: 6px;
-  top: 40px;
-  left: 0;
-  min-width: 180px;
-  z-index: 1;
-  padding: 8px 0;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-.dropdown-content button {
-  background: none;
-  border: none;
-  padding: 10px 16px;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.dropdown-content button:hover {
-  background-color: #f5f5f5;
 }
 
 .search-input {
@@ -186,4 +142,10 @@
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .managers-page {
+    padding: 20px 20px 0 20px;
+  }
 }

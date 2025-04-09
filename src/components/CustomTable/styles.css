@@ -1,0 +1,72 @@
+.table-container {
+  width: 100%;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.custom-table th,
+.custom-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.custom-table th {
+  background-color: rgba(191, 71, 86, 0.1);
+  font-weight: 600;
+}
+
+.text-left {
+  text-align: left;
+}
+.text-center {
+  text-align: center;
+}
+.text-right {
+  text-align: right;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.status-badge.success {
+  background-color: #e6f7ee;
+  color: #00a651;
+}
+
+.status-planned {
+  background-color: rgba(255, 193, 7, 0.1);
+  color: #ffc107;
+}
+
+.status-sent {
+  background-color: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+}
+
+.status-draft {
+  background-color: rgba(108, 117, 125, 0.1);
+  color: #6c757d;
+}
+
+.status-error {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+.feature-cell {
+  font-weight: 500;
+  min-width: 200px;
+}
+
+@media (max-width: 768px) {
+  .table-container {
+    overflow-x: auto;
+  }
+}

@@ -1,5 +1,5 @@
 .rfm-settings-page {
-  padding: 24px;
+  padding: 20px 20px 20px 0;
 }
 
 .rfm-grid {
@@ -32,7 +32,7 @@
 
 .rfm-field {
   flex: 1;
-  min-width: 0; /* важно для избежания переполнения */
+  min-width: 0;
   display: flex;
   flex-direction: column;
 }
@@ -48,8 +48,8 @@
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 14px;
-  width: 100%; /* ключевой момент */
-  max-width: 100%; /* не даст выйти за пределы */
+  width: 100%;
+  max-width: 100%;
 }
 
 .btn-dark {
@@ -66,4 +66,26 @@
 
 .btn-dark:hover {
   background: #333;
+}
+
+.rfm-warning {
+  border: 1px solid black;
+  border-radius: 4px;
+  padding: 16px;
+  font-size: 18px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.rfm-subtitle {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 8px 0;
+}
+
+@media (max-width: 768px) {
+  .rfm-settings-page {
+    padding: 20px 20px 0 20px;
+  }
 }

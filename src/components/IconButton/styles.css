@@ -14,8 +14,8 @@
 }
 
 .icon-button:hover {
-  color: #1dcd27;
-  background-color: rgba(29, 205, 39, 0.1);
+  color: #bf4756;
+  background-color: rgba(191, 71, 86, 0.1);
 }
 
 .icon-button:active {
@@ -23,9 +23,9 @@
 }
 
 .icon-button.active {
-  color: #1dcd27;
-  background-color: rgba(29, 205, 39, 0.1);
-  box-shadow: 0 0 8px rgba(29, 205, 39, 0.3);
+  color: #bf4756;
+  background-color: rgba(191, 71, 86, 0.1);
+  box-shadow: 0 0 8px rgba(191, 71, 86, 0.3);
 }
 
 .icon-button:active {

@@ -1,25 +1,42 @@
 .settings-container {
-  padding: 24px;
-  max-width: 1200px;
+  padding: 20px 20px 80px 0;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .tariff-boxes {
   display: flex;
   gap: 24px;
-  margin-bottom: 24px;
+  width: 100%;
 }
 
 .tariff-box {
-  flex: 1;
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 16px;
+  display: flex;
+  width: 100%;
+}
+
+.tariff-box-column {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+
+.tariff-box-column hr {
+  width: 100%;
+}
+
+.tariff-box-content {
+  margin: 16px 0;
 }
 
 .tariff-name {
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 600;
 }
 
@@ -39,13 +56,25 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 16px;
-  margin-bottom: 32px;
+  width: 100%;
+}
+
+.tariff-due-title,
+.tariff-box-column p {
+  font-weight: 600;
+}
+
+.tariff-table th.text-left {
+  padding-left: 16px;
+}
+
+.tariff-due-title hr {
+  width: 100%;
 }
 
 .tariff-due-grid {
   display: flex;
   justify-content: space-between;
-  margin: 16px 0;
 }
 
 .tariff-due-date,
@@ -53,20 +82,21 @@
 .tariff-due-days {
   font-size: 26px;
   font-weight: 600;
-  text-align: center;
 }
 
-.btn-dark {
+.tariff-btn-dark {
+  margin-top: 8px;
   background: #000;
   color: #fff;
   border: none;
   padding: 10px 16px;
   border-radius: 6px;
   cursor: pointer;
+  max-width: 250px;
+  width: 100%;
 }
 
 .tariff-table-wrapper {
-  margin-top: 24px;
   overflow-x: auto;
 }
 
@@ -82,13 +112,13 @@
   border: 1px solid #ddd;
 }
 
-.green {
+.tariff-green {
   color: green;
   font-weight: 600;
   font-size: 18px;
 }
 
-.red {
+.tariff-red {
   color: red;
   font-weight: 600;
   font-size: 18px;
@@ -107,4 +137,81 @@
   width: 100%;
   border-radius: 6px;
   border: 1px solid #ccc;
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.settings-tabs {
+  display: flex;
+  gap: 10px;
+}
+
+.settings-tab-button {
+  padding: 8px 16px;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.settings-tab-button.active {
+  background-color: #333;
+  color: white;
+  border-color: #333;
+}
+
+.payment-history {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.history-table th,
+.history-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.history-table th {
+  background-color: #f5f5f5;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .settings-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .tariff-boxes {
+    flex-direction: column;
+  }
+
+  .settings-container {
+    padding: 20px 20px 0 20px;
+  }
+
+  .tariff-due-grid {
+    flex-direction: column;
+  }
+
+  .tariff-box-content {
+    margin: 4px 0;
+  }
+
+  .tariff-box {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
 }

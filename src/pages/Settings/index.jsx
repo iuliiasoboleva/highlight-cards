@@ -1,53 +1,11 @@
 import React, { useState } from 'react';
 
 import AgreementModal from '../../components/AgreementModal';
+import CustomSelect from '../../components/CustomSelect';
+import CustomTable from '../../components/CustomTable';
+import { mockPaymentHistory, mockTariff, tariffPlans } from '../../mocks/mockTariff';
 
 import './styles.css';
-
-const mockTariff = {
-  name: 'Start (Пробный)',
-  billing: 'С годовой оплатой',
-  price: 25,
-  nextPaymentDate: '10/04/2025',
-  nextPaymentTime: '00:33',
-  daysLeft: 10,
-};
-
-const tariffPlans = [
-  {
-    name: 'START',
-    prices: {
-      year: 19,
-      quarter: 22,
-      month: 25,
-    },
-    integrations: '—',
-    customFields: false,
-    permissions: false,
-  },
-  {
-    name: 'GROW',
-    prices: {
-      year: 35,
-      quarter: 39,
-      month: 45,
-    },
-    integrations: '—',
-    customFields: true,
-    permissions: false,
-  },
-  {
-    name: 'BUSINESS',
-    prices: {
-      year: 69,
-      quarter: 79,
-      month: 85,
-    },
-    integrations: '3 интеграции',
-    customFields: true,
-    permissions: true,
-  },
-];
 
 const Settings = () => {
   const [period, setPeriod] = useState({
@@ -55,148 +13,227 @@ const Settings = () => {
     GROW: 'Год',
     BUSINESS: 'Год',
   });
+
   const [showModal, setShowModal] = useState(false);
+  const [activeTab, setActiveTab] = useState('plan');
+
+  // Подготовка данных для таблицы тарифов
+  const tariffColumns = [
+    {
+      key: 'feature',
+      title: 'ФУНКЦИОНАЛ',
+      className: 'text-left feature-header',
+      cellClassName: 'text-left feature-cell',
+    },
+    ...tariffPlans.map((plan) => ({
+      key: plan.name,
+      title: plan.name,
+      className: 'text-center',
+      cellClassName: 'text-center',
+    })),
+  ];
+
+  const tariffRows = [
+    {
+      feature: (
+        <>
+          <strong>Стоимость в месяц</strong>
+          <br />
+          <small>
+            при оплате за год
+            <br />/ за квартал
+            <br />/ за месяц
+          </small>
+        </>
+      ),
+      ...Object.fromEntries(
+        tariffPlans.map((plan) => [
+          plan.name,
+          `${plan.prices.year} $ / ${plan.prices.quarter} $ / ${plan.prices.month} $`,
+        ]),
+      ),
+    },
+    {
+      feature: (
+        <>
+          <strong>Интеграции</strong>
+          <br />
+          Интеграция с ПО для автоматического начисления
+        </>
+      ),
+      ...Object.fromEntries(
+        tariffPlans.map((plan) => [
+          plan.name,
+          plan.integrations === '—' ? <span className="tariff-red">−</span> : plan.integrations,
+        ]),
+      ),
+    },
+    {
+      feature: (
+        <>
+          <strong>Пользовательские поля</strong>
+          <br />
+          Добавьте собственное наполнение без шаблона
+        </>
+      ),
+      ...Object.fromEntries(
+        tariffPlans.map((plan) => [
+          plan.name,
+          plan.customFields ? (
+            <span className="tariff-green">+</span>
+          ) : (
+            <span className="tariff-red">−</span>
+          ),
+        ]),
+      ),
+    },
+    {
+      feature: (
+        <>
+          <strong>Настройка прав менеджеров</strong>
+          <br />
+          Детальный контроль доступа
+        </>
+      ),
+      ...Object.fromEntries(
+        tariffPlans.map((plan) => [
+          plan.name,
+          plan.permissions ? (
+            <span className="tariff-green">+</span>
+          ) : (
+            <span className="tariff-red">−</span>
+          ),
+        ]),
+      ),
+    },
+    {
+      feature: <strong>Период оплаты</strong>,
+      ...Object.fromEntries(
+        tariffPlans.map((plan) => [
+          plan.name,
+          <div className="tariff-selector">
+            <CustomSelect
+              value={period[plan.name]}
+              onChange={(value) => setPeriod((prev) => ({ ...prev, [plan.name]: value }))}
+              options={[
+                { value: 'Год', label: 'Год' },
+                { value: 'Квартал', label: 'Квартал' },
+                { value: 'Месяц', label: 'Месяц' },
+              ]}
+              className="tariff-period-select"
+            />
+            <button className="tariff-btn-dark">Выбрать тариф</button>
+          </div>,
+        ]),
+      ),
+    },
+  ];
+
+  const paymentHistoryColumns = [
+    { key: 'date', title: 'Дата', className: 'text-left' },
+    { key: 'amount', title: 'Сумма', className: 'text-left' },
+    { key: 'plan', title: 'Тарифный план', className: 'text-left' },
+    {
+      key: 'status',
+      title: 'Статус',
+      className: 'text-left',
+      render: (row) => (
+        <span className={`status-badge ${row.status === 'Успешно' ? 'success' : ''}`}>
+          {row.status}
+        </span>
+      ),
+    },
+    { key: 'invoice', title: 'Инвойс', className: 'text-left' },
+  ];
 
   return (
     <div className="settings-container">
-      <h2>Тарифный план</h2>
-
-      <div className="tariff-boxes">
-        <div className="tariff-box">
-          <p>Ваш тариф</p>
-          <div className="tariff-name">{mockTariff.name}</div>
-          <div className="tariff-sub">{mockTariff.billing}</div>
-        </div>
-        <div className="tariff-box">
-          <p>Стоимость</p>
-          <div className="tariff-price">{mockTariff.price} $</div>
-          <div className="tariff-sub">В месяц</div>
+      <div className="settings-header">
+        <h2>Тарифный план</h2>
+        <div className="settings-tabs">
+          <button
+            className={`settings-tab-button ${activeTab === 'plan' ? 'active' : ''}`}
+            onClick={() => setActiveTab('plan')}
+          >
+            План
+          </button>
+          <button
+            className={`settings-tab-button ${activeTab === 'history' ? 'active' : ''}`}
+            onClick={() => setActiveTab('history')}
+          >
+            История платежей
+          </button>
         </div>
       </div>
 
-      <div className="tariff-due">
-        <p className="tariff-due-title">Дата списания средств за тариф</p>
-        <div className="tariff-due-grid">
-          <div>
-            <div className="tariff-due-date">{mockTariff.nextPaymentDate}</div>
-            <p>Дата следующего списания</p>
-          </div>
-          <div>
-            <div className="tariff-due-time">{mockTariff.nextPaymentTime}</div>
-          </div>
-          <div>
-            <div className="tariff-due-days">{mockTariff.daysLeft}</div>
-            <p>Дней осталось</p>
-          </div>
-        </div>
-        <button className="btn-dark" onClick={() => setShowModal(true)}>
-          Продлить
-        </button>
-      </div>
-
-      <h3>Полный функционал</h3>
-
-      <div className="tariff-table-wrapper">
-        <table className="tariff-table">
-          <thead>
-            <tr>
-              <th>ФУНКЦИОНАЛ</th>
-              {tariffPlans.map((plan) => (
-                <th key={plan.name}>{plan.name}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <strong>Стоимость в месяц</strong>
-                <br />
-                <small>
-                  при оплате за год
-                  <br />/ за квартал
-                  <br />/ за месяц
-                </small>
-              </td>
-              {tariffPlans.map((plan) => (
-                <td key={plan.name}>
-                  {plan.prices.year} $<br />/ {plan.prices.quarter} $<br />/ {plan.prices.month} $
-                </td>
-              ))}
-            </tr>
-            <tr>
-              <td>
-                <strong>Интеграции</strong>
-                <br />
-                Интеграция с ПО для автоматического начисления
-              </td>
-              {tariffPlans.map((plan) => (
-                <td key={plan.name}>
-                  {plan.integrations === '—' ? <span className="red">−</span> : plan.integrations}
-                </td>
-              ))}
-            </tr>
-            <tr>
-              <td>
-                <strong>Пользовательские поля</strong>
-                <br />
-                Добавьте собственное наполнение без шаблона
-              </td>
-              {tariffPlans.map((plan) => (
-                <td key={plan.name}>
-                  {plan.customFields ? (
-                    <span className="green">+</span>
-                  ) : (
-                    <span className="red">−</span>
-                  )}
-                </td>
-              ))}
-            </tr>
-            <tr>
-              <td>
-                <strong>Customizable manager’s permissions</strong>
-                <br />
-                Granular control over manager access
-              </td>
-              {tariffPlans.map((plan) => (
-                <td key={plan.name}>
-                  {plan.permissions ? (
-                    <span className="green">+</span>
-                  ) : (
-                    <span className="red">−</span>
-                  )}
-                </td>
-              ))}
-            </tr>
-          </tbody>
-        </table>
-
-        <div className="tariff-selectors">
-          {tariffPlans.map((plan) => (
-            <div key={plan.name} className="tariff-selector">
-              <select
-                value={period[plan.name]}
-                onChange={(e) =>
-                  setPeriod((prev) => ({
-                    ...prev,
-                    [plan.name]: e.target.value,
-                  }))
-                }
-              >
-                <option>Год</option>
-                <option>Квартал</option>
-                <option>Месяц</option>
-              </select>
-              <button className="btn-dark">Выбрать тариф</button>
+      {activeTab === 'plan' ? (
+        <>
+          <div className="tariff-boxes">
+            <div className="tariff-box">
+              <div className="tariff-box-column">
+                <p>Ваш тариф</p>
+                <hr />
+                <div className="tariff-box-content">
+                  <div className="tariff-name">{mockTariff.name}</div>
+                  <div className="tariff-sub">{mockTariff.billing}</div>
+                </div>
+              </div>
+              <div className="tariff-box-column">
+                <p>Стоимость</p>
+                <hr />
+                <div className="tariff-box-content">
+                  <div className="tariff-price">{mockTariff.price} $</div>
+                  <div className="tariff-sub">В месяц</div>
+                </div>
+              </div>
             </div>
-          ))}
+
+            <div className="tariff-due">
+              <p className="tariff-due-title">Дата списания средств за тариф</p>
+              <hr />
+              <div className="tariff-due-grid">
+                <div className="tariff-box-content">
+                  <div className="tariff-due-date">{mockTariff.nextPaymentDate}</div>
+                  <p className="tariff-sub">Дата следующего списания</p>
+                </div>
+                <div className="tariff-box-content">
+                  <div className="tariff-due-time">{mockTariff.nextPaymentTime}</div>
+                </div>
+                <div className="tariff-box-content">
+                  <div className="tariff-due-days">{mockTariff.daysLeft}</div>
+                  <p className="tariff-sub">Дней осталось</p>
+                </div>
+              </div>
+              <button className="tariff-btn-dark" onClick={() => setShowModal(true)}>
+                Продлить
+              </button>
+            </div>
+          </div>
+
+          <h3>Полный функционал</h3>
+          <CustomTable
+            columns={tariffColumns}
+            rows={tariffRows}
+            className="tariff-comparison-table"
+          />
+        </>
+      ) : (
+        <div className="payment-history">
+          <h3>История платежей</h3>
+          <CustomTable
+            columns={paymentHistoryColumns}
+            rows={mockPaymentHistory}
+            className="payment-history-table"
+          />
         </div>
-      </div>
+      )}
+
       {showModal && (
         <AgreementModal
           onClose={() => setShowModal(false)}
           onConfirm={() => {
             setShowModal(false);
-            alert('Переход к оплате'); // или переход на страницу оплаты
+            alert('Переход к оплате');
           }}
         />
       )}
