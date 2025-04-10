@@ -54,16 +54,13 @@ const STATUS_CONFIG = {
 };
 
 const CardInfo = ({ card }) => {
-  // Получаем текущий дизайн из Redux store
-  const design = useSelector((state) => state.cardDesign);
-
+  const design = useSelector((state) => state.cards.currentCard?.design);
   const fields = STATUS_CONFIG[card.status] || [];
 
-  // Объединяем пропсы карты с настройками дизайна
   const mergedCard = {
     ...card,
-    cardImg: design.background || card.cardImg,
-    ...design.colors,
+    cardImg: design?.background || card.cardImg,
+    ...design?.colors,
   };
 
   const renderInlineValues = () => {
@@ -74,11 +71,9 @@ const CardInfo = ({ card }) => {
     return inlineFields.map(({ label, valueKey, suffix = '', defaultValue = '' }) => {
       const value = mergedCard[valueKey] ?? defaultValue;
 
-      const shortLabel = label.length > 15 ? `${label.slice(0, 15)}...` : label;
-
       return value ? (
         <span key={valueKey} className="card-inline-value" title={label}>
-          <span className="inline-label">{shortLabel}:</span> {value}
+          <span className="inline-label">{label}:</span> {value}
           {suffix}
         </span>
       ) : null;
@@ -123,14 +118,12 @@ const CardInfo = ({ card }) => {
         {fields.map(({ label, valueKey, suffix = '', defaultValue = '' }) => {
           const value = mergedCard[valueKey] ?? defaultValue;
 
-          const shortLabel = label.length > 15 ? `${label.slice(0, 15)}...` : label;
-
           return (
             !['balanceMoney', 'credits', 'balance', 'expirationDate'].includes(valueKey) &&
             value && (
               <div key={valueKey} className="card-info-row">
                 <p className="card-info-row-label" title={label}>
-                  {shortLabel}:
+                  {label}:
                 </p>
                 <p>
                   {value}

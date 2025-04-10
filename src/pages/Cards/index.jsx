@@ -1,50 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useDispatch, useSelector } from 'react-redux';
 
 import CardButtons from '../../components/CardButtons';
 import CardInfo from '../../components/CardInfo';
-import { mockCards } from '../../mocks/cardData';
+import { initializeCards } from '../../store/cardsSlice';
 
 import './styles.css';
 
-const fixedCard = {
-  id: 'fixed',
-  title: 'Активна',
-  status: 'fixed',
-  isActive: true,
-  isFixed: true,
-  frameUrl: '/frame-empty.svg',
-  name: 'Создать карту',
-};
-
 const Cards = () => {
-  const [cards, setCards] = useState([fixedCard]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const cards = useSelector((state) => state.cards.cards);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const response = await new Promise((resolve) => {
-          setTimeout(() => {
-            resolve(mockCards);
-          }, 1000);
-        });
-        setCards([fixedCard, ...response]);
-      } catch (err) {
-        setError(err.message);
-        setCards([fixedCard]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (isLoading) return <div>Загрузка...</div>;
-  if (error) return <div style={{ color: 'red' }}>Ошибка: {error}</div>;
+    dispatch(initializeCards());
+  }, [dispatch]);
 
   return (
     <div className="cards">

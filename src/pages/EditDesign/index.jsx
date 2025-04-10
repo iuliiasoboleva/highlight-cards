@@ -6,12 +6,7 @@ import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import CardInfo from '../../components/CardInfo';
-import {
-  updateBackground,
-  updateColors,
-  updateIcon,
-  updateLogo,
-} from '../../store/cardDesignSlice';
+import { updateBackground, updateColors, updateIcon, updateLogo } from '../../store/cardsSlice';
 
 import './styles.css';
 
@@ -145,7 +140,7 @@ const EditDesign = () => {
           <label>Фон карты</label>
           <input
             type="color"
-            value={colors.cardBackground}
+            // value={colors.cardBackground}
             onChange={(e) => handleColorChange('cardBackground', e.target.value)}
           />
           <input type="text" value={colors.cardBackground} readOnly />
@@ -154,7 +149,7 @@ const EditDesign = () => {
           <label>Цвет текста</label>
           <input
             type="color"
-            value={colors.textColor}
+            // value={colors.textColor}
             onChange={(e) => handleColorChange('textColor', e.target.value)}
           />
           <input type="text" value={colors.textColor} readOnly />
@@ -163,7 +158,7 @@ const EditDesign = () => {
           <label>Цвет фона центральной части</label>
           <input
             type="color"
-            value={colors.centerBackground}
+            // value={colors.centerBackground}
             onChange={(e) => handleColorChange('centerBackground', e.target.value)}
           />
           <input type="text" value={colors.centerBackground} readOnly />

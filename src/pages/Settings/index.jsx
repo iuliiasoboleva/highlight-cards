@@ -211,20 +211,12 @@ const Settings = () => {
           </div>
 
           <h3>Полный функционал</h3>
-          <CustomTable
-            columns={tariffColumns}
-            rows={tariffRows}
-            className="tariff-comparison-table"
-          />
+          <CustomTable columns={tariffColumns} rows={tariffRows} />
         </>
       ) : (
         <div className="payment-history">
           <h3>История платежей</h3>
-          <CustomTable
-            columns={paymentHistoryColumns}
-            rows={mockPaymentHistory}
-            className="payment-history-table"
-          />
+          <CustomTable columns={paymentHistoryColumns} rows={mockPaymentHistory} />
         </div>
       )}
 

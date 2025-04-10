@@ -1,5 +1,16 @@
+.settings-inputs-container {
+  flex-direction: column;
+  gap: 16px;
+  display: flex;
+}
+
+.settings-inputs-container hr {
+  width: 100%;
+}
+
 .barcode-radio-group {
   margin-bottom: 20px;
+  gap: 8px;
   display: flex;
   flex-direction: column;
 }
@@ -42,14 +53,14 @@
   height: 18px;
   width: 18px;
   background-color: #fff;
-  border: 2px solid #1dcd27;
+  border: 2px solid #bf4756;
   border-radius: 50%;
   transition: all 0.2s ease;
 }
 
 .barcode-radio-input:checked ~ .barcode-radio-checkmark {
-  border-color: #1dcd27;
-  background-color: #1dcd27;
+  border-color: #bf4756;
+  background-color: #bf4756;
 }
 
 .barcode-radio-checkmark:after {
@@ -72,7 +83,30 @@
   margin-left: 8px;
 }
 
-/* LocationModal.css */
+.barcode-radio-additional {
+  margin-top: 8px;
+  border-radius: 4px;
+  grid-column: 1 / -1;
+  animation: fadeIn 0.3s ease;
+}
+
+.stamp-duration-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 .location-modal-overlay {
   position: fixed;

@@ -141,7 +141,6 @@ const MainLayout = () => {
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('login');
-  const [newCardType, setNewCardType] = useState(null);
 
   return (
     <Router>
@@ -169,10 +168,7 @@ const App = () => {
           <Route path="/cards" element={<Cards />} />
           <Route path="/scan" element={<ScanPage />} />
 
-          <Route
-            path="/cards/create"
-            element={<EditType setType={setNewCardType} cardType={newCardType} />}
-          />
+          <Route path="/cards/create" element={<EditType />} />
           <Route path="/cards/template" element={<Cards />} />
           <Route path="/mailings" element={<Mailings />}>
             <Route path="info" element={<MailingsInfo />} />
@@ -183,11 +179,8 @@ const App = () => {
             <Route path="settings" element={<MailingsSettings />} />
           </Route>
           <Route path="/cards/:id/edit" element={<CardEditGuard />}>
-            <Route
-              path="type"
-              element={<EditType setType={setNewCardType} cardType={newCardType} />}
-            />
-            <Route path="settings" element={<EditSettings cardType={newCardType} />} />
+            <Route path="type" element={<EditType />} />
+            <Route path="settings" element={<EditSettings />} />
             <Route path="design" element={<EditDesign />} />
             <Route path="info" element={<EditInfo />} />
           </Route>

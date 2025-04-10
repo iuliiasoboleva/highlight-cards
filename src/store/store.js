@@ -1,12 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import cardDesignReducer from './cardDesignSlice';
 import cardInfoReducer from './cardInfoSlice';
+import cardsReducer from './cardsSlice';
 import userReducer from './userSlice';
 
 export const store = configureStore({
   reducer: {
-    cardDesign: cardDesignReducer,
+    cards: cardsReducer,
     cardInfo: cardInfoReducer,
     user: userReducer,
   },

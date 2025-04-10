@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -15,7 +16,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import CardInfo from '../../components/CardInfo';
-import { mockCards } from '../../mocks/cardData';
+import { addCard, initializeCurrentCard, updateCurrentCard } from '../../store/cardsSlice';
 
 import './styles.css';
 
@@ -27,47 +28,58 @@ const cardTypes = [
   { id: 'cashback', name: 'Кешбэк', icon: faDollarSign, tag: 'high' },
   { id: 'coupon', name: 'Купон', icon: faTag, tag: 'shop' },
   { id: 'subscription', name: 'Абонемент', icon: faTicket, tag: 'shop' },
-  {
-    id: 'certificate',
-    name: 'Сертификат',
-    icon: faMoneyCheckDollar,
-    tag: 'shop',
-  },
+  { id: 'certificate', name: 'Сертификат', icon: faMoneyCheckDollar, tag: 'shop' },
 ];
 
-const EditType = ({ setType, cardType }) => {
-  const [selectedType, setSelectedType] = useState('');
+const EditType = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { currentCard, cards } = useSelector((state) => state.cards);
+  const [selectedType, setSelectedType] = useState(currentCard.status || '');
   const [activeTab, setActiveTab] = useState('description');
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
-  const navigate = useNavigate();
 
-  const newCard = {
-    id: Math.max(...mockCards.map((c) => c.id)) + 1,
-    status: selectedType,
-    name: 'Накопительная карта',
-    isActive: false,
-    urlCopy: 'https://take.cards/cMla3',
-    pdfImg: '/pdf-example.svg',
-    qrImg: '/qr-code.svg',
-    frameUrl: '/phone.svg',
-    balanceMoney: 1800,
-    cardImg: '/strip.png',
-    title: 'Сертификат',
+  // Инициализация currentCard при монтировании
+  useEffect(() => {
+    if (!currentCard.id) {
+      const newId = cards.length > 0 ? Math.max(...cards.map((c) => c.id)) + 1 : 1;
+      dispatch(initializeCurrentCard({ id: newId }));
+    }
+  }, [dispatch, cards, currentCard.id]);
+
+  // Синхронизация выбранного типа с currentCard
+  useEffect(() => {
+    if (currentCard.status) {
+      setSelectedType(currentCard.status);
+    }
+  }, [currentCard.status]);
+
+  const handleResize = () => {
+    setIsMobile(window.innerWidth >= 1024);
   };
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth >= 1024);
-    };
-
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const handleTypeSelect = (typeId) => {
+    setSelectedType(typeId);
+    const cardTitle = cardTypes.find((type) => type.id === typeId)?.name || 'Карта';
+    dispatch(
+      updateCurrentCard({
+        status: typeId,
+        title: cardTitle,
+      }),
+    );
+  };
+
   const handleCreateCard = () => {
-    setType(selectedType);
-    mockCards.push(newCard);
-    navigate(`/cards/${newCard.id}/edit/settings`);
+    if (!selectedType) return;
+
+    // Добавляем карту с текущими параметрами
+    dispatch(addCard());
+    navigate(`/cards/${currentCard.id}/edit/settings`);
   };
 
   return (
@@ -103,7 +115,7 @@ const EditType = ({ setType, cardType }) => {
                   <div
                     key={type.id}
                     className={`edit-type-card ${selectedType === type.id ? 'selected' : ''}`}
-                    onClick={() => setSelectedType(type.id)}
+                    onClick={() => handleTypeSelect(type.id)}
                   >
                     <FontAwesomeIcon icon={type.icon} className="icon" />
                     <div className="edit-type-name">{type.name}</div>
@@ -124,8 +136,8 @@ const EditType = ({ setType, cardType }) => {
 
           {activeTab === 'card' && (
             <div className="type-card-image-container">
-              <img className="card-image-add" src={newCard.frameUrl} alt={newCard.name} />
-              <CardInfo card={newCard} />
+              <img className="card-image-add" src={currentCard.frameUrl} alt={currentCard.name} />
+              <CardInfo card={currentCard} />
             </div>
           )}
         </div>
@@ -142,7 +154,7 @@ const EditType = ({ setType, cardType }) => {
                 <div
                   key={type.id}
                   className={`edit-type-card ${selectedType === type.id ? 'selected' : ''}`}
-                  onClick={() => setSelectedType(type.id)}
+                  onClick={() => handleTypeSelect(type.id)}
                 >
                   <FontAwesomeIcon icon={type.icon} className="icon" />
                   <div className="edit-type-name">{type.name}</div>
@@ -160,8 +172,8 @@ const EditType = ({ setType, cardType }) => {
             </button>
           </div>
           <div className="type-card-image-container">
-            <img className="card-image-add" src={newCard.frameUrl} alt={newCard.name} />
-            <CardInfo card={newCard} />
+            <img className="card-image-add" src={currentCard.frameUrl} alt={currentCard.name} />
+            <CardInfo card={currentCard} />
           </div>
         </>
       )}

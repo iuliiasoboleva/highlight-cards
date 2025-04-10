@@ -1,6 +1,6 @@
 .card-info-wrapper {
   flex-direction: column;
-  gap: 12px;
+  gap: 24px;
   display: flex;
   padding: 20px 20px 20px 0;
 }
@@ -52,7 +52,6 @@
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
   gap: 8px;
 }
@@ -66,7 +65,7 @@
   border: 0.1rem solid #d5d5dd;
   box-shadow: 0 0.4rem 2rem #4c48610d;
   border-radius: 0.4rem;
-  max-width: 190px;
+  width: 100%;
   padding: 10px 20px;
   text-align: center;
 }
@@ -74,10 +73,6 @@
 .card-info-link {
   max-width: 100%;
   width: -webkit-fill-available;
-}
-
-.card-info-container img {
-  padding: 4rem;
 }
 
 .table-wrapper {

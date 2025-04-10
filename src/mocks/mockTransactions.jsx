@@ -24,12 +24,12 @@ export const mockTransactions = [
 ];
 
 export const transactionHeaders = [
-  { key: 'userName', label: 'Имя пользователя' },
-  { key: 'dateTime', label: 'Дата и время' },
-  { key: 'phone', label: 'Телефон' },
-  { key: 'device', label: 'Устройство' },
-  { key: 'template', label: 'Шаблон' },
-  { key: 'event', label: 'Событие' },
-  { key: 'quantity', label: 'Количество' },
-  { key: 'balance', label: 'Баланс' },
+  { key: 'userName', title: 'Имя пользователя' },
+  { key: 'dateTime', title: 'Дата и время' },
+  { key: 'phone', title: 'Телефон' },
+  { key: 'device', title: 'Устройство' },
+  { key: 'template', title: 'Шаблон' },
+  { key: 'event', title: 'Событие' },
+  { key: 'quantity', title: 'Количество' },
+  { key: 'balance', title: 'Баланс' },
 ];

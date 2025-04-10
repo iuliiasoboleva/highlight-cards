@@ -2,8 +2,8 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 
 import CardInfo from '../../components/CardInfo';
+import CustomTable from '../../components/CustomTable';
 import DashboardStats from '../../components/DashboardStats';
-import TransactionsTable from '../../components/TransactionsTable';
 import { mockCards } from '../../mocks/cardData';
 import { mockTransactions, transactionHeaders } from '../../mocks/mockTransactions';
 
@@ -47,11 +47,8 @@ const DefaultCardInfo = () => {
         <DashboardStats />
       </div>
       <div className="table-wrapper">
-        <TransactionsTable
-          title="Последние транзакции по карте"
-          headers={transactionHeaders}
-          data={mockTransactions}
-        />
+        <h3>Последние транзакции по карте</h3>
+        <CustomTable columns={transactionHeaders} rows={mockTransactions} />
       </div>
     </div>
   );

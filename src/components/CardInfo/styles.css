@@ -9,6 +9,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   max-width: 200px;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -20,14 +21,15 @@
 
 .card-info-header {
   display: flex;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px;
   width: 100%;
 }
 
-.card-info-row:nth-child(2),
-.card-inline-values {
-  text-align: right;
+.card-info-row {
+  width: 100%;
 }
 
 .card-info-row-label,
@@ -41,8 +43,10 @@
 
 .card-info-main-img {
   max-width: 190px;
+  width: 100%;
 }
 
 .card-info-qr-img {
   max-width: 140px;
+  width: 100%;
 }

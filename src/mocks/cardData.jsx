@@ -1,3 +1,27 @@
+export const defaultCardTemplate = {
+  id: null,
+  status: '',
+  name: 'Накопительная карта',
+  isActive: false,
+  urlCopy: 'https://take.cards/cMla3',
+  pdfImg: '/pdf-example.svg',
+  qrImg: '/qr-code.svg',
+  frameUrl: '/phone.svg',
+  balanceMoney: 1800,
+  cardImg: '/strip.png',
+  title: 'Сертификат',
+  design: {
+    logo: null,
+    icon: null,
+    background: null,
+    colors: {
+      cardBackground: '#FFFFFF',
+      centerBackground: '#F6F6F6',
+      textColor: '#1F1E1F',
+    },
+  },
+};
+
 export const mockCards = [
   {
     id: 2,
