@@ -8,6 +8,45 @@
   width: 100%;
 }
 
+.search-container {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.search-hint {
+  position: absolute;
+  bottom: -18px;
+  left: 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.no-location-wrapper {
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  display: flex;
+  font-size: 18px;
+}
+
+.no-location-wrapper button {
+  width: 100%;
+  padding: 14px;
+  background-color: #1a1a1a;
+  color: #fff;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background-color 0.2s ease;
+}
+
 .barcode-radio-group {
   margin-bottom: 20px;
   gap: 8px;
@@ -215,13 +254,13 @@
 }
 
 .location-modal-button-primary {
-  background-color: #4a90e2;
+  background-color: #1a1a1a;
   color: white;
   border: none;
 }
 
 .location-modal-button-primary:hover {
-  background-color: #3a7bc8;
+  background-color: black;
 }
 
 .location-modal-button-secondary {

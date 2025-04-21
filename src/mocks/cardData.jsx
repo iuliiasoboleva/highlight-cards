@@ -1,27 +1,3 @@
-export const defaultCardTemplate = {
-  id: null,
-  status: '',
-  name: 'Накопительная карта',
-  isActive: false,
-  urlCopy: 'https://take.cards/cMla3',
-  pdfImg: '/pdf-example.svg',
-  qrImg: '/qr-code.svg',
-  frameUrl: '/phone.svg',
-  balanceMoney: 1800,
-  cardImg: '/strip.png',
-  title: 'Сертификат',
-  design: {
-    logo: null,
-    icon: null,
-    background: null,
-    colors: {
-      cardBackground: '#FFFFFF',
-      centerBackground: '#F6F6F6',
-      textColor: '#1F1E1F',
-    },
-  },
-};
-
 export const mockCards = [
   {
     id: 2,
@@ -34,6 +10,7 @@ export const mockCards = [
     isActive: true,
     frameUrl: '/phone.svg',
     name: 'Создать карту',
+    certificateName: '',
     balanceMoney: 1800,
   },
   {
@@ -103,6 +80,7 @@ export const mockCards = [
     qrImg: '/qr-code.svg',
     title: 'Штамп',
     isActive: false,
+    stamps: 2,
     frameUrl: '/phone.svg',
     name: 'Создать карту',
   },
@@ -117,7 +95,6 @@ export const mockCards = [
     isActive: false,
     frameUrl: '/phone.svg',
     name: 'Создать карту',
-    restStamps: 8,
     stamps: 2,
     expirationDate: '00.00.0000',
     firstVisitDiscount: '10',
@@ -133,5 +110,7 @@ export const mockCards = [
     isActive: false,
     frameUrl: '/phone.svg',
     name: 'Создать карту',
+    discountStatus: 'Бронзовый',
+    discountPercent: 1,
   },
 ];

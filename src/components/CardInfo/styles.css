@@ -5,7 +5,7 @@
   color: rgb(31, 30, 31);
   background-color: rgb(255, 255, 255);
   padding: 12px;
-  top: 40%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   max-width: 200px;
@@ -43,10 +43,44 @@
 
 .card-info-main-img {
   max-width: 190px;
+  max-height: 140px;
   width: 100%;
 }
 
 .card-info-qr-img {
   max-width: 140px;
   width: 100%;
+}
+
+.stamp-container {
+  flex-wrap: wrap;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  background-color: rgb(246, 246, 246);
+  padding: 5px 10px;
+  gap: 10px;
+  flex-direction: column;
+  width: 100%;
+}
+
+.stamp-row {
+  display: flex;
+  gap: 10px;
+}
+
+.stamp-row svg {
+  font-size: 14px;
+}
+
+.card-background {
+  background-color: rgb(246, 246, 246);
+  height: 8.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    width: 100%;
+    font-weight: 500;
 }

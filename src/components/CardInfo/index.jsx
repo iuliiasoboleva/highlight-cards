@@ -1,83 +1,60 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { STATUS_CONFIG } from './defaultCardInfo';
 import './styles.css';
 
-const STATUS_CONFIG = {
-  certificate: [
-    { label: 'Баланс', valueKey: 'balanceMoney', suffix: '₽' },
-    { label: 'Срок действия', valueKey: 'expirationDate' },
-  ],
-  cashback: [
-    { label: 'Баллы', valueKey: 'credits', suffix: '₽' },
-    {
-      label: 'Текущий процент кешбэка',
-      valueKey: 'cashbackPercent',
-      suffix: '%',
-    },
-    { label: 'Текущий статус кешбэка', valueKey: 'cashbackStatus' },
-    { label: 'Срок действия', valueKey: 'expirationDate' },
-  ],
-  subscription: [
-    { label: 'Текущее количество баллов', valueKey: 'score' },
-    { label: 'Общее количество визитов', valueKey: 'visitsCount' },
-    { label: 'Срок действия', valueKey: 'expirationDate' },
-  ],
-  club: [
-    { label: 'Уровень клубной карты', valueKey: 'cardLevel', suffix: '' },
-    { label: 'Доступный лимит', valueKey: 'visitsCount', suffix: ' визиты' },
-    { label: 'Срок действия', valueKey: 'expirationDate' },
-  ],
-  reward: [
-    { label: 'Баланс', valueKey: 'balance' },
-    {
-      label: 'Текущий уровень',
-      valueKey: 'currentLevel',
-      defaultValue: 'Нет данных',
-    },
-    { label: 'До следующей награды', valueKey: 'untilNextReward' },
-    { label: 'Срок действия', valueKey: 'expirationDate' },
-  ],
-  stamp: [
-    {
-      label: 'До получения награды',
-      valueKey: 'restStamps',
-      suffix: ' штампов',
-    },
-    { label: 'Доступно наград', valueKey: 'stamps', suffix: ' награды' },
-    { label: 'Срок действия', valueKey: 'expirationDate' },
-  ],
-  coupon: [
-    { label: 'Скидка на первый визит', valueKey: 'firstVisitDiscount' },
-    { label: 'Срок действия', valueKey: 'expirationDate' },
-  ],
-};
-
 const CardInfo = ({ card }) => {
-  const design = useSelector((state) => state.cards.currentCard?.design);
+  const design = useSelector((state) => state.cards.currentCard?.design) || {};
   const fields = STATUS_CONFIG[card.status] || [];
+
+  const stampsQuantity = design?.stampsQuantity || 0;
+  const stampIcon = design?.stampIcon || faStar;
+  const restStamps = card.status === 'stamp' ? (design?.stampsQuantity || 10) - (card.stamps || 0) : 0;
+
+  const barcodeImage = card.settings?.barcodeType === 'pdf417' ? card.pdfImg : card.qrImg;
 
   const mergedCard = {
     ...card,
+    restStamps,
     cardImg: design?.background || card.cardImg,
     ...design?.colors,
+    stampsQuantity,
+    stampIcon
   };
 
-  const renderInlineValues = () => {
-    const inlineFields = fields.filter(({ valueKey }) =>
-      ['balanceMoney', 'credits', 'balance', 'expirationDate'].includes(valueKey),
+  const renderFieldValue = (value, { format, suffix }) => {
+    return format ? format(value) : `${value}${suffix || ''}`;
+  };
+
+  const renderStamps = () => {
+    const totalStamps = mergedCard.stampsQuantity || 10;
+    const activeStamps = card.stamps || 0;
+    const rows = Math.ceil(totalStamps / 5);
+    
+    return (
+      <div className="stamp-container">
+        {[...Array(rows)].map((_, rowIndex) => (
+          <div className="stamp-row" key={`row-${rowIndex}`}>
+            {[...Array(5)].map((_, stampIndex) => {
+              const stampNumber = rowIndex * 5 + stampIndex;
+              if (stampNumber >= totalStamps) return null;
+              
+              return (
+                <FontAwesomeIcon
+                  key={`stamp-${stampNumber}`}
+                  icon={stampIcon}
+                  style={{
+                    color: stampNumber < activeStamps ? "black" : "gray",
+                  }}
+                />
+              );
+            })}
+          </div>
+        ))}
+      </div>
     );
-
-    return inlineFields.map(({ label, valueKey, suffix = '', defaultValue = '' }) => {
-      const value = mergedCard[valueKey] ?? defaultValue;
-
-      return value ? (
-        <span key={valueKey} className="card-inline-value" title={label}>
-          <span className="inline-label">{label}:</span> {value}
-          {suffix}
-        </span>
-      ) : null;
-    });
   };
 
   return (
@@ -95,19 +72,39 @@ const CardInfo = ({ card }) => {
         }}
       >
         <p className="card-name">
-          {mergedCard.name.length > 15 ? `${mergedCard.name.slice(0, 15)}...` : mergedCard.name}
+          {mergedCard.name}
         </p>
-        <div className="card-inline-values">{renderInlineValues()}</div>
+        {fields
+          .filter(({ valueKey }) =>
+            ['balanceMoney', 'credits', 'balance', 'expirationDate'].includes(valueKey)
+          )
+          .map(({ label, valueKey, suffix, format, defaultValue }) => {
+            const value = mergedCard[valueKey] ?? defaultValue;
+            return value ? (
+              <span key={valueKey} className="card-inline-value" title={label}>
+                <span className="inline-label">{label}:</span>{' '}
+                {renderFieldValue(value, { format, suffix })}
+              </span>
+            ) : null;
+          })}
       </div>
 
-      <img
-        className="card-info-main-img"
-        src={mergedCard.cardImg}
-        alt="Card background"
-        style={{
-          backgroundColor: mergedCard.centerBackground,
-        }}
-      />
+      {(card.status === 'subscription' || card.status === 'stamp') ? (
+        renderStamps()
+      ) : (
+        mergedCard.cardImg
+          ? <img
+            className="card-info-main-img"
+            src={mergedCard.cardImg}
+            alt="Card background"
+            style={{
+              backgroundColor: mergedCard.centerBackground,
+            }}
+          />
+          : <div className='card-background'>
+            Фоновое изображение
+          </div>
+      )}
 
       <div
         className="card-info-header"
@@ -115,7 +112,7 @@ const CardInfo = ({ card }) => {
           backgroundColor: mergedCard.centerBackground,
         }}
       >
-        {fields.map(({ label, valueKey, suffix = '', defaultValue = '' }) => {
+        {fields.map(({ label, valueKey, suffix = '', defaultValue = '', format }) => {
           const value = mergedCard[valueKey] ?? defaultValue;
 
           return (
@@ -126,8 +123,7 @@ const CardInfo = ({ card }) => {
                   {label}:
                 </p>
                 <p>
-                  {value}
-                  {suffix}
+                  {renderFieldValue(value, { format, suffix })}
                 </p>
               </div>
             )
@@ -135,7 +131,11 @@ const CardInfo = ({ card }) => {
         })}
       </div>
 
-      <img className="card-info-qr-img" src={mergedCard.pdfImg} alt="QR scanner" />
+      <img
+        className="card-info-qr-img"
+        src={barcodeImage}
+        alt={card.barcodeType === 'pdf417' ? 'PDF код' : 'QR код'}
+      />
       <p className="card-details">Tap ••• for details</p>
     </div>
   );

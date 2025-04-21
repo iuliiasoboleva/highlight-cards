@@ -35,7 +35,7 @@ const EditType = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { currentCard, cards } = useSelector((state) => state.cards);
-  const [selectedType, setSelectedType] = useState(currentCard.status || '');
+  const [selectedType, setSelectedType] = useState(currentCard.status || 'stamp');
   const [activeTab, setActiveTab] = useState('description');
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
 
@@ -47,7 +47,6 @@ const EditType = () => {
     }
   }, [dispatch, cards, currentCard.id]);
 
-  // Синхронизация выбранного типа с currentCard
   useEffect(() => {
     if (currentCard.status) {
       setSelectedType(currentCard.status);
@@ -65,11 +64,11 @@ const EditType = () => {
 
   const handleTypeSelect = (typeId) => {
     setSelectedType(typeId);
-    const cardTitle = cardTypes.find((type) => type.id === typeId)?.name || 'Карта';
+    const cardName = cardTypes.find((type) => type.id === typeId)?.name || 'Карта';
     dispatch(
       updateCurrentCard({
         status: typeId,
-        title: cardTitle,
+        name: cardName,
       }),
     );
   };

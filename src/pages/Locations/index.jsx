@@ -1,43 +1,58 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import CardInfo from '../../components/CardInfo';
 import YandexMapPicker from '../../components/YandexMapPicker';
 
 import './styles.css';
+import { useDebounce } from 'use-debounce';
 
 const MAX_LOCATIONS = 10;
 const API_KEY = 'a886f296-c974-43b3-aa06-a94c782939c2';
 
 const Locations = () => {
+  const mapRef = useRef(null);
   const { id } = useParams();
+
   const [locations, setLocations] = useState([]);
   const [currentCoords, setCurrentCoords] = useState(null);
   const [currentAddress, setCurrentAddress] = useState('');
   const [limitReached, setLimitReached] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [isSearching, setIsSearching] = useState(false);
 
-  const handleSelect = async ({ coords }) => {
-    const { lat, lon } = coords;
-    setCurrentCoords([lat, lon]);
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 2000);
 
-    try {
-      const res = await fetch(
-        `https://geocode-maps.yandex.ru/1.x/?apikey=${API_KEY}&geocode=${lon},${lat}&format=json`,
-      );
-      const data = await res.json();
-      const address =
-        data.response.GeoObjectCollection.featureMember[0]?.GeoObject?.metaDataProperty
-          ?.GeocoderMetaData?.text;
+  useEffect(() => {
+    const searchAddress = async () => {
+      if (!debouncedSearchQuery || !mapRef.current) return;
 
-      if (address) {
-        setCurrentAddress(address);
-      } else {
-        setCurrentAddress('Не удалось получить адрес');
+      try {
+        setIsSearching(true);
+        const coords = await mapRef.current.search(debouncedSearchQuery.trim());
+
+        if (coords && Array.isArray(coords) && coords.length === 2) {
+          setSelectedLocation({
+            address: debouncedSearchQuery,
+            coords: {
+              lat: coords[0],
+              lon: coords[1]
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Ошибка поиска:', error);
+      } finally {
+        setIsSearching(false);
       }
-    } catch (error) {
-      console.error('Ошибка при геокодировании:', error);
-      setCurrentAddress('Не удалось получить адрес');
-    }
+    };
+
+    searchAddress();
+  }, [debouncedSearchQuery]);
+
+  const handleMapSelect = (location) => {
+    setSelectedLocation(location);
   };
 
   const handleAddLocation = () => {
@@ -75,7 +90,32 @@ const Locations = () => {
           <div className="limit-alert">Вы достигли лимита в {MAX_LOCATIONS} локаций</div>
         )}
 
-        <YandexMapPicker onSelect={handleSelect} />
+        <div className="search-container">
+          <input
+            type="text"
+            className="location-modal-input"
+            placeholder="Введите адрес локации"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && setSearchQuery(e.target.value)}
+          />
+          {isSearching && (
+            <div className="search-loading">Идет поиск...</div>
+          )}
+        </div>
+
+        {selectedLocation && (
+          <div className="location-info">
+            <p>Выбрано: {selectedLocation.address}</p>
+            <p>Координаты: {selectedLocation.coords.lat.toFixed(6)}, {selectedLocation.coords.lon.toFixed(6)}</p>
+          </div>
+        )}
+
+          <YandexMapPicker
+            ref={mapRef}
+            onSelect={handleMapSelect}
+            initialCoords={selectedLocation?.coords}
+          />
 
         {currentAddress && (
           <div className="location-preview">

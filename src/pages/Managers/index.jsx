@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import './styles.css';
 
@@ -12,6 +13,7 @@ const initialManagers = [
 ];
 
 const ManagersPage = () => {
+  const navigate = useNavigate();
   const [managers, setManagers] = useState(initialManagers);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
@@ -71,7 +73,7 @@ const ManagersPage = () => {
             они смогут пробивать штампы клиентам и выдавать награды.
           </p>
           <img className="scanner-icon" src="/scanner.png" alt="scanner" />
-          <button className="btn-dark">Открыть</button>
+          <button className="btn-dark" onClick={() => navigate('/scan')}>Открыть</button>
         </div>
 
         {filteredManagers.map((m) => (

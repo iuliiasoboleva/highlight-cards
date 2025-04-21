@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
@@ -7,17 +7,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import CardInfo from '../../components/CardInfo';
 import QRPopup from '../../components/QRPopup';
-import { updateCardInfo } from '../../store/cardInfoSlice';
 
 import './styles.css';
 
 const EditInfo = () => {
   const { id } = useParams();
-  const dispatch = useDispatch();
-  const cardInfo = useSelector((state) => state.cardInfo);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
   const [activeTab, setActiveTab] = useState('description');
   const [showQRPopup, setShowQRPopup] = useState(false);
+
+  const currentCard = useSelector((state) => state.cards.currentCard);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 1024);
@@ -25,16 +24,9 @@ const EditInfo = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleChange = useCallback(
-    (field) => (e) =>
-      dispatch(
-        updateCardInfo({
-          ...cardInfo,
-          [field]: e.target.value,
-        }),
-      ),
-    [cardInfo, dispatch],
-  );
+  const handleChange = useCallback((field) => (e) =>
+    console.log('done')
+    , []);
 
   const formFields = [
     {
@@ -64,7 +56,7 @@ const EditInfo = () => {
       <div key={key}>
         <h3>{label}</h3>
         <InputComponent
-          value={cardInfo[key] || defaultValue}
+          value={defaultValue}
           onChange={handleChange(key)}
           className={`info-${type || 'input'}`}
         />
@@ -92,10 +84,9 @@ const EditInfo = () => {
         card={{
           id,
           title: 'Карта',
-          name: cardInfo.companyName || 'Накопительная карта',
-          description: cardInfo.description,
+          name: 'Накопительная карта',
           status: 'stamp',
-          ...cardInfo,
+          ...currentCard,
         }}
       />
     </div>

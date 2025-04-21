@@ -42,6 +42,16 @@ const EditSettings = () => {
     label: (i + 1).toString(),
   }));
 
+  const handleBarcodeTypeChange = (value) => {
+    dispatch(
+      updateCurrentCard({
+        settings: {
+          barcodeType: value
+        }
+      }))
+    setSettings((prev) => ({ ...prev, barcodeType: value }));
+  };
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth >= 1024);
@@ -77,7 +87,7 @@ const EditSettings = () => {
         { value: 'qrcode', label: 'QR Code' },
       ],
       selected: settings.barcodeType,
-      onChange: (value) => setSettings((prev) => ({ ...prev, barcodeType: value })),
+      onChange: handleBarcodeTypeChange,
       title: 'Тип штрихкода',
       name: 'barcode-type',
     },
@@ -174,8 +184,14 @@ const EditSettings = () => {
       {showLocationModal && (
         <LocationModal onClose={() => setShowLocationModal(false)} onSave={handleAddLocation} />
       )}
-
-      <button onClick={() => setShowLocationModal(true)}>Добавить локацию</button>
+      {settings.locations.length === 0
+        ? <div className='no-location-wrapper'>
+          У вас еще не создано ни одной локации
+          <button onClick={() => setShowLocationModal(true)}>Добавить локацию</button>
+        </div>
+        : <>
+        </>
+      }
       <button onClick={handleSave} className="create-button">
         Сохранить и продолжить
       </button>

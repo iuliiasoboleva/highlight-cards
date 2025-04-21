@@ -27,8 +27,13 @@ const QRPopup = ({ cardId, onClose }) => {
   return (
     <div className="qr-popup-overlay">
       <div className="qr-popup-container">
-        <h2>Посмотреть на своем телефоне</h2>
+        <div className="location-modal-header">
 
+          <h2>Посмотреть на своем телефоне</h2>
+          <button className="location-modal-close" onClick={onClose}>
+            ×
+          </button>
+        </div>
         <div className="qr-code-wrapper">
           <QRCode value={link} size={200} />
           <p className="qr-link">{link}</p>
@@ -43,11 +48,6 @@ const QRPopup = ({ cardId, onClose }) => {
           </button>
           <button onClick={activateCard} className="action-button primary">
             Активировать карту
-          </button>
-        </div>
-        <div className="popup-footer">
-          <button onClick={onClose} className="footer-button">
-            Закрыть
           </button>
         </div>
       </div>

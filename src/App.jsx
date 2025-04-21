@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Navigate,
   Outlet,
@@ -17,7 +18,6 @@ import Sidebar from './components/Sidebar';
 import SubMenu from './components/SubMenu';
 import Tabs from './components/Tabs';
 import AuthLayout from './layouts/AuthLayout';
-import { mockCards } from './mocks/cardData';
 import CardDetails from './pages/CardDetails';
 import Cards from './pages/Cards';
 import Clients from './pages/Clients';
@@ -45,10 +45,12 @@ import SettingsLayout from './pages/SettingsLayout';
 import SettingsPersonal from './pages/SettingsPersonal';
 import SettingsRFMSegment from './pages/SettingsRFMSegment';
 import StatsTab from './pages/StatsTab';
+import { updateCurrentCard } from './store/cardsSlice';
 
 const MainLayout = () => {
   const location = useLocation();
   const { id } = useParams();
+  const dispatch = useDispatch();
 
   const hideLayout = ['/login', '/register', '/scan'].includes(location.pathname);
   const matchCreate = matchPath('/cards/create', location.pathname);
@@ -57,7 +59,7 @@ const MainLayout = () => {
   const matchMailings = matchPath('/mailings/*', location.pathname);
   const matchSettings = matchPath('/settings/*', location.pathname);
 
-  const currentCard = mockCards.find((c) => c.id === parseInt(matchEdit?.params?.id));
+  const currentCard = useSelector((state) => state.cards.currentCard);
 
   if (hideLayout) {
     return <Outlet />;
@@ -125,7 +127,7 @@ const MainLayout = () => {
           showNameInput={!!matchEdit || !!matchCreate}
           initialName={currentCard?.name || ''}
           onNameChange={(newName) => {
-            if (currentCard) currentCard.name = newName;
+            dispatch(updateCurrentCard({ name: newName }));
           }}
         />
       )}

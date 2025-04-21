@@ -1,24 +1,71 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-
-import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCircleQuestion,
+  faStar,
+  faHeart,
+  faCheck,
+  faFire,
+  faGem
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import CardInfo from '../../components/CardInfo';
-import { updateBackground, updateColors, updateIcon, updateLogo } from '../../store/cardsSlice';
-
+import {
+  updateBackground,
+  updateColors,
+  updateIcon,
+  updateLogo,
+  updateCurrentCard
+} from '../../store/cardsSlice';
 import './styles.css';
+
+const STAMP_ICONS = [
+  { id: 1, name: 'Звезда', icon: faStar },
+  { id: 2, name: 'Сердце', icon: faHeart },
+  { id: 3, name: 'Галочка', icon: faCheck },
+  { id: 4, name: 'Огонь', icon: faFire },
+  { id: 5, name: 'Бриллиант', icon: faGem }
+];
 
 const EditDesign = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const designState = useSelector((state) => state.cardDesign);
+
+  const currentCard = useSelector((state) => state.cards.currentCard) || {
+    design: {
+      logo: null,
+      icon: null,
+      background: null,
+      colors: {
+        cardBackground: '#FFFFFF',
+        centerBackground: '#F6F6F6',
+        textColor: '#1F1E1F',
+      },
+      stampIcon: STAMP_ICONS[0].icon,
+      stampsQuantity: 0,
+    }
+  };
+
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
   const [activeTab, setActiveTab] = useState('description');
 
-  const { logo, icon, background, colors } = designState;
+  const design = currentCard.design || {};
+  const {
+    logo = null,
+    icon = null,
+    background = null,
+    colors = {
+      cardBackground: '#FFFFFF',
+      centerBackground: '#F6F6F6',
+      textColor: '#1F1E1F',
+    },
+    stampIcon = STAMP_ICONS[0].icon,
+    stampsQuantity = 0
+  } = design;
+
+  const isStampCard = ['stamp', 'subscription'].includes(currentCard.status);
 
   useEffect(() => {
     const handleResize = () => {
@@ -38,11 +85,31 @@ const EditDesign = () => {
   };
 
   const handleColorChange = (key, value) => {
-    const updatedColors = {
+    dispatch(updateColors({
       ...colors,
-      [key]: value,
-    };
-    dispatch(updateColors(updatedColors));
+      [key]: value
+    }));
+  };
+
+  const handleStampsChange = (e) => {
+    const value = Math.min(30, Math.max(0, parseInt(e.target.value) || 0));
+    dispatch(updateCurrentCard({
+      ...currentCard,
+      design: {
+        ...design,
+        stampsQuantity: value
+      }
+    }));
+  };
+
+  const handleStampIconChange = (icon) => {
+    dispatch(updateCurrentCard({
+      ...currentCard,
+      design: {
+        ...design,
+        stampIcon: icon
+      }
+    }));
   };
 
   const handleSave = () => {
@@ -50,14 +117,47 @@ const EditDesign = () => {
   };
 
   const previewCardData = {
-    id,
-    title: 'Карта',
-    name: 'Накопительная карта',
-    status: 'stamp',
+    ...currentCard,
     cardImg: background || '/default-card-bg.png',
     pdfImg: '/default-qr.png',
-    ...designState,
+    design: {
+      ...design,
+      stampsQuantity,
+      stampIcon,
+    }
   };
+
+  const renderStampControls = () => (
+    <div className="design-stamp-controls">
+      <h3>Настройки штампов</h3>
+      <div className="stamp-count-control">
+        <label>Количество штампов (0-30)</label>
+        <input
+          type="number"
+          min="0"
+          max="30"
+          value={stampsQuantity}
+          onChange={handleStampsChange}
+        />
+      </div>
+
+      <div className="stamp-icon-control">
+        <label>Выберите иконку штампа</label>
+        <div className="stamp-icon-options">
+          {STAMP_ICONS.map(({ id, name, icon }) => (
+            <button
+              key={id}
+              className={`stamp-icon-option ${stampIcon === icon ? 'active' : ''}`}
+              onClick={() => handleStampIconChange(icon)}
+              title={name}
+            >
+              <FontAwesomeIcon icon={icon} />
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 
   const designContent = (
     <div className="design-section">
@@ -65,9 +165,12 @@ const EditDesign = () => {
         Настройки <FontAwesomeIcon icon={faCircleQuestion} style={{ fontSize: 16 }} />
       </h2>
       <hr />
+
+      {isStampCard && renderStampControls()}
+
       <div className="design-row">
         <div className="upload-box">
-          <label className="upload-label">Логотип</label>
+          <h3>Логотип</h3>
           <div className="upload-area">
             {logo ? (
               <img src={logo} alt="logo" className="preview-img" />
@@ -80,9 +183,9 @@ const EditDesign = () => {
               hidden
               onChange={(e) => handleImageChange(e, updateLogo)}
             />
-            <label htmlFor="logo" className="upload-button">
+            <h3>
               Выбрать файл
-            </label>
+            </h3>
           </div>
           <p className="upload-description">
             Рекомендуемый размер: 480x150 пикселей. Только PNG. 3 МБ
@@ -90,7 +193,7 @@ const EditDesign = () => {
         </div>
 
         <div className="upload-box">
-          <label className="upload-label">Иконка</label>
+          <h3>Иконка</h3>
           <div className="upload-area">
             {icon ? (
               <img src={icon} alt="icon" className="preview-img" />
@@ -113,26 +216,28 @@ const EditDesign = () => {
         </div>
       </div>
 
-      <div className="upload-box full-width">
-        <label className="upload-label">Фон центральной части</label>
-        <div className="upload-area">
-          {background ? (
-            <img src={background} alt="background" className="preview-img" />
-          ) : (
-            <div className="upload-placeholder">📁</div>
-          )}
-          <input
-            type="file"
-            id="background"
-            hidden
-            onChange={(e) => handleImageChange(e, updateBackground)}
-          />
-          <label htmlFor="background" className="upload-button">
-            Выбрать файл
-          </label>
+      {!isStampCard && (
+        <div className="upload-box full-width">
+          <label className="upload-label">Фон центральной части</label>
+          <div className="upload-area">
+            {background ? (
+              <img src={background} alt="background" className="preview-img" />
+            ) : (
+              <div className="upload-placeholder">📁</div>
+            )}
+            <input
+              type="file"
+              id="background"
+              hidden
+              onChange={(e) => handleImageChange(e, updateBackground)}
+            />
+            <label htmlFor="background" className="upload-button">
+              Выбрать файл
+            </label>
+          </div>
+          <p className="upload-description">Минимальный размер: 1125x432. Только PNG. 3 МБ</p>
         </div>
-        <p className="upload-description">Минимальный размер: 1125x432. Только PNG. 3 МБ</p>
-      </div>
+      )}
 
       <h3>Цвета</h3>
       <div className="color-section">
@@ -140,7 +245,7 @@ const EditDesign = () => {
           <label>Фон карты</label>
           <input
             type="color"
-            // value={colors.cardBackground}
+            value={colors.cardBackground}
             onChange={(e) => handleColorChange('cardBackground', e.target.value)}
           />
           <input type="text" value={colors.cardBackground} readOnly />
@@ -149,7 +254,7 @@ const EditDesign = () => {
           <label>Цвет текста</label>
           <input
             type="color"
-            // value={colors.textColor}
+            value={colors.textColor}
             onChange={(e) => handleColorChange('textColor', e.target.value)}
           />
           <input type="text" value={colors.textColor} readOnly />
@@ -158,7 +263,7 @@ const EditDesign = () => {
           <label>Цвет фона центральной части</label>
           <input
             type="color"
-            // value={colors.centerBackground}
+            value={colors.centerBackground}
             onChange={(e) => handleColorChange('centerBackground', e.target.value)}
           />
           <input type="text" value={colors.centerBackground} readOnly />

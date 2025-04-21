@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { defaultCardTemplate, mockCards } from '../mocks/cardData';
+import { mockCards } from '../mocks/cardData';
+import { defaultCardTemplate } from '../components/CardInfo/defaultCardInfo';
 
 // Фиксированная карта для создания новых карт
 export const fixedCard = {
@@ -77,7 +78,7 @@ export const cardsSlice = createSlice({
       state.currentCard = {
         ...state.currentCard,
         ...action.payload,
-        updatedAt: new Date().toISOString(), // Добавляем метку времени
+        updatedAt: new Date().toISOString(),
       };
     },
 

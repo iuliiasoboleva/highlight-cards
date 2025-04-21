@@ -1,18 +1,19 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import CardInfo from '../../components/CardInfo';
 import CustomTable from '../../components/CustomTable';
 import DashboardStats from '../../components/DashboardStats';
-import { mockCards } from '../../mocks/cardData';
 import { mockTransactions, transactionHeaders } from '../../mocks/mockTransactions';
 
 import './styles.css';
 
 const DefaultCardInfo = () => {
   const { id } = useParams();
+  const { cards } = useSelector((state) => state.cards);
 
-  const card = mockCards.find((card) => card.id === +id);
+  const card = cards.find((card) => card.id === +id);
 
   if (!card) {
     return <div>Карточка не найдена</div>;

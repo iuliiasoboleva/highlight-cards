@@ -1,69 +1,70 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, forwardRef, useImperativeHandle, useState } from 'react';
+import { YMaps, Map, Placemark, GeolocationControl, FullscreenControl } from '@pbe/react-yandex-maps';
 
-import { GeolocationControl, Map, Placemark, SearchControl, YMaps } from '@pbe/react-yandex-maps';
-
-const YandexMapPicker = ({ onSelect }) => {
-  const [coords, setCoords] = useState([55.751574, 37.573856]);
-  const [mapReady, setMapReady] = useState(false);
+const YandexMapPicker = forwardRef(({ onSelect, initialCoords }, ref) => {
+  const [coords, setCoords] = useState(initialCoords || [55.751574, 37.573856]);
   const mapRef = useRef(null);
+  const ymapsRef = useRef(null);
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const userCoords = [position.coords.latitude, position.coords.longitude];
-          setCoords(userCoords);
-          onSelect({ coords: { lat: userCoords[0], lon: userCoords[1] } });
-        },
-        (error) => {
-          console.warn('Геолокация недоступна:', error.message);
-        },
-      );
-    }
-  }, []);
+  useImperativeHandle(ref, () => ({
+    search: handleSearch,
+    setCenter: (newCoords) => updateCoords(newCoords)
+  }));
 
-  const handleMapClick = (e) => {
-    const newCoords = e.get('coords');
+  const updateCoords = (newCoords) => {
     setCoords(newCoords);
-    onSelect({ coords: { lat: newCoords[0], lon: newCoords[1] } });
+    if (mapRef.current) {
+      mapRef.current.setCenter(newCoords, 15);
+    }
+    onSelect?.({ coords: { lat: newCoords[0], lon: newCoords[1] } });
+  };
+
+  const handleSearch = async (query) => {
+    if (!ymapsRef.current || !query?.trim()) return null;
+
+    try {
+      const results = await ymapsRef.current.geocode(query);
+      const firstGeoObject = results.geoObjects.get(0);
+
+      if (firstGeoObject) {
+        const newCoords = firstGeoObject.geometry.getCoordinates();
+        updateCoords(newCoords);
+        return newCoords;
+      }
+    } catch (error) {
+      console.error('Ошибка поиска:', error);
+      throw error;
+    }
+    return null;
   };
 
   return (
-    <div className="map-placeholder">
-      <YMaps
-        query={{
-          lang: 'ru_RU',
-          apikey: 'a886f296-c974-43b3-aa06-a94c782939c2',
-        }}
+    <YMaps
+      query={{
+        lang: 'ru_RU',
+        apikey: 'a886f296-c974-43b3-aa06-a94c782939c2',
+        load: 'package.full',
+      }}
+    >
+      <Map
+        instanceRef={mapRef}
+        state={{ center: coords, zoom: 15 }}
+        width="100%"
+        height="400px"
+        modules={['geocode']}
+        onLoad={(ymaps) => { ymapsRef.current = ymaps; }}
+        onClick={(e) => updateCoords(e.get('coords'))}
       >
-        <Map
-          state={{ center: coords, zoom: 15 }}
-          width="100%"
-          height="300px"
-          onClick={handleMapClick}
-          instanceRef={mapRef}
-          onLoad={(ymaps) => {
-            window.ymaps = ymaps;
-            setMapReady(true);
-          }}
-        >
-          <GeolocationControl options={{ float: 'left' }} />
-          <SearchControl options={{ float: 'right' }} />
-          {mapReady && (
-            <Placemark
-              geometry={coords}
-              options={{ draggable: true }}
-              onDragEnd={(e) => {
-                const newCoords = e.get('target').geometry.getCoordinates();
-                setCoords(newCoords);
-                onSelect({ coords: { lat: newCoords[0], lon: newCoords[1] } });
-              }}
-            />
-          )}
-        </Map>
-      </YMaps>
-    </div>
+        <GeolocationControl options={{ float: 'left' }} />
+        <FullscreenControl />
+        <Placemark
+          geometry={coords}
+          options={{ draggable: true, preset: 'islands#blueDotIcon' }}
+          onDragEnd={(e) => updateCoords(e.get('target').geometry.getCoordinates())}
+        />
+      </Map>
+    </YMaps>
   );
-};
+});
 
 export default YandexMapPicker;
