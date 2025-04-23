@@ -22,23 +22,6 @@
   margin-top: 20px;
 }
 
-.edit-type-tabs {
-  display: flex;
-  border-bottom: 1px solid #ddd;
-}
-
-.edit-type-tab {
-  padding: 10px 20px;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.edit-type-tab.active {
-  border-bottom: 2px solid #4caf50;
-  font-weight: bold;
-}
-
 @media (min-width: 1025px) {
   .edit-type-main-container {
     display: flex;

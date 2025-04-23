@@ -16,9 +16,7 @@ const MailingsUserPush = () => {
     <div className="edit-type-main-container">
       <div className="edit-type-page">
         <div className="mailings-push-container">
-          <h2 className="mailings-push-title">
-            Пользовательские авто-push <span className="free-badge">Бесплатно!</span>
-          </h2>
+          <h2 className="mailings-push-title">Пользовательские авто-push</h2>
           <p className="mailings-push-description">
             Задайте свои правила отправки PUSH-уведомлений клиенту. Выберите после какого события и
             через сколько времени будет отправлено уведомление

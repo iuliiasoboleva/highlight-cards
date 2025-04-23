@@ -1,5 +1,12 @@
-import React, { useRef, forwardRef, useImperativeHandle, useState } from 'react';
-import { YMaps, Map, Placemark, GeolocationControl, FullscreenControl } from '@pbe/react-yandex-maps';
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+
+import {
+  FullscreenControl,
+  GeolocationControl,
+  Map,
+  Placemark,
+  YMaps,
+} from '@pbe/react-yandex-maps';
 
 const YandexMapPicker = forwardRef(({ onSelect, initialCoords }, ref) => {
   const [coords, setCoords] = useState(initialCoords || [55.751574, 37.573856]);
@@ -8,7 +15,7 @@ const YandexMapPicker = forwardRef(({ onSelect, initialCoords }, ref) => {
 
   useImperativeHandle(ref, () => ({
     search: handleSearch,
-    setCenter: (newCoords) => updateCoords(newCoords)
+    setCenter: (newCoords) => updateCoords(newCoords),
   }));
 
   const updateCoords = (newCoords) => {
@@ -52,7 +59,9 @@ const YandexMapPicker = forwardRef(({ onSelect, initialCoords }, ref) => {
         width="100%"
         height="400px"
         modules={['geocode']}
-        onLoad={(ymaps) => { ymapsRef.current = ymaps; }}
+        onLoad={(ymaps) => {
+          ymapsRef.current = ymaps;
+        }}
         onClick={(e) => updateCoords(e.get('coords'))}
       >
         <GeolocationControl options={{ float: 'left' }} />

@@ -13,7 +13,6 @@ const cards = [
 ];
 
 const MailingsInfo = () => {
-  // Преобразуем заголовки в формат для CustomTable
   const columns = mailingsHeaders.map((header) => ({
     key: header.key,
     title: header.label,
@@ -21,8 +20,8 @@ const MailingsInfo = () => {
     cellClassName: 'text-left',
   }));
 
-  // Добавляем обработку статуса
   const statusColumnIndex = columns.findIndex((col) => col.key === 'status');
+
   if (statusColumnIndex !== -1) {
     columns[statusColumnIndex].render = (row) => {
       let statusClass = '';
@@ -49,7 +48,7 @@ const MailingsInfo = () => {
   }
 
   return (
-    <>
+    <div className="mailings-container">
       <h2 className="page-title">Рассылки</h2>
 
       <div className="stats-cards">
@@ -71,7 +70,7 @@ const MailingsInfo = () => {
       <div className="table-wrapper">
         <CustomTable columns={columns} rows={mockMailings} />
       </div>
-    </>
+    </div>
   );
 };
 

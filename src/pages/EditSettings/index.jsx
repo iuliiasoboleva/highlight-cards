@@ -46,9 +46,10 @@ const EditSettings = () => {
     dispatch(
       updateCurrentCard({
         settings: {
-          barcodeType: value
-        }
-      }))
+          barcodeType: value,
+        },
+      }),
+    );
     setSettings((prev) => ({ ...prev, barcodeType: value }));
   };
 
@@ -184,14 +185,14 @@ const EditSettings = () => {
       {showLocationModal && (
         <LocationModal onClose={() => setShowLocationModal(false)} onSave={handleAddLocation} />
       )}
-      {settings.locations.length === 0
-        ? <div className='no-location-wrapper'>
+      {settings.locations.length === 0 ? (
+        <div className="no-location-wrapper">
           У вас еще не создано ни одной локации
           <button onClick={() => setShowLocationModal(true)}>Добавить локацию</button>
         </div>
-        : <>
-        </>
-      }
+      ) : (
+        <></>
+      )}
       <button onClick={handleSave} className="create-button">
         Сохранить и продолжить
       </button>

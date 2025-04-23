@@ -24,9 +24,7 @@ const EditInfo = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleChange = useCallback((field) => (e) =>
-    console.log('done')
-    , []);
+  const handleChange = useCallback((field) => (e) => console.log('done'), []);
 
   const formFields = [
     {

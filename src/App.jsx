@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Navigate,
@@ -45,7 +45,7 @@ import SettingsLayout from './pages/SettingsLayout';
 import SettingsPersonal from './pages/SettingsPersonal';
 import SettingsRFMSegment from './pages/SettingsRFMSegment';
 import StatsTab from './pages/StatsTab';
-import { updateCurrentCard } from './store/cardsSlice';
+import { initializeCards, updateCurrentCard } from './store/cardsSlice';
 
 const MainLayout = () => {
   const location = useLocation();
@@ -60,6 +60,10 @@ const MainLayout = () => {
   const matchSettings = matchPath('/settings/*', location.pathname);
 
   const currentCard = useSelector((state) => state.cards.currentCard);
+
+  useEffect(() => {
+    dispatch(initializeCards());
+  }, [dispatch]);
 
   if (hideLayout) {
     return <Outlet />;

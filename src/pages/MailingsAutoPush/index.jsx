@@ -16,9 +16,7 @@ const MailingsAutoPush = () => {
     <div className="edit-type-main-container">
       <div className="edit-type-page">
         <div className="mailings-push-container">
-          <h2 className="mailings-push-title">
-            Автоматизация push <span className="free-badge">Бесплатно!</span>
-          </h2>
+          <h2 className="mailings-push-title">Автоматизация push</h2>
           <p className="mailings-push-description">
             Настройте автоматические PUSH-уведомления по собственному сценарию. Поздравляйте клиента
             с днём рождения, собирайте обратную связь, напоминайте зайти к вам снова

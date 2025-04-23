@@ -1,7 +1,5 @@
 .clients-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+  padding: 20px 20px 20px 0;
 }
 
 .clients-title {
@@ -25,11 +23,10 @@
   text-align: center;
 }
 
-.stat-value {
+.stat-clients-value {
   display: block;
   font-size: 32px;
   font-weight: bold;
-  color: white;
   margin-bottom: 5px;
 }
 
@@ -242,4 +239,10 @@
 
 .icon-birthday:before {
   content: '🎂';
+}
+
+@media (max-width: 768px) {
+  .clients-container {
+    padding: 20px 20px 0px 20px;
+  }
 }

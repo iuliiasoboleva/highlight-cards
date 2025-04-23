@@ -1,23 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+
 import {
-  faCircleQuestion,
-  faStar,
-  faHeart,
   faCheck,
+  faCircleQuestion,
   faFire,
-  faGem
+  faGem,
+  faHeart,
+  faStar,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import CardInfo from '../../components/CardInfo';
 import {
   updateBackground,
   updateColors,
+  updateCurrentCard,
   updateIcon,
   updateLogo,
-  updateCurrentCard
 } from '../../store/cardsSlice';
+
 import './styles.css';
 
 const STAMP_ICONS = [
@@ -25,7 +28,7 @@ const STAMP_ICONS = [
   { id: 2, name: 'Сердце', icon: faHeart },
   { id: 3, name: 'Галочка', icon: faCheck },
   { id: 4, name: 'Огонь', icon: faFire },
-  { id: 5, name: 'Бриллиант', icon: faGem }
+  { id: 5, name: 'Бриллиант', icon: faGem },
 ];
 
 const EditDesign = () => {
@@ -45,7 +48,7 @@ const EditDesign = () => {
       },
       stampIcon: STAMP_ICONS[0].icon,
       stampsQuantity: 0,
-    }
+    },
   };
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
@@ -62,7 +65,7 @@ const EditDesign = () => {
       textColor: '#1F1E1F',
     },
     stampIcon = STAMP_ICONS[0].icon,
-    stampsQuantity = 0
+    stampsQuantity = 0,
   } = design;
 
   const isStampCard = ['stamp', 'subscription'].includes(currentCard.status);
@@ -85,31 +88,37 @@ const EditDesign = () => {
   };
 
   const handleColorChange = (key, value) => {
-    dispatch(updateColors({
-      ...colors,
-      [key]: value
-    }));
+    dispatch(
+      updateColors({
+        ...colors,
+        [key]: value,
+      }),
+    );
   };
 
   const handleStampsChange = (e) => {
     const value = Math.min(30, Math.max(0, parseInt(e.target.value) || 0));
-    dispatch(updateCurrentCard({
-      ...currentCard,
-      design: {
-        ...design,
-        stampsQuantity: value
-      }
-    }));
+    dispatch(
+      updateCurrentCard({
+        ...currentCard,
+        design: {
+          ...design,
+          stampsQuantity: value,
+        },
+      }),
+    );
   };
 
   const handleStampIconChange = (icon) => {
-    dispatch(updateCurrentCard({
-      ...currentCard,
-      design: {
-        ...design,
-        stampIcon: icon
-      }
-    }));
+    dispatch(
+      updateCurrentCard({
+        ...currentCard,
+        design: {
+          ...design,
+          stampIcon: icon,
+        },
+      }),
+    );
   };
 
   const handleSave = () => {
@@ -124,7 +133,7 @@ const EditDesign = () => {
       ...design,
       stampsQuantity,
       stampIcon,
-    }
+    },
   };
 
   const renderStampControls = () => (
@@ -183,9 +192,7 @@ const EditDesign = () => {
               hidden
               onChange={(e) => handleImageChange(e, updateLogo)}
             />
-            <h3>
-              Выбрать файл
-            </h3>
+            <h3>Выбрать файл</h3>
           </div>
           <p className="upload-description">
             Рекомендуемый размер: 480x150 пикселей. Только PNG. 3 МБ

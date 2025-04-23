@@ -1,20 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import CardButtons from '../../components/CardButtons';
 import CardInfo from '../../components/CardInfo';
-import { initializeCards } from '../../store/cardsSlice';
 
 import './styles.css';
 
 const Cards = () => {
-  const dispatch = useDispatch();
   const cards = useSelector((state) => state.cards.cards);
-
-  useEffect(() => {
-    dispatch(initializeCards());
-  }, [dispatch]);
 
   return (
     <div className="cards">

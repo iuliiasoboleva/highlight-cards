@@ -1,6 +1,9 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+
 import { useDebounce } from 'use-debounce';
+
 import YandexMapPicker from '../../components/YandexMapPicker';
+
 import './styles.css';
 
 const LocationModal = ({ onClose, onSave }) => {
@@ -11,24 +14,24 @@ const LocationModal = ({ onClose, onSave }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
-  
+
   const [debouncedSearchQuery] = useDebounce(searchQuery, 2000);
 
   useEffect(() => {
     const searchAddress = async () => {
       if (!debouncedSearchQuery || !mapRef.current) return;
-      
+
       try {
         setIsSearching(true);
         const coords = await mapRef.current.search(debouncedSearchQuery.trim());
-        
+
         if (coords && Array.isArray(coords) && coords.length === 2) {
           setSelectedLocation({
             address: debouncedSearchQuery,
-            coords: { 
-              lat: coords[0], 
-              lon: coords[1] 
-            }
+            coords: {
+              lat: coords[0],
+              lon: coords[1],
+            },
           });
         }
       } catch (error) {
@@ -47,15 +50,15 @@ const LocationModal = ({ onClose, onSave }) => {
 
   const handleSubmit = () => {
     if (!selectedLocation) return;
-    
-    const newLocation = { 
-      name, 
-      address: selectedLocation.address || searchQuery, 
-      pushText, 
+
+    const newLocation = {
+      name,
+      address: selectedLocation.address || searchQuery,
+      pushText,
       visible,
-      coords: selectedLocation.coords 
+      coords: selectedLocation.coords,
     };
-    
+
     onSave(newLocation);
     onClose();
   };
@@ -87,15 +90,16 @@ const LocationModal = ({ onClose, onSave }) => {
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && setSearchQuery(e.target.value)}
           />
-          {isSearching && (
-            <div className="search-loading">Идет поиск...</div>
-          )}
+          {isSearching && <div className="search-loading">Идет поиск...</div>}
         </div>
 
         {selectedLocation && (
           <div className="location-info">
             <p>Выбрано: {selectedLocation.address}</p>
-            <p>Координаты: {selectedLocation.coords.lat.toFixed(6)}, {selectedLocation.coords.lon.toFixed(6)}</p>
+            <p>
+              Координаты: {selectedLocation.coords.lat.toFixed(6)},{' '}
+              {selectedLocation.coords.lon.toFixed(6)}
+            </p>
           </div>
         )}
 

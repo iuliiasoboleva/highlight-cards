@@ -1,3 +1,7 @@
+.mailings-settings-container {
+  padding: 20px 20px 20px 0;
+}
+
 .mailings-search {
   width: 100%;
   padding: 10px;
@@ -47,4 +51,10 @@
 .mailing-instruction {
   font-size: 13px;
   margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .mailings-settings-container {
+    padding: 20px 20px 0px 20px;
+  }
 }

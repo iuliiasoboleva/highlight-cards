@@ -37,15 +37,15 @@ const Clients = () => {
 
       <div className="clients-stats-grid">
         <div className="clients-stat-card">
-          <span className="stat-value">{clients.length}</span>
+          <span className="stat-clients-value">{clients.length}</span>
           <span className="stat-label">Клиентов в базе</span>
         </div>
         <div className="clients-stat-card">
-          <span className="stat-value">0</span>
+          <span className="stat-clients-value">0</span>
           <span className="stat-label">Транзакций по картам</span>
         </div>
         <div className="clients-stat-card">
-          <span className="stat-value">0</span>
+          <span className="stat-clients-value">0</span>
           <span className="stat-label">Карт установлено</span>
         </div>
         <div className="clients-stat-card">

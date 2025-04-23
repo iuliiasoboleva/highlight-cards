@@ -73,7 +73,9 @@ const ManagersPage = () => {
             они смогут пробивать штампы клиентам и выдавать награды.
           </p>
           <img className="scanner-icon" src="/scanner.png" alt="scanner" />
-          <button className="btn-dark" onClick={() => navigate('/scan')}>Открыть</button>
+          <button className="btn-dark" onClick={() => navigate('/scan')}>
+            Открыть
+          </button>
         </div>
 
         {filteredManagers.map((m) => (

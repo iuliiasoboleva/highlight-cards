@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { useDebounce } from 'use-debounce';
+
 import CardInfo from '../../components/CardInfo';
 import YandexMapPicker from '../../components/YandexMapPicker';
 
 import './styles.css';
-import { useDebounce } from 'use-debounce';
 
 const MAX_LOCATIONS = 10;
-const API_KEY = 'a886f296-c974-43b3-aa06-a94c782939c2';
 
 const Locations = () => {
   const mapRef = useRef(null);
@@ -37,8 +37,8 @@ const Locations = () => {
             address: debouncedSearchQuery,
             coords: {
               lat: coords[0],
-              lon: coords[1]
-            }
+              lon: coords[1],
+            },
           });
         }
       } catch (error) {
@@ -99,23 +99,24 @@ const Locations = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && setSearchQuery(e.target.value)}
           />
-          {isSearching && (
-            <div className="search-loading">Идет поиск...</div>
-          )}
+          {isSearching && <div className="search-loading">Идет поиск...</div>}
         </div>
 
         {selectedLocation && (
           <div className="location-info">
             <p>Выбрано: {selectedLocation.address}</p>
-            <p>Координаты: {selectedLocation.coords.lat.toFixed(6)}, {selectedLocation.coords.lon.toFixed(6)}</p>
+            <p>
+              Координаты: {selectedLocation.coords.lat.toFixed(6)},{' '}
+              {selectedLocation.coords.lon.toFixed(6)}
+            </p>
           </div>
         )}
 
-          <YandexMapPicker
-            ref={mapRef}
-            onSelect={handleMapSelect}
-            initialCoords={selectedLocation?.coords}
-          />
+        <YandexMapPicker
+          ref={mapRef}
+          onSelect={handleMapSelect}
+          initialCoords={selectedLocation?.coords}
+        />
 
         {currentAddress && (
           <div className="location-preview">

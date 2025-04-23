@@ -12,6 +12,11 @@ export const mockCards = [
     name: 'Создать карту',
     certificateName: '',
     balanceMoney: 1800,
+    subscribersCount: 150,
+    pushNotification: {
+      message: 'У нас скидка',
+      scheduledDate: '',
+    },
   },
   {
     id: 3,
@@ -26,6 +31,11 @@ export const mockCards = [
     name: 'Создать карту',
     visitsCount: 2,
     score: 10,
+    subscribersCount: 150,
+    pushNotification: {
+      message: 'У нас скидка',
+      scheduledDate: '',
+    },
   },
   {
     id: 4,
@@ -41,6 +51,11 @@ export const mockCards = [
     credits: 1000,
     cashbackStatus: 'Бронзовый',
     cashbackPercent: 1,
+    subscribersCount: 150,
+    pushNotification: {
+      message: 'У нас скидка',
+      scheduledDate: '',
+    },
   },
   {
     id: 5,
@@ -55,6 +70,11 @@ export const mockCards = [
     name: 'Создать карту',
     visitsCount: 8,
     cardLevel: 'Золотой',
+    subscribersCount: 150,
+    pushNotification: {
+      message: 'У нас скидка',
+      scheduledDate: '',
+    },
   },
   {
     id: 6,
@@ -70,6 +90,11 @@ export const mockCards = [
     balance: 500,
     untilNextReward: 2,
     currentLevel: '',
+    subscribersCount: 150,
+    pushNotification: {
+      message: 'У нас скидка',
+      scheduledDate: '',
+    },
   },
   {
     id: 7,
@@ -83,6 +108,11 @@ export const mockCards = [
     stamps: 2,
     frameUrl: '/phone.svg',
     name: 'Создать карту',
+    subscribersCount: 150,
+    pushNotification: {
+      message: 'У нас скидка',
+      scheduledDate: '',
+    },
   },
   {
     id: 8,
@@ -98,6 +128,11 @@ export const mockCards = [
     stamps: 2,
     expirationDate: '00.00.0000',
     firstVisitDiscount: '10',
+    subscribersCount: 150,
+    pushNotification: {
+      message: 'У нас скидка',
+      scheduledDate: '',
+    },
   },
   {
     id: 9,
@@ -112,5 +147,10 @@ export const mockCards = [
     name: 'Создать карту',
     discountStatus: 'Бронзовый',
     discountPercent: 1,
+    subscribersCount: 150,
+    pushNotification: {
+      message: 'У нас скидка',
+      scheduledDate: '',
+    },
   },
 ];

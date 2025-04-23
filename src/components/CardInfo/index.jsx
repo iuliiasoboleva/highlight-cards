@@ -1,8 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import { STATUS_CONFIG } from './defaultCardInfo';
+
 import './styles.css';
 
 const CardInfo = ({ card }) => {
@@ -11,7 +14,8 @@ const CardInfo = ({ card }) => {
 
   const stampsQuantity = design?.stampsQuantity || 0;
   const stampIcon = design?.stampIcon || faStar;
-  const restStamps = card.status === 'stamp' ? (design?.stampsQuantity || 10) - (card.stamps || 0) : 0;
+  const restStamps =
+    card.status === 'stamp' ? (design?.stampsQuantity || 10) - (card.stamps || 0) : 0;
 
   const barcodeImage = card.settings?.barcodeType === 'pdf417' ? card.pdfImg : card.qrImg;
 
@@ -21,7 +25,7 @@ const CardInfo = ({ card }) => {
     cardImg: design?.background || card.cardImg,
     ...design?.colors,
     stampsQuantity,
-    stampIcon
+    stampIcon,
   };
 
   const renderFieldValue = (value, { format, suffix }) => {
@@ -32,7 +36,7 @@ const CardInfo = ({ card }) => {
     const totalStamps = mergedCard.stampsQuantity || 10;
     const activeStamps = card.stamps || 0;
     const rows = Math.ceil(totalStamps / 5);
-    
+
     return (
       <div className="stamp-container">
         {[...Array(rows)].map((_, rowIndex) => (
@@ -40,13 +44,13 @@ const CardInfo = ({ card }) => {
             {[...Array(5)].map((_, stampIndex) => {
               const stampNumber = rowIndex * 5 + stampIndex;
               if (stampNumber >= totalStamps) return null;
-              
+
               return (
                 <FontAwesomeIcon
                   key={`stamp-${stampNumber}`}
                   icon={stampIcon}
                   style={{
-                    color: stampNumber < activeStamps ? "black" : "gray",
+                    color: stampNumber < activeStamps ? 'black' : 'gray',
                   }}
                 />
               );
@@ -71,12 +75,10 @@ const CardInfo = ({ card }) => {
           backgroundColor: mergedCard.centerBackground,
         }}
       >
-        <p className="card-name">
-          {mergedCard.name}
-        </p>
+        <p className="card-name">{mergedCard.name}</p>
         {fields
           .filter(({ valueKey }) =>
-            ['balanceMoney', 'credits', 'balance', 'expirationDate'].includes(valueKey)
+            ['balanceMoney', 'credits', 'balance', 'expirationDate'].includes(valueKey),
           )
           .map(({ label, valueKey, suffix, format, defaultValue }) => {
             const value = mergedCard[valueKey] ?? defaultValue;
@@ -89,21 +91,19 @@ const CardInfo = ({ card }) => {
           })}
       </div>
 
-      {(card.status === 'subscription' || card.status === 'stamp') ? (
+      {card.status === 'subscription' || card.status === 'stamp' ? (
         renderStamps()
+      ) : mergedCard.cardImg ? (
+        <img
+          className="card-info-main-img"
+          src={mergedCard.cardImg}
+          alt="Card background"
+          style={{
+            backgroundColor: mergedCard.centerBackground,
+          }}
+        />
       ) : (
-        mergedCard.cardImg
-          ? <img
-            className="card-info-main-img"
-            src={mergedCard.cardImg}
-            alt="Card background"
-            style={{
-              backgroundColor: mergedCard.centerBackground,
-            }}
-          />
-          : <div className='card-background'>
-            Фоновое изображение
-          </div>
+        <div className="card-background">Фоновое изображение</div>
       )}
 
       <div
@@ -122,9 +122,7 @@ const CardInfo = ({ card }) => {
                 <p className="card-info-row-label" title={label}>
                   {label}:
                 </p>
-                <p>
-                  {renderFieldValue(value, { format, suffix })}
-                </p>
+                <p>{renderFieldValue(value, { format, suffix })}</p>
               </div>
             )
           );

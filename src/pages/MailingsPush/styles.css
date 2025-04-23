@@ -1,22 +1,9 @@
-.mailings-push-container {
-  padding: 24px;
-  max-width: 640px;
-}
-
 .mailings-push-title {
   font-size: 22px;
   margin-bottom: 8px;
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.free-badge {
-  background: #6f42c1;
-  color: #fff;
-  padding: 2px 8px;
-  font-size: 12px;
-  border-radius: 12px;
 }
 
 .mailings-push-description {
@@ -89,6 +76,10 @@
   font-size: 14px;
   color: #666;
   margin-bottom: 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
 }
 
 .push-schedule {
@@ -118,4 +109,12 @@
   border-radius: 6px;
   border: 1px solid #ccc;
   resize: vertical;
+}
+
+@media (max-width: 768px) {
+  .push-schedule {
+    flex-direction: column;
+    gap: 8px;
+    justify-content: center;
+  }
 }

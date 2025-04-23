@@ -28,7 +28,6 @@ const QRPopup = ({ cardId, onClose }) => {
     <div className="qr-popup-overlay">
       <div className="qr-popup-container">
         <div className="location-modal-header">
-
           <h2>Посмотреть на своем телефоне</h2>
           <button className="location-modal-close" onClick={onClose}>
             ×

@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { mockCards } from '../mocks/cardData';
 import { defaultCardTemplate } from '../components/CardInfo/defaultCardInfo';
+import { mockCards } from '../mocks/cardData';
 
 // Фиксированная карта для создания новых карт
 export const fixedCard = {
