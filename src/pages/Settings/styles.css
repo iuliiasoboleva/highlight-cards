@@ -84,18 +84,6 @@
   font-weight: 600;
 }
 
-.tariff-btn-dark {
-  margin-top: 8px;
-  background: #000;
-  color: #fff;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  max-width: 250px;
-  width: 100%;
-}
-
 .tariff-table-wrapper {
   overflow-x: auto;
 }

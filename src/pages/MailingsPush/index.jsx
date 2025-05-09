@@ -6,8 +6,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import CustomSelect from '../../components/CustomSelect';
 import PushPreview from '../../components/PushPreview';
-import { pluralize } from '../../helpers/pluralize';
+import { pluralVerb, pluralize } from '../../helpers/pluralize';
 import { updateCurrentCard } from '../../store/cardsSlice';
+import PushTargetTabs from './PushTargetTabs';
 
 import './styles.css';
 
@@ -16,19 +17,28 @@ const MailingsPush = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
   const [activeTab, setActiveTab] = useState('settings');
 
-  const currentCard = useSelector((state) => state.cards.currentCard);
-  const cards = useSelector((state) => state.cards.cards.filter((card) => card.id !== 'fixed'));
+  const allCards = useSelector((state) => state.cards.cards);
+  const cards = allCards.filter((card) => card.id !== 'fixed');
+  const hasActiveCards = cards.length > 0;
 
+  const currentCard = useSelector((state) => state.cards.currentCard);
   const [pushMessage, setPushMessage] = useState('');
   const [scheduledDate, setScheduledDate] = useState('');
   const [isScheduled, setIsScheduled] = useState(false);
-  const usersCount = currentCard?.subscribersCount || 0;
+  const [selectedTab, setSelectedTab] = useState('all');
+  const [usersCount, setUsersCount] = useState(0);
 
   const getMinDateTime = () => {
     const now = new Date();
     now.setMinutes(now.getMinutes() + 5);
     return now.toISOString().slice(0, 16);
   };
+
+  useEffect(() => {
+    if ((!currentCard || !cards.find((c) => c.id === currentCard.id)) && cards.length > 0) {
+      dispatch(updateCurrentCard(cards[0]));
+    }
+  }, [currentCard, cards, dispatch]);
 
   useEffect(() => {
     if (currentCard) {
@@ -92,7 +102,7 @@ const MailingsPush = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const pushContent = (
+  const pushContent = hasActiveCards ? (
     <div className="mailings-push-container">
       <h2 className="mailings-push-title">
         Отправить push
@@ -108,17 +118,15 @@ const MailingsPush = () => {
             label: card.title,
           }))}
           className="tariff-period-select"
-          disabled={cards.length === 0}
+          disabled={!hasActiveCards}
         />
 
-        <div className="push-toggle-buttons">
-          <button className="btn btn-light">Всем клиентам</button>
-        </div>
+        <PushTargetTabs onTabChange={setSelectedTab} onFilteredCountChange={setUsersCount} />
 
         <p className="push-recipient-count">
           <FontAwesomeIcon icon={faUsers} style={{ fontSize: 14 }} />
-          {usersCount} {pluralize(usersCount, ['клиент', 'клиента', 'клиентов'])} получат ваше
-          сообщение
+          {usersCount} {pluralize(usersCount, ['клиент', 'клиента', 'клиентов'])}{' '}
+          {pluralVerb(usersCount, 'получит', 'получат')} ваше сообщение
         </p>
 
         <div className="push-schedule">
@@ -154,9 +162,17 @@ const MailingsPush = () => {
         </button>
       </div>
     </div>
+  ) : (
+    <div className="mailings-push-container">
+      <h2 className="mailings-push-title">Push-уведомления</h2>
+      <p className="no-active-cards-text">
+        У вас нет активных карт, чтобы настроить push-уведомление. Пожалуйста, создайте и
+        активируйте карту в разделе "Карты".
+      </p>
+    </div>
   );
 
-  const cardPreview = (
+  const cardPreview = hasActiveCards && (
     <div className="type-card-image-container">
       <img className="card-image-add" src="/phone.svg" alt="preview" />
       <PushPreview

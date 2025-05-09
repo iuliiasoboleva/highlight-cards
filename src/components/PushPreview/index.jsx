@@ -7,7 +7,7 @@ import './styles.css';
 
 const PushPreview = ({ card, message, scheduledDate }) => {
   return (
-    <div className="card-info" style={{ maxWidth: '300px' }}>
+    <div className="card-info" style={{ maxWidth: '210px' }}>
       {scheduledDate && (
         <div className="push-preview-header">
           <FontAwesomeIcon icon={faBell} className="push-app-icon" />

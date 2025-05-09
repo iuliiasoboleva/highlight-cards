@@ -17,6 +17,7 @@ import './styles.css';
 
 const Chart = ({
   title = 'Статистика аккаунта',
+  subtitle,
   generateData,
   overallStats,
   periodLabels,
@@ -103,8 +104,8 @@ const Chart = ({
     <>
       <div className="title-block">
         <h2 className="title">{title}</h2>
-
-        <div className="filters">
+        <p className="chart-subtitle">{subtitle}</p>
+        {/* <div className="filters">
           {Object.keys(periods).map((key) => (
             <button
               key={key}
@@ -115,7 +116,7 @@ const Chart = ({
               {periods[key]}
             </button>
           ))}
-        </div>
+        </div> */}
       </div>
 
       <div className="statistics-card">

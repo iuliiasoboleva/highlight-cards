@@ -5,13 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import {
   faCircleQuestion,
   faDollarSign,
-  faGift,
-  faMoneyCheckDollar,
   faPercent,
   faStamp,
-  faTag,
   faTicket,
-  faUserGroup,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -21,14 +17,10 @@ import { addCard, initializeCurrentCard, updateCurrentCard } from '../../store/c
 import './styles.css';
 
 const cardTypes = [
-  { id: 'stamp', name: 'Штамп', icon: faStamp, tag: 'high' },
-  { id: 'reward', name: 'Награда', icon: faGift, tag: 'high' },
-  { id: 'club', name: 'Клубная карта', icon: faUserGroup, tag: 'high' },
+  { id: 'stamps', name: 'Штамп', icon: faStamp, tag: 'high' },
   { id: 'discount', name: 'Скидка', icon: faPercent, tag: 'high' },
   { id: 'cashback', name: 'Кешбэк', icon: faDollarSign, tag: 'high' },
-  { id: 'coupon', name: 'Купон', icon: faTag, tag: 'shop' },
   { id: 'subscription', name: 'Абонемент', icon: faTicket, tag: 'shop' },
-  { id: 'certificate', name: 'Сертификат', icon: faMoneyCheckDollar, tag: 'shop' },
 ];
 
 const EditType = () => {

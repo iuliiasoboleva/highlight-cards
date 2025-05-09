@@ -30,6 +30,7 @@ const Home = () => {
     <div className="statistics-container">
       <Chart
         title="Статистика пользователей"
+        subtitle="Следите за тем, сколько людей приходит к вам, кто возвращается, и как меняется активность клиентов. Выбирайте удобный период — день, неделя, месяц или год — чтобы видеть полную картину и находить точки роста."
         generateData={generateData}
         overallStats={overallStats}
         periodLabels={periodLabels}
@@ -37,8 +38,6 @@ const Home = () => {
       />
       <h2 className="title">Лояльность</h2>
       <div className="portrait-chart">
-        <ClientPortraitCard title="Уровень лояльности" value="" />
-        <ClientPortraitCard title="Недовольные клиенты" value="" />
         <ClientPortraitCard title="Гендерное соотношение" value="" />
         <ClientPortraitCard title="Устройства" value="" />
       </div>

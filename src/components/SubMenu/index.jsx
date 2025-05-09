@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css';
 
 import './styles.css';
 
@@ -33,13 +35,25 @@ const SubMenu = ({ menuItems, showNameInput, onNameChange, initialName }) => {
 
           if (item.disabled) {
             return (
-              <button
-                key={item.label}
-                className={`sub-menu-link ${isActive ? 'active' : ''} static`}
-                disabled
-              >
-                {item.label}
-              </button>
+              <React.Fragment key={item.label}>
+                <button
+                  className={`sub-menu-link ${isActive ? 'active' : ''} static`}
+                  disabled
+                  data-tooltip-id={`tooltip-${item.label}`}
+                  data-tooltip-content={item.tooltip || ''}
+                  data-tooltip-trigger="click"
+                >
+                  {item.label}
+                </button>
+                {item.tooltip && (
+                  <Tooltip
+                    id={`tooltip-${item.label}`}
+                    place="bottom"
+                    clickable
+                    className="tooltip-on-bottom"
+                  />
+                )}
+              </React.Fragment>
             );
           }
 

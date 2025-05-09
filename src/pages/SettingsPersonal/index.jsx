@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import CustomSelect from '../../components/CustomSelect';
-import { removeAvatar, resetUser, setAvatar, updateField } from '../../store/userSlice';
+import { logout, removeAvatar, setAvatar, updateField } from '../../store/userSlice';
 
 import './styles.css';
 
@@ -47,7 +47,7 @@ const SettingsPersonal = () => {
     e.preventDefault();
     if (confirmDelete === 'ПОДТВЕРЖДАЮ') {
       alert('Аккаунт будет удален (мок)');
-      dispatch(resetUser());
+      dispatch(logout());
     } else {
       alert('Введите подтверждение правильно');
     }

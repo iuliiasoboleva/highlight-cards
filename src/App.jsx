@@ -12,12 +12,15 @@ import {
 } from 'react-router-dom';
 
 import AuthForm from './components/AuthForm';
+import Breadcrumbs from './components/Breadcrumbs';
 import Header from './components/Header';
 import NotFound from './components/NotFound';
 import Sidebar from './components/Sidebar';
 import SubMenu from './components/SubMenu';
 import Tabs from './components/Tabs';
 import AuthLayout from './layouts/AuthLayout';
+import { mockClients } from './mocks/clientsInfo';
+import { mockUserProfile } from './mocks/mockUserProfile';
 import CardDetails from './pages/CardDetails';
 import Cards from './pages/Cards';
 import Clients from './pages/Clients';
@@ -28,11 +31,11 @@ import EditDesign from './pages/EditDesign';
 import EditInfo from './pages/EditInfo';
 import EditSettings from './pages/EditSettings';
 import EditType from './pages/EditType';
+import Footer from './pages/Footer';
 import Home from './pages/Home';
 import Locations from './pages/Locations';
 import Mailings from './pages/Mailings';
 import MailingsAutoPush from './pages/MailingsAutoPush';
-import MailingsInbox from './pages/MailingsInbox';
 import MailingsInfo from './pages/MailingsInfo';
 import MailingsPush from './pages/MailingsPush';
 import MailingsSettings from './pages/MailingsSettings';
@@ -46,6 +49,8 @@ import SettingsPersonal from './pages/SettingsPersonal';
 import SettingsRFMSegment from './pages/SettingsRFMSegment';
 import StatsTab from './pages/StatsTab';
 import { initializeCards, updateCurrentCard } from './store/cardsSlice';
+import { setClients } from './store/clientsSlice';
+import { setUser } from './store/userSlice';
 
 const MainLayout = () => {
   const location = useLocation();
@@ -63,6 +68,8 @@ const MainLayout = () => {
 
   useEffect(() => {
     dispatch(initializeCards());
+    dispatch(setClients(mockClients));
+    dispatch(setUser(mockUserProfile));
   }, [dispatch]);
 
   if (hideLayout) {
@@ -72,11 +79,13 @@ const MainLayout = () => {
   const getMenuItems = () => {
     if (matchCreate) {
       const base = '/cards/create';
+      const tooltipText = 'Выберите тип карты, чтобы продолжить';
+
       return [
         { to: `${base}`, label: 'Тип карты' },
-        { to: `${base}/settings`, label: 'Настройки', disabled: true },
-        { to: `${base}/design`, label: 'Дизайн', disabled: true },
-        { to: `${base}/info`, label: 'Информация', disabled: true },
+        { to: `${base}/settings`, label: 'Настройки', disabled: true, tooltip: tooltipText },
+        { to: `${base}/design`, label: 'Дизайн', disabled: true, tooltip: tooltipText },
+        { to: `${base}/info`, label: 'Информация', disabled: true, tooltip: tooltipText },
       ];
     }
 
@@ -103,11 +112,11 @@ const MainLayout = () => {
     if (matchMailings) {
       return [
         { to: `/mailings/info`, label: 'Рассылки' },
-        { to: `/mailings/inbox`, label: 'Входящие' },
         { to: `/mailings/push`, label: 'Отправить push' },
         { to: `/mailings/auto-push`, label: 'Автоматизация push' },
         { to: `/mailings/user-push`, label: 'Пользовательские авто-push' },
         { to: `/mailings/settings`, label: 'Настройки' },
+        { to: `/mailings/rfm-segment`, label: 'Сегментация клиентов' },
       ];
     }
 
@@ -115,7 +124,6 @@ const MainLayout = () => {
       return [
         { to: `/settings`, label: 'Тарифный план' },
         { to: `/settings/personal`, label: 'Персональные настройки' },
-        { to: `/settings/rfm-segment`, label: 'RFM' },
       ];
     }
 
@@ -138,7 +146,9 @@ const MainLayout = () => {
       <div className="main">
         <Sidebar />
         <div className="page-content">
+          <Breadcrumbs />
           <Outlet />
+          <Footer />
         </div>
       </div>
     </div>
@@ -178,11 +188,11 @@ const App = () => {
           <Route path="/cards/template" element={<Cards />} />
           <Route path="/mailings" element={<Mailings />}>
             <Route path="info" element={<MailingsInfo />} />
-            <Route path="inbox" element={<MailingsInbox />} />
             <Route path="push" element={<MailingsPush />} />
             <Route path="auto-push" element={<MailingsAutoPush />} />
             <Route path="user-push" element={<MailingsUserPush />} />
             <Route path="settings" element={<MailingsSettings />} />
+            <Route path="rfm-segment" element={<SettingsRFMSegment />} />
           </Route>
           <Route path="/cards/:id/edit" element={<CardEditGuard />}>
             <Route path="type" element={<EditType />} />
@@ -193,7 +203,6 @@ const App = () => {
           <Route path="/settings" element={<Settings />} />
           <Route path="/settings" element={<SettingsLayout />}>
             <Route path="personal" element={<SettingsPersonal />} />
-            <Route path="rfm-segment" element={<SettingsRFMSegment />} />
           </Route>
           <Route path="/cards/:id" element={<CardDetails />}>
             <Route index element={<DefaultCardInfo />} />

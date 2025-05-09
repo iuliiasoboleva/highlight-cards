@@ -1,12 +1,17 @@
 .title-block {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
 }
 
 .title {
   font-size: 24px;
   font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.chart-subtitle {
+  font-size: 18px;
   margin-bottom: 16px;
 }
 
@@ -155,6 +160,13 @@
 .react-datepicker__month-select,
 .react-datepicker__year-select {
   font-size: 14px;
+}
+
+.statistics-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 20px 20px 20px 0;
 }
 
 @media (max-width: 768px) {

@@ -30,7 +30,7 @@
   margin-bottom: 5px;
 }
 
-.stat-label {
+.stat-clients-label {
   color: #7f8c8d;
   font-size: 14px;
 }
@@ -140,17 +140,17 @@
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
 }
 
-.modal-title {
+.clients-modal-title {
   margin-top: 0;
   color: #2c3e50;
   margin-bottom: 20px;
 }
 
-.modal-form-group {
+.clients-modal-form-group {
   margin-bottom: 15px;
 }
 
-.modal-input {
+.clients-modal-input {
   width: 100%;
   padding: 12px 15px;
   border: 1px solid #ddd;
@@ -158,14 +158,15 @@
   font-size: 16px;
 }
 
-.modal-actions {
+.clients-modal-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  flex-direction: column;
   gap: 10px;
   margin-top: 20px;
 }
 
-.modal-button {
+.clients-modal-button {
   padding: 10px 20px;
   border-radius: 6px;
   font-size: 16px;
@@ -174,13 +175,13 @@
   background: white;
 }
 
-.modal-button-primary {
+.clients-modal-button-primary {
   background-color: black;
   color: white;
   border: none;
 }
 
-.modal-button-secondary {
+.clients-modal-button-secondary {
   background-color: #f5f5f5;
 }
 
@@ -239,6 +240,45 @@
 
 .icon-birthday:before {
   content: '🎂';
+}
+.clients-tooltip-wrapper {
+  position: relative;
+}
+
+.clients-tooltip {
+  position: absolute;
+  bottom: 100%;
+  right: 20px;
+  background-color: #333;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  transform: translateY(-4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+}
+
+.clients-tooltip-wrapper:hover .clients-tooltip {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.link-container {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.link-container input {
+  width: 100%;
+}
+
+.copy-link-button {
+  text-decoration: dashed;
 }
 
 @media (max-width: 768px) {

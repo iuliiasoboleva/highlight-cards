@@ -55,6 +55,7 @@
   cursor: pointer;
   font-weight: 500;
   border: none;
+  width: 100%;
 }
 
 .btn-light {
@@ -99,6 +100,7 @@
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 6px;
+  cursor: pointer;
 }
 
 .push-textarea {
@@ -109,6 +111,33 @@
   border-radius: 6px;
   border: 1px solid #ccc;
   resize: vertical;
+}
+
+.push-tabs {
+  margin-bottom: 16px;
+}
+
+.push-segment-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.push-input {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.no-active-cards-text {
+  padding: 16px;
+  background-color: #f9f9f9;
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+  color: #555;
+  margin-top: 12px;
 }
 
 @media (max-width: 768px) {

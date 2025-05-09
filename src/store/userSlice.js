@@ -1,9 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { mockUserProfile } from '../mocks/mockUserProfile';
-
 const initialState = {
-  ...mockUserProfile,
+  firstName: '',
+  lastName: '',
+  email: '',
+  avatar: null,
+  token: null,
+  // добавь нужные поля, которые ты хочешь отслеживать
 };
 
 export const userSlice = createSlice({
@@ -20,9 +23,12 @@ export const userSlice = createSlice({
     removeAvatar: (state) => {
       state.avatar = null;
     },
-    resetUser: () => initialState,
+    setUser: (state, action) => {
+      return { ...state, ...action.payload };
+    },
+    logout: () => initialState,
   },
 });
 
-export const { updateField, setAvatar, removeAvatar, resetUser } = userSlice.actions;
+export const { updateField, setAvatar, removeAvatar, setUser, logout } = userSlice.actions;
 export default userSlice.reducer;

@@ -37,17 +37,6 @@
   height: 32px;
 }
 
-.btn-dark {
-  background: #000;
-  color: #fff;
-  padding: 10px 16px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 12px;
-}
-
 .mailing-instruction {
   font-size: 13px;
   margin-top: 8px;

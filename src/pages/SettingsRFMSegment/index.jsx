@@ -4,42 +4,42 @@ import './styles.css';
 
 const mockRFM = [
   {
-    title: 'RFM - Требуют внимания',
+    title: 'Требуют внимания',
     freqFrom: 8,
     freqTo: 12,
     recencyFrom: 61,
     recencyTo: 90,
   },
   {
-    title: 'RFM - Лояльные - постоянные',
+    title: 'Лояльные - постоянные',
     freqFrom: 8,
     freqTo: 12,
     recencyFrom: 31,
     recencyTo: 60,
   },
   {
-    title: 'RFM - Чемпионы',
+    title: 'Чемпионы',
     freqFrom: 8,
     freqTo: 12,
     recencyFrom: 0,
     recencyTo: 30,
   },
   {
-    title: 'RFM - В зоне риска',
+    title: 'В зоне риска',
     freqFrom: 4,
     freqTo: 7,
     recencyFrom: 61,
     recencyTo: 90,
   },
   {
-    title: 'RFM - Средние (на грани)',
+    title: 'Средние (на грани)',
     freqFrom: 4,
     freqTo: 7,
     recencyFrom: 31,
     recencyTo: 60,
   },
   {
-    title: 'RFM - Растущие',
+    title: 'Растущие',
     freqFrom: 4,
     freqTo: 7,
     recencyFrom: 0,
@@ -58,7 +58,7 @@ const SettingsRFMSegment = () => {
 
   return (
     <div className="rfm-settings-page">
-      <h2 className="rfm-title">Настройки RFM</h2>
+      <h2 className="rfm-title">Настройки сегментации</h2>
       <p className="rfm-subtitle">
         <span>Частота – визиты (как часто пользователи у вас покупают)</span>
         <span>Давность – дни (как давно ваши пользователи что-то у вас покупали)</span>

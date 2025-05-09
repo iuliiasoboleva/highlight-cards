@@ -6,16 +6,21 @@ import { mockCards } from '../mocks/cardData';
 // Фиксированная карта для создания новых карт
 export const fixedCard = {
   id: 'fixed',
-  title: 'Активна',
+  title: 'Не активна',
   status: 'fixed',
-  isActive: true,
+  isActive: false,
   isFixed: true,
   frameUrl: '/frame-empty.svg',
   name: 'Создать карту',
 };
 
 // Функция для получения всех карт (фиксированная + моки)
-const getAllCards = () => [fixedCard, ...mockCards];
+const getAllCards = () => {
+  const sortedCards = [...mockCards].sort((a, b) => {
+    return Number(b.isActive) - Number(a.isActive);
+  });
+  return [...sortedCards, fixedCard];
+};
 
 const initialState = {
   cards: [],

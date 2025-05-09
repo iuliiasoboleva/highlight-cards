@@ -52,7 +52,7 @@ const Sidebar = () => {
         <IconButton
           icon={faComments}
           onClick={handleNavigate('/mailings/info')}
-          title="Сообщения"
+          title="Рассылки"
           className={isActive('/mailings') ? 'active' : ''}
         />
         <IconButton
@@ -98,7 +98,7 @@ const Sidebar = () => {
         <IconButton
           icon={faComments}
           onClick={handleNavigate('/mailings/info')}
-          title="Сообщения"
+          title="Рассылки"
           className={isActive('/mailings') ? 'active' : ''}
         />
         <IconButton

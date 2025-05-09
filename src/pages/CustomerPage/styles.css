@@ -28,19 +28,6 @@
   flex-wrap: wrap;
 }
 
-.btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  flex: 1;
-  min-width: 120px;
-  text-align: center;
-}
-
 .btn-primary {
   background-color: #27ae60;
   color: white;
@@ -221,10 +208,6 @@
     gap: 10px;
   }
 
-  .btn {
-    width: 100%;
-  }
-
   .stamp-controls {
     flex-direction: column;
   }
@@ -257,8 +240,7 @@
     padding: 15px;
   }
 
-  .stamp-input,
-  .btn {
+  .stamp-input {
     padding: 8px 12px;
     font-size: 14px;
   }

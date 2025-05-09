@@ -41,19 +41,6 @@ const ManagersPage = () => {
     <div className="managers-page">
       <div className="managers-header">
         <h2>Менеджеры</h2>
-        <button className="download-btn">📥</button>
-      </div>
-
-      <div className="managers-controls">
-        <button className="btn-dark" onClick={() => setShowAddModal(true)}>
-          Добавить менеджера
-        </button>
-        <input
-          className="search-input"
-          placeholder="Введите имя менеджера"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
       </div>
 
       <div className="managers-grid">
@@ -63,7 +50,10 @@ const ManagersPage = () => {
             Создайте менеджеров для раздельного отслеживания эффективности выдачи карт и начисления
             штампов. Менеджеры могут быть распределены по торговым точкам или же по сменам.
           </p>
-          <span className="emoji">🧑‍💼</span>
+          <span className="scanner-icon">🧑‍💼</span>
+          <button className="btn-dark" onClick={() => setShowAddModal(true)}>
+            Добавить менеджера
+          </button>
         </div>
 
         <div className="manager-card scanner-card">
@@ -72,7 +62,7 @@ const ManagersPage = () => {
             Установите приложение-сканер карт своим менеджерам в точках продаж. С помощью приложения
             они смогут пробивать штампы клиентам и выдавать награды.
           </p>
-          <img className="scanner-icon" src="/scanner.png" alt="scanner" />
+          <span className="scanner-icon">📷</span>
           <button className="btn-dark" onClick={() => navigate('/scan')}>
             Открыть
           </button>

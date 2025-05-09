@@ -50,10 +50,13 @@ const MailingsInfo = () => {
   return (
     <div className="mailings-container">
       <h2 className="page-title">Рассылки</h2>
-
+      <p className="page-subtitle">
+        Здесь вы управляете своими рассылками: создавайте, планируйте, отправляйте Push, SMS и
+        Email-сообщения клиентам для повышения лояльности.
+      </p>
       <div className="stats-cards">
         {cards.map((card, index) => (
-          <div className="card" key={index}>
+          <div className="mailing-card" key={index}>
             <div className={`value ${card.className || ''}`}>{card.value}</div>
             <div className={`label ${card.className?.includes('small') ? 'small' : ''}`}>
               {card.label}
@@ -63,8 +66,8 @@ const MailingsInfo = () => {
       </div>
 
       <div className="alert">
-        Для создания рассылок необходимо подключить провайдера SMS или Email в настройках.{' '}
-        <a href="#">Подключить</a>
+        Чтобы отправлять SMS и Email-рассылки, подключите провайдера в настройках. Push-рассылки
+        доступны бесплатно! 🚀
       </div>
 
       <div className="table-wrapper">

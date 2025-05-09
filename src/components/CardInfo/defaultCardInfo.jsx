@@ -3,10 +3,6 @@ import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { pluralize } from '../../helpers/pluralize';
 
 export const STATUS_CONFIG = {
-  certificate: [
-    { label: 'Баланс', valueKey: 'balanceMoney', suffix: '₽' },
-    { label: 'Имя', valueKey: 'certificateName', suffix: '' },
-  ],
   cashback: [
     { label: 'Баллы', valueKey: 'credits', suffix: '' },
     {
@@ -21,25 +17,7 @@ export const STATUS_CONFIG = {
     { label: 'Общее количество визитов', valueKey: 'visitsCount' },
     { label: 'Срок действия', valueKey: 'expirationDate' },
   ],
-  club: [
-    { label: 'Уровень клубной карты', valueKey: 'cardLevel', suffix: '' },
-    {
-      label: 'Доступный лимит',
-      valueKey: 'visitsCount',
-      format: (value) => `${value} ${pluralize(value, ['визит', 'визита', 'визитов'])}`,
-    },
-    { label: 'Срок действия', valueKey: 'expirationDate' },
-  ],
-  reward: [
-    { label: 'Баланс', valueKey: 'balance', suffix: '₽' },
-    {
-      label: 'Текущий уровень',
-      valueKey: 'currentLevel',
-      defaultValue: 'Нет данных',
-    },
-    { label: 'До следующей награды', valueKey: 'untilNextReward' },
-  ],
-  stamp: [
+  stamps: [
     {
       label: 'До получения награды',
       valueKey: 'restStamps',
@@ -50,10 +28,6 @@ export const STATUS_CONFIG = {
       valueKey: 'stamps',
       format: (value) => `${value} ${pluralize(value, ['награда', 'награды', 'наград'])}`,
     },
-    { label: 'Срок действия', valueKey: 'expirationDate' },
-  ],
-  coupon: [
-    { label: 'Скидка на первый визит', valueKey: 'firstVisitDiscount' },
     { label: 'Срок действия', valueKey: 'expirationDate' },
   ],
   discount: [

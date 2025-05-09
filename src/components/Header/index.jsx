@@ -1,124 +1,52 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
-import {
-  faBars,
-  faBell,
-  faChevronDown,
-  faInfoCircle,
-  faTimes,
-  faUser,
-} from '@fortawesome/free-solid-svg-icons';
+import { faAddressCard, faGear, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { menuData } from '../../mocks/menuData';
+import { logout } from '../../store/userSlice';
 
 import './styles.css';
 
 const Header = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const user = useSelector((state) => state.user);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const toggleMenu = () => setIsMenuOpen((prev) => !prev);
-  const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
-
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login');
+  };
   return (
-    <>
-      <header className="header">
-        <div className="mobile-header">
-          <img src="/logoColored.png" alt="Logo" className="logo" />
-          <FontAwesomeIcon icon={faBars} className="burger-icon" onClick={toggleMobileMenu} />
+    <header className="header">
+      <div className="desktop-header">
+        <img src="/logoColored.png" alt="Logo" className="logo" />
+        <div className="user-section">
+          <span>Привет, {user.firstName}</span>
         </div>
 
-        <div className="desktop-header">
-          <img src="/logoColored.png" alt="Logo" className="logo" />
-          <div className="user-section" onClick={toggleMenu}>
-            <span> Привет, {user.firstName} </span>
-            <FontAwesomeIcon
-              icon={faChevronDown}
-              className={`chevron ${isMenuOpen ? 'open' : ''}`}
-            />
-            {isMenuOpen && (
-              <div className="dropdown-menu">
-                <div className="dropdown-content">
-                  <p>
-                    <strong>Пробный {menuData.tariff.name}</strong>
-                  </p>
-                  <div className="features">
-                    <div className="available">
-                      <h4>{menuData.available.title}</h4>
-                      <ul>
-                        {menuData.available.items.map((item, index) => (
-                          <li key={index}>{item}</li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="unavailable">
-                      <h4>{menuData.unavailable.title}</h4>
-                      <ul>
-                        {menuData.unavailable.items.map((item, index) => (
-                          <li key={index}>{item}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                  <p>
-                    У вас <strong>{menuData.tariff.name} (Пробный)</strong> тариф.
-                  </p>
-                  <p>{menuData.tariff.description}</p>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="header-icons">
-            <FontAwesomeIcon icon={faBell} />
-            <FontAwesomeIcon icon={faInfoCircle} />
-            <FontAwesomeIcon icon={faUser} />
-          </div>
-        </div>
-      </header>
-
-      {/* Мобильное меню */}
-      <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
-        <div className="mobile-menu-header">
-          <img src="/logoColored.png" alt="Logo" className="logo" />
-          <FontAwesomeIcon icon={faTimes} className="close-icon" onClick={toggleMobileMenu} />
-        </div>
-        <div className="mobile-menu-content">
-          <p>
-            Привет, <strong>{user.firstName}</strong>
-          </p>
-          <div className="features">
-            <div className="available">
-              <h4>{menuData.available.title}</h4>
-              <ul>
-                {menuData.available.items.map((item, index) => (
-                  <li key={index}>{item}</li>
-                ))}
-              </ul>
-            </div>
-            <div className="unavailable">
-              <h4>{menuData.unavailable.title}</h4>
-              <ul>
-                {menuData.unavailable.items.map((item, index) => (
-                  <li key={index}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          <p>
-            У вас <strong>{menuData.tariff.name} (Пробный)</strong> тариф.
-          </p>
-          <p>{menuData.tariff.description}</p>
-        </div>
         <div className="header-icons">
-          <FontAwesomeIcon icon={faBell} />
-          <FontAwesomeIcon icon={faInfoCircle} />
-          <FontAwesomeIcon icon={faUser} />
+          <div
+            className="icon-with-tooltip"
+            title="Мой профиль"
+            onClick={() => navigate('/managers')}
+          >
+            <FontAwesomeIcon icon={faAddressCard} />
+          </div>
+          <div
+            className="icon-with-tooltip"
+            title="Настройки"
+            onClick={() => navigate('/settings')}
+          >
+            <FontAwesomeIcon icon={faGear} />
+          </div>
+          <div className="icon-with-tooltip" title="Выйти" onClick={handleLogout}>
+            <FontAwesomeIcon icon={faRightFromBracket} />
+          </div>
         </div>
       </div>
-    </>
+    </header>
   );
 };
 

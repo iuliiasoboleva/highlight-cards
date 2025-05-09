@@ -8,3 +8,7 @@ export const pluralize = (count, variants) => {
 
   return variants[2];
 };
+
+export const pluralVerb = (count, singular, plural) => {
+  return count === 1 ? singular : plural;
+};
