@@ -21,6 +21,7 @@ export const mockCards = [
     pushNotification: {
       message: 'У нас скидка',
       scheduledDate: '',
+      locations: [],
     },
   },
   {
@@ -39,6 +40,7 @@ export const mockCards = [
     pushNotification: {
       message: 'У нас скидка',
       scheduledDate: '',
+      locations: [],
     },
   },
   {
@@ -59,6 +61,7 @@ export const mockCards = [
     pushNotification: {
       message: 'У нас скидка',
       scheduledDate: '',
+      locations: [],
     },
   },
   {
@@ -78,6 +81,7 @@ export const mockCards = [
     pushNotification: {
       message: 'У нас скидка',
       scheduledDate: '',
+      locations: [],
     },
   },
 ];

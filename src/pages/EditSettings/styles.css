@@ -10,7 +10,8 @@
 
 .search-container {
   position: relative;
-  margin-bottom: 15px;
+  margin-bottom: 16px;
+  margin-top: 16px;
 }
 
 .search-hint {
@@ -201,7 +202,6 @@
 .location-modal-input {
   width: 100%;
   padding: 12px 16px;
-  margin-bottom: 16px;
   border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 16px;

@@ -1,6 +1,5 @@
 .breadcrumbs {
   font-size: 14px;
-  margin-bottom: 16px;
   margin-top: 16px;
 }
 
@@ -11,4 +10,10 @@
 
 .breadcrumbs a:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 1024px) {
+  .breadcrumbs {
+    margin: 20px 20px 0 20px;
+  }
 }

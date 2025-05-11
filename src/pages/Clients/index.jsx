@@ -29,12 +29,13 @@ const Clients = () => {
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(generatedLink)
+    navigator.clipboard
+      .writeText(generatedLink)
       .then(() => {
         setIsCopied(true);
         setTimeout(() => setIsCopied(false), 2000);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('Ошибка копирования: ', err);
         const textArea = document.createElement('textarea');
         textArea.value = generatedLink;
@@ -60,7 +61,7 @@ const Clients = () => {
       key: 'actions',
       title: 'Действия',
       render: (row) => (
-        <a className='copy-link-button' onClick={() => generateClientLink(row.id)}>
+        <a className="copy-link-button" onClick={() => generateClientLink(row.id)}>
           Получить ссылку
         </a>
       ),
@@ -144,7 +145,7 @@ const Clients = () => {
               <input
                 className="clients-modal-input"
                 placeholder="Фамилия"
-                type='text'
+                type="text"
                 value={newClient.surname}
                 onChange={(e) => setNewClient({ ...newClient, surname: e.target.value })}
               />
@@ -153,7 +154,7 @@ const Clients = () => {
               <input
                 className="clients-modal-input"
                 placeholder="Имя"
-                type='text'
+                type="text"
                 value={newClient.name}
                 onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
               />
@@ -162,7 +163,7 @@ const Clients = () => {
               <input
                 className="clients-modal-input"
                 placeholder="Телефон"
-                type='number'
+                type="number"
                 value={newClient.phone}
                 onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
               />
@@ -171,7 +172,7 @@ const Clients = () => {
               <input
                 className="clients-modal-input"
                 placeholder="Email"
-                type='email'
+                type="email"
                 value={newClient.email}
                 onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
               />
@@ -211,16 +212,8 @@ const Clients = () => {
             </p>
 
             <div className="link-container">
-              <input
-                type="text"
-                value={generatedLink}
-                readOnly
-                className="push-input"
-              />
-              <button
-                onClick={handleCopy}
-                className={`btn-light ${isCopied ? 'copied' : ''}`}
-              >
+              <input type="text" value={generatedLink} readOnly className="push-input" />
+              <button onClick={handleCopy} className={`btn-light ${isCopied ? 'copied' : ''}`}>
                 {isCopied ? 'Скопировано!' : 'Копировать'}
               </button>
             </div>

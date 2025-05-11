@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import './styles.css';
@@ -22,11 +23,29 @@ const ManagersPage = () => {
     location: '',
     shift: '',
   });
+  const [cardNumber, setCardNumber] = useState('');
+
+  const clients = useSelector((state) => state.clients);
 
   const handleAdd = () => {
     setManagers([...managers, { ...newManager, id: Date.now() }]);
     setNewManager({ name: '', location: '', shift: '' });
     setShowAddModal(false);
+  };
+
+  const handleFindCustomer = () => {
+    const trimmedCard = cardNumber.trim();
+    if (!trimmedCard) return;
+
+    const foundClient = clients.find((client) =>
+      client.cards.some((card) => card.cardNumber === trimmedCard),
+    );
+
+    if (foundClient) {
+      navigate(`/customer/card/${trimmedCard}`);
+    } else {
+      alert('Клиент с такой картой не найден');
+    }
   };
 
   const handleRemove = (id) => {
@@ -53,6 +72,23 @@ const ManagersPage = () => {
           <span className="scanner-icon">🧑‍💼</span>
           <button className="btn-dark" onClick={() => setShowAddModal(true)}>
             Добавить менеджера
+          </button>
+        </div>
+        <div className="manager-card search-card">
+          <h3>Поиск по карте</h3>
+          <p>
+            Введите номер карты лояльности клиента, чтобы перейти к его профилю. Удобно, если нет
+            приложения-сканера.
+          </p>
+          <span className="scanner-icon">🔎</span>
+          <input
+            type="text"
+            placeholder="Номер карты"
+            value={cardNumber}
+            onChange={(e) => setCardNumber(e.target.value)}
+          />
+          <button className="btn-dark" onClick={handleFindCustomer}>
+            Найти клиента
           </button>
         </div>
 

@@ -1,49 +1,64 @@
 import React, { useState } from 'react';
-
-import { mockCustomerData } from '../../mocks/mockCustomerData';
+import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 
 import './styles.css';
 
 const CustomerPage = () => {
-  const [customer, setCustomer] = useState(mockCustomerData);
+  const { cardNumber } = useParams();
+  const clients = useSelector((state) => state.clients);
+
+  const customerWithCard = clients.find((client) =>
+    client.cards.some((card) => card.cardNumber === cardNumber),
+  );
+  console.log('customerWithCard', customerWithCard);
+  const selectedCard = customerWithCard?.cards.find((card) => card.cardNumber === cardNumber);
+  const selectedCardIndex = customerWithCard?.cards.findIndex(
+    (card) => card.cardNumber === cardNumber,
+  );
+  console.log('selectedCard', selectedCard);
+
+  const [customer, setCustomer] = useState(customerWithCard);
   const [stampsToAdd, setStampsToAdd] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [notification, setNotification] = useState(null);
 
-  // Имитация API-запроса
+  if (!customer || !selectedCard || selectedCardIndex === -1) {
+    return <div>Карта не найдена</div>;
+  }
+
   const mockApiCall = (action, data) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         try {
-          let response = { ...customer };
+          const updatedCustomer = { ...customer };
+          const updatedCard = { ...selectedCard };
 
           switch (action) {
             case 'addStamps':
-              response.activeStorage += data.amount;
-              response.stamps += data.amount;
+              updatedCard.activeStorage += data.amount;
+              updatedCard.stamps = (updatedCard.stamps || 0) + data.amount;
               break;
-
             case 'addReward':
-              response.availableRewards += 1;
-              response.lastRewardReceived = new Date().toLocaleDateString();
+              updatedCard.availableRewards += 1;
+              updatedCard.lastRewardReceived = new Date().toLocaleDateString();
               break;
-
             case 'receiveReward':
-              if (response.availableRewards <= 0) {
+              if (updatedCard.availableRewards <= 0) {
                 throw new Error('Нет доступных наград');
               }
-              response.availableRewards -= 1;
-              response.lastRewardReceived = new Date().toLocaleDateString();
-
-              if (response.activeStorage >= 10) {
-                response.activeStorage -= 10; // Пример: 10 баллов = 1 награда
+              updatedCard.availableRewards -= 1;
+              updatedCard.lastRewardReceived = new Date().toLocaleDateString();
+              if (updatedCard.activeStorage >= 10) {
+                updatedCard.activeStorage -= 10;
               }
               break;
-
             default:
               break;
           }
-          resolve(response);
+
+          updatedCustomer.cards[selectedCardIndex] = updatedCard;
+          resolve(updatedCustomer);
         } catch (error) {
           reject(error);
         }
@@ -120,7 +135,7 @@ const CustomerPage = () => {
         <button
           className="btn btn-secondary"
           onClick={handleReceiveReward}
-          disabled={isLoading || customer.availableRewards <= 0}
+          disabled={isLoading || selectedCard.availableRewards <= 0}
         >
           {isLoading ? 'Обработка...' : 'Получить награду'}
         </button>
@@ -151,38 +166,38 @@ const CustomerPage = () => {
       <div className="customer-info-grid">
         <div className="info-item">
           <span className="info-label">Текущие баллы:</span>
-          <span className="info-value">{customer.activeStorage}</span>
+          <span className="info-value">{selectedCard.activeStorage}</span>
         </div>
         <div className="info-item">
           <span className="info-label">Доступные награды:</span>
-          <span className="info-value">{customer.availableRewards}</span>
+          <span className="info-value">{selectedCard.availableRewards}</span>
         </div>
         <div className="info-item">
           <span className="info-label">Последняя награда:</span>
-          <span className="info-value">{customer.lastRewardReceived || '—'}</span>
+          <span className="info-value">{selectedCard.lastRewardReceived || '—'}</span>
         </div>
         <div className="info-item">
           <span className="info-label">Последнее начисление:</span>
-          <span className="info-value">{customer.lastAccrual}</span>
+          <span className="info-value">{selectedCard.lastAccrual || '—'}</span>
         </div>
         <div className="info-item">
           <span className="info-label">Срок действия карты:</span>
-          <span className="info-value">{customer.cardExpirationDate || '—'}</span>
+          <span className="info-value">{selectedCard.cardExpirationDate || '—'}</span>
         </div>
         <div className="info-item">
           <span className="info-label">Дата регистрации:</span>
-          <span className="info-value">{customer.cardInstallationDate}</span>
+          <span className="info-value">{selectedCard.cardInstallationDate || '—'}</span>
         </div>
       </div>
 
       <div className="serial-number">
         <span className="serial-label">Номер карты:</span>
-        <span className="serial-value">{customer.serialNumber}</span>
+        <span className="serial-value">{selectedCard.serialNumber}</span>
       </div>
 
       <div className="age-info">
         <span className="age-label">Статус:</span>
-        <span className="age-value">{customer.ageInfo}</span>
+        <span className="age-value">{selectedCard.ageInfo || '—'}</span>
       </div>
 
       <div className="instruction">

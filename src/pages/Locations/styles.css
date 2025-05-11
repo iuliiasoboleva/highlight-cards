@@ -30,6 +30,7 @@
   border-radius: 6px;
   font-weight: 500;
   margin-bottom: 20px;
+  margin-top: 16px;
 }
 
 .location-list {
@@ -83,10 +84,50 @@
   border-radius: 50%;
 }
 
+.search-container {
+  display: flex;
+  gap: 8px;
+}
+
+.search-loading {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
 input:checked + .slider {
   background-color: #000;
 }
 
 input:checked + .slider:before {
   transform: translateX(20px);
+}
+
+.locations-subtext {
+  margin-bottom: 12px;
+}
+
+.location-push-textarea {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.location-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.delete-location-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px;
+  color: #d00;
+  transition: color 0.2s;
+}
+
+.delete-location-btn:hover {
+  color: #a00;
 }

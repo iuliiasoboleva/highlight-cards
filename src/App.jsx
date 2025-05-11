@@ -216,7 +216,7 @@ const App = () => {
           <Route path="/clients" element={<Clients />} />
           <Route path="*" element={<NotFound />} />
         </Route>
-        <Route path="/customer/:id" element={<CustomerPage />} />
+        <Route path="/customer/card/:cardNumber" element={<CustomerPage />} />
       </Routes>
     </Router>
   );

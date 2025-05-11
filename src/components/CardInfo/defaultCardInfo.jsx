@@ -45,7 +45,7 @@ export const STATUS_CONFIG = {
 };
 
 export const defaultCardTemplate = {
-  id: 21,
+  id: 3,
   status: 'stamp',
   name: 'Накопительная карта',
   isActive: false,
@@ -83,6 +83,20 @@ export const defaultCardTemplate = {
   pushNotification: {
     message: '',
     scheduledDate: '',
+    locations: [
+      {
+        name: 'Москва, ул. Арбат, 10',
+        coords: [55.7522, 37.6156],
+        active: true,
+        message: 'Вы рядом с нашим магазином на Арбате! Зайдите за подарком 🎁',
+      },
+      {
+        name: 'Санкт-Петербург, Невский проспект',
+        coords: [59.9343, 30.3351],
+        active: true,
+        message: 'Скидка 15% для гостей у Невского! Ждём вас 👋',
+      },
+    ],
   },
   design: {
     logo: null,
