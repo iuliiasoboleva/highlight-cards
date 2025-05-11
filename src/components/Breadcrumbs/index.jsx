@@ -1,7 +1,5 @@
-// components/Breadcrumbs.js
 import React from 'react';
-import { Link, matchPath, useLocation } from 'react-router-dom';
-
+import { Link, useLocation } from 'react-router-dom';
 import './styles.css';
 
 const breadcrumbNameMap = {
@@ -16,65 +14,68 @@ const breadcrumbNameMap = {
   '/mailings/auto-push': 'Авто push',
   '/mailings/user-push': 'Пользовательские push',
   '/mailings/settings': 'Настройки рассылок',
-  '/mailings/rfm-segment': 'RFM-сегментация',
+  '/mailings/rfm-segment': 'Сегментация клиентов',
   '/settings': 'Настройки',
   '/settings/personal': 'Персональные',
   '/managers': 'Менеджеры',
   '/locations': 'Локации',
   '/customer': 'Клиент',
   '/scan': 'Сканирование',
+  '/cards/:id/edit/type': 'Тип карты',
+  '/cards/:id/edit/settings': 'Настройки',
+  '/cards/:id/edit/design': 'Дизайн',
+  '/cards/:id/edit/info': 'Информация',
+  '/cards/:id/info': 'Информация',
+  '/cards/:id/clients': 'Клиенты',
+  '/cards/:id/push': 'Push-уведомления',
+  '/cards/:id/stats': 'Статистика',
 };
 
-const dynamicBreadcrumbs = {
-  '/cards/:id': (params) => `Карта ${params.id}`,
-  '/cards/:id/edit': (params) => `Редактирование ${params.id}`,
-  '/cards/:id/edit/type': (params) => 'Тип карты',
-  '/cards/:id/edit/settings': (params) => 'Настройки',
-  '/cards/:id/edit/design': (params) => 'Дизайн',
-  '/cards/:id/edit/info': (params) => 'Информация',
-  '/cards/:id/info': (params) => 'Информация',
-  '/cards/:id/clients': (params) => 'Клиенты',
-  '/cards/:id/push': (params) => 'Push-уведомления',
-  '/cards/:id/stats': (params) => 'Статистика',
-  '/customer/:id': (params) => `Клиент ${params.id}`,
+const matchPathToName = (path) => {
+  if (breadcrumbNameMap[path]) return breadcrumbNameMap[path];
+
+  for (const pattern in breadcrumbNameMap) {
+    const patternParts = pattern.split('/');
+    const pathParts = path.split('/');
+
+    if (patternParts.length !== pathParts.length) continue;
+
+    const isMatch = patternParts.every((part, i) =>
+      part.startsWith(':') || part === pathParts[i]
+    );
+
+    if (isMatch) return breadcrumbNameMap[pattern];
+  }
+
+  return null;
 };
 
 const Breadcrumbs = () => {
   const location = useLocation();
   const pathnames = location.pathname.split('/').filter((x) => x);
 
-  // Проверяем динамические маршруты
-  const getDynamicBreadcrumb = (path) => {
-    for (const [route, fn] of Object.entries(dynamicBreadcrumbs)) {
-      const match = matchPath(route, path);
-      if (match) {
-        return fn(match.params);
-      }
+  const breadcrumbs = [{ name: 'Главная', path: '/' }];
+
+  for (let i = 0; i < pathnames.length; i++) {
+    const currentPath = `/${pathnames.slice(0, i + 1).join('/')}`;
+    const name = matchPathToName(currentPath);
+    if (name) {
+      breadcrumbs.push({ name, path: currentPath });
     }
-    return null;
-  };
+  }
 
   return (
     <nav className="breadcrumbs">
-      <Link to="/">Главная</Link>
-      {pathnames.map((_, index) => {
-        const to = `/${pathnames.slice(0, index + 1).join('/')}`;
-        const isLast = index === pathnames.length - 1;
-
-        // Проверяем динамические хлебные крошки
-        const dynamicName = getDynamicBreadcrumb(to);
-        const displayName =
-          dynamicName || breadcrumbNameMap[to] || decodeURIComponent(pathnames[index]);
-
-        return isLast ? (
-          <span key={to}>
-            {' '}
-            {'>'} {displayName}
-          </span>
-        ) : (
-          <span key={to}>
-            {' '}
-            {'>'} <Link to={to}>{displayName}</Link>
+      {breadcrumbs.map((crumb, index) => {
+        const isLast = index === breadcrumbs.length - 1;
+        return (
+          <span key={crumb.path}>
+            {index !== 0 && ' > '}
+            {isLast ? (
+              <span>{crumb.name}</span>
+            ) : (
+              <Link to={crumb.path}>{crumb.name}</Link>
+            )}
           </span>
         );
       })}

@@ -240,8 +240,8 @@
 
 .location-modal-actions {
   display: flex;
+  flex-direction: column;
   gap: 12px;
-  justify-content: flex-end;
 }
 
 .location-modal-button {

@@ -24,7 +24,6 @@ import { mockUserProfile } from './mocks/mockUserProfile';
 import CardDetails from './pages/CardDetails';
 import Cards from './pages/Cards';
 import Clients from './pages/Clients';
-import ClientsTab from './pages/ClientsTab';
 import CustomerPage from './pages/CustomerPage';
 import DefaultCardInfo from './pages/DefaultCardInfo';
 import EditDesign from './pages/EditDesign';
@@ -41,13 +40,11 @@ import MailingsPush from './pages/MailingsPush';
 import MailingsSettings from './pages/MailingsSettings';
 import MailingsUserPush from './pages/MailingsUserPush';
 import Managers from './pages/Managers';
-import PushTab from './pages/PushTab';
 import ScanPage from './pages/ScanPage';
 import Settings from './pages/Settings';
 import SettingsLayout from './pages/SettingsLayout';
 import SettingsPersonal from './pages/SettingsPersonal';
 import SettingsRFMSegment from './pages/SettingsRFMSegment';
-import StatsTab from './pages/StatsTab';
 import { initializeCards, updateCurrentCard } from './store/cardsSlice';
 import { setClients } from './store/clientsSlice';
 import { setUser } from './store/userSlice';
@@ -207,9 +204,9 @@ const App = () => {
           <Route path="/cards/:id" element={<CardDetails />}>
             <Route index element={<DefaultCardInfo />} />
             <Route path="info" element={<DefaultCardInfo />} />
-            <Route path="clients" element={<ClientsTab />} />
-            <Route path="push" element={<PushTab />} />
-            <Route path="stats" element={<StatsTab />} />
+            <Route path="clients" element={<Clients />} />
+            <Route path="push" element={<MailingsPush />} />
+            <Route path="stats" element={<Home />} />
           </Route>
           <Route path="/managers" element={<Managers />} />
           <Route path="/locations" element={<Locations />} />

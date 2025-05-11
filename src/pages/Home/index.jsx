@@ -4,6 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Chart from '../../components/Chart';
 import ClientPortraitCard from '../../components/ClientPortraitCard';
 import { generateData, overallStats } from '../../mocks/chartData';
+import { deviceStats, genderStats } from '../../mocks/portraitMockData';
 
 import './styles.css';
 
@@ -38,8 +39,8 @@ const Home = () => {
       />
       <h2 className="title">Лояльность</h2>
       <div className="portrait-chart">
-        <ClientPortraitCard title="Гендерное соотношение" value="" />
-        <ClientPortraitCard title="Устройства" value="" />
+        <ClientPortraitCard title={genderStats.title} data={genderStats.data} />
+        <ClientPortraitCard title={deviceStats.title} data={deviceStats.data} />
       </div>
     </div>
   );

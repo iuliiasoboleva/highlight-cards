@@ -1,29 +1,37 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-
+import { setClients, updateCard } from '../../store/clientsSlice';
+import { mockClients } from '../../mocks/clientsInfo';
 import './styles.css';
 
 const CustomerPage = () => {
   const { cardNumber } = useParams();
+  const dispatch = useDispatch();
   const clients = useSelector((state) => state.clients);
 
-  const customerWithCard = clients.find((client) =>
-    client.cards.some((card) => card.cardNumber === cardNumber),
-  );
-  console.log('customerWithCard', customerWithCard);
-  const selectedCard = customerWithCard?.cards.find((card) => card.cardNumber === cardNumber);
-  const selectedCardIndex = customerWithCard?.cards.findIndex(
-    (card) => card.cardNumber === cardNumber,
-  );
-  console.log('selectedCard', selectedCard);
-
-  const [customer, setCustomer] = useState(customerWithCard);
   const [stampsToAdd, setStampsToAdd] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [notification, setNotification] = useState(null);
 
-  if (!customer || !selectedCard || selectedCardIndex === -1) {
+  useEffect(() => {
+    dispatch(setClients(mockClients));
+  }, [dispatch]);
+
+  const customerWithCard = clients.find((client) =>
+    client.cards.some((card) => card.cardNumber === cardNumber),
+  );
+
+  const selectedCard = customerWithCard?.cards.find((card) => card.cardNumber === cardNumber);
+  const selectedCardIndex = customerWithCard?.cards.findIndex(
+    (card) => card.cardNumber === cardNumber,
+  );
+
+  if (clients.length === 0) {
+    return <div>Загрузка...</div>;
+  }
+
+  if (!customerWithCard || !selectedCard || selectedCardIndex === -1) {
     return <div>Карта не найдена</div>;
   }
 
@@ -31,34 +39,37 @@ const CustomerPage = () => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         try {
-          const updatedCustomer = { ...customer };
-          const updatedCard = { ...selectedCard };
+          const updates = {};
 
           switch (action) {
             case 'addStamps':
-              updatedCard.activeStorage += data.amount;
-              updatedCard.stamps = (updatedCard.stamps || 0) + data.amount;
+              updates.activeStorage = (selectedCard.activeStorage || 0) + data.amount;
+              updates.stamps = (selectedCard.stamps || 0) + data.amount;
               break;
+
             case 'addReward':
-              updatedCard.availableRewards += 1;
-              updatedCard.lastRewardReceived = new Date().toLocaleDateString();
+              updates.availableRewards = (selectedCard.availableRewards || 0) + 1;
+              updates.lastRewardReceived = new Date().toLocaleDateString();
               break;
+
             case 'receiveReward':
-              if (updatedCard.availableRewards <= 0) {
+              if (selectedCard.availableRewards <= 0) {
                 throw new Error('Нет доступных наград');
               }
-              updatedCard.availableRewards -= 1;
-              updatedCard.lastRewardReceived = new Date().toLocaleDateString();
-              if (updatedCard.activeStorage >= 10) {
-                updatedCard.activeStorage -= 10;
-              }
+              updates.availableRewards = selectedCard.availableRewards - 1;
+              updates.lastRewardReceived = new Date().toLocaleDateString();
+              updates.activeStorage =
+                selectedCard.activeStorage >= 10
+                  ? selectedCard.activeStorage - 10
+                  : selectedCard.activeStorage;
               break;
+
             default:
               break;
           }
 
-          updatedCustomer.cards[selectedCardIndex] = updatedCard;
-          resolve(updatedCustomer);
+          dispatch(updateCard({ cardNumber, updates }));
+          resolve();
         } catch (error) {
           reject(error);
         }
@@ -69,8 +80,7 @@ const CustomerPage = () => {
   const handleReceiveReward = async () => {
     setIsLoading(true);
     try {
-      const updatedCustomer = await mockApiCall('receiveReward');
-      setCustomer(updatedCustomer);
+      await mockApiCall('receiveReward');
       showNotification('Награда успешно получена!');
     } catch (error) {
       showNotification(error.message);
@@ -87,10 +97,7 @@ const CustomerPage = () => {
 
     setIsLoading(true);
     try {
-      const updatedCustomer = await mockApiCall('addStamps', {
-        amount: parseInt(stampsToAdd),
-      });
-      setCustomer(updatedCustomer);
+      await mockApiCall('addStamps', { amount: parseInt(stampsToAdd) });
       setStampsToAdd('');
       showNotification(`Добавлено ${stampsToAdd} штампов!`);
     } catch (error) {
@@ -103,8 +110,7 @@ const CustomerPage = () => {
   const handleAddReward = async () => {
     setIsLoading(true);
     try {
-      const updatedCustomer = await mockApiCall('addReward');
-      setCustomer(updatedCustomer);
+      await mockApiCall('addReward');
       showNotification('Награда добавлена!');
     } catch (error) {
       showNotification('Ошибка при добавлении награды');
@@ -124,16 +130,16 @@ const CustomerPage = () => {
 
       <div className="customer-header">
         <h1>
-          Клиент: <span className="customer-name">{customer.name}</span>
+          Клиент: <span className="customer-name">{customerWithCard.name}</span>
         </h1>
       </div>
 
       <div className="customer-actions">
-        <button className="btn btn-primary" onClick={handleAddReward} disabled={isLoading}>
+        <button className="btn btn-dark" onClick={handleAddReward} disabled={isLoading}>
           {isLoading ? 'Обработка...' : 'Добавить награду'}
         </button>
         <button
-          className="btn btn-secondary"
+          className="btn btn-light"
           onClick={handleReceiveReward}
           disabled={isLoading || selectedCard.availableRewards <= 0}
         >
@@ -154,7 +160,7 @@ const CustomerPage = () => {
             disabled={isLoading}
           />
           <button
-            className="btn btn-add-stamp"
+            className="btn btn-dark"
             onClick={handleAddStamps}
             disabled={isLoading || !stampsToAdd}
           >

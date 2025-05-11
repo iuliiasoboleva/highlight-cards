@@ -1,35 +1,49 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import CustomTable from '../../components/CustomTable';
+import { managersHeaders } from '../../mocks/managersInfo';
+import { addManager, removeManager } from '../../store/managersSlice';
 
 import './styles.css';
 
-const initialManagers = [
-  {
-    id: 1,
-    name: 'Иван Иванов',
-    location: 'Точка 1',
-    shift: 'Утренняя',
-  },
-];
-
 const ManagersPage = () => {
   const navigate = useNavigate();
-  const [managers, setManagers] = useState(initialManagers);
-  const [searchQuery, setSearchQuery] = useState('');
+  const dispatch = useDispatch();
+
   const [showAddModal, setShowAddModal] = useState(false);
+  const [cardNumber, setCardNumber] = useState('');
   const [newManager, setNewManager] = useState({
     name: '',
+    surname: '',
     location: '',
     shift: '',
   });
-  const [cardNumber, setCardNumber] = useState('');
 
+  const managers = useSelector((state) => state.managers);
   const clients = useSelector((state) => state.clients);
 
+  const columns = [
+    ...managersHeaders.map((header) => ({
+      key: header.key,
+      title: header.label,
+      className: 'text-left',
+      cellClassName: 'text-left',
+    })),
+    {
+      key: 'actions',
+      title: 'Действия',
+      render: (row) => (
+        <button className="remove-btn" onClick={() => dispatch(removeManager(row.id))}>
+          🗑
+        </button>
+      ),
+    },
+  ];
+
   const handleAdd = () => {
-    setManagers([...managers, { ...newManager, id: Date.now() }]);
-    setNewManager({ name: '', location: '', shift: '' });
+    dispatch(addManager(newManager));
+    setNewManager({ name: '', surname: '', location: '', shift: '' });
     setShowAddModal(false);
   };
 
@@ -47,14 +61,6 @@ const ManagersPage = () => {
       alert('Клиент с такой картой не найден');
     }
   };
-
-  const handleRemove = (id) => {
-    setManagers(managers.filter((m) => m.id !== id));
-  };
-
-  const filteredManagers = managers.filter((m) =>
-    m.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
 
   return (
     <div className="managers-page">
@@ -85,6 +91,7 @@ const ManagersPage = () => {
             type="text"
             placeholder="Номер карты"
             value={cardNumber}
+            className="location-modal-input"
             onChange={(e) => setCardNumber(e.target.value)}
           />
           <button className="btn-dark" onClick={handleFindCustomer}>
@@ -103,25 +110,10 @@ const ManagersPage = () => {
             Открыть
           </button>
         </div>
-
-        {filteredManagers.map((m) => (
-          <div className="manager-card" key={m.id}>
-            <div className="manager-card-header">
-              <h4>{m.name}</h4>
-              <button className="remove-btn" onClick={() => handleRemove(m.id)}>
-                🗑
-              </button>
-            </div>
-            <p>
-              <strong>Локация:</strong> {m.location}
-            </p>
-            <p>
-              <strong>Смена:</strong> {m.shift}
-            </p>
-          </div>
-        ))}
       </div>
-
+      <div className="table-wrapper">
+        <CustomTable columns={columns} rows={managers} />
+      </div>
       {showAddModal && (
         <div className="modal-overlay">
           <div className="modal">
@@ -130,22 +122,45 @@ const ManagersPage = () => {
               type="text"
               placeholder="Имя"
               value={newManager.name}
-              onChange={(e) => setNewManager({ ...newManager, name: e.target.value })}
+              onChange={(e) =>
+                setNewManager((prev) => ({ ...prev, name: e.target.value }))
+              }
+            />
+            <input
+              type="text"
+              placeholder="Фамилия"
+              value={newManager.surname}
+              onChange={(e) =>
+                setNewManager((prev) => ({ ...prev, surname: e.target.value }))
+              }
             />
             <input
               type="text"
               placeholder="Локация"
               value={newManager.location}
-              onChange={(e) => setNewManager({ ...newManager, location: e.target.value })}
+              onChange={(e) =>
+                setNewManager((prev) => ({ ...prev, location: e.target.value }))
+              }
             />
             <input
               type="text"
               placeholder="Смена"
               value={newManager.shift}
-              onChange={(e) => setNewManager({ ...newManager, shift: e.target.value })}
+              onChange={(e) =>
+                setNewManager((prev) => ({ ...prev, shift: e.target.value }))
+              }
             />
             <div className="modal-buttons">
-              <button className="btn-dark" onClick={handleAdd}>
+              <button
+                className="btn btn-dark"
+                onClick={handleAdd}
+                disabled={
+                  !newManager.name ||
+                  !newManager.surname ||
+                  !newManager.location ||
+                  !newManager.shift
+                }
+              >
                 Добавить
               </button>
               <button className="btn-light" onClick={() => setShowAddModal(false)}>
@@ -155,6 +170,7 @@ const ManagersPage = () => {
           </div>
         </div>
       )}
+
     </div>
   );
 };

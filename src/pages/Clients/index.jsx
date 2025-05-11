@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';

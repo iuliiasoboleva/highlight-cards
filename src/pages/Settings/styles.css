@@ -88,6 +88,10 @@
   overflow-x: auto;
 }
 
+.tariff-btn-dark {
+  margin-top: 8px;
+}
+
 .tariff-table {
   width: 100%;
   border-collapse: collapse;

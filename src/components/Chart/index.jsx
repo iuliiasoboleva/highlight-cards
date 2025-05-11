@@ -13,7 +13,27 @@ import {
   YAxis,
 } from 'recharts';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faCalendarDay,
+  faCalendarWeek,
+  faCalendarAlt,
+  faCalendar,
+  faInfinity,
+  faCalendarDays,
+  faQuestionCircle,
+} from '@fortawesome/free-solid-svg-icons';
+
 import './styles.css';
+
+const periodIcons = {
+  day: faCalendarDay,
+  week: faCalendarWeek,
+  month: faCalendarAlt,
+  year: faCalendar,
+  allTime: faInfinity,
+  custom: faCalendarDays,
+};
 
 const Chart = ({
   title = 'Статистика аккаунта',
@@ -32,8 +52,31 @@ const Chart = ({
   const [chartData, setChartData] = useState([]);
   const [customStartDate, setCustomStartDate] = useState(new Date());
   const [customEndDate, setCustomEndDate] = useState(new Date());
-  const periodButtonRef = useRef(null);
   const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [isCalendarVisible, setIsCalendarVisible] = useState(false);
+
+  const tooltipRef = useRef(null);
+  const periodButtonRef = useRef(null);
+  const calendarRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (tooltipRef.current && !tooltipRef.current.contains(event.target)) {
+        setShowTooltip(false);
+      }
+      if (
+        (calendarRef.current && !calendarRef.current.contains(event.target))
+      ) {
+        setIsCalendarVisible(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     if (selectedPeriod !== 'custom') {
@@ -59,6 +102,7 @@ const Chart = ({
       }
 
       setCalendarPosition({ top, left });
+      setIsCalendarVisible(true);
     }
   }, [selectedPeriod]);
 
@@ -68,7 +112,8 @@ const Chart = ({
     setCustomEndDate(end);
 
     if (start && end) {
-      const filteredData = generateData('month').filter((item) => {
+      const allData = generateData('month');
+      const filteredData = allData.filter((item) => {
         const itemDate = new Date(item.date);
         return itemDate >= start && itemDate <= end;
       });
@@ -76,8 +121,15 @@ const Chart = ({
     }
   };
 
+
   const getDateRange = () => {
-    if (chartData.length === 0) return '';
+    if (selectedPeriod === 'custom') {
+      if (chartData.length === 0) {
+        return `За ${periodLabels[selectedPeriod]}: данных нет`;
+      }
+    } else {
+      if (chartData.length === 0) return '';
+    }
 
     if (selectedPeriod === 'day') {
       const currentDate = new Date(chartData[0].date).toLocaleDateString('ru-RU', {
@@ -100,28 +152,40 @@ const Chart = ({
     return `За ${periodLabels[selectedPeriod]}, ${startDate} - ${endDate}`;
   };
 
+  const handlePeriodClick = (key) => {
+    setSelectedPeriod(key);
+    if (key === 'custom') {
+      setIsCalendarVisible(true);
+    } else {
+      setIsCalendarVisible(false);
+    }
+  };
+
   return (
     <>
       <div className="title-block">
         <h2 className="title">{title}</h2>
         <p className="chart-subtitle">{subtitle}</p>
-        {/* <div className="filters">
-          {Object.keys(periods).map((key) => (
-            <button
-              key={key}
-              onClick={() => setSelectedPeriod(key)}
-              className={selectedPeriod === key ? 'active' : ''}
-              ref={key === 'custom' ? periodButtonRef : null}
-            >
-              {periods[key]}
-            </button>
-          ))}
-        </div> */}
       </div>
 
       <div className="statistics-card">
         <div className="statistics-header">
-          <span>{getDateRange()}</span>
+          <div className="filters-block">
+            <span>{getDateRange()}</span>
+            <div className="filters">
+              {Object.keys(periods).map((key) => (
+                <button
+                  key={key}
+                  onClick={() => handlePeriodClick(key)}
+                  className={selectedPeriod === key ? 'active' : ''}
+                  ref={key === 'custom' ? periodButtonRef : null}
+                >
+                  <FontAwesomeIcon icon={periodIcons[key]} />
+                  {periods[key]}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
         <div className="statistics-grid">
           <div className="stat-item">
@@ -130,8 +194,23 @@ const Chart = ({
             <div className="stat-change neutral">{overallStats.totalVisits.change}</div>
           </div>
           <div className="stat-item">
-            <div className="stat-label">Повторные клиенты</div>
-            <div className="stat-value">{chartData[chartData.length - 1]?.repeatClients || 0}</div>
+            <div className="stat-label stat-tooltip-wrapper" ref={tooltipRef}>
+              Повторные клиенты
+              <span
+                className="stat-tooltip-icon"
+                onClick={() => setShowTooltip((prev) => !prev)}
+              >
+                <FontAwesomeIcon icon={faQuestionCircle} />
+              </span>
+
+              {showTooltip && (
+                <div className="stat-tooltip-box">
+                  Клиенты, которые вернулись повторно после первого визита
+                </div>
+              )}
+            </div>
+
+            <div className="stat-value">{chartData[chartData.length - 1]?.repeatClients || 0}%</div>
             <div className="stat-change neutral">{overallStats.repeatClients.change}</div>
           </div>
         </div>
@@ -147,9 +226,9 @@ const Chart = ({
                   selectedPeriod === 'day'
                     ? `${new Date(value).getHours()}:00`
                     : new Date(value).toLocaleDateString('ru-RU', {
-                        month: 'short',
-                        day: '2-digit',
-                      })
+                      month: 'short',
+                      day: '2-digit',
+                    })
                 }
               />
               <YAxis />
@@ -181,9 +260,10 @@ const Chart = ({
       </div>
 
       {/* === Календарь === */}
-      {selectedPeriod === 'custom' && (
+      {selectedPeriod === 'custom' && isCalendarVisible && (
         <div
           className="datepicker-wrapper"
+          ref={calendarRef}
           style={{
             top: `${calendarPosition.top}px`,
             left: `${calendarPosition.left}px`,
@@ -199,6 +279,7 @@ const Chart = ({
             selectsRange
             inline
             locale={ru}
+            maxDate={new Date()}
           />
         </div>
       )}

@@ -32,7 +32,8 @@ const CardButtons = ({ isFixed, cardId }) => {
   // Стандартное поведение для остальных карточек
   return (
     <div className="card-buttons-block">
-      <button onClick={() => navigate(`/cards/${cardId}`)}>Редактировать</button>
+      <button onClick={() => navigate(`/cards/${cardId}`)}>Перейти</button>
+      <button onClick={() => navigate(`/cards/${cardId}/edit/type`)}>Редактировать</button>
     </div>
   );
 };

@@ -23,11 +23,14 @@
 }
 
 .filters button {
-  padding: 8px 16px;
+  padding: 12px 18px;
   background-color: #f0f0f0;
   border: 1px solid #ddd;
   border-radius: 4px;
   cursor: pointer;
+  gap: 4px;
+  display: flex;
+  align-items: center;
 }
 
 .filters button.active {
@@ -169,7 +172,52 @@
   padding: 20px 20px 20px 0;
 }
 
+.filters-block {
+  display: flex;
+  justify-content: space-between;
+}
+
+.stat-tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.stat-tooltip-icon {
+  margin-left: 6px;
+  color: #888;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.stat-tooltip-box {
+  position: absolute;
+  top: 120%;
+  left: 0;
+  z-index: 100;
+  background-color: #fff;
+  color: #333;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 220px;
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+
 @media (max-width: 768px) {
+  .filters-block {
+    gap: 4px;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .filters button {
+    padding: 8px;
+    justify-content: center;
+    flex-direction: column;
+  }
+
   .statistics-container {
     padding: 20px 20px 0 20px;
   }
