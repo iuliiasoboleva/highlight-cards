@@ -12,4 +12,18 @@ export const mockUserProfile = {
   password: '',
   confirmPassword: '',
   avatar: null,
+  
+  role: 'employee', //admin
+  id: 1,
+  name: 'Иван',
+  surname: 'Иванов',
+  locations: ['Точка 1'],
+  status: 'Активен',
+  shift: {
+    startShift: '11:00',
+    endShift: '19:00',
+  },
+  clientsServed: 5,
+  pointsIssued: 140,
+  giftsGiven: 2,
 };

@@ -1,5 +1,5 @@
 .sub-menu {
-  background-color: #2e2e2e;
+  background-color: #eeeeee;
   padding: 10px;
   z-index: 9;
   position: relative;
@@ -17,48 +17,40 @@
   gap: 10px;
   min-width: 100%;
   align-items: center;
+  padding: 8px 12px;
 }
 
 .sub-menu-link {
   all: unset;
   display: inline-block;
-  background-color: #444;
-  color: #fff !important;
-  padding: 8px 12px;
+  background-color: rgba(191, 71, 86, 0.1);
+  color: black !important;
+  padding: 12px 16px;
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.2s;
+  transition:
+    background-color 0.2s,
+    box-shadow 0.2s,
+    transform 0.2s;
   white-space: nowrap;
   flex-shrink: 0;
   text-decoration: none !important;
 }
 
 .sub-menu-link:hover {
-  background-color: #555;
+  box-shadow: 0 0 8px rgba(191, 71, 86, 0.3);
+  transform: translateY(-1px);
 }
 
 .sub-menu-link.active {
-  background-color: #666;
+  background-color: #bf4756; /* ярче */
+  color: #fff !important;
 }
 
 .name-editor {
   flex-shrink: 0;
   margin-right: 20px;
-}
-
-.name-input {
-  padding: 6px 12px;
-  border: 1px solid #555;
-  border-radius: 4px;
-  background: #3a3a3a;
-  color: #fff;
-  width: 200px;
-}
-
-.name-input:focus {
-  outline: none;
-  border-color: #666;
 }
 
 .tooltip-on-bottom {

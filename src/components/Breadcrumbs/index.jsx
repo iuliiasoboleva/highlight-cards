@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+
 import './styles.css';
 
 const breadcrumbNameMap = {
@@ -17,7 +18,7 @@ const breadcrumbNameMap = {
   '/mailings/rfm-segment': 'Сегментация клиентов',
   '/settings': 'Настройки',
   '/settings/personal': 'Персональные',
-  '/managers': 'Менеджеры',
+  '/managers': 'Сотрудники и точки продаж',
   '/locations': 'Локации',
   '/customer': 'Клиент',
   '/scan': 'Сканирование',
@@ -40,9 +41,7 @@ const matchPathToName = (path) => {
 
     if (patternParts.length !== pathParts.length) continue;
 
-    const isMatch = patternParts.every((part, i) =>
-      part.startsWith(':') || part === pathParts[i]
-    );
+    const isMatch = patternParts.every((part, i) => part.startsWith(':') || part === pathParts[i]);
 
     if (isMatch) return breadcrumbNameMap[pattern];
   }
@@ -71,11 +70,7 @@ const Breadcrumbs = () => {
         return (
           <span key={crumb.path}>
             {index !== 0 && ' > '}
-            {isLast ? (
-              <span>{crumb.name}</span>
-            ) : (
-              <Link to={crumb.path}>{crumb.name}</Link>
-            )}
+            {isLast ? <span>{crumb.name}</span> : <Link to={crumb.path}>{crumb.name}</Link>}
           </span>
         );
       })}

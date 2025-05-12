@@ -1,7 +1,9 @@
 import React from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+
 import { faSun } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
+
 import './styles.css';
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1'];
@@ -34,10 +36,9 @@ const ClientPortraitCard = ({ title, data }) => {
         </ResponsiveContainer>
       ) : (
         <div className="empty-state">
-                  <FontAwesomeIcon icon={faSun} className="empty-icon" />
-
+          <FontAwesomeIcon icon={faSun} className="empty-icon" />
           Недостаточно данных
-          </div>
+        </div>
       )}
     </div>
   );

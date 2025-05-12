@@ -24,6 +24,7 @@ import { mockUserProfile } from './mocks/mockUserProfile';
 import CardDetails from './pages/CardDetails';
 import Cards from './pages/Cards';
 import Clients from './pages/Clients';
+import Workplace from './pages/Workplace';
 import CustomerPage from './pages/CustomerPage';
 import DefaultCardInfo from './pages/DefaultCardInfo';
 import EditDesign from './pages/EditDesign';
@@ -153,6 +154,8 @@ const MainLayout = () => {
 };
 
 const App = () => {
+  const user = useSelector((state) => state.user);
+
   const [activeTab, setActiveTab] = useState('login');
 
   return (
@@ -208,7 +211,7 @@ const App = () => {
             <Route path="push" element={<MailingsPush />} />
             <Route path="stats" element={<Home />} />
           </Route>
-          <Route path="/managers" element={<Managers />} />
+          <Route path="/managers" element={user.role === 'employee' ? <Workplace /> : <Managers />} />
           <Route path="/locations" element={<Locations />} />
           <Route path="/clients" element={<Clients />} />
           <Route path="*" element={<NotFound />} />

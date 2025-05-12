@@ -6,6 +6,7 @@ const initialState = {
   email: '',
   avatar: null,
   token: null,
+  role: '',
   // добавь нужные поля, которые ты хочешь отслеживать
 };
 

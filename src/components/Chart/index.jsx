@@ -2,6 +2,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
+import {
+  faCalendar,
+  faCalendarAlt,
+  faCalendarDay,
+  faCalendarDays,
+  faCalendarWeek,
+  faInfinity,
+  faQuestionCircle,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ru } from 'date-fns/locale';
 import {
   CartesianGrid,
@@ -12,17 +22,6 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCalendarDay,
-  faCalendarWeek,
-  faCalendarAlt,
-  faCalendar,
-  faInfinity,
-  faCalendarDays,
-  faQuestionCircle,
-} from '@fortawesome/free-solid-svg-icons';
 
 import './styles.css';
 
@@ -65,9 +64,7 @@ const Chart = ({
       if (tooltipRef.current && !tooltipRef.current.contains(event.target)) {
         setShowTooltip(false);
       }
-      if (
-        (calendarRef.current && !calendarRef.current.contains(event.target))
-      ) {
+      if (calendarRef.current && !calendarRef.current.contains(event.target)) {
         setIsCalendarVisible(false);
       }
     };
@@ -120,7 +117,6 @@ const Chart = ({
       setChartData(filteredData);
     }
   };
-
 
   const getDateRange = () => {
     if (selectedPeriod === 'custom') {
@@ -196,13 +192,9 @@ const Chart = ({
           <div className="stat-item">
             <div className="stat-label stat-tooltip-wrapper" ref={tooltipRef}>
               Повторные клиенты
-              <span
-                className="stat-tooltip-icon"
-                onClick={() => setShowTooltip((prev) => !prev)}
-              >
+              <span className="stat-tooltip-icon" onClick={() => setShowTooltip((prev) => !prev)}>
                 <FontAwesomeIcon icon={faQuestionCircle} />
               </span>
-
               {showTooltip && (
                 <div className="stat-tooltip-box">
                   Клиенты, которые вернулись повторно после первого визита
@@ -226,9 +218,9 @@ const Chart = ({
                   selectedPeriod === 'day'
                     ? `${new Date(value).getHours()}:00`
                     : new Date(value).toLocaleDateString('ru-RU', {
-                      month: 'short',
-                      day: '2-digit',
-                    })
+                        month: 'short',
+                        day: '2-digit',
+                      })
                 }
               />
               <YAxis />

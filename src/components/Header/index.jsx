@@ -30,7 +30,7 @@ const Header = () => {
           <div
             className="icon-with-tooltip"
             title="Мой профиль"
-            onClick={() => navigate('/managers')}
+            onClick={() => navigate('/settings/personal')}
           >
             <FontAwesomeIcon icon={faAddressCard} />
           </div>

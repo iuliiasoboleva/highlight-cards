@@ -11,7 +11,6 @@ const MailingsSettings = () => {
   return (
     <div className="mailings-settings-container">
       <h2>Настройки рассылки</h2>
-      <input type="text" className="mailings-search" placeholder="Введите название сервиса" />
       <div className="mailings-grid">
         {mockServices.map((service) => (
           <div key={service.id} className="mailings-card">
@@ -32,7 +31,10 @@ const MailingsSettings = () => {
                 </p>
               )}
             </div>
-            <button className="btn-dark" onClick={() => setSelectedService(service)}>
+            <button
+              className="tariff-btn-dark btn-dark"
+              onClick={() => setSelectedService(service)}
+            >
               Подключить аккаунт
             </button>
           </div>

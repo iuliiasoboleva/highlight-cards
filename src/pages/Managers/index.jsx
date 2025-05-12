@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+
 import CustomTable from '../../components/CustomTable';
+import ManagerModal from '../../components/ManagerModal';
+import SalesPointsModal from '../../components/SalesPointsModal';
 import { managersHeaders } from '../../mocks/managersInfo';
-import { addManager, removeManager } from '../../store/managersSlice';
+import { locationsHeaders } from '../../mocks/mockLocations';
+import { addManager, removeManager, updateManager } from '../../store/managersSlice';
+import { addLocation } from '../../store/salesPointsSlice';
 
 import './styles.css';
 
@@ -13,38 +18,63 @@ const ManagersPage = () => {
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [cardNumber, setCardNumber] = useState('');
-  const [newManager, setNewManager] = useState({
-    name: '',
-    surname: '',
-    location: '',
-    shift: '',
-  });
+  const [editModalData, setEditModalData] = useState(null);
+  const [showLocationModal, setShowLocationModal] = useState(false);
 
   const managers = useSelector((state) => state.managers);
+  const locations = useSelector((state) => state.locations);
+
   const clients = useSelector((state) => state.clients);
 
-  const columns = [
-    ...managersHeaders.map((header) => ({
-      key: header.key,
-      title: header.label,
-      className: 'text-left',
-      cellClassName: 'text-left',
-    })),
+  const managersColumns = [
+    ...managersHeaders.map((header) => {
+      if (header.key === 'shift') {
+        return {
+          key: header.key,
+          title: header.label,
+          className: 'text-left',
+          cellClassName: 'text-left',
+          render: (row) => `${row.shift.startShift} - ${row.shift.endShift}`,
+        };
+      }
+      return {
+        key: header.key,
+        title: header.label,
+        className: 'text-left',
+        cellClassName: 'text-left',
+      };
+    }),
     {
       key: 'actions',
       title: 'Действия',
       render: (row) => (
-        <button className="remove-btn" onClick={() => dispatch(removeManager(row.id))}>
-          🗑
-        </button>
+        <div className="manager-edit-button" onClick={() => setEditModalData(row)}>
+          ✏️
+        </div>
       ),
     },
   ];
 
-  const handleAdd = () => {
-    dispatch(addManager(newManager));
-    setNewManager({ name: '', surname: '', location: '', shift: '' });
+  const locationColumns = locationsHeaders.map((header) => ({
+    key: header.key,
+    title: header.label,
+    className: 'text-left',
+    cellClassName: 'text-left',
+  }));
+
+  const handleSave = (manager) => {
+    if (manager.id) {
+      dispatch(updateManager(manager));
+    } else {
+      dispatch(addManager(manager));
+    }
+    setEditModalData(null);
     setShowAddModal(false);
+  };
+
+  const handleDelete = (id) => {
+    dispatch(removeManager(id));
+    setEditModalData(null);
   };
 
   const handleFindCustomer = () => {
@@ -65,19 +95,36 @@ const ManagersPage = () => {
   return (
     <div className="managers-page">
       <div className="managers-header">
-        <h2>Менеджеры</h2>
+        <h2>Сотрудники и точки продаж</h2>
+        <p>
+          Здесь вы управляете своими сотрудниками и точками продаж: добавляйте новых сотрудников,
+          контролируйте выдачу карт и начисление баллов клиентам. Используйте приложение-сканер,
+          чтобы упростить процесс обслуживания на местах.
+        </p>
       </div>
 
       <div className="managers-grid">
         <div className="manager-card create-card" onClick={() => setShowAddModal(true)}>
-          <h3>Создать менеджера</h3>
+          <h3>Добавить сотрудника</h3>
           <p>
-            Создайте менеджеров для раздельного отслеживания эффективности выдачи карт и начисления
-            штампов. Менеджеры могут быть распределены по торговым точкам или же по сменам.
+            Добавьте сотрудника, чтобы настроить выдачу карт, начисление баллов и работу по сменам в
+            вашей точке продаж.
           </p>
-          <span className="scanner-icon">🧑‍💼</span>
+          <span className="scanner-icon">➕</span>
           <button className="btn-dark" onClick={() => setShowAddModal(true)}>
-            Добавить менеджера
+            Добавить сотрудника
+          </button>
+        </div>
+        <div className="manager-card create-card" onClick={() => setShowLocationModal(true)}>
+          <h3>Добавить точку продаж</h3>
+          <p>
+            Создавайте торговые точки для управления клиентами, картами лояльности и сотрудниками в
+            каждой локации. Вы сможете привязывать сотрудников и настраивать отдельные акции для
+            каждой точки.{' '}
+          </p>
+          <span className="scanner-icon">➕</span>
+          <button className="btn-dark" onClick={() => setShowLocationModal(true)}>
+            + Добавить точку
           </button>
         </div>
         <div className="manager-card search-card">
@@ -98,7 +145,6 @@ const ManagersPage = () => {
             Найти клиента
           </button>
         </div>
-
         <div className="manager-card scanner-card">
           <h3>Приложение-сканер</h3>
           <p>
@@ -112,65 +158,32 @@ const ManagersPage = () => {
         </div>
       </div>
       <div className="table-wrapper">
-        <CustomTable columns={columns} rows={managers} />
+        <h3 className="table-name">Информация о сотрудниках</h3>
+        <CustomTable columns={managersColumns} rows={managers} />
       </div>
-      {showAddModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h3>Добавить менеджера</h3>
-            <input
-              type="text"
-              placeholder="Имя"
-              value={newManager.name}
-              onChange={(e) =>
-                setNewManager((prev) => ({ ...prev, name: e.target.value }))
-              }
-            />
-            <input
-              type="text"
-              placeholder="Фамилия"
-              value={newManager.surname}
-              onChange={(e) =>
-                setNewManager((prev) => ({ ...prev, surname: e.target.value }))
-              }
-            />
-            <input
-              type="text"
-              placeholder="Локация"
-              value={newManager.location}
-              onChange={(e) =>
-                setNewManager((prev) => ({ ...prev, location: e.target.value }))
-              }
-            />
-            <input
-              type="text"
-              placeholder="Смена"
-              value={newManager.shift}
-              onChange={(e) =>
-                setNewManager((prev) => ({ ...prev, shift: e.target.value }))
-              }
-            />
-            <div className="modal-buttons">
-              <button
-                className="btn btn-dark"
-                onClick={handleAdd}
-                disabled={
-                  !newManager.name ||
-                  !newManager.surname ||
-                  !newManager.location ||
-                  !newManager.shift
-                }
-              >
-                Добавить
-              </button>
-              <button className="btn-light" onClick={() => setShowAddModal(false)}>
-                Отмена
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
+      <div className="table-wrapper">
+        <h3 className="table-name">Информация о точках продаж</h3>
+        <CustomTable columns={locationColumns} rows={locations} />
+      </div>
+      <ManagerModal
+        isOpen={showAddModal || !!editModalData}
+        onClose={() => {
+          setShowAddModal(false);
+          setEditModalData(null);
+        }}
+        onSave={handleSave}
+        onDelete={handleDelete}
+        initialData={editModalData}
+        isEdit={!!editModalData}
+      />
+      <SalesPointsModal
+        isOpen={showLocationModal}
+        onClose={() => setShowLocationModal(false)}
+        onSave={(data) => {
+          dispatch(addLocation(data));
+          setShowLocationModal(false);
+        }}
+      />
     </div>
   );
 };

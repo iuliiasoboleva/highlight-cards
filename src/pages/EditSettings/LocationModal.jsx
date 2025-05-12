@@ -15,7 +15,7 @@ const LocationModal = ({ onClose, onSave }) => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
 
-  const [debouncedSearchQuery] = useDebounce(searchQuery, 2000);
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 1500);
 
   useEffect(() => {
     const searchAddress = async () => {
@@ -88,11 +88,9 @@ const LocationModal = ({ onClose, onSave }) => {
             placeholder="Введите адрес локации"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && setSearchQuery(e.target.value)}
           />
-          {isSearching && <div className="search-loading">Идет поиск...</div>}
         </div>
-
+        {isSearching && <div className="search-loading">Идет поиск...</div>}
         {selectedLocation && (
           <div className="location-info">
             <p>Выбрано: {selectedLocation.address}</p>

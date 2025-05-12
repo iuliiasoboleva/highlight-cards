@@ -25,7 +25,7 @@ const SubMenu = ({ menuItems, showNameInput, onNameChange, initialName }) => {
               value={name}
               onChange={handleNameChange}
               placeholder="Название карты"
-              className="name-input"
+              className="location-modal-input"
             />
           </div>
         )}

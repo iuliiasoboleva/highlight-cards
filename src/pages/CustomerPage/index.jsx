@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { setClients, updateCard } from '../../store/clientsSlice';
+
 import { mockClients } from '../../mocks/clientsInfo';
+import { setClients, updateCard } from '../../store/clientsSlice';
+
 import './styles.css';
 
 const CustomerPage = () => {
@@ -81,7 +83,7 @@ const CustomerPage = () => {
     setIsLoading(true);
     try {
       await mockApiCall('receiveReward');
-      showNotification('Награда успешно получена!');
+      showNotification('Награда успешно получена! Спасибо за обслуживание клиента');
     } catch (error) {
       showNotification(error.message);
     } finally {
@@ -99,7 +101,7 @@ const CustomerPage = () => {
     try {
       await mockApiCall('addStamps', { amount: parseInt(stampsToAdd) });
       setStampsToAdd('');
-      showNotification(`Добавлено ${stampsToAdd} штампов!`);
+      showNotification(`Добавлено ${stampsToAdd} штампов! Спасибо за обслуживание клиента`);
     } catch (error) {
       showNotification('Ошибка при добавлении штампов');
     } finally {
@@ -111,7 +113,7 @@ const CustomerPage = () => {
     setIsLoading(true);
     try {
       await mockApiCall('addReward');
-      showNotification('Награда добавлена!');
+      showNotification('Награда добавлена! Спасибо за обслуживание клиента');
     } catch (error) {
       showNotification('Ошибка при добавлении награды');
     } finally {
