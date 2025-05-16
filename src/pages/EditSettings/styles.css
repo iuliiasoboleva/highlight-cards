@@ -271,3 +271,43 @@
 .location-modal-button-secondary:hover {
   background-color: #f5f5f5;
 }
+
+.spending-config {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.spending-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.spending-equal {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.visit-config {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.visit-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.visit-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.visit-text {
+  white-space: pre;
+}

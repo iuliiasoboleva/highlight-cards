@@ -3,6 +3,10 @@ import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { pluralize } from '../../helpers/pluralize';
 
 export const STATUS_CONFIG = {
+  certificate: [
+    { label: 'Баланс', valueKey: 'balanceMoney', suffix: '₽' },
+    { label: 'Имя', valueKey: 'certificateName', suffix: '' },
+  ],
   cashback: [
     { label: 'Баллы', valueKey: 'credits', suffix: '' },
     {
@@ -17,7 +21,7 @@ export const STATUS_CONFIG = {
     { label: 'Общее количество визитов', valueKey: 'visitsCount' },
     { label: 'Срок действия', valueKey: 'expirationDate' },
   ],
-  stamps: [
+  stamp: [
     {
       label: 'До получения награды',
       valueKey: 'restStamps',
@@ -50,7 +54,6 @@ export const defaultCardTemplate = {
   name: 'Накопительная карта',
   isActive: false,
   urlCopy: 'https://take.cards/cMla3',
-  pdfImg: '/pdf-example.svg',
   qrImg: '/qr-code.svg',
   frameUrl: '/phone.svg',
   balanceMoney: 1800,
@@ -71,11 +74,13 @@ export const defaultCardTemplate = {
   cashbackStatus: 'Бронзовый',
   cashbackPercent: 1,
   settings: {
-    barcodeType: 'qrcode',
     rewardProgram: 'spending',
-    cardLimit: 'cardUnlimit',
-    stampLimit: 'stampUnlimit',
-    stampDuration: { value: 1, unit: 'days' },
+    card: {},
+    stamp: {},
+    spendingAmount: 500,
+    spendingStamps: 1,
+    visitStamps: 1,
+    limitVisitPerDay: false,
     locations: [],
   },
   score: 10,

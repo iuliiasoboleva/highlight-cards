@@ -10,6 +10,7 @@ const BarcodeRadio = ({
   name,
   additionalContentKey = null,
   additionalContent = null,
+  additionalContentByValue = {},
 }) => {
   return (
     <div className="barcode-radio-group">
@@ -29,9 +30,17 @@ const BarcodeRadio = ({
               <span className="barcode-radio-checkmark"></span>
               <span className="barcode-radio-label">{option.label}</span>
             </label>
+
+            {selected === option.value && additionalContentByValue?.[option.value] && (
+              <div className="barcode-radio-additional">
+                {additionalContentByValue[option.value]}
+              </div>
+            )}
+
             {additionalContentKey === option.value &&
               selected === option.value &&
-              additionalContent && (
+              additionalContent &&
+              !additionalContentByValue?.[option.value] && (
                 <div className="barcode-radio-additional">{additionalContent}</div>
               )}
           </React.Fragment>

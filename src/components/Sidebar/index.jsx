@@ -46,7 +46,7 @@ const Sidebar = () => {
         <IconButton
           icon={faUsers}
           onClick={handleNavigate('/clients')}
-          title="Пользователи"
+          title="Клиенты"
           className={isActive('/clients') ? 'active' : ''}
         />
         <IconButton
@@ -92,7 +92,7 @@ const Sidebar = () => {
         <IconButton
           icon={faUsers}
           onClick={handleNavigate('/clients')}
-          title="Пользователи"
+          title="Клиенты"
           className={isActive('/clients') ? 'active' : ''}
         />
         <IconButton

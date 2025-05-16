@@ -11,6 +11,7 @@ import { updateCurrentCard } from '../../store/cardsSlice';
 import PushTargetTabs from './PushTargetTabs';
 
 import './styles.css';
+import { getMinDateTime } from '../../helpers/date';
 
 const MailingsPush = () => {
   const dispatch = useDispatch();
@@ -27,12 +28,6 @@ const MailingsPush = () => {
   const [isScheduled, setIsScheduled] = useState(false);
   const [selectedTab, setSelectedTab] = useState('all');
   const [usersCount, setUsersCount] = useState(0);
-
-  const getMinDateTime = () => {
-    const now = new Date();
-    now.setMinutes(now.getMinutes() + 5);
-    return now.toISOString().slice(0, 16);
-  };
 
   useEffect(() => {
     if ((!currentCard || !cards.find((c) => c.id === currentCard.id)) && cards.length > 0) {

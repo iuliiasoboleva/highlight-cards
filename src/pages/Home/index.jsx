@@ -1,6 +1,4 @@
 import React from 'react';
-import 'react-datepicker/dist/react-datepicker.css';
-
 import Chart from '../../components/Chart';
 import ClientPortraitCard from '../../components/ClientPortraitCard';
 import { generateData, overallStats } from '../../mocks/chartData';

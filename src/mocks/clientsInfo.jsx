@@ -12,7 +12,7 @@ export const mockClients = [
     cards: [
       {
         cardNumber: '1234562',
-        type: 'stamps',
+        type: 'stamp',
         stamps: 3,
         activeStorage: 0,
         availableRewards: 1,
@@ -49,7 +49,7 @@ export const mockClients = [
     cards: [
       {
         cardNumber: '123',
-        type: 'stamps',
+        type: 'stamp',
         stamps: 3,
         activeStorage: 0,
         availableRewards: 1,
@@ -90,7 +90,7 @@ export const mockClients = [
     cards: [
       {
         cardNumber: '1234560',
-        type: 'stamps',
+        type: 'stamp',
         stamps: 3,
         activeStorage: 0,
         availableRewards: 1,
@@ -114,7 +114,7 @@ export const mockClients = [
     cards: [
       {
         cardNumber: '1234561',
-        type: 'stamps',
+        type: 'stamp',
         stamps: 3,
         activeStorage: 0,
         availableRewards: 1,

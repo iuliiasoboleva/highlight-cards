@@ -29,7 +29,7 @@ const Locations = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [pushMessage, setPushMessage] = useState(
     currentCard.pushNotification?.message ||
-      `Новое уведомление по вашей карте "${currentCard.title}"`,
+    `Новое уведомление по вашей карте "${currentCard.title}"`,
   );
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
@@ -186,8 +186,8 @@ const Locations = () => {
 
   const renderMapSection = () => (
     <div className="edit-type-page">
-      <h2 className="locations-title">
-        Локации <span className="geo-badge">Geo-push в радиусе 100 метров</span>
+      <h2>
+        <span className="geo-badge">Локации Geo-push в радиусе 100 метров</span>
       </h2>
 
       <p className="locations-subtext">

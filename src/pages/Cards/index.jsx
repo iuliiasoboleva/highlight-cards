@@ -1,5 +1,4 @@
 import React from 'react';
-import 'react-datepicker/dist/react-datepicker.css';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 
@@ -13,7 +12,7 @@ const cardDescriptions = {
     title: 'Скидочная карта',
     text: 'Постоянная скидка для ваших клиентов. Клиент предъявляет карту — получает фиксированную скидку на каждый заказ.',
   },
-  stamps: {
+  stamp: {
     title: 'Штампы',
     text: 'Клиент собирает виртуальные штампы за покупки и получает подарок. При регистрации он сразу получает 2 штампа: за регистрацию и первый визит — чтобы быстрее почувствовать прогресс.',
   },
@@ -24,6 +23,10 @@ const cardDescriptions = {
   subscription: {
     title: 'Абонемент (клубная карта)',
     text: 'Карта с доступом к специальным условиям или ограниченным числом посещений. Можно настроить "пакеты услуг" или "уровни клиента".',
+  },
+  certificate: {
+    title: 'Подарочный сертификат',
+    text: '',
   },
 };
 

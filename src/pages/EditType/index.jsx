@@ -8,6 +8,7 @@ import {
   faPercent,
   faStamp,
   faTicket,
+  faMoneyCheckDollar,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -17,10 +18,11 @@ import { addCard, initializeCurrentCard, updateCurrentCard } from '../../store/c
 import './styles.css';
 
 const cardTypes = [
-  { id: 'stamps', name: 'Штамп', icon: faStamp, tag: 'high' },
+  { id: 'stamp', name: 'Штамп', icon: faStamp, tag: 'high' },
   { id: 'discount', name: 'Скидка', icon: faPercent, tag: 'high' },
   { id: 'cashback', name: 'Кешбэк', icon: faDollarSign, tag: 'high' },
   { id: 'subscription', name: 'Абонемент', icon: faTicket, tag: 'shop' },
+  { id: 'certificate', name: 'Подарочный сертификат', icon: faMoneyCheckDollar, tag: 'shop' },
 ];
 
 const EditType = () => {
@@ -35,7 +37,7 @@ const EditType = () => {
   useEffect(() => {
     if (!currentCard.id) {
       const newId = cards.length > 0 ? Math.max(...cards.map((c) => c.id)) + 1 : 1;
-      dispatch(initializeCurrentCard({ id: newId }));
+      dispatch(initializeCurrentCard({ id: newId, status: 'stamp', name: 'Штамп' }));
     }
   }, [dispatch, cards, currentCard.id]);
 
@@ -67,8 +69,6 @@ const EditType = () => {
 
   const handleCreateCard = () => {
     if (!selectedType) return;
-
-    // Добавляем карту с текущими параметрами
     dispatch(addCard());
     navigate(`/cards/${currentCard.id}/edit/settings`);
   };
@@ -141,21 +141,24 @@ const EditType = () => {
             <hr />
 
             <div className="card-types-grid">
-              {cardTypes.map((type) => (
-                <div
-                  key={type.id}
-                  className={`edit-type-card ${selectedType === type.id ? 'selected' : ''}`}
-                  onClick={() => handleTypeSelect(type.id)}
-                >
-                  <FontAwesomeIcon icon={type.icon} className="icon" />
-                  <div className="edit-type-name">{type.name}</div>
+              {cardTypes.map((type) => {
+                const isSelected = selectedType === type.id;
+                return (
                   <div
-                    className={`edit-type-tag ${type.tag === 'high' ? 'edit-type-green' : 'edit-type-purple'}`}
+                    key={type.id}
+                    className={`edit-type-card ${isSelected ? 'selected' : ''}`}
+                    onClick={() => handleTypeSelect(type.id)}
                   >
-                    {type.tag === 'high' ? 'Высокий уровень удержания' : 'Лучшее для покупок'}
+                    <FontAwesomeIcon icon={type.icon} className="icon" />
+                    <div className="edit-type-name">{type.name}</div>
+                    <div
+                      className={`edit-type-tag ${type.tag === 'high' ? 'edit-type-green' : 'edit-type-purple'}`}
+                    >
+                      {type.tag === 'high' ? 'Высокий уровень удержания' : 'Лучшее для покупок'}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <button onClick={handleCreateCard} disabled={!selectedType} className="create-button">

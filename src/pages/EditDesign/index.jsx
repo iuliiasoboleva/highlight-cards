@@ -128,7 +128,7 @@ const EditDesign = () => {
   const previewCardData = {
     ...currentCard,
     cardImg: background || '/default-card-bg.png',
-    pdfImg: '/default-qr.png',
+    qrImg: '/default-qr.png',
     design: {
       ...design,
       stampsQuantity,

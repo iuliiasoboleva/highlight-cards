@@ -28,23 +28,36 @@ const Workplace = () => {
             <div className="managers-header">
                 <h1>Рабочее место</h1>
                 <p>Добро пожаловать в рабочее место, <strong>{user.name} <strong>{user.surname}</strong></strong>!
-                    Вы находитесь в точке <strong>{userLocation.name}</strong>. Начните работу — отсканируйте карту клиент или введите номер карты  и начислите баллы.
+                    Вы находитесь в точке <strong>{userLocation.name}</strong>. Начните работу — отсканируйте карту клиента или введите номер карты и начислите баллы.
                 </p>
             </div>
 
             <div className="managers-grid">
-                <div className="manager-card workplace-info">
-                    <p>
-                        Ваши точки продаж: <strong>{userLocation.name}</strong>
-                    </p>
-                    <p>Адрес: {userLocation.address || 'не указан'}</p>
-                    <p>Смена: —</p>
-                    <p>Статус: {user.status || 'неизвестен'}</p>
-                    <h4>Мини-отчёт по смене</h4>
-                    - Обслужено клиентов: {user.clientsServed}<br />
-                    - Начислено баллов: {user.pointsIssued}<br />
-                    - Выдано подарков: {user.giftsGiven}<br />
+                <div className="manager-card">
+                    <h3>Информация о сотруднике</h3>
+                    <div>
+                        <p>
+                            Ваши точки продаж: <strong>{userLocation.name}</strong>
+                        </p>
+                        <p>📍 Адрес: {userLocation.address || 'не указан'}</p>
+                        <p>🕒 Смена: —</p>
+                        <p>⚙️ Статус: {user.status || 'неизвестен'}</p>
+                    </div>
+                    <span className="scanner-icon">👤</span>
+
                 </div>
+
+                <div className="manager-card">
+                    <h3>Мини-отчёт по смене</h3>
+                    <p>
+                        - Обслужено клиентов: {user.clientsServed}<br />
+                        - Начислено баллов: {user.pointsIssued}<br />
+                        - Выдано подарков: {user.giftsGiven}<br />
+                    </p>
+                    <span className="scanner-icon">📊</span>
+
+                </div>
+
                 <div className="manager-card search-card">
                     <h3>Поиск по карте</h3>
                     <p>
@@ -77,7 +90,6 @@ const Workplace = () => {
                 </div>
             </div>
         </div>
-
     );
 };
 

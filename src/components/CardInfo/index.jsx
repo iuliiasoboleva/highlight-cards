@@ -17,8 +17,6 @@ const CardInfo = ({ card }) => {
   const restStamps =
     card.status === 'stamp' ? (design?.stampsQuantity || 10) - (card.stamps || 0) : 0;
 
-  const barcodeImage = card.settings?.barcodeType === 'pdf417' ? card.pdfImg : card.qrImg;
-
   const mergedCard = {
     ...card,
     restStamps,
@@ -131,8 +129,8 @@ const CardInfo = ({ card }) => {
 
       <img
         className="card-info-qr-img"
-        src={barcodeImage}
-        alt={card.barcodeType === 'pdf417' ? 'PDF код' : 'QR код'}
+        src={card.qrImg}
+        alt={'QR код'}
       />
       <p className="card-details">Tap ••• for details</p>
     </div>

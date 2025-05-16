@@ -12,22 +12,21 @@ const CardButtons = ({ isFixed, cardId }) => {
   if (isFixed) {
     return (
       <div className="card-buttons">
-        {!isTemplatePage && <button onClick={() => navigate('/cards/template')}>На шаблоне</button>}
-        <button onClick={() => navigate('/cards/create')}>Без шаблона</button>
+        <button onClick={() => navigate('/cards/create')}>Редактировать</button>
       </div>
     );
   }
 
   // Если находимся на странице шаблонов
-  if (isTemplatePage) {
-    return (
-      <div className="card-buttons">
-        <button className="template-select-button" onClick={() => navigate('/cards/create')}>
-          Выбрать этот тип
-        </button>
-      </div>
-    );
-  }
+  // if (isTemplatePage) {
+  //   return (
+  //     <div className="card-buttons">
+  //       <button className="template-select-button" onClick={() => navigate('/cards/create')}>
+  //         Выбрать этот тип
+  //       </button>
+  //     </div>
+  //   );
+  // }
 
   // Стандартное поведение для остальных карточек
   return (

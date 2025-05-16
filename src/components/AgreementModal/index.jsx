@@ -20,7 +20,12 @@ const AgreementModal = ({ onClose, onConfirm }) => {
         </div>
 
         <label className="checkbox-row">
-          <input type="checkbox" checked={agreed} onChange={() => setAgreed(!agreed)} />
+          <input
+            type="checkbox"
+            className='custom-checkbox'
+            checked={agreed}
+            onChange={() => setAgreed(!agreed)}
+          />
           <span>Я принимаю условия соглашения</span>
         </label>
 

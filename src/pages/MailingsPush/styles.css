@@ -89,6 +89,7 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
+  gap: 8px;
 }
 
 .checkbox-label {
@@ -102,9 +103,11 @@
   border: 1px solid #ccc;
   border-radius: 6px;
   cursor: pointer;
+  width: 100%;
 }
 
 .push-textarea {
+  font-family: 'Manrope', system-ui;
   width: 100%;
   min-height: 80px;
   padding: 10px;
@@ -112,6 +115,7 @@
   border-radius: 6px;
   border: 1px solid #ccc;
   resize: vertical;
+  font-size: 16px;
 }
 
 .push-tabs {
@@ -130,6 +134,7 @@
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 8px;
+  width: 100%;
 }
 
 .no-active-cards-text {
@@ -144,7 +149,6 @@
 @media (max-width: 768px) {
   .push-schedule {
     flex-direction: column;
-    gap: 8px;
     justify-content: center;
   }
 }
