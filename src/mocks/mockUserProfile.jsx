@@ -12,7 +12,7 @@ export const mockUserProfile = {
   password: '',
   confirmPassword: '',
   avatar: null,
-  
+
   role: 'employee', //admin
   id: 1,
   name: 'Иван',

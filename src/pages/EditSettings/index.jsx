@@ -7,13 +7,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import CardInfo from '../../components/CardInfo';
 import CustomSelect from '../../components/CustomSelect';
+import { formatDateToDDMMYYYY, getMinDate } from '../../helpers/date';
+import { pluralize } from '../../helpers/pluralize';
 import { updateCurrentCard } from '../../store/cardsSlice';
 import BarcodeRadio from './BarcodeRadio';
 import LocationModal from './LocationModal';
 
 import './styles.css';
-import { pluralize } from '../../helpers/pluralize';
-import { formatDateToDDMMYYYY, getMinDate } from '../../helpers/date';
 
 const EditSettings = () => {
   const { id } = useParams();
@@ -51,12 +51,14 @@ const EditSettings = () => {
   };
 
   const updateSettingsField = (field, value) => {
-    dispatch(updateCurrentCard({
-      settings: {
-        ...settings,
-        [field]: value,
-      },
-    }));
+    dispatch(
+      updateCurrentCard({
+        settings: {
+          ...settings,
+          [field]: value,
+        },
+      }),
+    );
   };
 
   const handleAddLocation = (location) => {
@@ -93,7 +95,9 @@ const EditSettings = () => {
                 className="push-input"
                 min="1"
                 value={settings.spendingAmount || ''}
-                onChange={(e) => updateSettingsField('spendingAmount', parseInt(e.target.value) || 0)}
+                onChange={(e) =>
+                  updateSettingsField('spendingAmount', parseInt(e.target.value) || 0)
+                }
               />
             </label>
             <span className="spending-equal">=</span>
@@ -103,7 +107,9 @@ const EditSettings = () => {
                 className="push-input"
                 min="1"
                 value={settings.spendingStamps || ''}
-                onChange={(e) => updateSettingsField('spendingStamps', parseInt(e.target.value) || 0)}
+                onChange={(e) =>
+                  updateSettingsField('spendingStamps', parseInt(e.target.value) || 0)
+                }
               />
               <span>штампов</span>
             </label>
@@ -112,13 +118,7 @@ const EditSettings = () => {
         visit: (
           <div className="visit-config">
             <label className="visit-label">
-              <input
-                type="number"
-                min="1"
-                className="push-input"
-                value={1}
-                disabled
-              />
+              <input type="number" min="1" className="push-input" value={1} disabled />
               <span className="visit-text">визит =</span>
               <input
                 type="number"
@@ -161,15 +161,18 @@ const EditSettings = () => {
             onChange={(e) => {
               const newDate = e.target.value;
               const formattedExpiration = formatDateToDDMMYYYY(newDate);
-        
-              dispatch(updateCurrentCard({
-                settings: {
-                  ...settings,
-                  cardFixedDate: newDate,
-                },
-                expirationDate: formattedExpiration,
-              }));
-            }}          />
+
+              dispatch(
+                updateCurrentCard({
+                  settings: {
+                    ...settings,
+                    cardFixedDate: newDate,
+                  },
+                  expirationDate: formattedExpiration,
+                }),
+              );
+            }}
+          />
         ),
         cardFixedLater: (
           <>

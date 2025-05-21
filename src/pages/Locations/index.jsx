@@ -29,7 +29,7 @@ const Locations = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [pushMessage, setPushMessage] = useState(
     currentCard.pushNotification?.message ||
-    `Новое уведомление по вашей карте "${currentCard.title}"`,
+      `Новое уведомление по вашей карте "${currentCard.title}"`,
   );
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);

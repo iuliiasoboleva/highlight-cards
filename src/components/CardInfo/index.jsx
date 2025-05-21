@@ -127,11 +127,7 @@ const CardInfo = ({ card }) => {
         })}
       </div>
 
-      <img
-        className="card-info-qr-img"
-        src={card.qrImg}
-        alt={'QR код'}
-      />
+      <img className="card-info-qr-img" src={card.qrImg} alt={'QR код'} />
       <p className="card-details">Tap ••• for details</p>
     </div>
   );

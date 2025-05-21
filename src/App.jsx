@@ -11,10 +11,13 @@ import {
   useParams,
 } from 'react-router-dom';
 
+import { Pencil } from 'lucide-react';
+
 import AuthForm from './components/AuthForm';
 import Breadcrumbs from './components/Breadcrumbs';
 import Header from './components/Header';
 import NotFound from './components/NotFound';
+import ScrollToTop from './components/ScrollToTop';
 import Sidebar from './components/Sidebar';
 import SubMenu from './components/SubMenu';
 import Tabs from './components/Tabs';
@@ -24,7 +27,6 @@ import { mockUserProfile } from './mocks/mockUserProfile';
 import CardDetails from './pages/CardDetails';
 import Cards from './pages/Cards';
 import Clients from './pages/Clients';
-import Workplace from './pages/Workplace';
 import CustomerPage from './pages/CustomerPage';
 import DefaultCardInfo from './pages/DefaultCardInfo';
 import EditDesign from './pages/EditDesign';
@@ -46,6 +48,7 @@ import Settings from './pages/Settings';
 import SettingsLayout from './pages/SettingsLayout';
 import SettingsPersonal from './pages/SettingsPersonal';
 import SettingsRFMSegment from './pages/SettingsRFMSegment';
+import Workplace from './pages/Workplace';
 import { initializeCards, updateCurrentCard } from './store/cardsSlice';
 import { setClients } from './store/clientsSlice';
 import { setUser } from './store/userSlice';
@@ -70,9 +73,25 @@ const MainLayout = () => {
     dispatch(setUser(mockUserProfile));
   }, [dispatch]);
 
+  useEffect(() => {
+    const root = document.documentElement;
+    const showSubMenu =
+      matchEdit || matchCreate || matchCardDetails || matchMailings || matchSettings;
+
+    root.style.setProperty('--bar-height', showSubMenu ? '73px' : '0px');
+  }, [location.pathname]);
+
   if (hideLayout) {
     return <Outlet />;
   }
+
+  const getSubMenuIcon = () => {
+    if (matchCreate || matchEdit) return Pencil;
+    // if (matchSettings) return Sliders;
+    // if (matchMailings) return Bell;
+    // if (matchCardDetails) return Users;
+    return null;
+  };
 
   const getMenuItems = () => {
     if (matchCreate) {
@@ -134,6 +153,7 @@ const MainLayout = () => {
       {(matchEdit || matchCreate || matchCardDetails || matchMailings || matchSettings) && (
         <SubMenu
           menuItems={getMenuItems()}
+          icon={getSubMenuIcon()}
           showNameInput={!!matchEdit || !!matchCreate}
           initialName={currentCard?.name || ''}
           onNameChange={(newName) => {
@@ -144,7 +164,7 @@ const MainLayout = () => {
       <div className="main">
         <Sidebar />
         <div className="page-content">
-          <Breadcrumbs />
+          {/* <Breadcrumbs /> */}
           <Outlet />
           <Footer />
         </div>
@@ -160,6 +180,7 @@ const App = () => {
 
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         <Route
           path="/login"
@@ -211,7 +232,10 @@ const App = () => {
             <Route path="push" element={<MailingsPush />} />
             <Route path="stats" element={<Home />} />
           </Route>
-          <Route path="/managers" element={user.role === 'employee' ? <Workplace /> : <Managers />} />
+          <Route
+            path="/managers"
+            element={user.role === 'employee' ? <Workplace /> : <Managers />}
+          />
           <Route path="/locations" element={<Locations />} />
           <Route path="/clients" element={<Clients />} />
           <Route path="*" element={<NotFound />} />

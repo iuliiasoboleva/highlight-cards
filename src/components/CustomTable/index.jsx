@@ -20,13 +20,11 @@ const CustomTable = ({ columns, rows }) => {
             <tr key={rowIndex}>
               {columns.map((column, colIndex) => (
                 <td key={colIndex} className={column.cellClassName || ''}>
-                  {
-                    Array.isArray(row[column.key])
-                      ? row[column.key].join(', ')
-                      : column.render
-                        ? column.render(row)
-                        : row[column.key]
-                  }
+                  {Array.isArray(row[column.key])
+                    ? row[column.key].join(', ')
+                    : column.render
+                      ? column.render(row)
+                      : row[column.key]}
                 </td>
               ))}
             </tr>

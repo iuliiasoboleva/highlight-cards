@@ -1,11 +1,15 @@
 .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 1000;
+  background-color: rgb(239, 227, 229);
+  padding: 10px 20px;
   display: flex;
   justify-content: space-between;
-  padding: 10px 20px;
-  background-color: rgba(191, 71, 86, 0.1);
   align-items: center;
-  z-index: 10;
-  position: relative;
 }
 
 .logo {
@@ -17,12 +21,7 @@
 .header-icons {
   align-items: center;
   display: flex;
-  gap: 20px;
-}
-
-.header-icons svg {
-  margin-left: 10px;
-  cursor: pointer;
+  gap: 24px;
 }
 
 .user-section {
@@ -33,11 +32,7 @@
 
 .user-section span {
   font-weight: 600;
-  margin-right: 5px;
-}
-
-.header-icons svg:hover {
-  color: red;
+  margin-left: 5px;
 }
 
 .desktop-header {
@@ -46,37 +41,7 @@
   width: 100%;
   justify-content: space-between;
 }
-.icon-with-tooltip {
-  position: relative;
-  font-size: 20px;
-  cursor: pointer;
-}
 
-.icon-with-tooltip:hover {
-  color: #bf4756;
-}
-
-.icon-with-tooltip::after {
-  content: attr(title);
-  position: absolute;
-  bottom: -30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(50, 50, 50, 0.85);
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 5px;
-  white-space: nowrap;
-  font-size: 12px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease-in-out;
-  z-index: 100;
-}
-
-.icon-with-tooltip:hover::after {
-  opacity: 1;
-}
 @media (max-width: 768px) {
   .desktop-header {
     flex-direction: column;

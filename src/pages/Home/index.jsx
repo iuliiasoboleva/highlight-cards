@@ -1,4 +1,5 @@
 import React from 'react';
+
 import Chart from '../../components/Chart';
 import ClientPortraitCard from '../../components/ClientPortraitCard';
 import { generateData, overallStats } from '../../mocks/chartData';

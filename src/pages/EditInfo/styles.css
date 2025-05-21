@@ -23,10 +23,6 @@
 }
 
 @media (min-width: 1025px) {
-  .edit-type-main-container {
-    display: flex;
-  }
-
   .type-card-image-container {
     width: 400px;
     padding: 20px;

@@ -1,16 +1,9 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css';
 
-import { faComments, faUser } from '@fortawesome/free-regular-svg-icons';
-import {
-  faCog,
-  faHome,
-  faMapMarkerAlt,
-  faMobile,
-  faUsers,
-} from '@fortawesome/free-solid-svg-icons';
-
-import IconButton from '../IconButton';
+import { CreditCard, Home, MapPin, MessageSquare, Settings, User, Users } from 'lucide-react';
 
 import './styles.css';
 
@@ -21,104 +14,56 @@ const Sidebar = () => {
   const handleNavigate = (path) => () => navigate(path);
 
   const isActive = (path) => {
-    if (path === '/') {
-      return location.pathname === path;
-    }
+    if (path === '/') return location.pathname === path;
     return location.pathname.startsWith(path);
   };
 
+  const items = [
+    { icon: <Home size={20} />, label: 'Главная', path: '/' },
+    { icon: <CreditCard size={20} />, label: 'Карты', path: '/cards' },
+    { icon: <Users size={20} />, label: 'Клиенты', path: '/clients' },
+    { icon: <MessageSquare size={20} />, label: 'Рассылки', path: '/mailings' },
+    { icon: <MapPin size={20} />, label: 'Локации', path: '/locations' },
+    { icon: <User size={20} />, label: 'Профиль', path: '/managers' },
+    { icon: <Settings size={20} />, label: 'Настройки', path: '/settings' },
+  ];
+
   return (
     <>
-      {/* Десктопная версия */}
+      {/* Desktop Sidebar */}
       <nav className="sidebar">
-        <IconButton
-          icon={faHome}
-          onClick={handleNavigate('/')}
-          title="Главная"
-          className={isActive('/') ? 'active' : ''}
-        />
-        <IconButton
-          icon={faMobile}
-          onClick={handleNavigate('/cards')}
-          title="Карты"
-          className={isActive('/cards') ? 'active' : ''}
-        />
-        <IconButton
-          icon={faUsers}
-          onClick={handleNavigate('/clients')}
-          title="Клиенты"
-          className={isActive('/clients') ? 'active' : ''}
-        />
-        <IconButton
-          icon={faComments}
-          onClick={handleNavigate('/mailings/info')}
-          title="Рассылки"
-          className={isActive('/mailings') ? 'active' : ''}
-        />
-        <IconButton
-          icon={faMapMarkerAlt}
-          onClick={handleNavigate('/locations')}
-          title="Локации"
-          className={isActive('/locations') ? 'active' : ''}
-        />
-        <IconButton
-          icon={faUser}
-          onClick={handleNavigate('/managers')}
-          title="Профиль"
-          className={isActive('/managers') ? 'active' : ''}
-        />
-        <IconButton
-          icon={faCog}
-          onClick={handleNavigate('/settings')}
-          title="Настройки"
-          className={isActive('/settings') ? 'active' : ''}
-        />
+        {items.map(({ icon, label, path }) => {
+          const active = isActive(path);
+          const tooltipId = `tooltip-${label}`;
+          return (
+            <React.Fragment key={path}>
+              <button
+                className={`icon-button ${active ? 'active' : ''}`}
+                onClick={handleNavigate(path)}
+                data-tooltip-id={tooltipId}
+                data-tooltip-content={label}
+                data-tooltip-place="right"
+              >
+                {icon}
+              </button>
+              <Tooltip id={tooltipId} className="sidebar-tooltip" />
+            </React.Fragment>
+          );
+        })}
       </nav>
 
-      {/* Мобильная версия */}
+      {/* Mobile Bottom Nav */}
       <nav className="bottom-nav">
-        <IconButton
-          icon={faHome}
-          onClick={handleNavigate('/')}
-          title="Главная"
-          className={isActive('/') ? 'active' : ''}
-        />
-        <IconButton
-          icon={faMobile}
-          onClick={handleNavigate('/cards')}
-          title="Карты"
-          className={isActive('/cards') ? 'active' : ''}
-        />
-        <IconButton
-          icon={faUsers}
-          onClick={handleNavigate('/clients')}
-          title="Клиенты"
-          className={isActive('/clients') ? 'active' : ''}
-        />
-        <IconButton
-          icon={faComments}
-          onClick={handleNavigate('/mailings/info')}
-          title="Рассылки"
-          className={isActive('/mailings') ? 'active' : ''}
-        />
-        <IconButton
-          icon={faMapMarkerAlt}
-          onClick={handleNavigate('/locations')}
-          title="Локации"
-          className={isActive('/locations') ? 'active' : ''}
-        />
-        <IconButton
-          icon={faUser}
-          onClick={handleNavigate('/managers')}
-          title="Профиль"
-          className={isActive('/managers') ? 'active' : ''}
-        />
-        <IconButton
-          icon={faCog}
-          onClick={handleNavigate('/settings')}
-          title="Настройки"
-          className={isActive('/settings') ? 'active' : ''}
-        />
+        {items.map(({ icon, label, path }) => (
+          <button
+            key={path}
+            className={`icon-button ${isActive(path) ? 'active' : ''}`}
+            onClick={handleNavigate(path)}
+            title={label}
+          >
+            {icon}
+          </button>
+        ))}
       </nav>
     </>
   );

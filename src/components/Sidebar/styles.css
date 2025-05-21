@@ -1,37 +1,55 @@
 .sidebar {
-  width: 80px;
-  padding: 20px 0;
+  position: fixed;
+  top: calc(var(--header-height));
+  left: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  padding-top: calc(var(--header-height) + var(--bar-height));
+  background-color: #eaeaed;
+  z-index: 9;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 30px;
   align-items: center;
-  height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
+  gap: 24px;
 }
 
-.sidebar-link {
-  font-size: 24px;
+.icon-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 8px;
   color: #666;
-  text-decoration: none;
-  transition: 0.2s;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.sidebar-link:hover {
-  color: #000;
+.icon-button svg {
+  stroke-width: 1.5;
+  width: 22px;
+  height: 22px;
 }
 
-.sidebar-link svg {
-  stroke: currentColor;
-  fill: none;
-  width: 24px;
-  height: 24px;
+.icon-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #222;
 }
 
-.sidebar-link:hover svg {
-  color: red;
+.icon-button.active {
+  background-color: #454545;
+  color: white;
+}
+
+.sidebar-tooltip {
+  background-color: white !important;
+  color: black !important;
+  border-radius: 6px !important;
+  font-size: 13px !important;
+  padding: 6px 10px !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
+  border: 1px solid #e5e5e5 !important;
 }
 
 .bottom-nav {
@@ -56,25 +74,22 @@
     z-index: 1000;
   }
 
-  .bottom-nav-link {
-    font-size: 24px;
+  .bottom-nav .icon-button {
     color: #666;
-    text-decoration: none;
-    transition: color 0.2s ease;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
   }
 
-  .bottom-nav-link:hover {
-    color: #000;
+  .bottom-nav .icon-button.active {
+    background-color: #454545;
+    color: white;
   }
 
-  .bottom-nav-link svg {
-    stroke: currentColor;
-    fill: none;
-    width: 24px;
-    height: 24px;
-  }
-
-  .bottom-nav-link:hover svg {
-    color: red;
+  .bottom-nav .icon-button svg {
+    width: 22px;
+    height: 22px;
   }
 }

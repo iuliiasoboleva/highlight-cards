@@ -3,14 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import {
-  faCircleQuestion,
   faDollarSign,
+  faMoneyCheckDollar,
   faPercent,
   faStamp,
   faTicket,
-  faMoneyCheckDollar,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { HelpCircle } from 'lucide-react';
 
 import CardInfo from '../../components/CardInfo';
 import { addCard, initializeCurrentCard, updateCurrentCard } from '../../store/cardsSlice';
@@ -97,7 +97,7 @@ const EditType = () => {
           {activeTab === 'description' && (
             <div className="edit-type-page">
               <h2>
-                Тип карты <FontAwesomeIcon icon={faCircleQuestion} style={{ fontSize: 16 }} />
+                Тип карты <HelpCircle size={16} />
               </h2>
               <hr />
 
@@ -136,7 +136,7 @@ const EditType = () => {
         <>
           <div className="edit-type-page">
             <h2>
-              Тип карты <FontAwesomeIcon icon={faCircleQuestion} style={{ fontSize: 16 }} />
+              Тип карты <HelpCircle size={16} />
             </h2>
             <hr />
 

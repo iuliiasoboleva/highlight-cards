@@ -6,12 +6,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import CustomSelect from '../../components/CustomSelect';
 import PushPreview from '../../components/PushPreview';
+import { getMinDateTime } from '../../helpers/date';
 import { pluralVerb, pluralize } from '../../helpers/pluralize';
 import { updateCurrentCard } from '../../store/cardsSlice';
 import PushTargetTabs from './PushTargetTabs';
 
 import './styles.css';
-import { getMinDateTime } from '../../helpers/date';
 
 const MailingsPush = () => {
   const dispatch = useDispatch();

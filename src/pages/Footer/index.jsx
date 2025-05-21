@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { HelpCircle } from 'lucide-react';
 
 import './styles.css';
 
@@ -9,7 +8,7 @@ const Footer = () => (
   <footer className="footer">
     <div className="footer-section">
       <a href="mailto:support@example.com" className="footer-link">
-        <FontAwesomeIcon icon={faCircleQuestion} />
+        <HelpCircle size={16} />
         Написать в техподдержку
       </a>
     </div>
