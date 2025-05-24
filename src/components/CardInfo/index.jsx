@@ -4,16 +4,17 @@ import { useSelector } from 'react-redux';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { STATUS_CONFIG } from './defaultCardInfo';
+import { STATUS_CONFIG } from '../defaultCardInfo';
 
 import './styles.css';
 
 const CardInfo = ({ card }) => {
-  const design = useSelector((state) => state.cards.currentCard?.design) || {};
+  const currentDesign = useSelector((state) => state.cards.currentCard?.design) || {};
+  const design = card.design || currentDesign || {};
   const fields = STATUS_CONFIG[card.status] || [];
 
   const stampsQuantity = design?.stampsQuantity || 0;
-  const stampIcon = design?.stampIcon || faStar;
+  const stampIcon = design?.stampIcon || card.stampIcon || faStar;
   const restStamps =
     card.status === 'stamp' ? (design?.stampsQuantity || 10) - (card.stamps || 0) : 0;
 
@@ -127,8 +128,7 @@ const CardInfo = ({ card }) => {
         })}
       </div>
 
-      <img className="card-info-qr-img" src={card.qrImg} alt={'QR код'} />
-      <p className="card-details">Tap ••• for details</p>
+      {card.qrImg && <img className="card-info-qr-img" src={card.qrImg} alt={'QR код'} />}
     </div>
   );
 };

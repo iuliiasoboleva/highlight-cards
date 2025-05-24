@@ -8,27 +8,31 @@ const CardButtons = ({ isFixed, cardId }) => {
   const location = useLocation();
   const isTemplatePage = location.pathname === '/cards/template';
 
-  // Если это фиксированная карточка (первая)
   if (isFixed) {
     return (
       <div className="card-buttons">
-        <button onClick={() => navigate('/cards/create')}>Редактировать</button>
+        {isTemplatePage ? (
+          <button onClick={() => navigate('/cards/create')}>Без шаблона</button>
+        ) : (
+          <>
+            <button onClick={() => navigate('/cards/template')}>На шаблоне</button>
+            <button onClick={() => navigate('/cards/create')}>Без шаблона</button>
+          </>
+        )}
       </div>
     );
   }
 
-  // Если находимся на странице шаблонов
-  // if (isTemplatePage) {
-  //   return (
-  //     <div className="card-buttons">
-  //       <button className="template-select-button" onClick={() => navigate('/cards/create')}>
-  //         Выбрать этот тип
-  //       </button>
-  //     </div>
-  //   );
-  // }
+  if (isTemplatePage) {
+    return (
+      <div className="card-buttons">
+        <button className="template-select-button" onClick={() => navigate('/cards/create')}>
+          Выбрать шаблон
+        </button>
+      </div>
+    );
+  }
 
-  // Стандартное поведение для остальных карточек
   return (
     <div className="card-buttons-block">
       <button onClick={() => navigate(`/cards/${cardId}`)}>Перейти</button>

@@ -1,9 +1,10 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 
 import CardButtons from '../../components/CardButtons';
 import CardInfo from '../../components/CardInfo';
+import { initializeCards } from '../../store/cardsSlice';
 
 import './styles.css';
 
@@ -31,9 +32,22 @@ const cardDescriptions = {
 };
 
 const Cards = () => {
-  const cards = useSelector((state) => state.cards.cards);
+  const dispatch = useDispatch();
   const location = useLocation();
+
+  const cards = useSelector((state) => state.cards.cards);
+
   const isTemplatePage = location.pathname === '/cards/template';
+
+  useEffect(() => {
+    let useTemplates = false;
+
+    if (isTemplatePage) {
+      useTemplates = true;
+    }
+
+    dispatch(initializeCards({ useTemplates }));
+  }, [dispatch, isTemplatePage]);
 
   return (
     <div className="mailings-container">
@@ -44,18 +58,7 @@ const Cards = () => {
       </p>
       <div className="cards">
         {cards.map((card) => (
-          <div key={card.id} className={`card ${card.isActive ? 'active' : 'inactive'}`}>
-            <div className="card-state">
-              <span className={`status-indicator ${card.isActive ? 'active' : 'inactive'}`} />
-              {card.title}
-            </div>
-            {/* Описание — только на /cards/template и если есть статус */}
-            {isTemplatePage && cardDescriptions[card.status] && (
-              <div className="card-bottom-text">
-                <h3>{cardDescriptions[card.status].title}</h3>
-                <p>{cardDescriptions[card.status].text}</p>
-              </div>
-            )}
+          <div key={card.id}>
             <div className="card-image-block">
               <img className="card-image" src={card.frameUrl} alt={card.name} />
               {card.id !== 'fixed' && <CardInfo card={card} />}

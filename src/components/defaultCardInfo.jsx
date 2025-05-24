@@ -1,6 +1,6 @@
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 
-import { pluralize } from '../../helpers/pluralize';
+import { pluralize } from '../helpers/pluralize';
 
 export const STATUS_CONFIG = {
   certificate: [

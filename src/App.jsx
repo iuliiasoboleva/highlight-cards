@@ -49,7 +49,7 @@ import SettingsLayout from './pages/SettingsLayout';
 import SettingsPersonal from './pages/SettingsPersonal';
 import SettingsRFMSegment from './pages/SettingsRFMSegment';
 import Workplace from './pages/Workplace';
-import { initializeCards, updateCurrentCard } from './store/cardsSlice';
+import { updateCurrentCard } from './store/cardsSlice';
 import { setClients } from './store/clientsSlice';
 import { setUser } from './store/userSlice';
 
@@ -61,14 +61,15 @@ const MainLayout = () => {
   const hideLayout = ['/login', '/register', '/scan'].includes(location.pathname);
   const matchCreate = matchPath('/cards/create', location.pathname);
   const matchEdit = matchPath('/cards/:id/edit/*', location.pathname);
-  const matchCardDetails = matchPath('/cards/:id/*', location.pathname);
+  const matchCardDetails =
+    matchPath('/cards/:id/*', location.pathname) &&
+    !location.pathname.startsWith('/cards/template');
   const matchMailings = matchPath('/mailings/*', location.pathname);
   const matchSettings = matchPath('/settings/*', location.pathname);
 
   const currentCard = useSelector((state) => state.cards.currentCard);
 
   useEffect(() => {
-    dispatch(initializeCards());
     dispatch(setClients(mockClients));
     dispatch(setUser(mockUserProfile));
   }, [dispatch]);

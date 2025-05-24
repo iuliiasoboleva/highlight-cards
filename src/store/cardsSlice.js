@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { defaultCardTemplate } from '../components/CardInfo/defaultCardInfo';
+import { defaultCardTemplate } from '../components/defaultCardInfo';
 import { mockCards } from '../mocks/cardData';
+import { mockTemplateCards } from '../mocks/cardTemplatesData';
 
 // Фиксированная карта для создания новых карт
 export const fixedCard = {
@@ -15,11 +16,12 @@ export const fixedCard = {
 };
 
 // Функция для получения всех карт (фиксированная + моки)
-const getAllCards = () => {
-  const sortedCards = [...mockCards].sort((a, b) => {
+const getAllCards = (useTemplates = false) => {
+  const source = useTemplates ? mockTemplateCards : mockCards;
+  const sortedCards = [...source].sort((a, b) => {
     return Number(b.isActive) - Number(a.isActive);
   });
-  return [...sortedCards, fixedCard];
+  return [fixedCard, ...sortedCards];
 };
 
 const initialState = {
@@ -34,10 +36,11 @@ export const cardsSlice = createSlice({
   initialState,
   reducers: {
     // Инициализация списка карт
-    initializeCards: (state) => {
+    initializeCards: (state, action) => {
       state.loading = true;
       try {
-        state.cards = getAllCards();
+        const useTemplates = action.payload?.useTemplates || false;
+        state.cards = getAllCards(useTemplates);
         state.error = null;
       } catch (err) {
         state.error = err.message;
