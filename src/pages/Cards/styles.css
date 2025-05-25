@@ -1,20 +1,16 @@
 .cards {
   display: grid;
-  gap: 32px;
+  gap: 46px;
   justify-content: center;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   padding: 20px 0;
 }
 
 .card {
   flex-direction: column;
-  gap: 6px;
+  gap: 30px;
   display: flex;
   align-items: center;
-  background: #fff;
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .card-bottom {
@@ -32,18 +28,27 @@
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 8px;
+  gap: 8px;
+  margin-bottom: 20px;
 }
 
-.card.active {
-  border: 2px solid #1dcd27;
+.card-bottom-text h2 {
+  font-size: 20px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.card-bottom-text p {
+  font-size: 18px;
 }
 
 .card-state {
   display: inline-flex;
   align-items: center;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 24px;
   height: 28px;
   padding: 0 12px;
@@ -83,11 +88,18 @@
   object-fit: cover;
 }
 
+@media (max-width: 1700px) {
+  .cards {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
 @media (max-width: 1350px) {
   .cards {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
 @media (max-width: 1124px) {
   .cards {
     grid-template-columns: repeat(2, 1fr);

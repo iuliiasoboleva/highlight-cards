@@ -13,13 +13,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import CardInfo from '../../components/CardInfo';
-import {
-  updateBackground,
-  updateColors,
-  updateCurrentCard,
-  updateIcon,
-  updateLogo,
-} from '../../store/cardsSlice';
+import { updateCardById } from '../../store/cardsSlice';
 
 import './styles.css';
 
@@ -36,7 +30,9 @@ const EditDesign = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const currentCard = useSelector((state) => state.cards.currentCard) || {
+  const currentCard = useSelector((state) =>
+    state.cards.cards.find((c) => String(c.id) === id)
+  ) || {
     design: {
       logo: null,
       icon: null,
@@ -79,45 +75,67 @@ const EditDesign = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleImageChange = (e, action) => {
+  const handleImageChange = (e, field) => {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      dispatch(action(imageUrl));
+      dispatch(
+        updateCardById({
+          id: currentCard.id,
+          changes: {
+            design: {
+              ...design,
+              [field]: imageUrl,
+            },
+          },
+        })
+      );
     }
   };
 
   const handleColorChange = (key, value) => {
     dispatch(
-      updateColors({
-        ...colors,
-        [key]: value,
-      }),
+      updateCardById({
+        id: currentCard.id,
+        changes: {
+          design: {
+            ...design,
+            colors: {
+              ...colors,
+              [key]: value,
+            },
+          },
+        },
+      })
     );
   };
 
   const handleStampsChange = (e) => {
     const value = Math.min(30, Math.max(0, parseInt(e.target.value) || 0));
     dispatch(
-      updateCurrentCard({
-        ...currentCard,
-        design: {
-          ...design,
-          stampsQuantity: value,
+      updateCardById({
+        id: currentCard.id,
+        changes: {
+          design: {
+            ...design,
+            stampsQuantity: value,
+          },
         },
-      }),
+      })
     );
   };
 
   const handleStampIconChange = (icon) => {
     dispatch(
-      updateCurrentCard({
-        ...currentCard,
-        design: {
-          ...design,
-          stampIcon: icon,
+      updateCardById({
+        id: currentCard.id,
+        changes: {
+          design: {
+            ...design,
+            stampIcon: icon,
+          },
         },
-      }),
+      })
     );
   };
 
@@ -190,9 +208,11 @@ const EditDesign = () => {
               type="file"
               id="logo"
               hidden
-              onChange={(e) => handleImageChange(e, updateLogo)}
+              onChange={(e) => handleImageChange(e, 'logo')}
             />
-            <h3>Выбрать файл</h3>
+            <label htmlFor="logo" className="upload-button">
+              Выбрать файл
+            </label>
           </div>
           <p className="upload-description">
             Рекомендуемый размер: 480x150 пикселей. Только PNG. 3 МБ
@@ -211,7 +231,7 @@ const EditDesign = () => {
               type="file"
               id="icon"
               hidden
-              onChange={(e) => handleImageChange(e, updateIcon)}
+              onChange={(e) => handleImageChange(e, 'icon')}
             />
             <label htmlFor="icon" className="upload-button">
               Выбрать файл
@@ -236,7 +256,7 @@ const EditDesign = () => {
               type="file"
               id="background"
               hidden
-              onChange={(e) => handleImageChange(e, updateBackground)}
+              onChange={(e) => handleImageChange(e, 'background')}
             />
             <label htmlFor="background" className="upload-button">
               Выбрать файл

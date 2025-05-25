@@ -1,8 +1,9 @@
-// SPA салон
-// Автозаправка
-// Барбершоп
-// Бассейн
-import { faTShirt } from '@fortawesome/free-solid-svg-icons';
+import {
+  Flower,
+  Fuel,
+  Scissors,
+  Waves,
+} from 'lucide-react';
 
 export const mockTemplateCards = [
   {
@@ -26,19 +27,21 @@ export const mockTemplateCards = [
       logo: null,
       icon: null,
       background: null,
-      stampsQuantity: 8,
-      stampIcon: faTShirt,
+      stampsQuantity: null,
+      stampIcon: Flower,
       colors: {
-        cardBackground: 'red',
+        cardBackground: 'rgb(246, 247, 251)',
         centerBackground: '#F6F6F6',
         textColor: '#1F1E1F',
+        stampIconBackground: 'rgb(193, 155, 176)',
+        iconColor: 'white',
       },
     },
   },
   {
     id: 2,
     status: 'stamp',
-    cardImg: '/strip-one.png',
+    cardImg: '/fuel.png',
     urlCopy: 'https://take.cards/cMla3',
     qrImg: '',
     title: 'Штампы',
@@ -52,11 +55,21 @@ export const mockTemplateCards = [
       scheduledDate: '',
       locations: [],
     },
+    design: {
+      logo: null,
+      icon: null,
+      background: null,
+      stampsQuantity: null,
+      stampIcon: Fuel,
+      colors: {
+        cardBackground: 'rgb(249, 201, 5)',
+      },
+    },
   },
   {
     id: 3,
     status: 'stamp',
-    cardImg: '/strip-one.png',
+    cardImg: '/barber.png',
     urlCopy: 'https://take.cards/cMla3',
     qrImg: '',
     title: 'Штампы',
@@ -70,11 +83,22 @@ export const mockTemplateCards = [
       scheduledDate: '',
       locations: [],
     },
+    design: {
+      logo: null,
+      icon: null,
+      background: null,
+      stampsQuantity: null,
+      stampIcon: Scissors,
+      colors: {
+        cardBackground: 'rgb(0, 0, 0)',
+        textColor: 'white',
+      }
+    },
   },
   {
     id: 4,
     status: 'stamp',
-    cardImg: '/strip-one.png',
+    cardImg: '/pool.png',
     urlCopy: 'https://take.cards/cMla3',
     qrImg: '',
     title: 'Штампы',
@@ -87,6 +111,17 @@ export const mockTemplateCards = [
       message: 'У нас скидка',
       scheduledDate: '',
       locations: [],
+    },
+    design: {
+      logo: null,
+      icon: null,
+      background: null,
+      stampsQuantity: null,
+      stampIcon: Waves,
+      colors: {
+        cardBackground: 'rgb(49, 218, 248)',
+        iconColor: 'white',
+      }
     },
   },
 ];

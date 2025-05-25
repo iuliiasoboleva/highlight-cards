@@ -1,12 +1,18 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Power, Download, Copy, X } from 'lucide-react';
+import { updateCardById, deleteCard, copyCard, downloadCard } from '../../store/cardsSlice';
 
 import './styles.css';
 
 const CardButtons = ({ isFixed, cardId }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const isTemplatePage = location.pathname === '/cards/template';
+
+  const card = useSelector((state) => state.cards.cards.find((c) => c.id === cardId));
 
   if (isFixed) {
     return (
@@ -33,10 +39,44 @@ const CardButtons = ({ isFixed, cardId }) => {
     );
   }
 
+  const handleToggleActive = () => {
+    dispatch(
+      updateCardById({
+        id: cardId,
+        changes: { isActive: !card.isActive },
+      })
+    );
+  };
+
+  const handleDownload = () => {
+    dispatch(downloadCard(cardId));
+  };
+
+  const handleCopy = () => {
+    dispatch(copyCard(cardId));
+  };
+
+  const handleDelete = () => {
+    dispatch(deleteCard(cardId));
+  };
+
   return (
     <div className="card-buttons-block">
       <button onClick={() => navigate(`/cards/${cardId}`)}>Перейти</button>
-      <button onClick={() => navigate(`/cards/${cardId}/edit/type`)}>Редактировать</button>
+      <div className="icon-buttons">
+        <button onClick={handleToggleActive} title="Включить/выключить">
+          <Power size={20} />
+        </button>
+        <button onClick={handleDownload} title="Скачать">
+          <Download size={20} />
+        </button>
+        <button onClick={handleCopy} title="Копировать">
+          <Copy size={20} />
+        </button>
+        <button onClick={handleDelete} title="Удалить">
+          <X size={20} />
+        </button>
+      </div>
     </div>
   );
 };

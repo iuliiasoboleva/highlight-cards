@@ -36,7 +36,6 @@ const Cards = () => {
   const location = useLocation();
 
   const cards = useSelector((state) => state.cards.cards);
-
   const isTemplatePage = location.pathname === '/cards/template';
 
   useEffect(() => {
@@ -52,13 +51,19 @@ const Cards = () => {
   return (
     <div className="mailings-container">
       <h2 className="page-title">Создайте свою карту лояльности</h2>
-      <p>
+      <p className="page-subtitle">
         Выберите тип карты, который лучше всего подходит вашему бизнесу и настройте её за несколько
         минут. После выбора вы сможете настроить логотип, цвета и правила начисления баллов.
       </p>
       <div className="cards">
         {cards.map((card) => (
-          <div key={card.id}>
+          <div key={card.id} className={`card ${card.isActive ? 'active' : 'inactive'}`}>
+            {!isTemplatePage && (
+              <div className="card-state">
+                <span className={`status-indicator ${card.isActive ? 'active' : 'inactive'}`} />
+                {card.title}
+              </div>
+            )}
             <div className="card-image-block">
               <img className="card-image" src={card.frameUrl} alt={card.name} />
               {card.id !== 'fixed' && <CardInfo card={card} />}
@@ -66,7 +71,7 @@ const Cards = () => {
             <div className="card-bottom">
               <div className="card-bottom-text">
                 <h2>{card.name}</h2>
-                <p>Вы можете отредактировать настройки карты или обновить дизайн</p>
+                {/* <p>Вы можете отредактировать настройки карты или обновить дизайн</p> */}
               </div>
               <CardButtons isFixed={card.id === 'fixed'} cardId={card.id} />
             </div>

@@ -7,20 +7,29 @@ import { mockTemplateCards } from '../mocks/cardTemplatesData';
 // Фиксированная карта для создания новых карт
 export const fixedCard = {
   id: 'fixed',
-  title: 'Не активна',
+  title: 'Активна',
   status: 'fixed',
-  isActive: false,
+  isActive: true,
   isFixed: true,
   frameUrl: '/frame-empty.svg',
   name: 'Создать карту',
 };
 
-// Функция для получения всех карт (фиксированная + моки)
 const getAllCards = (useTemplates = false) => {
   const source = useTemplates ? mockTemplateCards : mockCards;
-  const sortedCards = [...source].sort((a, b) => {
-    return Number(b.isActive) - Number(a.isActive);
-  });
+
+  let sortedCards;
+
+  if (useTemplates) {
+    sortedCards = [...source].sort((a, b) => {
+      return a.name.localeCompare(b.name, 'ru', { sensitivity: 'base' });
+    });
+  } else {
+    sortedCards = [...source].sort((a, b) => {
+      return Number(b.isActive) - Number(a.isActive);
+    });
+  }
+
   return [fixedCard, ...sortedCards];
 };
 
@@ -66,7 +75,6 @@ export const cardsSlice = createSlice({
     addCard: (state) => {
       if (!state.currentCard.id || !state.currentCard.status) return;
 
-      // Проверяем, не существует ли уже карта с таким ID
       const exists = state.cards.some(
         (card) => card.id !== 'fixed' && card.id === state.currentCard.id,
       );
@@ -75,7 +83,7 @@ export const cardsSlice = createSlice({
         const newCard = {
           ...state.currentCard,
           createdAt: new Date().toISOString(),
-          isActive: true, // Новая карта активна по умолчанию
+          isActive: true,
         };
         state.cards.push(newCard);
       }
@@ -106,42 +114,63 @@ export const cardsSlice = createSlice({
       }
     },
 
-    // Обновление дизайна
-    updateCardDesign: (state, action) => {
-      state.currentCard.design = {
-        ...state.currentCard.design,
-        ...action.payload,
-      };
-      state.currentCard.updatedAt = new Date().toISOString();
-    },
-
-    // Специфичные обновления дизайна
-    updateLogo: (state, action) => {
-      state.currentCard.design.logo = action.payload;
-      state.currentCard.updatedAt = new Date().toISOString();
-    },
-
-    updateIcon: (state, action) => {
-      state.currentCard.design.icon = action.payload;
-      state.currentCard.updatedAt = new Date().toISOString();
-    },
-
-    updateBackground: (state, action) => {
-      state.currentCard.design.background = action.payload;
-      state.currentCard.updatedAt = new Date().toISOString();
-    },
-
-    updateColors: (state, action) => {
-      state.currentCard.design.colors = {
-        ...state.currentCard.design.colors,
-        ...action.payload,
-      };
-      state.currentCard.updatedAt = new Date().toISOString();
+    updateCardById: (state, action) => {
+      const { id, changes } = action.payload;
+      const cardIndex = state.cards.findIndex((c) => c.id === id);
+      if (cardIndex !== -1) {
+        state.cards[cardIndex] = {
+          ...state.cards[cardIndex],
+          ...changes,
+          updatedAt: new Date().toISOString(),
+        };
+      }
     },
 
     // Сброс текущей карты
     resetCurrentCard: (state) => {
       state.currentCard = { ...defaultCardTemplate };
+    },
+
+    // Удаление карты
+    deleteCard: (state, action) => {
+      state.cards = state.cards.filter((c) => c.id !== action.payload);
+    },
+
+    // Копирование карты (создаём новый объект с новым id)
+    copyCard: (state, action) => {
+      const cardToCopy = state.cards.find((c) => c.id === action.payload);
+      if (cardToCopy) {
+        const newId = state.cards.reduce(
+          (max, card) => (card.id !== 'fixed' && card.id > max ? card.id : max),
+          0,
+        ) + 1;
+
+        const copiedCard = {
+          ...cardToCopy,
+          id: newId,
+          name: `${cardToCopy.name} (копия)`,
+          isActive: false,
+          createdAt: new Date().toISOString(),
+        };
+
+        state.cards.push(copiedCard);
+      }
+    },
+
+    // Экспорт данных карты как JSON-файла
+    downloadCard: (state, action) => {
+      const card = state.cards.find((c) => c.id === action.payload);
+      if (card) {
+        console.log(`Downloading card ${card.id} (${card.name})`);
+
+        const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(card, null, 2));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute('href', dataStr);
+        downloadAnchorNode.setAttribute('download', `card_${card.id}_${card.name}.json`);
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+      }
     },
   },
 });
@@ -153,12 +182,11 @@ export const {
   addCard,
   updateCurrentCard,
   saveCurrentCard,
-  updateCardDesign,
-  updateLogo,
-  updateIcon,
-  updateBackground,
-  updateColors,
   resetCurrentCard,
+  updateCardById,
+  deleteCard,
+  copyCard,
+  downloadCard,
 } = cardsSlice.actions;
 
 export default cardsSlice.reducer;

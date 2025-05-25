@@ -35,7 +35,7 @@
   line-height: 18px;
   border: 1.6px solid transparent;
   margin: 0;
-  min-width: 64px;
+  min-width: 58px;
   text-align: center;
   display: inline-flex;
   align-items: center;
@@ -55,5 +55,23 @@
 
 .icon-buttons {
   display: flex;
-  gap: 4px;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.icon-buttons button {
+  background-color: #eaeaed;
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.icon-buttons button:hover {
+  background-color: #e0e0e5;
+}
+
+.icon-buttons svg {
+  stroke: #1f1e1f;
 }
