@@ -1,4 +1,4 @@
-import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { Star } from 'lucide-react';
 
 import { pluralize } from '../helpers/pluralize';
 
@@ -108,7 +108,7 @@ export const defaultCardTemplate = {
     icon: null,
     background: null,
     stampsQuantity: 10,
-    stampIcon: faStar,
+    stampIcon: Star,
     colors: {
       cardBackground: '#FFFFFF',
       centerBackground: '#F6F6F6',

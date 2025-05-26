@@ -2,15 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import {
-  faDollarSign,
-  faMoneyCheckDollar,
-  faPercent,
-  faStamp,
-  faTicket,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { HelpCircle } from 'lucide-react';
+import { BadgePercent, DollarSign, Gift, HelpCircle, Stamp, Ticket } from 'lucide-react';
 
 import CardInfo from '../../components/CardInfo';
 import { addCard, initializeCurrentCard, updateCurrentCard } from '../../store/cardsSlice';
@@ -18,11 +10,11 @@ import { addCard, initializeCurrentCard, updateCurrentCard } from '../../store/c
 import './styles.css';
 
 const cardTypes = [
-  { id: 'stamp', name: 'Штамп', icon: faStamp, tag: 'high' },
-  { id: 'discount', name: 'Скидка', icon: faPercent, tag: 'high' },
-  { id: 'cashback', name: 'Кешбэк', icon: faDollarSign, tag: 'high' },
-  { id: 'subscription', name: 'Абонемент', icon: faTicket, tag: 'shop' },
-  { id: 'certificate', name: 'Подарочный сертификат', icon: faMoneyCheckDollar, tag: 'shop' },
+  { id: 'stamp', name: 'Штамп', icon: Stamp, tag: 'high' },
+  { id: 'discount', name: 'Скидка', icon: BadgePercent, tag: 'high' },
+  { id: 'cashback', name: 'Кешбэк', icon: DollarSign, tag: 'high' },
+  { id: 'subscription', name: 'Абонемент', icon: Ticket, tag: 'shop' },
+  { id: 'certificate', name: 'Подарочный сертификат', icon: Gift, tag: 'shop' },
 ];
 
 const EditType = () => {
@@ -31,9 +23,8 @@ const EditType = () => {
   const { currentCard, cards } = useSelector((state) => state.cards);
   const [selectedType, setSelectedType] = useState(currentCard.status || 'stamp');
   const [activeTab, setActiveTab] = useState('description');
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 999);
 
-  // Инициализация currentCard при монтировании
   useEffect(() => {
     if (!currentCard.id) {
       const newId = cards.length > 0 ? Math.max(...cards.map((c) => c.id)) + 1 : 1;
@@ -48,7 +39,7 @@ const EditType = () => {
   }, [currentCard.status]);
 
   const handleResize = () => {
-    setIsMobile(window.innerWidth >= 1024);
+    setIsMobile(window.innerWidth <= 1024);
   };
 
   useEffect(() => {
@@ -74,66 +65,26 @@ const EditType = () => {
   };
 
   return (
-    <div className="edit-type-main-container">
-      {isMobile && (
-        <div className="edit-type-tabs">
-          <button
-            className={`edit-type-tab ${activeTab === 'description' ? 'active' : ''}`}
-            onClick={() => setActiveTab('description')}
-          >
-            Описание
-          </button>
-          <button
-            className={`edit-type-tab ${activeTab === 'card' ? 'active' : ''}`}
-            onClick={() => setActiveTab('card')}
-          >
-            Карта
-          </button>
-        </div>
-      )}
+    <div className="edit-type-layout">
+      <div className="edit-type-left">
+        {isMobile && (
+          <div className="edit-type-tabs">
+            <button
+              className={`edit-type-tab ${activeTab === 'description' ? 'active' : ''}`}
+              onClick={() => setActiveTab('description')}
+            >
+              Описание
+            </button>
+            <button
+              className={`edit-type-tab ${activeTab === 'card' ? 'active' : ''}`}
+              onClick={() => setActiveTab('card')}
+            >
+              Карта
+            </button>
+          </div>
+        )}
 
-      {isMobile ? (
-        <div className="edit-type-content">
-          {activeTab === 'description' && (
-            <div className="edit-type-page">
-              <h2>
-                Тип карты <HelpCircle size={16} />
-              </h2>
-              <hr />
-
-              <div className="card-types-grid">
-                {cardTypes.map((type) => (
-                  <div
-                    key={type.id}
-                    className={`edit-type-card ${selectedType === type.id ? 'selected' : ''}`}
-                    onClick={() => handleTypeSelect(type.id)}
-                  >
-                    <FontAwesomeIcon icon={type.icon} className="icon" />
-                    <div className="edit-type-name">{type.name}</div>
-                    <div
-                      className={`edit-type-tag ${type.tag === 'high' ? 'edit-type-green' : 'edit-type-purple'}`}
-                    >
-                      {type.tag === 'high' ? 'Высокий уровень удержания' : 'Лучшее для покупок'}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <button onClick={handleCreateCard} disabled={!selectedType} className="create-button">
-                Продолжить
-              </button>
-            </div>
-          )}
-
-          {activeTab === 'card' && (
-            <div className="type-card-image-container">
-              <img className="card-image-add" src={currentCard.frameUrl} alt={currentCard.name} />
-              <CardInfo card={currentCard} />
-            </div>
-          )}
-        </div>
-      ) : (
-        <>
+        {(!isMobile || activeTab === 'description') && (
           <div className="edit-type-page">
             <h2>
               Тип карты <HelpCircle size={16} />
@@ -143,13 +94,14 @@ const EditType = () => {
             <div className="card-types-grid">
               {cardTypes.map((type) => {
                 const isSelected = selectedType === type.id;
+                const Icon = type.icon;
                 return (
                   <div
                     key={type.id}
                     className={`edit-type-card ${isSelected ? 'selected' : ''}`}
                     onClick={() => handleTypeSelect(type.id)}
                   >
-                    <FontAwesomeIcon icon={type.icon} className="icon" />
+                    <Icon className="icon" size={24} />
                     <div className="edit-type-name">{type.name}</div>
                     <div
                       className={`edit-type-tag ${type.tag === 'high' ? 'edit-type-green' : 'edit-type-purple'}`}
@@ -165,11 +117,18 @@ const EditType = () => {
               Продолжить
             </button>
           </div>
-          <div className="type-card-image-container">
-            <img className="card-image-add" src={currentCard.frameUrl} alt={currentCard.name} />
-            <CardInfo card={currentCard} />
+        )}
+      </div>
+
+      {(!isMobile || activeTab === 'card') && (
+        <div className="edit-type-right">
+          <div className="phone-frame">
+            <img className="phone-image" src={currentCard.frameUrl} alt={currentCard.name} />
+            <div className="phone-screen">
+              <CardInfo card={currentCard} />
+            </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

@@ -42,7 +42,10 @@ const CardInfo = ({ card }) => {
               const stampNumber = rowIndex * 5 + colIndex;
 
               return (
-                <div key={`stamp-${stampNumber}`} style={{ backgroundColor: mergedCard.stampIconBackground }}>
+                <div
+                  key={`stamp-${stampNumber}`}
+                  style={{ backgroundColor: mergedCard.stampIconBackground }}
+                >
                   <IconComponent
                     size={24}
                     strokeWidth={2}
@@ -68,7 +71,6 @@ const CardInfo = ({ card }) => {
       <div className="card-info-header">
         <p className="card-name">{mergedCard.name}</p>
         <span className="card-inline-value">
-
           {fields
             .filter(({ valueKey }) =>
               ['balanceMoney', 'credits', 'balance', 'expirationDate'].includes(valueKey),
@@ -77,13 +79,12 @@ const CardInfo = ({ card }) => {
               const value = mergedCard[valueKey] ?? defaultValue;
               return (
                 <span key={valueKey} className="card-inline-value" title={label}>
-                <span className="inline-label">{label}:</span>{ ' ' }
-              { renderFieldValue(value, { format, suffix }) }
-              </span>
-            );
-          })}
+                  <span className="inline-label">{label}:</span>{' '}
+                  {renderFieldValue(value, { format, suffix })}
+                </span>
+              );
+            })}
         </span>
-
       </div>
 
       <div
@@ -91,19 +92,13 @@ const CardInfo = ({ card }) => {
         style={{ backgroundColor: mergedCard.centerBackground }}
       >
         {mergedCard.cardImg ? (
-          <img
-            className="card-info-main-img"
-            src={mergedCard.cardImg}
-            alt="Card background"
-          />
+          <img className="card-info-main-img" src={mergedCard.cardImg} alt="Card background" />
         ) : (
           <div className="card-background" />
         )}
 
         {(card.status === 'subscription' || card.status === 'stamp') && (
-          <div className="stamp-overlay">
-            {renderStamps()}
-          </div>
+          <div className="stamp-overlay">{renderStamps()}</div>
         )}
       </div>
 
@@ -113,13 +108,14 @@ const CardInfo = ({ card }) => {
           const shouldShowNoData = valueKey === 'restStamps' && value <= 0;
 
           return (
-            !['balanceMoney', 'credits', 'balance', 'expirationDate'].includes(valueKey) &&
-            (
+            !['balanceMoney', 'credits', 'balance', 'expirationDate'].includes(valueKey) && (
               <div key={valueKey} className="card-info-row">
                 <p className="card-info-row-label" title={label}>
                   {label}:
                 </p>
-                <span>{shouldShowNoData ? 'НЕТ ДАННЫХ' : renderFieldValue(value, { format, suffix })}</span>
+                <span>
+                  {shouldShowNoData ? 'НЕТ ДАННЫХ' : renderFieldValue(value, { format, suffix })}
+                </span>
               </div>
             )
           );

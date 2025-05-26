@@ -3,7 +3,6 @@
 // Кэшбек
 // Абонемент
 // Подарочный сертификат
-
 import { Flower, Ticket } from 'lucide-react';
 
 export const mockCards = [
@@ -73,8 +72,7 @@ export const mockCards = [
       scheduledDate: '',
       locations: [],
     },
-    design: {
-    },
+    design: {},
   },
   {
     id: 93,
@@ -94,8 +92,7 @@ export const mockCards = [
       scheduledDate: '',
       locations: [],
     },
-    design: {
-    },
+    design: {},
   },
   {
     id: 92,
@@ -115,7 +112,6 @@ export const mockCards = [
       scheduledDate: '',
       locations: [],
     },
-    design: {
-    },
+    design: {},
   },
 ];

@@ -31,7 +31,7 @@ const EditDesign = () => {
   const dispatch = useDispatch();
 
   const currentCard = useSelector((state) =>
-    state.cards.cards.find((c) => String(c.id) === id)
+    state.cards.cards.find((c) => String(c.id) === id),
   ) || {
     design: {
       logo: null,
@@ -88,7 +88,7 @@ const EditDesign = () => {
               [field]: imageUrl,
             },
           },
-        })
+        }),
       );
     }
   };
@@ -106,7 +106,7 @@ const EditDesign = () => {
             },
           },
         },
-      })
+      }),
     );
   };
 
@@ -121,7 +121,7 @@ const EditDesign = () => {
             stampsQuantity: value,
           },
         },
-      })
+      }),
     );
   };
 
@@ -135,7 +135,7 @@ const EditDesign = () => {
             stampIcon: icon,
           },
         },
-      })
+      }),
     );
   };
 
@@ -204,12 +204,7 @@ const EditDesign = () => {
             ) : (
               <div className="upload-placeholder">📁</div>
             )}
-            <input
-              type="file"
-              id="logo"
-              hidden
-              onChange={(e) => handleImageChange(e, 'logo')}
-            />
+            <input type="file" id="logo" hidden onChange={(e) => handleImageChange(e, 'logo')} />
             <label htmlFor="logo" className="upload-button">
               Выбрать файл
             </label>
@@ -227,12 +222,7 @@ const EditDesign = () => {
             ) : (
               <div className="upload-placeholder">📁</div>
             )}
-            <input
-              type="file"
-              id="icon"
-              hidden
-              onChange={(e) => handleImageChange(e, 'icon')}
-            />
+            <input type="file" id="icon" hidden onChange={(e) => handleImageChange(e, 'icon')} />
             <label htmlFor="icon" className="upload-button">
               Выбрать файл
             </label>

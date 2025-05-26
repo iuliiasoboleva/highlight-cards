@@ -56,7 +56,7 @@
   display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 999px) {
   .sidebar {
     display: none;
   }
@@ -71,7 +71,7 @@
     width: 100%;
     background-color: #eaeaed;
     padding: 10px 0;
-    z-index: 1000;
+    z-index: 10000;
   }
 
   .bottom-nav .icon-button {

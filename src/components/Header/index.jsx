@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 
-import { Contact, GraduationCap, LogOut, User, BarChart, Settings, ScanLine } from 'lucide-react';
+import { BarChart, Contact, GraduationCap, LogOut, ScanLine, Settings, User } from 'lucide-react';
 
 import { logout } from '../../store/userSlice';
 

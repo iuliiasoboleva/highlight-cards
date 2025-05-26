@@ -140,10 +140,11 @@ export const cardsSlice = createSlice({
     copyCard: (state, action) => {
       const cardToCopy = state.cards.find((c) => c.id === action.payload);
       if (cardToCopy) {
-        const newId = state.cards.reduce(
-          (max, card) => (card.id !== 'fixed' && card.id > max ? card.id : max),
-          0,
-        ) + 1;
+        const newId =
+          state.cards.reduce(
+            (max, card) => (card.id !== 'fixed' && card.id > max ? card.id : max),
+            0,
+          ) + 1;
 
         const copiedCard = {
           ...cardToCopy,
@@ -163,7 +164,8 @@ export const cardsSlice = createSlice({
       if (card) {
         console.log(`Downloading card ${card.id} (${card.name})`);
 
-        const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(card, null, 2));
+        const dataStr =
+          'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(card, null, 2));
         const downloadAnchorNode = document.createElement('a');
         downloadAnchorNode.setAttribute('href', dataStr);
         downloadAnchorNode.setAttribute('download', `card_${card.id}_${card.name}.json`);

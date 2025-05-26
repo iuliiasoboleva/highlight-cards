@@ -234,6 +234,12 @@ const Clients = () => {
             Импортируйте клиентов в систему с помощью xlsx шаблона
           </p>
           <div className="footer-card-actions">
+            <button
+              className="footer-button"
+              onClick={() => window.open('/import_customers_template.xlsx', '_blank')}
+            >
+              Скачать шаблон импорта
+            </button>
             <button className="footer-button" onClick={handleExportToExcel}>
               Импортировать клиентов
             </button>

@@ -22,7 +22,7 @@ const Sidebar = () => {
     { icon: <Home size={20} />, label: 'Главная', path: '/' },
     { icon: <CreditCard size={20} />, label: 'Карты', path: '/cards' },
     { icon: <Users size={20} />, label: 'Клиенты', path: '/clients' },
-    { icon: <MessageSquare size={20} />, label: 'Рассылки', path: '/mailings' },
+    { icon: <MessageSquare size={20} />, label: 'Рассылки', path: '/mailings/info' },
     { icon: <MapPin size={20} />, label: 'Локации', path: '/locations' },
     { icon: <User size={20} />, label: 'Профиль', path: '/managers' },
     { icon: <Settings size={20} />, label: 'Настройки', path: '/settings' },

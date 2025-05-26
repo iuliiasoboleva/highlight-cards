@@ -58,4 +58,10 @@ export const overallStats = {
   lastPeriod: {
     value: 40,
   },
+  newClients: {
+    value: 1,
+  },
+  referrals: {
+    value: 1,
+  },
 };

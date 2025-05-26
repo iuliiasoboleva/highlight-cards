@@ -167,8 +167,8 @@ const MainLayout = () => {
         <div className="page-content">
           {/* <Breadcrumbs /> */}
           <Outlet />
-          <Footer />
         </div>
+        <Footer />
       </div>
     </div>
   );

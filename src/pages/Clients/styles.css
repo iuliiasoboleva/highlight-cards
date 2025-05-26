@@ -211,7 +211,10 @@
 
 .footer-card-actions {
   display: flex;
+  flex-direction: column;
   gap: 10px;
+  width: auto;
+  max-width: fit-content;
 }
 
 .footer-button {

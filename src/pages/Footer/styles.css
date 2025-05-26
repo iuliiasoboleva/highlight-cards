@@ -1,5 +1,5 @@
 .footer {
-  background-color: rgba(191, 71, 86, 0.1);
+  background-color: rgb(239, 227, 229);
   color: black;
   padding: 16px;
   text-align: center;
@@ -8,6 +8,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  z-index: 9999;
+  margin-left: var(--sidebar-width);
 }
 
 .footer-link {
@@ -15,4 +17,11 @@
   gap: 4px;
   align-items: center;
   justify-content: center;
+}
+
+@media (max-width: 999px) {
+  .footer {
+    margin-left: 0;
+    margin-bottom: var(--bottom-nav-height);
+  }
 }

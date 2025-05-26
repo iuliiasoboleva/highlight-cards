@@ -187,9 +187,8 @@ const Locations = () => {
   const renderMapSection = () => (
     <div className="edit-type-page">
       <h2>
-        <span className="geo-badge">Локации Geo-push в радиусе 100 метров</span>
+        Локации <span className="geo-badge">Geo-push в радиусе 100 метров</span>
       </h2>
-
       <p className="locations-subtext">
         Добавьте адреса, рядом с которыми вашим клиентам будут автоматически приходить
         push-уведомления. Geo-push работает, когда клиент оказывается в радиусе 100 метров от вашей

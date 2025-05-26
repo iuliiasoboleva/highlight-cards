@@ -1,36 +1,71 @@
-.edit-type-main-container {
+.edit-type-layout {
   display: flex;
-  gap: 32px;
-  align-items: center;
-  justify-content: space-between;
+  width: 100%;
+  gap: 20px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.edit-type-left {
+  width: 50%;
   padding: 20px;
 }
 
-.edit-type-page {
-  flex: 1;
-  width: 60%;
+.edit-type-right {
+  width: 40%;
+  position: fixed;
+  right: 0;
+  top: calc(var(--header-height)+ var(--bar-height));
+  height: calc(100vh - (var(--header-height) + var(--bar-height)));
+  background: #fff;
+  border-left: 1px solid #e0e0e0;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: hidden;
 }
 
-.type-card-image-container {
-  width: 40%;
-  height: 100%;
-  background-color: #fff;
-  border-radius: 0.4rem;
-  border: 0.1rem solid #d5d5dd;
-  padding: 1.5rem;
+.phone-frame {
   position: relative;
+  width: 100%;
+  max-width: 320px;
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+.phone-image {
+  width: 100%;
+  display: block;
+  height: 570px;
+}
+
+.phone-screen {
+  position: absolute;
+  top: 0;
+  left: 8%;
+  width: 85%;
+  height: 100%;
+  overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .edit-type-page h2 {
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 500;
   margin-bottom: 12px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+}
+
+hr {
+  border: none;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 24px;
 }
 
 .card-types-grid {
@@ -66,8 +101,9 @@
   border: none;
 }
 
-.edit-type-card .icon {
-  font-size: 28px;
+.edit-type-card svg {
+  width: 32px;
+  height: 32px;
 }
 
 .edit-type-name {
@@ -85,12 +121,12 @@
   white-space: nowrap;
 }
 
-.edit-type-tag.edit-type-green {
+.edit-type-green {
   background-color: #e8fff1;
   color: #00b24f;
 }
 
-.edit-type-tag.edit-type-purple {
+.edit-type-purple {
   background-color: #eee8ff;
   color: #6c4dd6;
 }
@@ -146,30 +182,22 @@
   background-color: #111827;
 }
 
-.edit-type-content {
-  display: flex;
-  flex-direction: column;
-}
-
-@media (max-width: 1024px) {
-  .edit-type-main-container {
+@media (max-width: 999px) {
+  .edit-type-layout {
     flex-direction: column;
-    padding: 20px 20px 0 20px;
-    justify-content: flex-start;
   }
 
-  .edit-type-page,
-  .type-card-image-container,
-  .edit-type-content {
+  .edit-type-left,
+  .edit-type-right {
     width: 100%;
+    position: static;
+    height: auto;
+    padding: 16px;
   }
 
-  .edit-type-page {
-    padding-right: 0;
-    padding-top: 0;
-  }
-
-  .type-card-image-container {
-    padding-left: 0;
+  .edit-type-right {
+    border-left: none;
+    border-top: 1px solid #e0e0e0;
+    margin-top: 24px;
   }
 }

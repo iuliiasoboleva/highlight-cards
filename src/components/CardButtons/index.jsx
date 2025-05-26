@@ -1,8 +1,10 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Power, Download, Copy, X } from 'lucide-react';
-import { updateCardById, deleteCard, copyCard, downloadCard } from '../../store/cardsSlice';
+import { useLocation, useNavigate } from 'react-router-dom';
+
+import { Copy, Download, Power, X } from 'lucide-react';
+
+import { copyCard, deleteCard, downloadCard, updateCardById } from '../../store/cardsSlice';
 
 import './styles.css';
 
@@ -44,7 +46,7 @@ const CardButtons = ({ isFixed, cardId }) => {
       updateCardById({
         id: cardId,
         changes: { isActive: !card.isActive },
-      })
+      }),
     );
   };
 

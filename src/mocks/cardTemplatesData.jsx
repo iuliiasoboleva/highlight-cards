@@ -1,9 +1,4 @@
-import {
-  Flower,
-  Fuel,
-  Scissors,
-  Waves,
-} from 'lucide-react';
+import { Flower, Fuel, Scissors, Waves } from 'lucide-react';
 
 export const mockTemplateCards = [
   {
@@ -92,7 +87,7 @@ export const mockTemplateCards = [
       colors: {
         cardBackground: 'rgb(0, 0, 0)',
         textColor: 'white',
-      }
+      },
     },
   },
   {
@@ -121,7 +116,7 @@ export const mockTemplateCards = [
       colors: {
         cardBackground: 'rgb(49, 218, 248)',
         iconColor: 'white',
-      }
+      },
     },
   },
 ];
