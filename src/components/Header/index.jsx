@@ -96,11 +96,11 @@ const Header = () => {
                 <User size={16} style={{ marginRight: '8px' }} />
                 Профиль пользователя
               </button>
-              <button onClick={() => navigate('/stats')}>
+              <button onClick={() => navigate('/clients')}>
                 <BarChart size={16} style={{ marginRight: '8px' }} />
                 Статистика
               </button>
-              <button onClick={() => navigate('/scanner')}>
+              <button onClick={() => navigate('/scan')}>
                 <ScanLine size={16} style={{ marginRight: '8px' }} />
                 Приложение-сканер
               </button>

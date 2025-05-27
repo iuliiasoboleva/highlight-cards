@@ -29,7 +29,7 @@ const Locations = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [pushMessage, setPushMessage] = useState(
     currentCard.pushNotification?.message ||
-      `Новое уведомление по вашей карте "${currentCard.title}"`,
+    `Новое уведомление по вашей карте "${currentCard.title}"`,
   );
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
@@ -186,128 +186,134 @@ const Locations = () => {
 
   const renderMapSection = () => (
     <div className="edit-type-page">
-      <h2>
-        Локации <span className="geo-badge">Geo-push в радиусе 100 метров</span>
-      </h2>
-      <p className="locations-subtext">
-        Добавьте адреса, рядом с которыми вашим клиентам будут автоматически приходить
-        push-уведомления. Geo-push работает, когда клиент оказывается в радиусе 100 метров от вашей
-        точки.
-      </p>
-      <CustomSelect
-        value={currentCard?.id || null}
-        onChange={handleCardSelect}
-        options={cards.map((card) => ({
-          value: card.id,
-          label: card.title,
-        }))}
-        className="tariff-period-select"
-      />
-      {limitReached && (
-        <div className="limit-alert">Вы достигли лимита в {MAX_LOCATIONS} локаций</div>
-      )}
-
-      <div className="search-container">
-        <input
-          type="text"
-          className="location-modal-input"
-          placeholder="Введите адрес локации"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && setSearchQuery(e.target.value)}
+      <div className='edit-type-left'>
+        <h2>
+          Локации <span className="geo-badge">Geo-push в радиусе 100 метров</span>
+        </h2>
+        <p className="locations-subtext">
+          Добавьте адреса, рядом с которыми вашим клиентам будут автоматически приходить
+          push-уведомления. Geo-push работает, когда клиент оказывается в радиусе 100 метров от вашей
+          точки.
+        </p>
+        <CustomSelect
+          value={currentCard?.id || null}
+          onChange={handleCardSelect}
+          options={cards.map((card) => ({
+            value: card.id,
+            label: card.title,
+          }))}
+          className="tariff-period-select"
         />
-        <button
-          className="btn btn-outline search-org-btn"
-          onClick={handleSearchOrganizations}
-          disabled={!debouncedSearchQuery.trim()}
-          style={{ marginLeft: '10px' }}
-        >
-          Найти все
+        {limitReached && (
+          <div className="limit-alert">Вы достигли лимита в {MAX_LOCATIONS} локаций</div>
+        )}
+
+        <div className="search-container">
+          <input
+            type="text"
+            className="location-modal-input"
+            placeholder="Введите адрес локации"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && setSearchQuery(e.target.value)}
+          />
+          <button
+            className="btn btn-outline search-org-btn"
+            onClick={handleSearchOrganizations}
+            disabled={!debouncedSearchQuery.trim()}
+            style={{ marginLeft: '10px' }}
+          >
+            Найти все
+          </button>
+        </div>
+
+        {isSearching && <div className="search-loading">Идет поиск...</div>}
+
+        {selectedLocation && (
+          <div className="location-info">
+            <p>Выбрано: {selectedLocation.address}</p>
+            <p>
+              Координаты: {selectedLocation.coords.lat.toFixed(6)},{' '}
+              {selectedLocation.coords.lon.toFixed(6)}
+            </p>
+          </div>
+        )}
+        {organizationResults.length > 0 && (
+          <div className="location-info">
+            <h4>Найденные организации:</h4>
+            <ul>
+              {organizationResults.map((org, index) => (
+                <li key={index}>
+                  {org.name} ({org.coords[0].toFixed(5)}, {org.coords[1].toFixed(5)})
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <div className="location-push-textarea">
+          <YandexMapPicker
+            ref={mapRef}
+            onSelect={handleMapSelect}
+            initialCoords={selectedLocation?.coords}
+          />
+        </div>
+
+        <textarea
+          className="push-textarea"
+          value={pushMessage}
+          onChange={(e) => setPushMessage(e.target.value)}
+          placeholder="Введите текст push-уведомления"
+        />
+
+        <button className="btn btn-dark" onClick={handleAddLocation} disabled={!pushMessage.trim()}>
+          Добавить
         </button>
-      </div>
-
-      {isSearching && <div className="search-loading">Идет поиск...</div>}
-
-      {selectedLocation && (
-        <div className="location-info">
-          <p>Выбрано: {selectedLocation.address}</p>
-          <p>
-            Координаты: {selectedLocation.coords.lat.toFixed(6)},{' '}
-            {selectedLocation.coords.lon.toFixed(6)}
-          </p>
-        </div>
-      )}
-      {organizationResults.length > 0 && (
-        <div className="location-info">
-          <h4>Найденные организации:</h4>
-          <ul>
-            {organizationResults.map((org, index) => (
-              <li key={index}>
-                {org.name} ({org.coords[0].toFixed(5)}, {org.coords[1].toFixed(5)})
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-      <div className="location-push-textarea">
-        <YandexMapPicker
-          ref={mapRef}
-          onSelect={handleMapSelect}
-          initialCoords={selectedLocation?.coords}
-        />
-      </div>
-
-      <textarea
-        className="push-textarea"
-        value={pushMessage}
-        onChange={(e) => setPushMessage(e.target.value)}
-        placeholder="Введите текст push-уведомления"
-      />
-
-      <button className="btn btn-dark" onClick={handleAddLocation} disabled={!pushMessage.trim()}>
-        Добавить
-      </button>
-      <div className="location-list">
-        {locations.map((loc, index) => (
-          <div key={loc.id} className="location-card">
-            <div className="location-info">
-              <strong>{loc.name}</strong>
-              <div className="location-coords">
-                {loc.coords[0].toFixed(5)}, {loc.coords[1].toFixed(5)}
+        <div className="location-list">
+          {locations.map((loc, index) => (
+            <div key={loc.id} className="location-card">
+              <div className="location-info">
+                <strong>{loc.name}</strong>
+                <div className="location-coords">
+                  {loc.coords[0].toFixed(5)}, {loc.coords[1].toFixed(5)}
+                </div>
+              </div>
+              <div className="location-actions">
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    checked={loc.active}
+                    onChange={() => toggleLocation(index)}
+                  />
+                  <span className="slider round" />
+                </label>
+                <button
+                  className="delete-location-btn"
+                  onClick={() => removeLocation(index)}
+                  title="Удалить"
+                >
+                  🗑
+                </button>
               </div>
             </div>
-            <div className="location-actions">
-              <label className="switch">
-                <input
-                  type="checkbox"
-                  checked={loc.active}
-                  onChange={() => toggleLocation(index)}
-                />
-                <span className="slider round" />
-              </label>
-              <button
-                className="delete-location-btn"
-                onClick={() => removeLocation(index)}
-                title="Удалить"
-              >
-                🗑
-              </button>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
 
   const renderPreviewSection = () => (
-    <div className="type-card-image-container">
-      <img className="card-image-add" src="/phone.svg" alt="preview" />
-      <PushPreview card={currentCard} message={pushMessage} />
+    <div className="edit-type-right">
+      <div className="phone-frame">
+        <img className="phone-image" src={currentCard.frameUrl} alt={currentCard.name} />
+        <div className="phone-screen">
+          <PushPreview card={currentCard} message={pushMessage} />
+        </div>
+      </div>
     </div>
   );
 
   return (
-    <div className="edit-type-main-container">
+    <div className="edit-type-layout">
       {isMobile && (
         <div className="edit-type-tabs">
           <button

@@ -70,6 +70,17 @@ export const cardsSlice = createSlice({
         id: maxId + 1,
       };
     },
+    setCurrentCardFromTemplate: (state, action) => {
+      state.currentCard = {
+        ...action.payload,
+        id: state.cards.reduce(
+          (max, card) => (card.id !== 'fixed' && card.id > max ? card.id : max),
+          0,
+        ) + 1, // присваиваем новый id
+        createdAt: new Date().toISOString(),
+        isActive: false, // копия шаблона пока не активна
+      };
+    },    
 
     // Добавление новой карты
     addCard: (state) => {
@@ -181,6 +192,7 @@ export const cardsSlice = createSlice({
 export const {
   initializeCards,
   initializeCurrentCard,
+  setCurrentCardFromTemplate, // <-- добавляем в экспорт
   addCard,
   updateCurrentCard,
   saveCurrentCard,

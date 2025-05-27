@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { Copy, Download, Power, X } from 'lucide-react';
 
-import { copyCard, deleteCard, downloadCard, updateCardById } from '../../store/cardsSlice';
+import { copyCard, deleteCard, downloadCard, initializeCurrentCard, setCurrentCardFromTemplate, updateCardById } from '../../store/cardsSlice';
 
 import './styles.css';
 
@@ -20,21 +20,40 @@ const CardButtons = ({ isFixed, cardId }) => {
     return (
       <div className="card-buttons">
         {isTemplatePage ? (
-          <button onClick={() => navigate('/cards/create')}>Без шаблона</button>
+          <button
+            onClick={() => {
+              dispatch(initializeCurrentCard());
+              navigate('/cards/create');
+            }}
+          >
+            Без шаблона
+          </button>
         ) : (
           <>
             <button onClick={() => navigate('/cards/template')}>На шаблоне</button>
-            <button onClick={() => navigate('/cards/create')}>Без шаблона</button>
+            <button
+              onClick={() => {
+                dispatch(initializeCurrentCard());
+                navigate('/cards/create');
+              }}
+            >
+              Без шаблона
+            </button>
           </>
         )}
       </div>
     );
-  }
+  }  
 
   if (isTemplatePage) {
+    const handleTemplateSelect = () => {
+      dispatch(setCurrentCardFromTemplate(card)); // <-- кладём шаблон в currentCard
+      navigate('/cards/create');
+    };
+  
     return (
       <div className="card-buttons">
-        <button className="template-select-button" onClick={() => navigate('/cards/create')}>
+        <button className="template-select-button" onClick={handleTemplateSelect}>
           Выбрать шаблон
         </button>
       </div>

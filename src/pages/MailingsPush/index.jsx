@@ -39,7 +39,7 @@ const MailingsPush = () => {
     if (currentCard) {
       setPushMessage(
         currentCard.pushNotification?.message ||
-          `Новое уведомление по вашей карте "${currentCard.title}"`,
+        `Новое уведомление по вашей карте "${currentCard.title}"`,
       );
 
       const hasSchedule = Boolean(currentCard.pushNotification?.scheduledDate);
@@ -98,88 +98,96 @@ const MailingsPush = () => {
   }, []);
 
   const pushContent = hasActiveCards ? (
-    <div className="mailings-push-container">
-      <h2 className="mailings-push-title">
-        Отправить push
-        <FontAwesomeIcon icon={faCircleQuestion} style={{ fontSize: 16, marginLeft: 8 }} />
-      </h2>
+    <div className='edit-type-left'>
+      <div className="mailings-push-container">
+        <h2 className="mailings-push-title">
+          Отправить push
+          <FontAwesomeIcon icon={faCircleQuestion} style={{ fontSize: 16, marginLeft: 8 }} />
+        </h2>
 
-      <div className="mailings-push-box">
-        <CustomSelect
-          value={currentCard?.id || null}
-          onChange={handleCardSelect}
-          options={cards.map((card) => ({
-            value: card.id,
-            label: card.title,
-          }))}
-          className="tariff-period-select"
-          disabled={!hasActiveCards}
-        />
+        <div className="mailings-push-box">
+          <CustomSelect
+            value={currentCard?.id || null}
+            onChange={handleCardSelect}
+            options={cards.map((card) => ({
+              value: card.id,
+              label: card.title,
+            }))}
+            className="tariff-period-select"
+            disabled={!hasActiveCards}
+          />
 
-        <PushTargetTabs onTabChange={setSelectedTab} onFilteredCountChange={setUsersCount} />
+          <PushTargetTabs onTabChange={setSelectedTab} onFilteredCountChange={setUsersCount} />
 
-        <p className="push-recipient-count">
-          <FontAwesomeIcon icon={faUsers} style={{ fontSize: 14 }} />
-          {usersCount} {pluralize(usersCount, ['клиент', 'клиента', 'клиентов'])}{' '}
-          {pluralVerb(usersCount, 'получит', 'получат')} ваше сообщение
-        </p>
+          <p className="push-recipient-count">
+            <FontAwesomeIcon icon={faUsers} style={{ fontSize: 14 }} />
+            {usersCount} {pluralize(usersCount, ['клиент', 'клиента', 'клиентов'])}{' '}
+            {pluralVerb(usersCount, 'получит', 'получат')} ваше сообщение
+          </p>
 
-        <div className="push-schedule">
-          <label className="custom-checkbox">
-            <input type="checkbox" checked={isScheduled} onChange={handleScheduleToggle} />
-            <span>Запланировать</span>
-          </label>
+          <div className="push-schedule">
+            <label className="custom-checkbox">
+              <input type="checkbox" checked={isScheduled} onChange={handleScheduleToggle} />
+              <span>Запланировать</span>
+            </label>
 
-          {isScheduled && (
-            <input
-              className="push-date"
-              type="datetime-local"
-              value={scheduledDate}
-              min={getMinDateTime()}
-              onChange={(e) => setScheduledDate(e.target.value)}
-            />
-          )}
+            {isScheduled && (
+              <input
+                className="push-date"
+                type="datetime-local"
+                value={scheduledDate}
+                min={getMinDateTime()}
+                onChange={(e) => setScheduledDate(e.target.value)}
+              />
+            )}
+          </div>
+
+          <textarea
+            className="push-textarea"
+            value={pushMessage}
+            onChange={(e) => setPushMessage(e.target.value)}
+            placeholder="Введите текст push-уведомления"
+          />
+
+          <button
+            className="btn btn-dark"
+            onClick={handleSavePushSettings}
+            disabled={!pushMessage.trim()}
+          >
+            Отправить
+          </button>
         </div>
-
-        <textarea
-          className="push-textarea"
-          value={pushMessage}
-          onChange={(e) => setPushMessage(e.target.value)}
-          placeholder="Введите текст push-уведомления"
-        />
-
-        <button
-          className="btn btn-dark"
-          onClick={handleSavePushSettings}
-          disabled={!pushMessage.trim()}
-        >
-          Отправить
-        </button>
       </div>
     </div>
   ) : (
-    <div className="mailings-push-container">
-      <h2 className="mailings-push-title">Push-уведомления</h2>
-      <p className="no-active-cards-text">
-        У вас нет активных карт, чтобы настроить push-уведомление. Пожалуйста, создайте и
-        активируйте карту в разделе "Карты".
-      </p>
+    <div className='edit-type-left'>
+      <div className="mailings-push-container">
+        <h2 className="mailings-push-title">Push-уведомления</h2>
+        <p className="no-active-cards-text">
+          У вас нет активных карт, чтобы настроить push-уведомление. Пожалуйста, создайте и
+          активируйте карту в разделе "Карты".
+        </p>
+      </div>
     </div>
+
   );
 
   const cardPreview = hasActiveCards && (
-    <div className="type-card-image-container">
-      <img className="card-image-add" src="/phone.svg" alt="preview" />
-      <PushPreview
-        card={currentCard}
-        message={pushMessage}
-        scheduledDate={isScheduled ? scheduledDate : null}
-      />
+    <div className="edit-type-right">
+      <div className="phone-frame">
+        <img className="phone-image" src={currentCard.frameUrl} alt={currentCard.name} />
+        <div className="phone-screen">
+          <PushPreview
+            card={currentCard}
+            message={pushMessage}
+            scheduledDate={isScheduled ? scheduledDate : null}
+          />  </div>
+      </div>
     </div>
   );
 
   return (
-    <div className="edit-type-main-container">
+    <div className="edit-type-layout">
       {isMobile && (
         <div className="edit-type-tabs">
           {['settings', 'card'].map((tab) => (
@@ -196,13 +204,11 @@ const MailingsPush = () => {
 
       {isMobile ? (
         <div className="edit-type-content">
-          <div className="edit-type-page">
             {activeTab === 'settings' ? pushContent : cardPreview}
-          </div>
         </div>
       ) : (
         <>
-          <div className="edit-type-page">{pushContent}</div>
+          {pushContent}
           {cardPreview}
         </>
       )}
