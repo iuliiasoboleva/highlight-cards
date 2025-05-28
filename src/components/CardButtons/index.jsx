@@ -4,7 +4,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { Copy, Download, Power, X } from 'lucide-react';
 
-import { copyCard, deleteCard, downloadCard, initializeCurrentCard, setCurrentCardFromTemplate, updateCardById } from '../../store/cardsSlice';
+import {
+  copyCard,
+  deleteCard,
+  downloadCard,
+  initializeCurrentCard,
+  setCurrentCardFromTemplate,
+  updateCardById,
+} from '../../store/cardsSlice';
 
 import './styles.css';
 
@@ -43,14 +50,14 @@ const CardButtons = ({ isFixed, cardId }) => {
         )}
       </div>
     );
-  }  
+  }
 
   if (isTemplatePage) {
     const handleTemplateSelect = () => {
       dispatch(setCurrentCardFromTemplate(card)); // <-- кладём шаблон в currentCard
       navigate('/cards/create');
     };
-  
+
     return (
       <div className="card-buttons">
         <button className="template-select-button" onClick={handleTemplateSelect}>

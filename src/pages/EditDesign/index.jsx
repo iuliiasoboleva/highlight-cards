@@ -294,9 +294,11 @@ const EditDesign = () => {
   );
 
   const cardPreview = (
-    <div className="type-card-image-container">
-      <img className="card-image-add" src="/phone.svg" alt="preview" />
-      <CardInfo card={previewCardData} />
+    <div className="phone-frame">
+      <img className="phone-image" src={currentCard.frameUrl} alt={currentCard.name} />
+      <div className="phone-screen">
+        <CardInfo card={previewCardData} />
+      </div>
     </div>
   );
 
@@ -320,15 +322,21 @@ const EditDesign = () => {
       )}
 
       {isMobile ? (
-        <div className="edit-type-content">
-          {activeTab === 'description' && <div className="edit-type-page">{designContent}</div>}
-          {activeTab === 'card' && cardPreview}
+        <div className="edit-type-layout">
+          {activeTab === 'description' && (
+            <div className="edit-type-left">
+              <div className="edit-type-page">{designContent}</div>
+            </div>
+          )}
+          {activeTab === 'card' && <div className="edit-type-right">{cardPreview}</div>}
         </div>
       ) : (
-        <>
-          <div className="edit-type-page">{designContent}</div>
-          {cardPreview}
-        </>
+        <div className="edit-type-layout">
+          <div className="edit-type-left">
+            <div className="edit-type-page">{designContent}</div>
+          </div>
+          <div className="edit-type-right">{cardPreview}</div>
+        </div>
       )}
     </div>
   );

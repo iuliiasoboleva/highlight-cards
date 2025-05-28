@@ -37,7 +37,7 @@ export const mockCards = [
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
-    stamps: 2,
+    stamps: 1,
     frameUrl: '/phone.svg',
     expirationDate: '01.02.2026',
     name: 'Карта №2',
@@ -106,6 +106,7 @@ export const mockCards = [
     name: 'Карта №5',
     balanceMoney: 1800,
     certificateName: 'Ivan',
+    expirationDate: '02.06.2025',
     subscribersCount: 150,
     pushNotification: {
       message: 'У нас скидка',

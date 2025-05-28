@@ -38,7 +38,6 @@
 
 .tariff-name {
   font-size: 26px;
-  font-weight: 600;
 }
 
 .tariff-sub {
@@ -49,7 +48,6 @@
 
 .tariff-price {
   font-size: 26px;
-  font-weight: 600;
 }
 
 .tariff-due {
@@ -58,11 +56,6 @@
   border-radius: 8px;
   padding: 16px;
   width: 100%;
-}
-
-.tariff-due-title,
-.tariff-box-column p {
-  font-weight: 600;
 }
 
 .tariff-table th.text-left {
@@ -82,7 +75,6 @@
 .tariff-due-time,
 .tariff-due-days {
   font-size: 26px;
-  font-weight: 600;
 }
 
 .tariff-table-wrapper {
@@ -107,13 +99,11 @@
 
 .tariff-green {
   color: green;
-  font-weight: 600;
   font-size: 18px;
 }
 
 .tariff-red {
   color: red;
-  font-weight: 600;
   font-size: 18px;
 }
 

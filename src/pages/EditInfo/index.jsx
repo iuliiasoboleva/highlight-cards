@@ -76,17 +76,11 @@ const EditInfo = () => {
   );
 
   const cardPreview = (
-    <div className="type-card-image-container">
-      <img className="card-image-add" src="/phone.svg" alt="preview" />
-      <CardInfo
-        card={{
-          id,
-          title: 'Карта',
-          name: 'Накопительная карта',
-          status: 'stamp',
-          ...currentCard,
-        }}
-      />
+    <div className="phone-frame">
+      <img className="phone-image" src={currentCard.frameUrl} alt={currentCard.name} />
+      <div className="phone-screen">
+        <CardInfo card={currentCard} />
+      </div>
     </div>
   );
 
@@ -107,16 +101,22 @@ const EditInfo = () => {
       )}
 
       {isMobile ? (
-        <div className="edit-type-content">
+        <div className="edit-type-layout">
           <div className="edit-type-page">
-            {activeTab === 'description' ? infoContent : cardPreview}
+            {activeTab === 'description' ? (
+              <div className="edit-type-right">{infoContent}</div>
+            ) : (
+              <div className="edit-type-right">{cardPreview}</div>
+            )}
           </div>
         </div>
       ) : (
-        <>
-          <div className="edit-type-page">{infoContent}</div>
-          {cardPreview}
-        </>
+        <div className="edit-type-layout">
+          <div className="edit-type-left">
+            <div className="edit-type-page">{infoContent}</div>
+          </div>
+          <div className="edit-type-right">{cardPreview}</div>
+        </div>
       )}
       {showQRPopup && <QRPopup cardId={id} onClose={() => setShowQRPopup(false)} />}
     </div>

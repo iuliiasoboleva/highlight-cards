@@ -1,6 +1,6 @@
 .settings-inputs-container {
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
   display: flex;
 }
 
@@ -57,15 +57,15 @@
 
 .barcode-radio-title {
   font-size: 16px;
-  font-weight: 600;
   color: #333;
-  margin-bottom: 12px;
+  font-weight: 500;
 }
 
 .barcode-radio-options {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  margin-top: 12px;
 }
 
 .barcode-radio-option {
@@ -158,7 +158,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 10000;
 }
 
 .location-modal {
@@ -181,7 +181,6 @@
 
 .location-modal-title {
   font-size: 20px;
-  font-weight: 600;
   margin: 0;
   color: #333;
 }
@@ -310,4 +309,181 @@
 
 .visit-text {
   white-space: pre;
+}
+
+.locations-wrapper {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.location-tag {
+  display: flex;
+  align-items: center;
+  background: #222;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  margin-left: 4px;
+  cursor: pointer;
+}
+
+.add-btn,
+.clear-btn {
+  background: #eee;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.card-form-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.card-form-warning {
+  background-color: #ffa500;
+  color: #fff;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.card-form-header,
+.utm-header {
+  display: grid;
+  margin-bottom: 10px;
+  align-items: center;
+  gap: 20px;
+}
+
+.card-form-header {
+  grid-template-columns: 3fr 3fr 1fr 1fr 1fr;
+}
+
+.utm-header {
+  grid-template-columns: 3fr 3fr 1fr 1fr;
+}
+
+.card-form-header span,
+.utm-header span {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgb(101, 101, 101);
+  line-height: 1.66667;
+}
+
+.card-form-row,
+.utm-row {
+  display: grid;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 20px;
+}
+
+.card-form-row {
+  grid-template-columns: 3fr 3fr 1fr 1fr 1fr;
+  justify-items: center;
+}
+
+.utm-row {
+  grid-template-columns: 3fr 3fr 1fr 1fr;
+}
+
+.card-form-delete-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #555;
+}
+
+.card-form-delete-btn:hover {
+  color: #d00;
+}
+
+.card-form-delete-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.card-form-add-btn {
+  width: 100%;
+  padding: 14px;
+  background-color: #1a1a1a;
+  color: #fff;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.card-form-add-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.utm-container,
+.card-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.utm-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.utm-copy {
+  cursor: pointer;
+}
+
+.utm-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+.utm-input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.utm-add-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #ddd;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.utm-add-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }

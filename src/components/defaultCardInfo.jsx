@@ -6,6 +6,7 @@ export const STATUS_CONFIG = {
   certificate: [
     { label: 'Баланс', valueKey: 'balanceMoney', suffix: '₽' },
     { label: 'Имя', valueKey: 'certificateName', suffix: '' },
+    { label: 'Срок действия', valueKey: 'expirationDate' },
   ],
   cashback: [
     { label: 'Баллы', valueKey: 'credits', suffix: '' },
@@ -17,8 +18,8 @@ export const STATUS_CONFIG = {
     { label: 'Текущий статус кешбэка', valueKey: 'cashbackStatus' },
   ],
   subscription: [
-    { label: 'Текущее количество баллов', valueKey: 'score' },
-    { label: 'Общее количество визитов', valueKey: 'visitsCount' },
+    { label: 'Текуще визиты', valueKey: 'score' },
+    { label: 'Всего визитов', valueKey: 'visitsCount' },
     { label: 'Срок действия', valueKey: 'expirationDate' },
   ],
   stamp: [
@@ -57,7 +58,7 @@ export const defaultCardTemplate = {
   qrImg: '/qr-code.svg',
   frameUrl: '/phone.svg',
   balanceMoney: 1800,
-  stamps: 2,
+  stamps: 1,
   cardImg: '',
   untilNextReward: 2,
   currentLevel: '',
@@ -82,6 +83,7 @@ export const defaultCardTemplate = {
     visitStamps: 1,
     limitVisitPerDay: false,
     locations: [],
+    language: 'ru',
   },
   score: 10,
   subscribersCount: 0,
@@ -115,4 +117,12 @@ export const defaultCardTemplate = {
       textColor: '#1F1E1F',
     },
   },
+  issueFormFields: [
+    { type: 'name', name: 'Имя', required: false, unique: false },
+    { type: 'surname', name: 'Фамилия', required: false, unique: false },
+    { type: 'phone', name: 'Телефон', required: false, unique: true },
+    { type: 'email', name: 'Email', required: false, unique: true },
+    { type: 'birthday', name: 'Дата рождения', required: false, unique: false },
+  ],
+  utmLinks: [],
 };

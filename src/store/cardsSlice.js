@@ -73,14 +73,15 @@ export const cardsSlice = createSlice({
     setCurrentCardFromTemplate: (state, action) => {
       state.currentCard = {
         ...action.payload,
-        id: state.cards.reduce(
-          (max, card) => (card.id !== 'fixed' && card.id > max ? card.id : max),
-          0,
-        ) + 1, // присваиваем новый id
+        id:
+          state.cards.reduce(
+            (max, card) => (card.id !== 'fixed' && card.id > max ? card.id : max),
+            0,
+          ) + 1, // присваиваем новый id
         createdAt: new Date().toISOString(),
         isActive: false, // копия шаблона пока не активна
       };
-    },    
+    },
 
     // Добавление новой карты
     addCard: (state) => {
@@ -185,11 +186,46 @@ export const cardsSlice = createSlice({
         downloadAnchorNode.remove();
       }
     },
+    updateIssueFormField: (state, action) => {
+      const { index, key, value } = action.payload;
+      const updatedFields = state.currentCard.issueFormFields.map((field, i) =>
+        i === index ? { ...field, [key]: value } : field,
+      );
+      state.currentCard.issueFormFields = updatedFields;
+    },
+    addIssueFormField: (state) => {
+      state.currentCard.issueFormFields.push({
+        type: 'text',
+        name: 'Текст',
+        required: false,
+        unique: false,
+      });
+    },
+    removeIssueFormField: (state, action) => {
+      const index = action.payload;
+      state.currentCard.issueFormFields = state.currentCard.issueFormFields.filter(
+        (_, i) => i !== index,
+      );
+    },
+    addUtmLink: (state, action) => {
+      const source = action.payload;
+      const generatedUrl = `https://take.cards/${Math.random().toString(36).substr(2, 5)}`;
+      state.currentCard.utmLinks.push({ source, url: generatedUrl });
+    },
+    removeUtmLink: (state, action) => {
+      const index = action.payload;
+      state.currentCard.utmLinks = state.currentCard.utmLinks.filter((_, i) => i !== index);
+    },
   },
 });
 
 // Экспорт всех actions
 export const {
+  addUtmLink,
+  removeUtmLink,
+  updateIssueFormField,
+  addIssueFormField,
+  removeIssueFormField,
   initializeCards,
   initializeCurrentCard,
   setCurrentCardFromTemplate, // <-- добавляем в экспорт

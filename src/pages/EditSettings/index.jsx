@@ -9,9 +9,18 @@ import CardInfo from '../../components/CardInfo';
 import CustomSelect from '../../components/CustomSelect';
 import { formatDateToDDMMYYYY, getMinDate } from '../../helpers/date';
 import { pluralize } from '../../helpers/pluralize';
-import { updateCurrentCard } from '../../store/cardsSlice';
+import {
+  addIssueFormField,
+  addUtmLink,
+  removeIssueFormField,
+  removeUtmLink,
+  updateCurrentCard,
+  updateIssueFormField,
+} from '../../store/cardsSlice';
 import BarcodeRadio from './BarcodeRadio';
+import CardIssueForm from './CardIssueForm';
 import LocationModal from './LocationModal';
+import UTMLinks from './UTMLinks';
 
 import './styles.css';
 
@@ -22,6 +31,8 @@ const EditSettings = () => {
 
   const currentCard = useSelector((state) => state.cards.currentCard);
   const settings = useSelector((state) => state.cards.currentCard.settings || {});
+  const formFields = useSelector((state) => state.cards.currentCard.issueFormFields);
+  const utmLinks = useSelector((state) => state.cards.currentCard.utmLinks);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
   const [activeTab, setActiveTab] = useState('description');
@@ -63,6 +74,11 @@ const EditSettings = () => {
 
   const handleAddLocation = (location) => {
     updateSettingsField('locations', [...(settings.locations || []), location]);
+  };
+
+  const handleRemoveLocation = (index) => {
+    const updatedLocations = settings.locations.filter((_, i) => i !== index);
+    updateSettingsField('locations', updatedLocations);
   };
 
   const radioConfigs = [
@@ -265,12 +281,69 @@ const EditSettings = () => {
       {showLocationModal && (
         <LocationModal onClose={() => setShowLocationModal(false)} onSave={handleAddLocation} />
       )}
-      {settings.locations.length === 0 && (
+      <hr />
+      {settings.locations.length === 0 ? (
         <div className="no-location-wrapper">
           У вас еще не создано ни одной локации
           <button onClick={() => setShowLocationModal(true)}>Добавить локацию</button>
         </div>
+      ) : (
+        <>
+          <h3 className="barcode-radio-title">Локации</h3>
+          <div className="locations-wrapper">
+            {settings.locations.map((location, index) => (
+              <div key={index} className="location-tag">
+                {location.name}
+                <button className="remove-btn" onClick={() => handleRemoveLocation(index)}>
+                  ×
+                </button>
+              </div>
+            ))}
+            <button className="add-btn" onClick={() => handleAddLocation()}>
+              +
+            </button>
+            <button className="clear-btn" onClick={() => updateSettingsField('locations', [])}>
+              ×
+            </button>
+          </div>
+        </>
       )}
+      <hr />
+      <>
+        <h3 className="barcode-radio-title">Язык карты</h3>
+        <CustomSelect
+          value={settings.language?.value || 'ru'}
+          onChange={(value) =>
+            updateSettingsField('language', {
+              ...settings.language,
+              value: value,
+            })
+          }
+          options={[
+            { value: 'ru', label: 'Русский (ru)' },
+            { value: 'en', label: 'Английский (en)' },
+          ]}
+        />
+      </>
+      <hr />
+      <h3 className="barcode-radio-title">Форма выдачи карты</h3>
+
+      <CardIssueForm
+        formFields={formFields}
+        onFieldChange={(index, key, value) => dispatch(updateIssueFormField({ index, key, value }))}
+        onAddField={() => dispatch(addIssueFormField())}
+        onRemoveField={(index) => dispatch(removeIssueFormField(index))}
+      />
+      <hr />
+
+      <h3 className="barcode-radio-title">UTM</h3>
+
+      <UTMLinks
+        utmLinks={utmLinks}
+        onAddLink={(source) => dispatch(addUtmLink(source))}
+        onRemoveLink={(index) => dispatch(removeUtmLink(index))}
+      />
+
       <button onClick={handleSave} className="create-button">
         Сохранить и продолжить
       </button>
@@ -278,9 +351,11 @@ const EditSettings = () => {
   );
 
   const cardPreviewContent = (
-    <div className="type-card-image-container">
-      <img className="card-image-add" src={currentCard.frameUrl || '/phone.svg'} alt="preview" />
-      <CardInfo card={currentCard} />
+    <div className="phone-frame">
+      <img className="phone-image" src={currentCard.frameUrl} alt={currentCard.name} />
+      <div className="phone-screen">
+        <CardInfo card={currentCard} />
+      </div>
     </div>
   );
 
@@ -304,15 +379,19 @@ const EditSettings = () => {
       )}
 
       {isMobile ? (
-        <div className="edit-type-content">
-          {activeTab === 'description' && <div className="edit-type-page">{settingsContent}</div>}
-          {activeTab === 'card' && cardPreviewContent}
+        <div className="edit-type-layout">
+          <div className="edit-type-left">
+            {activeTab === 'description' && <div className="edit-type-page">{settingsContent}</div>}
+          </div>
+          {activeTab === 'card' && <div className="edit-type-right">{cardPreviewContent}</div>}
         </div>
       ) : (
-        <>
-          <div className="edit-type-page">{settingsContent}</div>
-          {cardPreviewContent}
-        </>
+        <div className="edit-type-layout">
+          <div className="edit-type-left">
+            <div className="edit-type-page">{settingsContent}</div>
+          </div>
+          <div className="edit-type-right">{cardPreviewContent}</div>
+        </div>
       )}
     </div>
   );

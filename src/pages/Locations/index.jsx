@@ -29,7 +29,7 @@ const Locations = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [pushMessage, setPushMessage] = useState(
     currentCard.pushNotification?.message ||
-    `Новое уведомление по вашей карте "${currentCard.title}"`,
+      `Новое уведомление по вашей карте "${currentCard.title}"`,
   );
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
@@ -186,14 +186,14 @@ const Locations = () => {
 
   const renderMapSection = () => (
     <div className="edit-type-page">
-      <div className='edit-type-left'>
+      <div className="edit-type-left">
         <h2>
           Локации <span className="geo-badge">Geo-push в радиусе 100 метров</span>
         </h2>
         <p className="locations-subtext">
           Добавьте адреса, рядом с которыми вашим клиентам будут автоматически приходить
-          push-уведомления. Geo-push работает, когда клиент оказывается в радиусе 100 метров от вашей
-          точки.
+          push-уведомления. Geo-push работает, когда клиент оказывается в радиусе 100 метров от
+          вашей точки.
         </p>
         <CustomSelect
           value={currentCard?.id || null}

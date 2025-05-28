@@ -39,7 +39,7 @@ const MailingsPush = () => {
     if (currentCard) {
       setPushMessage(
         currentCard.pushNotification?.message ||
-        `Новое уведомление по вашей карте "${currentCard.title}"`,
+          `Новое уведомление по вашей карте "${currentCard.title}"`,
       );
 
       const hasSchedule = Boolean(currentCard.pushNotification?.scheduledDate);
@@ -98,7 +98,7 @@ const MailingsPush = () => {
   }, []);
 
   const pushContent = hasActiveCards ? (
-    <div className='edit-type-left'>
+    <div className="edit-type-left">
       <div className="mailings-push-container">
         <h2 className="mailings-push-title">
           Отправить push
@@ -160,7 +160,7 @@ const MailingsPush = () => {
       </div>
     </div>
   ) : (
-    <div className='edit-type-left'>
+    <div className="edit-type-left">
       <div className="mailings-push-container">
         <h2 className="mailings-push-title">Push-уведомления</h2>
         <p className="no-active-cards-text">
@@ -169,7 +169,6 @@ const MailingsPush = () => {
         </p>
       </div>
     </div>
-
   );
 
   const cardPreview = hasActiveCards && (
@@ -181,7 +180,8 @@ const MailingsPush = () => {
             card={currentCard}
             message={pushMessage}
             scheduledDate={isScheduled ? scheduledDate : null}
-          />  </div>
+          />{' '}
+        </div>
       </div>
     </div>
   );
@@ -204,7 +204,7 @@ const MailingsPush = () => {
 
       {isMobile ? (
         <div className="edit-type-content">
-            {activeTab === 'settings' ? pushContent : cardPreview}
+          {activeTab === 'settings' ? pushContent : cardPreview}
         </div>
       ) : (
         <>
