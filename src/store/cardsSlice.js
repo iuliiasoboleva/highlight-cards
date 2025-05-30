@@ -4,7 +4,6 @@ import { defaultCardTemplate } from '../components/defaultCardInfo';
 import { mockCards } from '../mocks/cardData';
 import { mockTemplateCards } from '../mocks/cardTemplatesData';
 
-// Фиксированная карта для создания новых карт
 export const fixedCard = {
   id: 'fixed',
   title: 'Активна',
@@ -44,7 +43,6 @@ export const cardsSlice = createSlice({
   name: 'cards',
   initialState,
   reducers: {
-    // Инициализация списка карт
     initializeCards: (state, action) => {
       state.loading = true;
       try {
@@ -59,7 +57,6 @@ export const cardsSlice = createSlice({
       }
     },
 
-    // Инициализация текущей карты
     initializeCurrentCard: (state) => {
       const maxId = state.cards.reduce(
         (max, card) => (card.id !== 'fixed' && card.id > max ? card.id : max),
@@ -77,13 +74,12 @@ export const cardsSlice = createSlice({
           state.cards.reduce(
             (max, card) => (card.id !== 'fixed' && card.id > max ? card.id : max),
             0,
-          ) + 1, // присваиваем новый id
+          ) + 1,
         createdAt: new Date().toISOString(),
-        isActive: false, // копия шаблона пока не активна
+        isActive: false,
       };
     },
 
-    // Добавление новой карты
     addCard: (state) => {
       if (!state.currentCard.id || !state.currentCard.status) return;
 
@@ -101,7 +97,6 @@ export const cardsSlice = createSlice({
       }
     },
 
-    // Обновление текущей карты
     updateCurrentCard: (state, action) => {
       state.currentCard = {
         ...state.currentCard,
@@ -110,7 +105,6 @@ export const cardsSlice = createSlice({
       };
     },
 
-    // Сохранение текущей карты в список
     saveCurrentCard: (state) => {
       const index = state.cards.findIndex((card) => card.id === state.currentCard.id);
       if (index !== -1) {
@@ -138,17 +132,14 @@ export const cardsSlice = createSlice({
       }
     },
 
-    // Сброс текущей карты
     resetCurrentCard: (state) => {
       state.currentCard = { ...defaultCardTemplate };
     },
 
-    // Удаление карты
     deleteCard: (state, action) => {
       state.cards = state.cards.filter((c) => c.id !== action.payload);
     },
 
-    // Копирование карты (создаём новый объект с новым id)
     copyCard: (state, action) => {
       const cardToCopy = state.cards.find((c) => c.id === action.payload);
       if (cardToCopy) {
@@ -170,7 +161,6 @@ export const cardsSlice = createSlice({
       }
     },
 
-    // Экспорт данных карты как JSON-файла
     downloadCard: (state, action) => {
       const card = state.cards.find((c) => c.id === action.payload);
       if (card) {
@@ -216,11 +206,47 @@ export const cardsSlice = createSlice({
       const index = action.payload;
       state.currentCard.utmLinks = state.currentCard.utmLinks.filter((_, i) => i !== index);
     },
+    togglePolicyField: (state, action) => {
+      const key = action.payload;
+      state.currentCard.policySettings[key] = !state.currentCard.policySettings[key];
+    },
+    updatePolicyTextField: (state, action) => {
+      const { key, value } = action.payload;
+      state.currentCard.policySettings[key] = value;
+    },
+    updateIssueLimit: (state, action) => {
+      state.currentCard.issueLimit = action.payload;
+    },
+    updateStatusField: (state, action) => {
+      const { index, key, value } = action.payload;
+      state.currentCard.statusFields[index][key] = value;
+    },
+    addStatusField: (state) => {
+      state.currentCard.statusFields.push({ name: '', cost: '', percent: '' });
+    },
+    removeStatusField: (state, action) => {
+      const index = action.payload;
+      state.currentCard.statusFields = state.currentCard.statusFields.filter((_, i) => i !== index);
+    },
+    toggleRequirePurchaseAmount: (state) => {
+      state.currentCard.requirePurchaseAmountOnAccrual =
+        !state.currentCard.requirePurchaseAmountOnAccrual;
+    },
+    updateInitialPointsOnIssue: (state, action) => {
+      state.currentCard.initialPointsOnIssue = action.payload;
+    },
   },
 });
 
-// Экспорт всех actions
 export const {
+  toggleRequirePurchaseAmount,
+  updateInitialPointsOnIssue,
+  updateStatusField,
+  addStatusField,
+  removeStatusField,
+  updateIssueLimit,
+  togglePolicyField,
+  updatePolicyTextField,
   addUtmLink,
   removeUtmLink,
   updateIssueFormField,
@@ -228,7 +254,7 @@ export const {
   removeIssueFormField,
   initializeCards,
   initializeCurrentCard,
-  setCurrentCardFromTemplate, // <-- добавляем в экспорт
+  setCurrentCardFromTemplate,
   addCard,
   updateCurrentCard,
   saveCurrentCard,

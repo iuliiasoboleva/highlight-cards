@@ -2,24 +2,33 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { HelpCircle } from 'lucide-react';
 
 import CardInfo from '../../components/CardInfo';
 import CustomSelect from '../../components/CustomSelect';
-import { formatDateToDDMMYYYY, getMinDate } from '../../helpers/date';
-import { pluralize } from '../../helpers/pluralize';
+import ToggleSwitch from '../../components/ToggleSwitch';
 import {
   addIssueFormField,
+  addStatusField,
   addUtmLink,
   removeIssueFormField,
+  removeStatusField,
   removeUtmLink,
+  togglePolicyField,
+  toggleRequirePurchaseAmount,
   updateCurrentCard,
+  updateInitialPointsOnIssue,
   updateIssueFormField,
+  updateIssueLimit,
+  updatePolicyTextField,
+  updateStatusField,
 } from '../../store/cardsSlice';
-import BarcodeRadio from './BarcodeRadio';
 import CardIssueForm from './CardIssueForm';
+import CardLimit from './CardLimit';
+import CardStatusForm from './CardStatusForm';
 import LocationModal from './LocationModal';
+import PersonalDataPolicy from './PersonalDataPolicy';
+import RadioConfigs from './RadioConfigs';
 import UTMLinks from './UTMLinks';
 
 import './styles.css';
@@ -30,24 +39,17 @@ const EditSettings = () => {
   const dispatch = useDispatch();
 
   const currentCard = useSelector((state) => state.cards.currentCard);
-  const settings = useSelector((state) => state.cards.currentCard.settings || {});
-  const formFields = useSelector((state) => state.cards.currentCard.issueFormFields);
-  const utmLinks = useSelector((state) => state.cards.currentCard.utmLinks);
+  const settings = currentCard.settings || {};
+  const formFields = currentCard.issueFormFields;
+  const utmLinks = currentCard.utmLinks;
+  const limit = currentCard.issueLimit;
+  const statusFields = currentCard.statusFields;
+  const policySettings = currentCard.policySettings;
+  const cardStatus = currentCard.status; // <=== ключевой момент
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
   const [activeTab, setActiveTab] = useState('description');
   const [showLocationModal, setShowLocationModal] = useState(false);
-
-  const getDurationOptions = (count) => [
-    { value: 'days', label: pluralize(count, ['день', 'дня', 'дней']) },
-    { value: 'months', label: pluralize(count, ['месяц', 'месяца', 'месяцев']) },
-    { value: 'years', label: pluralize(count, ['год', 'года', 'лет']) },
-  ];
-
-  const numberOptions = Array.from({ length: 30 }, (_, i) => ({
-    value: i + 1,
-    label: (i + 1).toString(),
-  }));
 
   useEffect(() => {
     const handleResize = () => {
@@ -58,18 +60,17 @@ const EditSettings = () => {
   }, []);
 
   const handleSave = () => {
+    if (policySettings.policyEnabled) {
+      if (!policySettings.policyText.trim() || !policySettings.fullPolicyText.trim()) {
+        alert('Заполните все обязательные поля');
+        return;
+      }
+    }
     navigate(`/cards/${id}/edit/design`);
   };
 
   const updateSettingsField = (field, value) => {
-    dispatch(
-      updateCurrentCard({
-        settings: {
-          ...settings,
-          [field]: value,
-        },
-      }),
-    );
+    dispatch(updateCurrentCard({ settings: { ...settings, [field]: value } }));
   };
 
   const handleAddLocation = (location) => {
@@ -81,206 +82,20 @@ const EditSettings = () => {
     updateSettingsField('locations', updatedLocations);
   };
 
-  const radioConfigs = [
-    {
-      options: [
-        {
-          value: 'spending',
-          label: 'Расход (Начисление штампов в зависимости от расходов клиента)',
-        },
-        {
-          value: 'visit',
-          label: 'Визит (Начисление штампов в зависимости от количества посещений клиента)',
-        },
-        {
-          value: 'stamps',
-          label: 'Штампы (Начисление штампов в соответствии с вашими правилами)',
-        },
-      ],
-      selected: settings.rewardProgram,
-      onChange: (value) => updateSettingsField('rewardProgram', value),
-      title: 'Программа вознаграждения',
-      name: 'reward-program',
-      additionalContentByValue: {
-        spending: (
-          <div className="spending-config">
-            <label className="spending-label">
-              <span>₽</span>
-              <input
-                type="number"
-                className="push-input"
-                min="1"
-                value={settings.spendingAmount || ''}
-                onChange={(e) =>
-                  updateSettingsField('spendingAmount', parseInt(e.target.value) || 0)
-                }
-              />
-            </label>
-            <span className="spending-equal">=</span>
-            <label className="spending-label">
-              <input
-                type="number"
-                className="push-input"
-                min="1"
-                value={settings.spendingStamps || ''}
-                onChange={(e) =>
-                  updateSettingsField('spendingStamps', parseInt(e.target.value) || 0)
-                }
-              />
-              <span>штампов</span>
-            </label>
-          </div>
-        ),
-        visit: (
-          <div className="visit-config">
-            <label className="visit-label">
-              <input type="number" min="1" className="push-input" value={1} disabled />
-              <span className="visit-text">визит =</span>
-              <input
-                type="number"
-                className="push-input"
-                min="1"
-                value={settings.visitStamps || ''}
-                onChange={(e) => updateSettingsField('visitStamps', parseInt(e.target.value) || 0)}
-              />
-              <span className="visit-text">штампов</span>
-            </label>
-            <label className="custom-checkbox">
-              <input
-                type="checkbox"
-                checked={settings.limitVisitPerDay || false}
-                onChange={(e) => updateSettingsField('limitVisitPerDay', e.target.checked)}
-              />
-              Ограничить до 1 посещения в день
-            </label>
-          </div>
-        ),
-      },
-    },
-    {
-      options: [
-        { value: 'cardUnlimit', label: 'Неограниченный' },
-        { value: 'cardFixed', label: 'Фиксированный срок' },
-        { value: 'cardFixedLater', label: 'Фиксированный срок после регистрации карты' },
-      ],
-      selected: settings.cardLimit,
-      onChange: (value) => updateSettingsField('cardLimit', value),
-      title: 'Срок действия карты',
-      name: 'card-limit',
-      additionalContentByValue: {
-        cardFixed: (
-          <input
-            className="push-date"
-            type="date"
-            value={settings.cardFixedDate || ''}
-            min={getMinDate()}
-            onChange={(e) => {
-              const newDate = e.target.value;
-              const formattedExpiration = formatDateToDDMMYYYY(newDate);
-
-              dispatch(
-                updateCurrentCard({
-                  settings: {
-                    ...settings,
-                    cardFixedDate: newDate,
-                  },
-                  expirationDate: formattedExpiration,
-                }),
-              );
-            }}
-          />
-        ),
-        cardFixedLater: (
-          <>
-            <h3 className="barcode-radio-title">Срок</h3>
-            <div className="stamp-duration-selector">
-              <CustomSelect
-                value={settings.cardDuration?.value || 1}
-                onChange={(value) =>
-                  updateSettingsField('cardDuration', {
-                    ...settings.cardDuration,
-                    value: parseInt(value),
-                  })
-                }
-                options={numberOptions}
-                className="duration-number-select"
-              />
-              <CustomSelect
-                value={settings.cardDuration?.unit || 'days'}
-                onChange={(unit) =>
-                  updateSettingsField('cardDuration', {
-                    ...settings.cardDuration,
-                    unit,
-                  })
-                }
-                options={getDurationOptions(settings.cardDuration?.value || 1)}
-                className="duration-unit-select"
-              />
-            </div>
-          </>
-        ),
-      },
-    },
-    {
-      options: [
-        { value: 'stampUnlimit', label: 'Неограниченный' },
-        { value: 'stampFixedLater', label: 'Фиксированный срок после получения штампов' },
-      ],
-      selected: settings.stampLimit,
-      onChange: (value) => updateSettingsField('stampLimit', value),
-      title: 'Срок жизни штампа',
-      name: 'stamp-limit',
-      additionalContentByValue: {
-        stampFixedLater: (
-          <>
-            <h3 className="barcode-radio-title">Срок</h3>
-            <div className="stamp-duration-selector">
-              <CustomSelect
-                value={settings.stampDuration?.value || 1}
-                onChange={(value) =>
-                  updateSettingsField('stampDuration', {
-                    ...settings.stampDuration,
-                    value: parseInt(value),
-                  })
-                }
-                options={numberOptions}
-                className="duration-number-select"
-              />
-              <CustomSelect
-                value={settings.stampDuration?.unit || 'days'}
-                onChange={(unit) =>
-                  updateSettingsField('stampDuration', {
-                    ...settings.stampDuration,
-                    unit,
-                  })
-                }
-                options={getDurationOptions(settings.stampDuration?.value || 1)}
-                className="duration-unit-select"
-              />
-            </div>
-          </>
-        ),
-      },
-    },
-  ];
-
   const settingsContent = (
     <div className="settings-inputs-container">
       <h2>
-        Настройки <FontAwesomeIcon icon={faCircleQuestion} style={{ fontSize: 16 }} />
+        Настройки <HelpCircle size={16} />
       </h2>
       <hr />
 
-      {radioConfigs.map((config, index) => (
-        <React.Fragment key={config.name}>
-          <BarcodeRadio {...config} />
-          {index < radioConfigs.length - 1 && <hr />}
-        </React.Fragment>
-      ))}
+      {/* 🛠️ Радио-блоки по статусу */}
+      <RadioConfigs cardStatus={cardStatus} />
 
       {showLocationModal && (
         <LocationModal onClose={() => setShowLocationModal(false)} onSave={handleAddLocation} />
       )}
+
       <hr />
       {settings.locations.length === 0 ? (
         <div className="no-location-wrapper">
@@ -309,25 +124,21 @@ const EditSettings = () => {
         </>
       )}
       <hr />
-      <>
-        <h3 className="barcode-radio-title">Язык карты</h3>
-        <CustomSelect
-          value={settings.language?.value || 'ru'}
-          onChange={(value) =>
-            updateSettingsField('language', {
-              ...settings.language,
-              value: value,
-            })
-          }
-          options={[
-            { value: 'ru', label: 'Русский (ru)' },
-            { value: 'en', label: 'Английский (en)' },
-          ]}
-        />
-      </>
-      <hr />
-      <h3 className="barcode-radio-title">Форма выдачи карты</h3>
 
+      {/* Язык */}
+      <h3 className="barcode-radio-title">Язык карты</h3>
+      <CustomSelect
+        value={settings.language?.value || 'ru'}
+        onChange={(value) => updateSettingsField('language', { ...settings.language, value })}
+        options={[
+          { value: 'ru', label: 'Русский (ru)' },
+          { value: 'en', label: 'Английский (en)' },
+        ]}
+      />
+      <hr />
+
+      {/* Форма выдачи карты */}
+      <h3 className="barcode-radio-title">Форма выдачи карты</h3>
       <CardIssueForm
         formFields={formFields}
         onFieldChange={(index, key, value) => dispatch(updateIssueFormField({ index, key, value }))}
@@ -336,15 +147,98 @@ const EditSettings = () => {
       />
       <hr />
 
+      {/* UTM */}
       <h3 className="barcode-radio-title">UTM</h3>
-
       <UTMLinks
         utmLinks={utmLinks}
         onAddLink={(source) => dispatch(addUtmLink(source))}
         onRemoveLink={(index) => dispatch(removeUtmLink(index))}
       />
+      <hr />
 
-      <button onClick={handleSave} className="create-button">
+      {/* Маска телефона */}
+      <h3 className="barcode-radio-title">Маска для номера телефона</h3>
+      <CustomSelect
+        value={settings.phoneMask?.value || 'Russia'}
+        onChange={(value) => updateSettingsField('phoneMask', { ...settings.phoneMask, value })}
+        options={[
+          { value: 'Russia', label: 'РФ (+7)' },
+          { value: 'UAE', label: 'ОАЭ (+971)' },
+        ]}
+      />
+      <hr />
+
+      {/* Политика персональных данных */}
+      <PersonalDataPolicy
+        settings={policySettings}
+        onToggle={(key) => dispatch(togglePolicyField(key))}
+        onTextChange={(key, value) => dispatch(updatePolicyTextField({ key, value }))}
+      />
+      <hr />
+
+      {/* Ограничения */}
+      <CardLimit
+        value={limit}
+        onChange={(value) => dispatch(updateIssueLimit(value))}
+        title="Ограничить количество выданных карт"
+        subtitle="0 — без ограничений"
+      />
+      <hr />
+
+      {/* Количество баллов или штампов при выпуске */}
+      {(cardStatus === 'cashback' || cardStatus === 'certificate') && (
+        <CardLimit
+          value={currentCard.initialPointsOnIssue}
+          onChange={(value) => dispatch(updateInitialPointsOnIssue(value))}
+          title="Количество баллов при выпуске карты"
+        />
+      )}
+      {cardStatus === 'stamp' && (
+        <CardLimit
+          value={currentCard.initialStampsOnIssue}
+          onChange={(value) => dispatch(updateCurrentCard({ initialStampsOnIssue: value }))}
+          title="Количество штампов при выпуске карты"
+        />
+      )}
+
+      {/* Статус держателя карты */}
+      {(cardStatus === 'discount' || cardStatus === 'cashback') && (
+        <>
+          <h3 className="barcode-radio-title">Статус держателя карты</h3>
+          <CardStatusForm
+            statusFields={statusFields}
+            onFieldChange={(index, key, value) =>
+              dispatch(updateStatusField({ index, key, value }))
+            }
+            onAddField={() => dispatch(addStatusField())}
+            onRemoveField={(index) => dispatch(removeStatusField(index))}
+          />
+          <hr />
+        </>
+      )}
+
+      {/* Сумма покупки при начислении */}
+      <h3 className="barcode-radio-title">Сумма покупки при начислении</h3>
+      <div className="policy-section policy-bordered">
+        <div className="policy-bordered-header">
+          <h3 className="barcode-radio-subtitle">
+            Требовать указания суммы покупки при начислении
+          </h3>
+          <ToggleSwitch
+            checked={currentCard.requirePurchaseAmountOnAccrual}
+            onChange={() => dispatch(toggleRequirePurchaseAmount())}
+          />
+        </div>
+      </div>
+
+      <button
+        onClick={handleSave}
+        className="create-button"
+        disabled={
+          policySettings.policyEnabled &&
+          (!policySettings.policyText.trim() || !policySettings.fullPolicyText.trim())
+        }
+      >
         Сохранить и продолжить
       </button>
     </div>
@@ -378,21 +272,16 @@ const EditSettings = () => {
         </div>
       )}
 
-      {isMobile ? (
-        <div className="edit-type-layout">
-          <div className="edit-type-left">
-            {activeTab === 'description' && <div className="edit-type-page">{settingsContent}</div>}
-          </div>
-          {activeTab === 'card' && <div className="edit-type-right">{cardPreviewContent}</div>}
-        </div>
-      ) : (
-        <div className="edit-type-layout">
-          <div className="edit-type-left">
+      <div className="edit-type-layout">
+        <div className="edit-type-left">
+          {(!isMobile || activeTab === 'description') && (
             <div className="edit-type-page">{settingsContent}</div>
-          </div>
-          <div className="edit-type-right">{cardPreviewContent}</div>
+          )}
         </div>
-      )}
+        <div className="edit-type-right">
+          {(!isMobile || activeTab === 'card') && cardPreviewContent}
+        </div>
+      </div>
     </div>
   );
 };

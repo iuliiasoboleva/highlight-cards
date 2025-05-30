@@ -28,7 +28,14 @@ const BarcodeRadio = ({
                 onChange={() => onChange(option.value)}
               />
               <span className="barcode-radio-checkmark"></span>
-              <span className="barcode-radio-label">{option.label}</span>
+              <span className="barcode-radio-label">
+                <span className="barcode-radio-label">
+                  <span className="barcode-radio-label">{option.label}</span>
+                  {option.labelSub && (
+                    <span className="barcode-radio-label-sub">{option.labelSub}</span>
+                  )}
+                </span>
+              </span>
             </label>
 
             {selected === option.value && additionalContentByValue?.[option.value] && (

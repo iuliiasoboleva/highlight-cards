@@ -75,7 +75,10 @@ export const defaultCardTemplate = {
   cashbackStatus: 'Бронзовый',
   cashbackPercent: 1,
   settings: {
-    rewardProgram: 'spending',
+    rewardProgram: 'stamps',
+    cardLimit: 'cardUnlimit',
+    stampLimit: 'stampUnlimit',
+    pointsLimit: 'pointsUnlimit',
     card: {},
     stamp: {},
     spendingAmount: 500,
@@ -84,6 +87,8 @@ export const defaultCardTemplate = {
     limitVisitPerDay: false,
     locations: [],
     language: 'ru',
+    phoneMask: 'Russia',
+    redemptionRule: 'multiple', // multiple | single
   },
   score: 10,
   subscribersCount: 0,
@@ -124,5 +129,20 @@ export const defaultCardTemplate = {
     { type: 'email', name: 'Email', required: false, unique: true },
     { type: 'birthday', name: 'Дата рождения', required: false, unique: false },
   ],
+  statusFields: [
+    { name: 'Бронзовый', cost: '0', percent: '1' },
+    { name: 'Серебряный', cost: '5000', percent: '3' },
+    { name: 'Золотой', cost: '10000', percent: '5' },
+  ],
   utmLinks: [],
+  requirePurchaseAmountOnAccrual: false,
+  initialPointsOnIssue: '',
+  policySettings: {
+    policyEnabled: true,
+    consentEnabled: false,
+    policyText: 'Я согласен с тем, что мои личные данные могут использоваться...',
+    fullPolicyText:
+      'Я согласен с тем, что мои личные данные могут использоваться (полный текст)...',
+  },
+  issueLimit: '',
 };
