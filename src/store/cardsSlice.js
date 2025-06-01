@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { defaultCardTemplate } from '../components/defaultCardInfo';
 import { mockCards } from '../mocks/cardData';
 import { mockTemplateCards } from '../mocks/cardTemplatesData';
+import { mergeCardWithDefault } from '../utils/mergeCardWithDefault';
 
 export const fixedCard = {
   id: 'fixed',
@@ -17,17 +17,12 @@ export const fixedCard = {
 const getAllCards = (useTemplates = false) => {
   const source = useTemplates ? mockTemplateCards : mockCards;
 
-  let sortedCards;
-
-  if (useTemplates) {
-    sortedCards = [...source].sort((a, b) => {
-      return a.name.localeCompare(b.name, 'ru', { sensitivity: 'base' });
-    });
-  } else {
-    sortedCards = [...source].sort((a, b) => {
-      return Number(b.isActive) - Number(a.isActive);
-    });
-  }
+  let sortedCards = [...source];
+  sortedCards.sort((a, b) =>
+    useTemplates
+      ? a.name.localeCompare(b.name, 'ru', { sensitivity: 'base' })
+      : Number(b.isActive) - Number(a.isActive),
+  );
 
   return [fixedCard, ...sortedCards];
 };
@@ -36,7 +31,7 @@ const initialState = {
   cards: [],
   loading: true,
   error: null,
-  currentCard: { ...defaultCardTemplate },
+  currentCard: mergeCardWithDefault({}),
 };
 
 export const cardsSlice = createSlice({
@@ -44,7 +39,6 @@ export const cardsSlice = createSlice({
   initialState,
   reducers: {
     initializeCards: (state, action) => {
-      state.loading = true;
       try {
         const useTemplates = action.payload?.useTemplates || false;
         state.cards = getAllCards(useTemplates);
@@ -57,83 +51,71 @@ export const cardsSlice = createSlice({
       }
     },
 
-    initializeCurrentCard: (state) => {
-      const maxId = state.cards.reduce(
-        (max, card) => (card.id !== 'fixed' && card.id > max ? card.id : max),
-        0,
-      );
-      state.currentCard = {
-        ...defaultCardTemplate,
-        id: maxId + 1,
-      };
-    },
-    setCurrentCardFromTemplate: (state, action) => {
-      state.currentCard = {
-        ...action.payload,
-        id:
-          state.cards.reduce(
-            (max, card) => (card.id !== 'fixed' && card.id > max ? card.id : max),
-            0,
-          ) + 1,
-        createdAt: new Date().toISOString(),
-        isActive: false,
-      };
+    setCurrentCard: (state, action) => {
+      state.currentCard = mergeCardWithDefault(action.payload);
     },
 
-    addCard: (state) => {
-      if (!state.currentCard.id || !state.currentCard.status) return;
+    updateCurrentCardField: (state, action) => {
+      const { path, value } = action.payload;
+      const keys = path.split('.');
+      let target = state.currentCard;
+      for (let i = 0; i < keys.length - 1; i++) {
+        if (!target[keys[i]]) target[keys[i]] = {};
+        target = target[keys[i]];
+      }
+      target[keys[keys.length - 1]] = value;
+      state.currentCard.updatedAt = new Date().toISOString();
+    },
 
-      const exists = state.cards.some(
-        (card) => card.id !== 'fixed' && card.id === state.currentCard.id,
-      );
-
-      if (!exists) {
-        const newCard = {
-          ...state.currentCard,
-          createdAt: new Date().toISOString(),
-          isActive: true,
-        };
-        state.cards.push(newCard);
+    addCurrentCardArrayItem: (state, action) => {
+      const { path, item } = action.payload;
+      const keys = path.split('.');
+      let target = state.currentCard;
+      for (let i = 0; i < keys.length; i++) {
+        target = target[keys[i]];
+      }
+      if (Array.isArray(target)) {
+        target.push(item);
+        state.currentCard.updatedAt = new Date().toISOString();
       }
     },
 
-    updateCurrentCard: (state, action) => {
-      state.currentCard = {
-        ...state.currentCard,
-        ...action.payload,
-        updatedAt: new Date().toISOString(),
-      };
+    removeCurrentCardArrayItem: (state, action) => {
+      const { path, index } = action.payload;
+      const keys = path.split('.');
+      let target = state.currentCard;
+      for (let i = 0; i < keys.length; i++) {
+        target = target[keys[i]];
+      }
+      if (Array.isArray(target)) {
+        target.splice(index, 1);
+        state.currentCard.updatedAt = new Date().toISOString();
+      }
     },
 
-    saveCurrentCard: (state) => {
-      const index = state.cards.findIndex((card) => card.id === state.currentCard.id);
-      if (index !== -1) {
-        state.cards[index] = {
-          ...state.currentCard,
-          updatedAt: new Date().toISOString(),
-        };
-      } else {
+    addCard: (state) => {
+      const exists = state.cards.some(
+        (card) => card.id !== 'fixed' && card.id === state.currentCard.id,
+      );
+      if (!exists) {
         state.cards.push({
           ...state.currentCard,
           createdAt: new Date().toISOString(),
+          isActive: true,
         });
       }
     },
 
-    updateCardById: (state, action) => {
+    updateCard: (state, action) => {
       const { id, changes } = action.payload;
-      const cardIndex = state.cards.findIndex((c) => c.id === id);
-      if (cardIndex !== -1) {
-        state.cards[cardIndex] = {
-          ...state.cards[cardIndex],
+      const index = state.cards.findIndex((c) => c.id === id);
+      if (index !== -1) {
+        state.cards[index] = {
+          ...state.cards[index],
           ...changes,
           updatedAt: new Date().toISOString(),
         };
       }
-    },
-
-    resetCurrentCard: (state) => {
-      state.currentCard = { ...defaultCardTemplate };
     },
 
     deleteCard: (state, action) => {
@@ -150,7 +132,7 @@ export const cardsSlice = createSlice({
           ) + 1;
 
         const copiedCard = {
-          ...cardToCopy,
+          ...mergeCardWithDefault(cardToCopy),
           id: newId,
           name: `${cardToCopy.name} (копия)`,
           isActive: false,
@@ -164,8 +146,6 @@ export const cardsSlice = createSlice({
     downloadCard: (state, action) => {
       const card = state.cards.find((c) => c.id === action.payload);
       if (card) {
-        console.log(`Downloading card ${card.id} (${card.name})`);
-
         const dataStr =
           'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(card, null, 2));
         const downloadAnchorNode = document.createElement('a');
@@ -173,93 +153,20 @@ export const cardsSlice = createSlice({
         downloadAnchorNode.setAttribute('download', `card_${card.id}_${card.name}.json`);
         document.body.appendChild(downloadAnchorNode);
         downloadAnchorNode.click();
-        downloadAnchorNode.remove();
+        document.body.removeChild(downloadAnchorNode);
       }
-    },
-    updateIssueFormField: (state, action) => {
-      const { index, key, value } = action.payload;
-      const updatedFields = state.currentCard.issueFormFields.map((field, i) =>
-        i === index ? { ...field, [key]: value } : field,
-      );
-      state.currentCard.issueFormFields = updatedFields;
-    },
-    addIssueFormField: (state) => {
-      state.currentCard.issueFormFields.push({
-        type: 'text',
-        name: 'Текст',
-        required: false,
-        unique: false,
-      });
-    },
-    removeIssueFormField: (state, action) => {
-      const index = action.payload;
-      state.currentCard.issueFormFields = state.currentCard.issueFormFields.filter(
-        (_, i) => i !== index,
-      );
-    },
-    addUtmLink: (state, action) => {
-      const source = action.payload;
-      const generatedUrl = `https://take.cards/${Math.random().toString(36).substr(2, 5)}`;
-      state.currentCard.utmLinks.push({ source, url: generatedUrl });
-    },
-    removeUtmLink: (state, action) => {
-      const index = action.payload;
-      state.currentCard.utmLinks = state.currentCard.utmLinks.filter((_, i) => i !== index);
-    },
-    togglePolicyField: (state, action) => {
-      const key = action.payload;
-      state.currentCard.policySettings[key] = !state.currentCard.policySettings[key];
-    },
-    updatePolicyTextField: (state, action) => {
-      const { key, value } = action.payload;
-      state.currentCard.policySettings[key] = value;
-    },
-    updateIssueLimit: (state, action) => {
-      state.currentCard.issueLimit = action.payload;
-    },
-    updateStatusField: (state, action) => {
-      const { index, key, value } = action.payload;
-      state.currentCard.statusFields[index][key] = value;
-    },
-    addStatusField: (state) => {
-      state.currentCard.statusFields.push({ name: '', cost: '', percent: '' });
-    },
-    removeStatusField: (state, action) => {
-      const index = action.payload;
-      state.currentCard.statusFields = state.currentCard.statusFields.filter((_, i) => i !== index);
-    },
-    toggleRequirePurchaseAmount: (state) => {
-      state.currentCard.requirePurchaseAmountOnAccrual =
-        !state.currentCard.requirePurchaseAmountOnAccrual;
-    },
-    updateInitialPointsOnIssue: (state, action) => {
-      state.currentCard.initialPointsOnIssue = action.payload;
     },
   },
 });
 
 export const {
-  toggleRequirePurchaseAmount,
-  updateInitialPointsOnIssue,
-  updateStatusField,
-  addStatusField,
-  removeStatusField,
-  updateIssueLimit,
-  togglePolicyField,
-  updatePolicyTextField,
-  addUtmLink,
-  removeUtmLink,
-  updateIssueFormField,
-  addIssueFormField,
-  removeIssueFormField,
   initializeCards,
-  initializeCurrentCard,
-  setCurrentCardFromTemplate,
+  setCurrentCard,
+  updateCurrentCardField,
+  addCurrentCardArrayItem,
+  removeCurrentCardArrayItem,
   addCard,
-  updateCurrentCard,
-  saveCurrentCard,
-  resetCurrentCard,
-  updateCardById,
+  updateCard,
   deleteCard,
   copyCard,
   downloadCard,

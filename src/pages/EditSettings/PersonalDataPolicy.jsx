@@ -5,7 +5,7 @@ import ToggleSwitch from '../../components/ToggleSwitch';
 import './styles.css';
 
 const PersonalDataPolicy = ({ settings, onToggle, onTextChange }) => {
-  const isDisabled = !settings.policyEnabled;
+  const isDisabled = !settings?.policyEnabled;
 
   return (
     <>
@@ -13,14 +13,14 @@ const PersonalDataPolicy = ({ settings, onToggle, onTextChange }) => {
         <div className="policy-header">
           <h3 className="barcode-radio-title">Политика использования персональных данных</h3>
           <ToggleSwitch
-            checked={settings.policyEnabled}
+            checked={settings?.policyEnabled}
             onChange={() => onToggle('policyEnabled')}
           />
         </div>
         <div className="policy-textarea-wrapper">
           <textarea
             className={`policy-textarea ${isDisabled ? 'disabled' : ''}`}
-            value={settings.policyText}
+            value={settings?.policyText}
             onChange={(e) => onTextChange('policyText', e.target.value)}
             disabled={isDisabled}
           />
@@ -32,7 +32,7 @@ const PersonalDataPolicy = ({ settings, onToggle, onTextChange }) => {
         <div className="policy-bordered-header">
           <h3 className="barcode-radio-subtitle">Согласие на обработку персональных данных</h3>
           <ToggleSwitch
-            checked={settings.consentEnabled}
+            checked={settings?.consentEnabled}
             onChange={() => onToggle('consentEnabled')}
           />
         </div>
@@ -47,7 +47,7 @@ const PersonalDataPolicy = ({ settings, onToggle, onTextChange }) => {
         <div className="policy-textarea-wrapper">
           <textarea
             className={`policy-textarea ${isDisabled ? 'disabled' : ''}`}
-            value={settings.fullPolicyText}
+            value={settings?.fullPolicyText}
             onChange={(e) => onTextChange('fullPolicyText', e.target.value)}
             disabled={isDisabled}
           />

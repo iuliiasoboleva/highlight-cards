@@ -6,7 +6,7 @@ import { useDebounce } from 'use-debounce';
 import CustomSelect from '../../components/CustomSelect';
 import PushPreview from '../../components/PushPreview';
 import YandexMapPicker from '../../components/YandexMapPicker';
-import { updateCurrentCard } from '../../store/cardsSlice';
+import { setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
 
 import './styles.css';
 
@@ -21,7 +21,6 @@ const Locations = () => {
   const cards = allCards.filter((card) => card.id !== 'fixed');
 
   const [locations, setLocations] = useState([]);
-
   const [organizationResults, setOrganizationResults] = useState([]);
   const [limitReached, setLimitReached] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -68,7 +67,7 @@ const Locations = () => {
     const selected = cards.find((c) => c.id === cardId);
     if (selected) {
       dispatch(
-        updateCurrentCard({
+        setCurrentCard({
           ...selected,
           pushNotification: selected.pushNotification || {
             message: `Новое уведомление по вашей карте "${selected.title}"`,
@@ -91,10 +90,6 @@ const Locations = () => {
     }
   }, [currentCard]);
 
-  const handleMapSelect = (location) => {
-    setSelectedLocation(location);
-  };
-
   const toggleLocation = (index) => {
     const updated = locations.map((loc, i) =>
       i === index ? { ...loc, active: !loc.active } : loc,
@@ -103,12 +98,9 @@ const Locations = () => {
     setLocations(updated);
 
     dispatch(
-      updateCurrentCard({
-        ...currentCard,
-        pushNotification: {
-          ...currentCard.pushNotification,
-          locations: updated,
-        },
+      updateCurrentCardField({
+        path: 'pushNotification.locations',
+        value: updated,
       }),
     );
   };
@@ -132,16 +124,12 @@ const Locations = () => {
     setLocations(updatedLocations);
 
     dispatch(
-      updateCurrentCard({
-        ...currentCard,
-        pushNotification: {
-          ...currentCard.pushNotification,
-          locations: updatedLocations,
-        },
+      updateCurrentCardField({
+        path: 'pushNotification.locations',
+        value: updatedLocations,
       }),
     );
 
-    // Очистим результаты
     setOrganizationResults([]);
     setSelectedLocation(null);
     setSearchQuery('');
@@ -174,12 +162,9 @@ const Locations = () => {
     setLimitReached(false);
 
     dispatch(
-      updateCurrentCard({
-        ...currentCard,
-        pushNotification: {
-          ...currentCard.pushNotification,
-          locations: updated,
-        },
+      updateCurrentCardField({
+        path: 'pushNotification.locations',
+        value: updated,
       }),
     );
   };
@@ -253,7 +238,7 @@ const Locations = () => {
         <div className="location-push-textarea">
           <YandexMapPicker
             ref={mapRef}
-            onSelect={handleMapSelect}
+            onSelect={setSelectedLocation}
             initialCoords={selectedLocation?.coords}
           />
         </div>

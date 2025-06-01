@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import CustomSelect from '../../components/CustomSelect';
 import { formatDateToDDMMYYYY, getMinDate } from '../../helpers/date';
 import { pluralize } from '../../helpers/pluralize';
-import { updateCurrentCard } from '../../store/cardsSlice';
+import { updateCurrentCardField } from '../../store/cardsSlice';
 import BarcodeRadio from './BarcodeRadio';
 
 const RadioConfigs = ({ cardStatus }) => {
@@ -12,11 +12,7 @@ const RadioConfigs = ({ cardStatus }) => {
   const settings = useSelector((state) => state.cards.currentCard.settings || {});
 
   const updateSettingsField = (field, value) => {
-    dispatch(
-      updateCurrentCard({
-        settings: { ...settings, [field]: value },
-      }),
-    );
+    dispatch(updateCurrentCardField({ path: `settings.${field}`, value }));
   };
 
   const numberOptions = Array.from({ length: 30 }, (_, i) => ({
@@ -32,7 +28,6 @@ const RadioConfigs = ({ cardStatus }) => {
 
   const configs = [];
 
-  // --- Срок действия карты (всегда) ---
   configs.push({
     options: [
       { value: 'cardUnlimit', label: 'Неограниченный' },
@@ -55,11 +50,9 @@ const RadioConfigs = ({ cardStatus }) => {
             onChange={(e) => {
               const newDate = e.target.value;
               const formattedExpiration = formatDateToDDMMYYYY(newDate);
+              updateSettingsField('cardFixedDate', newDate);
               dispatch(
-                updateCurrentCard({
-                  settings: { ...settings, cardFixedDate: newDate },
-                  expirationDate: formattedExpiration,
-                }),
+                updateCurrentCardField({ path: 'expirationDate', value: formattedExpiration }),
               );
             }}
           />
@@ -94,7 +87,6 @@ const RadioConfigs = ({ cardStatus }) => {
     },
   });
 
-  // --- Программа вознаграждения (штампы) ---
   if (cardStatus === 'stamp') {
     configs.push({
       options: [
@@ -173,7 +165,6 @@ const RadioConfigs = ({ cardStatus }) => {
     });
   }
 
-  // --- Срок жизни штампа ---
   if (['stamp', 'subscription'].includes(cardStatus)) {
     configs.push({
       options: [
@@ -215,7 +206,6 @@ const RadioConfigs = ({ cardStatus }) => {
     });
   }
 
-  // --- Срок жизни баллов ---
   if (['cashback', 'subscription', 'certificate'].includes(cardStatus)) {
     configs.push({
       options: [
@@ -257,7 +247,6 @@ const RadioConfigs = ({ cardStatus }) => {
     });
   }
 
-  // --- Правила погашения (certificate) ---
   if (cardStatus === 'certificate') {
     configs.push({
       options: [
@@ -281,10 +270,10 @@ const RadioConfigs = ({ cardStatus }) => {
 
   return (
     <>
-      {configs.map((config, index) => (
+      {configs?.map((config, index) => (
         <React.Fragment key={config.name || index}>
           <BarcodeRadio {...config} />
-          {index < configs.length - 1 && <hr />}
+          {index < configs?.length - 1 && <hr />}
         </React.Fragment>
       ))}
     </>

@@ -21,7 +21,7 @@ const fieldOptions = [
 ];
 
 const CardIssueForm = ({ formFields, onFieldChange, onAddField, onRemoveField }) => {
-  const hasUniqueField = formFields.some(
+  const hasUniqueField = formFields?.some(
     (field) => (field.type === 'phone' || field.type === 'email') && field.unique,
   );
   const handleTypeChange = (index, value) => {
@@ -45,7 +45,7 @@ const CardIssueForm = ({ formFields, onFieldChange, onAddField, onRemoveField })
         <span>Уникальное</span>
       </div>
 
-      {formFields.map((field, index) => (
+      {formFields?.map((field, index) => (
         <div key={index} className="card-form-row">
           <CustomSelect
             value={field.type}
@@ -91,7 +91,7 @@ const CardIssueForm = ({ formFields, onFieldChange, onAddField, onRemoveField })
             unique: false,
           })
         }
-        disabled={formFields.length > 6}
+        disabled={formFields?.length > 6}
       >
         Добавить поле
       </button>

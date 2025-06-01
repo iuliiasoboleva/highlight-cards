@@ -14,7 +14,6 @@ import {
 import { Pencil } from 'lucide-react';
 
 import AuthForm from './components/AuthForm';
-import Breadcrumbs from './components/Breadcrumbs';
 import Header from './components/Header';
 import NotFound from './components/NotFound';
 import ScrollToTop from './components/ScrollToTop';
@@ -49,7 +48,7 @@ import SettingsLayout from './pages/SettingsLayout';
 import SettingsPersonal from './pages/SettingsPersonal';
 import SettingsRFMSegment from './pages/SettingsRFMSegment';
 import Workplace from './pages/Workplace';
-import { updateCurrentCard } from './store/cardsSlice';
+import { updateCurrentCardField } from './store/cardsSlice';
 import { setClients } from './store/clientsSlice';
 import { setUser } from './store/userSlice';
 
@@ -88,9 +87,6 @@ const MainLayout = () => {
 
   const getSubMenuIcon = () => {
     if (matchCreate || matchEdit) return Pencil;
-    // if (matchSettings) return Sliders;
-    // if (matchMailings) return Bell;
-    // if (matchCardDetails) return Users;
     return null;
   };
 
@@ -158,14 +154,13 @@ const MainLayout = () => {
           showNameInput={!!matchEdit || !!matchCreate}
           initialName={currentCard?.name || ''}
           onNameChange={(newName) => {
-            dispatch(updateCurrentCard({ name: newName }));
+            dispatch(updateCurrentCardField({ path: 'name', value: newName }));
           }}
         />
       )}
       <div className="main">
         <Sidebar />
         <div className="page-content">
-          {/* <Breadcrumbs /> */}
           <Outlet />
         </div>
         <Footer />
@@ -227,7 +222,6 @@ const App = () => {
             <Route path="personal" element={<SettingsPersonal />} />
           </Route>
           <Route path="/cards/:id" element={<CardDetails />}>
-            <Route index element={<DefaultCardInfo />} />
             <Route path="info" element={<DefaultCardInfo />} />
             <Route path="clients" element={<Clients />} />
             <Route path="push" element={<MailingsPush />} />

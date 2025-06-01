@@ -25,7 +25,7 @@ const UTMLinks = ({ utmLinks, onAddLink, onRemoveLink }) => {
 
   return (
     <div className="utm-container">
-      {utmLinks.length > 0 && (
+      {utmLinks?.length > 0 && (
         <div className="utm-header">
           <span>Название источника</span>
           <span>UTM-ссылка</span>
@@ -33,7 +33,7 @@ const UTMLinks = ({ utmLinks, onAddLink, onRemoveLink }) => {
         </div>
       )}
 
-      {utmLinks.map((item, index) => (
+      {utmLinks?.map((item, index) => (
         <div key={index} className="utm-row">
           <span>{item.source}</span>
           <span className="utm-link">

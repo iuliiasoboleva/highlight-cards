@@ -26,7 +26,8 @@ export const mockCards = [
       locations: [],
     },
     design: {
-      stampIcon: Ticket,
+      activeStamp: Ticket,
+      inactiveStamp: Ticket,
     },
   },
   {
@@ -48,7 +49,8 @@ export const mockCards = [
       locations: [],
     },
     design: {
-      stampIcon: Flower,
+      activeStamp: Flower,
+      inactiveStamp: Flower,
     },
   },
   {

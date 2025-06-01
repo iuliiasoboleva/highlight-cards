@@ -1,54 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import {
-  faCheck,
-  faCircleQuestion,
-  faFire,
-  faGem,
-  faHeart,
-  faStar,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { HelpCircle, Image as ImageIcon, Upload } from 'lucide-react';
 
-import CardInfo from '../../components/CardInfo';
-import { updateCardById } from '../../store/cardsSlice';
+import EditLayout from '../../components/EditLayout';
+import { updateCurrentCardField } from '../../store/cardsSlice';
+import { stampIcons } from '../../utils/stampIcons';
+import ImageUploader from './ImageUploader';
+import StampIconSelector from './StampIconSelector';
 
 import './styles.css';
-
-const STAMP_ICONS = [
-  { id: 1, name: 'Звезда', icon: faStar },
-  { id: 2, name: 'Сердце', icon: faHeart },
-  { id: 3, name: 'Галочка', icon: faCheck },
-  { id: 4, name: 'Огонь', icon: faFire },
-  { id: 5, name: 'Бриллиант', icon: faGem },
-];
 
 const EditDesign = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const currentCard = useSelector((state) =>
-    state.cards.cards.find((c) => String(c.id) === id),
-  ) || {
-    design: {
-      logo: null,
-      icon: null,
-      background: null,
-      colors: {
-        cardBackground: '#FFFFFF',
-        centerBackground: '#F6F6F6',
-        textColor: '#1F1E1F',
-      },
-      stampIcon: STAMP_ICONS[0].icon,
-      stampsQuantity: 0,
-    },
-  };
-
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
-  const [activeTab, setActiveTab] = useState('description');
+  const currentCard = useSelector((state) => state.cards.currentCard);
 
   const design = currentCard.design || {};
   const {
@@ -60,178 +29,155 @@ const EditDesign = () => {
       centerBackground: '#F6F6F6',
       textColor: '#1F1E1F',
     },
-    stampIcon = STAMP_ICONS[0].icon,
     stampsQuantity = 0,
   } = design;
 
   const isStampCard = ['stamp', 'subscription'].includes(currentCard.status);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 1024);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   const handleImageChange = (e, field) => {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      dispatch(
-        updateCardById({
-          id: currentCard.id,
-          changes: {
-            design: {
-              ...design,
-              [field]: imageUrl,
-            },
-          },
-        }),
-      );
+      dispatch(updateCurrentCardField({ path: `design.${field}`, value: imageUrl }));
     }
   };
 
   const handleColorChange = (key, value) => {
-    dispatch(
-      updateCardById({
-        id: currentCard.id,
-        changes: {
-          design: {
-            ...design,
-            colors: {
-              ...colors,
-              [key]: value,
-            },
-          },
-        },
-      }),
-    );
+    dispatch(updateCurrentCardField({ path: `design.colors.${key}`, value }));
   };
 
-  const handleStampsChange = (e) => {
-    const value = Math.min(30, Math.max(0, parseInt(e.target.value) || 0));
-    dispatch(
-      updateCardById({
-        id: currentCard.id,
-        changes: {
-          design: {
-            ...design,
-            stampsQuantity: value,
-          },
-        },
-      }),
-    );
+  const handleStampIconChange = (path, iconName) => {
+    dispatch(updateCurrentCardField({ path, value: iconName }));
   };
 
-  const handleStampIconChange = (icon) => {
-    dispatch(
-      updateCardById({
-        id: currentCard.id,
-        changes: {
-          design: {
-            ...design,
-            stampIcon: icon,
-          },
-        },
-      }),
-    );
+  const handleImageChangeFromEditor = (croppedImage, field) => {
+    dispatch(updateCurrentCardField({ path: `design.${field}`, value: croppedImage }));
   };
 
   const handleSave = () => {
     navigate(`/cards/${id}/edit/info`);
   };
 
-  const previewCardData = {
-    ...currentCard,
-    cardImg: background || '/default-card-bg.png',
-    qrImg: '/default-qr.png',
-    design: {
-      ...design,
-      stampsQuantity,
-      stampIcon,
-    },
-  };
-
   const renderStampControls = () => (
-    <div className="design-stamp-controls">
-      <h3>Настройки штампов</h3>
-      <div className="stamp-count-control">
-        <label>Количество штампов (0-30)</label>
-        <input
-          type="number"
-          min="0"
-          max="30"
-          value={stampsQuantity}
-          onChange={handleStampsChange}
-        />
-      </div>
-
-      <div className="stamp-icon-control">
-        <label>Выберите иконку штампа</label>
-        <div className="stamp-icon-options">
-          {STAMP_ICONS.map(({ id, name, icon }) => (
+    <>
+      <div className="design-stamp-controls">
+        <label className="stamp-section-label">
+          <h3 className="barcode-radio-title">
+            Количество штампов <HelpCircle size={16} style={{ marginLeft: 6 }} />
+          </h3>
+        </label>
+        <div className="stamp-quantity-grid">
+          {Array.from({ length: 30 }, (_, i) => i + 1).map((num) => (
             <button
-              key={id}
-              className={`stamp-icon-option ${stampIcon === icon ? 'active' : ''}`}
-              onClick={() => handleStampIconChange(icon)}
-              title={name}
+              key={num}
+              className={`stamp-quantity-button ${num <= stampsQuantity ? 'active' : ''}`}
+              onClick={() =>
+                dispatch(updateCurrentCardField({ path: 'design.stampsQuantity', value: num }))
+              }
             >
-              <FontAwesomeIcon icon={icon} />
+              {num}
             </button>
           ))}
         </div>
       </div>
+      <hr />
+
+      <div className="stamp-settings">
+        <div className="stamp-settings-block">
+          <StampIconSelector
+            label="Активный штамп"
+            value={design.activeStamp}
+            options={stampIcons}
+            onChange={(val) => {
+              handleStampIconChange(`design.activeStamp`, val);
+              dispatch(updateCurrentCardField({ path: `design.activeStampImage`, value: null }));
+            }}
+          />
+          <ImageUploader
+            inputId="active-stamp-upload"
+            infoText="Минимальный размер файла 200 x 200 пикселей. Только PNG формат. 3 мегабайта"
+            onSave={(croppedImage) => handleImageChangeFromEditor(croppedImage, 'activeStampImage')}
+            externalImage={design.activeStampImage}
+          />
+        </div>
+
+        <div className="stamp-settings-block">
+          <StampIconSelector
+            label="Неактивный штамп"
+            value={design.inactiveStamp}
+            options={stampIcons}
+            onChange={(val) => {
+              handleStampIconChange(`design.inactiveStamp`, val);
+              dispatch(updateCurrentCardField({ path: `design.inactiveStampImage`, value: null }));
+            }}
+          />
+          <ImageUploader
+            inputId="inactive-stamp-upload"
+            infoText="Минимальный размер файла 200 x 200 пикселей. Только PNG формат. 3 мегабайта"
+            onSave={(croppedImage) =>
+              handleImageChangeFromEditor(croppedImage, 'inactiveStampImage')
+            }
+            externalImage={design.inactiveStampImage}
+          />
+        </div>
+      </div>
+    </>
+  );
+
+  const renderUploadPlaceholder = () => (
+    <div className="upload-placeholder">
+      <ImageIcon size={32} />
     </div>
   );
 
   const designContent = (
-    <div className="design-section">
+    <div className="settings-inputs-container">
       <h2>
-        Настройки <FontAwesomeIcon icon={faCircleQuestion} style={{ fontSize: 16 }} />
+        Дизайн <HelpCircle size={16} />
       </h2>
       <hr />
 
       {isStampCard && renderStampControls()}
+      <hr />
 
-      <div className="design-row">
-        <div className="upload-box">
-          <h3>Логотип</h3>
-          <div className="upload-area">
-            {logo ? (
-              <img src={logo} alt="logo" className="preview-img" />
-            ) : (
-              <div className="upload-placeholder">📁</div>
-            )}
-            <input type="file" id="logo" hidden onChange={(e) => handleImageChange(e, 'logo')} />
-            <label htmlFor="logo" className="upload-button">
-              Выбрать файл
-            </label>
-          </div>
-          <p className="upload-description">
-            Рекомендуемый размер: 480x150 пикселей. Только PNG. 3 МБ
-          </p>
+      <div className="stamp-settings">
+        <div className="stamp-settings-block">
+          <h3 className="barcode-radio-title">
+            Логотип <HelpCircle size={16} style={{ marginLeft: 6 }} />
+          </h3>
+          <ImageUploader
+            inputId="logo-upload"
+            infoText="Рекомендованный размер: 480х150 пикселей. Минимальная высота 150 пикселей. Только PNG формат. 3 мегабайта"
+            onSave={(croppedImage) => handleImageChangeFromEditor(croppedImage, 'logo')}
+          />
         </div>
 
-        <div className="upload-box">
-          <h3>Иконка</h3>
-          <div className="upload-area">
-            {icon ? (
-              <img src={icon} alt="icon" className="preview-img" />
-            ) : (
-              <div className="upload-placeholder">📁</div>
-            )}
-            <input type="file" id="icon" hidden onChange={(e) => handleImageChange(e, 'icon')} />
-            <label htmlFor="icon" className="upload-button">
-              Выбрать файл
-            </label>
-          </div>
-          <p className="upload-description">
-            Рекомендуемый размер: 512x512 пикселей. Только PNG. 3 МБ
-          </p>
+        <div className="stamp-settings-block">
+          <h3 className="barcode-radio-title">
+            Иконка <HelpCircle size={16} style={{ marginLeft: 6 }} />
+          </h3>
+          <ImageUploader
+            inputId="icon-upload"
+            infoText="Рекомендованный размер иконки: 512х512 пикселей. Изображение должно быть квадратное. Только PNG формат. 3 мегабайта"
+            onSave={(croppedImage) => handleImageChangeFromEditor(croppedImage, 'icon')}
+          />
         </div>
       </div>
+      <div className="stamp-settings">
+        <div className="stamp-settings-block">
+          <h3 className="barcode-radio-title">
+            Фон под штампами <HelpCircle size={16} style={{ marginLeft: 6 }} />
+          </h3>
+          <ImageUploader
+            inputId="stamp-background-upload"
+            infoText="Минимальный размер файла 1125 х 432 пикселя. Только PNG формат. 3 мегабайта"
+            onSave={(croppedImage) => handleImageChangeFromEditor(croppedImage, 'stampBackground')}
+          />
+        </div>
+        <div className="stamp-settings-block"></div>
+      </div>
+
+      <hr />
 
       {!isStampCard && (
         <div className="upload-box full-width">
@@ -240,7 +186,7 @@ const EditDesign = () => {
             {background ? (
               <img src={background} alt="background" className="preview-img" />
             ) : (
-              <div className="upload-placeholder">📁</div>
+              renderUploadPlaceholder()
             )}
             <input
               type="file"
@@ -293,53 +239,7 @@ const EditDesign = () => {
     </div>
   );
 
-  const cardPreview = (
-    <div className="phone-frame">
-      <img className="phone-image" src={currentCard.frameUrl} alt={currentCard.name} />
-      <div className="phone-screen">
-        <CardInfo card={previewCardData} />
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="edit-type-main-container">
-      {isMobile && (
-        <div className="edit-type-tabs">
-          <button
-            className={`edit-type-tab ${activeTab === 'description' ? 'active' : ''}`}
-            onClick={() => setActiveTab('description')}
-          >
-            Описание
-          </button>
-          <button
-            className={`edit-type-tab ${activeTab === 'card' ? 'active' : ''}`}
-            onClick={() => setActiveTab('card')}
-          >
-            Карта
-          </button>
-        </div>
-      )}
-
-      {isMobile ? (
-        <div className="edit-type-layout">
-          {activeTab === 'description' && (
-            <div className="edit-type-left">
-              <div className="edit-type-page">{designContent}</div>
-            </div>
-          )}
-          {activeTab === 'card' && <div className="edit-type-right">{cardPreview}</div>}
-        </div>
-      ) : (
-        <div className="edit-type-layout">
-          <div className="edit-type-left">
-            <div className="edit-type-page">{designContent}</div>
-          </div>
-          <div className="edit-type-right">{cardPreview}</div>
-        </div>
-      )}
-    </div>
-  );
+  return <EditLayout>{designContent}</EditLayout>;
 };
 
 export default EditDesign;

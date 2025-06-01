@@ -59,6 +59,8 @@
   font-size: 16px;
   color: #333;
   font-weight: 500;
+  display: flex;
+  align-items: center;
 }
 
 .barcode-radio-subtitle {

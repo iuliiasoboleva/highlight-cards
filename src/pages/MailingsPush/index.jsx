@@ -8,7 +8,7 @@ import CustomSelect from '../../components/CustomSelect';
 import PushPreview from '../../components/PushPreview';
 import { getMinDateTime } from '../../helpers/date';
 import { pluralVerb, pluralize } from '../../helpers/pluralize';
-import { updateCurrentCard } from '../../store/cardsSlice';
+import { setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
 import PushTargetTabs from './PushTargetTabs';
 
 import './styles.css';
@@ -20,7 +20,7 @@ const MailingsPush = () => {
 
   const allCards = useSelector((state) => state.cards.cards);
   const cards = allCards.filter((card) => card.id !== 'fixed');
-  const hasActiveCards = cards.length > 0;
+  const hasActiveCards = cards?.length > 0;
 
   const currentCard = useSelector((state) => state.cards.currentCard);
   const [pushMessage, setPushMessage] = useState('');
@@ -31,7 +31,7 @@ const MailingsPush = () => {
 
   useEffect(() => {
     if ((!currentCard || !cards.find((c) => c.id === currentCard.id)) && cards.length > 0) {
-      dispatch(updateCurrentCard(cards[0]));
+      dispatch(setCurrentCard(cards[0]));
     }
   }, [currentCard, cards, dispatch]);
 
@@ -57,7 +57,7 @@ const MailingsPush = () => {
     const selected = cards.find((c) => c.id === cardId);
     if (selected) {
       dispatch(
-        updateCurrentCard({
+        setCurrentCard({
           ...selected,
           pushNotification: selected.pushNotification || {
             message: `Новое уведомление по вашей карте "${selected.title}"`,
@@ -81,9 +81,9 @@ const MailingsPush = () => {
 
   const handleSavePushSettings = () => {
     dispatch(
-      updateCurrentCard({
-        ...currentCard,
-        pushNotification: {
+      updateCurrentCardField({
+        path: 'pushNotification',
+        value: {
           message: pushMessage,
           scheduledDate: isScheduled ? scheduledDate : '',
         },
@@ -180,7 +180,7 @@ const MailingsPush = () => {
             card={currentCard}
             message={pushMessage}
             scheduledDate={isScheduled ? scheduledDate : null}
-          />{' '}
+          />
         </div>
       </div>
     </div>

@@ -1,54 +1,5 @@
 import { Star } from 'lucide-react';
 
-import { pluralize } from '../helpers/pluralize';
-
-export const STATUS_CONFIG = {
-  certificate: [
-    { label: 'Баланс', valueKey: 'balanceMoney', suffix: '₽' },
-    { label: 'Имя', valueKey: 'certificateName', suffix: '' },
-    { label: 'Срок действия', valueKey: 'expirationDate' },
-  ],
-  cashback: [
-    { label: 'Баллы', valueKey: 'credits', suffix: '' },
-    {
-      label: 'Текущий процент кешбэка',
-      valueKey: 'cashbackPercent',
-      suffix: '%',
-    },
-    { label: 'Текущий статус кешбэка', valueKey: 'cashbackStatus' },
-  ],
-  subscription: [
-    { label: 'Текуще визиты', valueKey: 'score' },
-    { label: 'Всего визитов', valueKey: 'visitsCount' },
-    { label: 'Срок действия', valueKey: 'expirationDate' },
-  ],
-  stamp: [
-    {
-      label: 'До получения награды',
-      valueKey: 'restStamps',
-      format: (value) => `${value} ${pluralize(value, ['штамп', 'штампа', 'штампов'])}`,
-    },
-    {
-      label: 'Доступно наград',
-      valueKey: 'stamps',
-      format: (value) => `${value} ${pluralize(value, ['награда', 'награды', 'наград'])}`,
-    },
-    { label: 'Срок действия', valueKey: 'expirationDate' },
-  ],
-  discount: [
-    {
-      label: 'Текущий процент скидки',
-      valueKey: 'discountPercent',
-      suffix: '%',
-    },
-    {
-      label: 'Текущий статус скидки',
-      valueKey: 'discountStatus',
-      suffix: '',
-    },
-  ],
-};
-
 export const defaultCardTemplate = {
   id: 3,
   status: 'stamp',
@@ -113,9 +64,13 @@ export const defaultCardTemplate = {
   design: {
     logo: null,
     icon: null,
+    stampBackground: null,
     background: null,
     stampsQuantity: 10,
-    stampIcon: Star,
+    activeStamp: Star,
+    inactiveStamp: Star,
+    activeStampImage: null,
+    inactiveStampImage: null,
     colors: {
       cardBackground: '#FFFFFF',
       centerBackground: '#F6F6F6',

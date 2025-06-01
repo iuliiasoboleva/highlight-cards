@@ -16,7 +16,7 @@ const BarcodeRadio = ({
     <div className="barcode-radio-group">
       <h3 className="barcode-radio-title">{title}</h3>
       <div className="barcode-radio-options">
-        {options.map((option) => (
+        {options?.map((option) => (
           <React.Fragment key={option.value}>
             <label className="barcode-radio-option">
               <input

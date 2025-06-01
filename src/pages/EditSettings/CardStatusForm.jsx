@@ -13,7 +13,7 @@ const CardStatusForm = ({ statusFields, onFieldChange, onAddField, onRemoveField
         <span>Процент %</span>
       </div>
 
-      {statusFields.map((field, index) => (
+      {statusFields?.map((field, index) => (
         <div key={index} className="card-status-row">
           <input
             type="text"
@@ -46,7 +46,11 @@ const CardStatusForm = ({ statusFields, onFieldChange, onAddField, onRemoveField
         </div>
       ))}
 
-      <button className="card-form-add-btn" onClick={onAddField} disabled={statusFields.length > 6}>
+      <button
+        className="card-form-add-btn"
+        onClick={onAddField}
+        disabled={statusFields?.length > 6}
+      >
         Добавить статус
       </button>
     </>

@@ -3,7 +3,6 @@
   top: 0;
   left: 0;
   width: 100%;
-  box-sizing: border-box;
   z-index: 1000;
   background-color: rgb(239, 227, 229);
   padding: 10px 20px;

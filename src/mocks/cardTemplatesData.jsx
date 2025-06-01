@@ -23,7 +23,8 @@ export const mockTemplateCards = [
       icon: null,
       background: null,
       stampsQuantity: null,
-      stampIcon: Flower,
+      activeStamp: Flower,
+      inactiveStamp: Flower,
       colors: {
         cardBackground: 'rgb(246, 247, 251)',
         centerBackground: '#F6F6F6',
@@ -55,7 +56,8 @@ export const mockTemplateCards = [
       icon: null,
       background: null,
       stampsQuantity: null,
-      stampIcon: Fuel,
+      activeStamp: Fuel,
+      inactiveStamp: Fuel,
       colors: {
         cardBackground: 'rgb(249, 201, 5)',
       },
@@ -83,7 +85,8 @@ export const mockTemplateCards = [
       icon: null,
       background: null,
       stampsQuantity: null,
-      stampIcon: Scissors,
+      activeStamp: Scissors,
+      inactiveStamp: Scissors,
       colors: {
         cardBackground: 'rgb(0, 0, 0)',
         textColor: 'white',
@@ -112,7 +115,9 @@ export const mockTemplateCards = [
       icon: null,
       background: null,
       stampsQuantity: null,
-      stampIcon: Waves,
+      activeStamp: Waves,
+      inactiveStamp: Waves,
+
       colors: {
         cardBackground: 'rgb(49, 218, 248)',
         iconColor: 'white',

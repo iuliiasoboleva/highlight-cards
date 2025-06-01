@@ -8,9 +8,8 @@ import {
   copyCard,
   deleteCard,
   downloadCard,
-  initializeCurrentCard,
-  setCurrentCardFromTemplate,
-  updateCardById,
+  setCurrentCard,
+  updateCard,
 } from '../../store/cardsSlice';
 
 import './styles.css';
@@ -23,13 +22,15 @@ const CardButtons = ({ isFixed, cardId }) => {
 
   const card = useSelector((state) => state.cards.cards.find((c) => c.id === cardId));
 
+  if (!card) return null;
+
   if (isFixed) {
     return (
       <div className="card-buttons">
         {isTemplatePage ? (
           <button
             onClick={() => {
-              dispatch(initializeCurrentCard());
+              dispatch(setCurrentCard({})); // инициализация пустой карты
               navigate('/cards/create');
             }}
           >
@@ -40,7 +41,7 @@ const CardButtons = ({ isFixed, cardId }) => {
             <button onClick={() => navigate('/cards/template')}>На шаблоне</button>
             <button
               onClick={() => {
-                dispatch(initializeCurrentCard());
+                dispatch(setCurrentCard({}));
                 navigate('/cards/create');
               }}
             >
@@ -54,7 +55,7 @@ const CardButtons = ({ isFixed, cardId }) => {
 
   if (isTemplatePage) {
     const handleTemplateSelect = () => {
-      dispatch(setCurrentCardFromTemplate(card)); // <-- кладём шаблон в currentCard
+      dispatch(setCurrentCard(card)); // применяем шаблон к currentCard
       navigate('/cards/create');
     };
 
@@ -69,7 +70,7 @@ const CardButtons = ({ isFixed, cardId }) => {
 
   const handleToggleActive = () => {
     dispatch(
-      updateCardById({
+      updateCard({
         id: cardId,
         changes: { isActive: !card.isActive },
       }),
@@ -90,7 +91,7 @@ const CardButtons = ({ isFixed, cardId }) => {
 
   return (
     <div className="card-buttons-block">
-      <button onClick={() => navigate(`/cards/${cardId}`)}>Перейти</button>
+      <button onClick={() => navigate(`/cards/${cardId}/info`)}>Перейти</button>
       <div className="icon-buttons">
         <button onClick={handleToggleActive} title="Включить/выключить">
           <Power size={20} />

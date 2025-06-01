@@ -3,17 +3,26 @@ import { useSelector } from 'react-redux';
 
 import { Star } from 'lucide-react';
 
-import { STATUS_CONFIG } from '../defaultCardInfo';
+import { getStampIconComponent } from '../../utils/stampIcons';
+import { statusConfig } from '../../utils/statusConfig';
+import StampGrid from './StampGrid';
 
 import './styles.css';
 
 const CardInfo = ({ card }) => {
   const currentDesign = useSelector((state) => state.cards.currentCard?.design) || {};
   const design = card.design || currentDesign || {};
-  const fields = STATUS_CONFIG[card.status] || [];
+  const fields = statusConfig[card.status] || [];
 
   const stampsQuantity = design?.stampsQuantity || 0;
-  const stampIcon = design?.stampIcon || card.stampIcon || Star;
+  const activeStamp = design?.activeStamp || Star;
+  const inactiveStamp = design?.inactiveStamp || Star;
+  const activeStampImage = design?.activeStampImage || null;
+  const inactiveStampImage = design?.inactiveStampImage || null;
+
+  const ActiveIcon = getStampIconComponent(activeStamp);
+  const InactiveIcon = getStampIconComponent(inactiveStamp);
+
   const restStamps =
     card.status === 'stamp' ? (design?.stampsQuantity || 10) - (card.stamps || 0) : 0;
 
@@ -23,41 +32,10 @@ const CardInfo = ({ card }) => {
     cardImg: design?.background || card.cardImg,
     ...design?.colors,
     stampsQuantity,
-    stampIcon,
   };
 
   const renderFieldValue = (value, { format, suffix }) => {
     return format ? format(value) : `${value}${suffix || ''}`;
-  };
-
-  const renderStamps = () => {
-    const activeStamps = card.stamps || 0;
-    const IconComponent = stampIcon;
-
-    return (
-      <div className="stamp-container">
-        {[0, 1].map((rowIndex) => (
-          <div className="stamp-row" key={`row-${rowIndex}`}>
-            {[0, 1, 2, 3, 4].map((colIndex) => {
-              const stampNumber = rowIndex * 5 + colIndex;
-
-              return (
-                <div
-                  key={`stamp-${stampNumber}`}
-                  style={{ backgroundColor: mergedCard.stampIconBackground }}
-                >
-                  <IconComponent
-                    size={24}
-                    strokeWidth={2}
-                    color={stampNumber < activeStamps ? 'black' : mergedCard.iconColor || 'gray'}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        ))}
-      </div>
-    );
   };
 
   return (
@@ -69,7 +47,11 @@ const CardInfo = ({ card }) => {
       }}
     >
       <div className="card-info-header">
-        <p className="card-name">{mergedCard.name}</p>
+        {mergedCard.design.logo ? (
+          <img src={mergedCard.design.logo} alt="Лого" className="card-info-logo" />
+        ) : (
+          <p className="card-name">{mergedCard.name}</p>
+        )}
         <span className="card-inline-value">
           {fields
             .filter(({ valueKey }) =>
@@ -98,7 +80,19 @@ const CardInfo = ({ card }) => {
         )}
 
         {(card.status === 'subscription' || card.status === 'stamp') && (
-          <div className="stamp-overlay">{renderStamps()}</div>
+          <div
+            className="stamp-overlay"
+            style={{ backgroundImage: `url(${mergedCard.design.stampBackground})` }}
+          >
+            <StampGrid
+              totalStamps={mergedCard.stampsQuantity}
+              activeStamps={card.stamps || 0}
+              ActiveIcon={ActiveIcon}
+              InactiveIcon={InactiveIcon}
+              activeImage={activeStampImage}
+              inactiveImage={inactiveStampImage}
+            />
+          </div>
         )}
       </div>
 

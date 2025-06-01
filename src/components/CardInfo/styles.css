@@ -73,6 +73,15 @@
 
 .card-inline-value {
   height: 15px;
+  display: flex;
+  gap: 4px;
+}
+
+.card-info-logo {
+  width: 100%;
+  max-width: 80px;
+  height: 20px;
+  object-fit: cover;
 }
 
 .stamp-overlay {
@@ -85,36 +94,41 @@
   justify-content: center;
   align-items: center;
   position: absolute;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 
 .stamp-container {
-  flex-wrap: wrap;
-  height: 100%;
-  max-height: 88px;
+  width: 100%;
+  max-width: 200px;
+  height: 88px;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  display: flex;
-  padding: 5px 10px;
-  gap: 10px;
-  flex-direction: column;
-  width: 100%;
+  gap: 4px;
+  padding: 8px 0;
 }
 
 .stamp-row {
   display: flex;
-  gap: 10px;
+  justify-content: center;
+  gap: 4px;
 }
 
-.stamp-row div {
-  width: 32px;
-  height: 32px;
+.stamp-item {
   background-color: white;
   border: 1px solid gray;
   border-radius: 50%;
-  padding: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.stamp-item.no-border {
+  border: none;
+  background: none;
 }
 
 .card-background {
