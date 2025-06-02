@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import CardInfo from '../../components/CardInfo';
+import { updateCurrentCardField } from '../../store/cardsSlice';
+import { statusConfig } from '../../utils/statusConfig';
 
 import './styles.css';
 
 const EditLayout = ({ children }) => {
+  const dispatch = useDispatch();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
   const [activeTab, setActiveTab] = useState('description');
 
@@ -16,6 +19,22 @@ const EditLayout = ({ children }) => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  useEffect(() => {
+    if (currentCard.status) {
+      const defaultFields = (statusConfig[currentCard.status] || []).map((item) => ({
+        type: item.valueKey,
+        name: item.label,
+      }));
+
+      dispatch(
+        updateCurrentCardField({
+          path: 'fieldsName',
+          value: defaultFields,
+        }),
+      );
+    }
+  }, [currentCard.status, dispatch]);
 
   return (
     <>

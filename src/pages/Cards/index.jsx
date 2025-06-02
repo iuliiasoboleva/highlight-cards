@@ -4,7 +4,8 @@ import { useLocation } from 'react-router-dom';
 
 import CardButtons from '../../components/CardButtons';
 import CardInfo from '../../components/CardInfo';
-import { initializeCards } from '../../store/cardsSlice';
+import { initializeCards, updateCard } from '../../store/cardsSlice';
+import { statusConfig } from '../../utils/statusConfig';
 
 import './styles.css';
 

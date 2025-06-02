@@ -27,7 +27,7 @@ export const mockTemplateCards = [
       inactiveStamp: Flower,
       colors: {
         cardBackground: 'rgb(246, 247, 251)',
-        centerBackground: '#F6F6F6',
+        stampBackgroundColor: '#F6F6F6',
         textColor: '#1F1E1F',
         stampIconBackground: 'rgb(193, 155, 176)',
         iconColor: 'white',

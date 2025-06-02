@@ -250,7 +250,7 @@ const EditSettings = () => {
           (!policySettings?.policyText.trim() || !policySettings?.fullPolicyText.trim())
         }
       >
-        Сохранить и продолжить
+        Продолжить
       </button>
     </div>
   );

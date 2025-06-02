@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { HelpCircle, Image as ImageIcon, Upload } from 'lucide-react';
+import { HelpCircle } from 'lucide-react';
 
 import EditLayout from '../../components/EditLayout';
 import { updateCurrentCardField } from '../../store/cardsSlice';
 import { stampIcons } from '../../utils/stampIcons';
+import ColorSettings from './ColorSettings';
 import ImageUploader from './ImageUploader';
 import StampIconSelector from './StampIconSelector';
+import StatusFieldConfig from './StatusFieldConfig';
 
 import './styles.css';
 
@@ -18,33 +20,12 @@ const EditDesign = () => {
   const dispatch = useDispatch();
 
   const currentCard = useSelector((state) => state.cards.currentCard);
-
+  const fieldsName = useSelector((state) => state.cards.currentCard.fieldsName) || [];
+  const statusType = currentCard.status;
   const design = currentCard.design || {};
-  const {
-    logo = null,
-    icon = null,
-    background = null,
-    colors = {
-      cardBackground: '#FFFFFF',
-      centerBackground: '#F6F6F6',
-      textColor: '#1F1E1F',
-    },
-    stampsQuantity = 0,
-  } = design;
+  const { stampsQuantity = 0 } = design;
 
   const isStampCard = ['stamp', 'subscription'].includes(currentCard.status);
-
-  const handleImageChange = (e, field) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      dispatch(updateCurrentCardField({ path: `design.${field}`, value: imageUrl }));
-    }
-  };
-
-  const handleColorChange = (key, value) => {
-    dispatch(updateCurrentCardField({ path: `design.colors.${key}`, value }));
-  };
 
   const handleStampIconChange = (path, iconName) => {
     dispatch(updateCurrentCardField({ path, value: iconName }));
@@ -121,13 +102,8 @@ const EditDesign = () => {
           />
         </div>
       </div>
+      <hr />
     </>
-  );
-
-  const renderUploadPlaceholder = () => (
-    <div className="upload-placeholder">
-      <ImageIcon size={32} />
-    </div>
   );
 
   const designContent = (
@@ -138,7 +114,6 @@ const EditDesign = () => {
       <hr />
 
       {isStampCard && renderStampControls()}
-      <hr />
 
       <div className="stamp-settings">
         <div className="stamp-settings-block">
@@ -166,7 +141,7 @@ const EditDesign = () => {
       <div className="stamp-settings">
         <div className="stamp-settings-block">
           <h3 className="barcode-radio-title">
-            Фон под штампами <HelpCircle size={16} style={{ marginLeft: 6 }} />
+            Фон центральной части <HelpCircle size={16} style={{ marginLeft: 6 }} />
           </h3>
           <ImageUploader
             inputId="stamp-background-upload"
@@ -176,65 +151,26 @@ const EditDesign = () => {
         </div>
         <div className="stamp-settings-block"></div>
       </div>
-
       <hr />
 
-      {!isStampCard && (
-        <div className="upload-box full-width">
-          <label className="upload-label">Фон центральной части</label>
-          <div className="upload-area">
-            {background ? (
-              <img src={background} alt="background" className="preview-img" />
-            ) : (
-              renderUploadPlaceholder()
-            )}
-            <input
-              type="file"
-              id="background"
-              hidden
-              onChange={(e) => handleImageChange(e, 'background')}
-            />
-            <label htmlFor="background" className="upload-button">
-              Выбрать файл
-            </label>
-          </div>
-          <p className="upload-description">Минимальный размер: 1125x432. Только PNG. 3 МБ</p>
-        </div>
-      )}
+      <h3 className="barcode-radio-title">
+        Цвета <HelpCircle size={16} style={{ marginLeft: 6 }} />
+      </h3>
+      <ColorSettings
+        colors={design.colors}
+        handleColorChange={(key, value) =>
+          dispatch(updateCurrentCardField({ path: `design.colors.${key}`, value }))
+        }
+        isStampCard={isStampCard}
+      />
 
-      <h3>Цвета</h3>
-      <div className="color-section">
-        <div className="color-input">
-          <label>Фон карты</label>
-          <input
-            type="color"
-            value={colors.cardBackground}
-            onChange={(e) => handleColorChange('cardBackground', e.target.value)}
-          />
-          <input type="text" value={colors.cardBackground} readOnly />
-        </div>
-        <div className="color-input">
-          <label>Цвет текста</label>
-          <input
-            type="color"
-            value={colors.textColor}
-            onChange={(e) => handleColorChange('textColor', e.target.value)}
-          />
-          <input type="text" value={colors.textColor} readOnly />
-        </div>
-        <div className="color-input full-width">
-          <label>Цвет фона центральной части</label>
-          <input
-            type="color"
-            value={colors.centerBackground}
-            onChange={(e) => handleColorChange('centerBackground', e.target.value)}
-          />
-          <input type="text" value={colors.centerBackground} readOnly />
-        </div>
-      </div>
-
+      <hr />
+      <h3 className="barcode-radio-title">
+        Названия полей <HelpCircle size={16} style={{ marginLeft: 6 }} />
+      </h3>
+      <StatusFieldConfig statusType={statusType} fields={fieldsName} />
       <button onClick={handleSave} className="create-button">
-        Сохранить и продолжить
+        Продолжить
       </button>
     </div>
   );

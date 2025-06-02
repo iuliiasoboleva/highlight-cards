@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { mockCards } from '../mocks/cardData';
 import { mockTemplateCards } from '../mocks/cardTemplatesData';
 import { mergeCardWithDefault } from '../utils/mergeCardWithDefault';
+import { statusConfig } from '../utils/statusConfig';
 
 export const fixedCard = {
   id: 'fixed',
@@ -41,7 +42,13 @@ export const cardsSlice = createSlice({
     initializeCards: (state, action) => {
       try {
         const useTemplates = action.payload?.useTemplates || false;
-        state.cards = getAllCards(useTemplates);
+        state.cards = getAllCards(useTemplates).map((card) => ({
+          ...card,
+          fieldsName: (statusConfig[card.status] || []).map((item) => ({
+            type: item.valueKey,
+            name: item.label,
+          })),
+        }));
         state.error = null;
       } catch (err) {
         state.error = err.message;

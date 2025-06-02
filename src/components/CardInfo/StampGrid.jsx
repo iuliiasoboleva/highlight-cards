@@ -7,6 +7,10 @@ const StampGrid = ({
   InactiveIcon,
   activeImage,
   inactiveImage,
+  stampColor,
+  activeColor = '#000',
+  inactiveColor = '#000',
+  borderColor = '#000',
   containerWidth = 200,
   containerHeight = 88,
 }) => {
@@ -40,27 +44,38 @@ const StampGrid = ({
             return (
               <div
                 key={`stamp-${stampNumber}`}
-                className={`stamp-item ${isActive && activeImage ? 'no-border' : ''} ${!isActive && inactiveImage ? 'no-border' : ''}`}
-                style={{ width: `${itemSize}px`, height: `${itemSize}px` }}
+                className={`stamp-item ${isActive && activeImage ? 'no-border' : ''} ${
+                  !isActive && inactiveImage ? 'no-border' : ''
+                }`}
+                style={{
+                  width: `${itemSize}px`,
+                  height: `${itemSize}px`,
+                  border: `2px solid ${borderColor}`,
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: stampColor,
+                }}
               >
                 {isActive ? (
                   activeImage ? (
                     <img
                       src={activeImage}
                       alt="active-stamp"
-                      style={{ width: '100%', height: '100%' }}
+                      style={{ width: '100%', height: '100%', borderRadius: '50%' }}
                     />
                   ) : (
-                    <ActiveIcon size={iconSize} />
+                    <ActiveIcon size={iconSize} color={activeColor} />
                   )
                 ) : inactiveImage ? (
                   <img
                     src={inactiveImage}
                     alt="inactive-stamp"
-                    style={{ width: '100%', height: '100%' }}
+                    style={{ width: '100%', height: '100%', borderRadius: '50%' }}
                   />
                 ) : (
-                  <InactiveIcon size={iconSize} />
+                  <InactiveIcon size={iconSize} color={inactiveColor} />
                 )}
               </div>
             );

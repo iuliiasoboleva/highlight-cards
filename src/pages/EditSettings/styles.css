@@ -388,6 +388,7 @@
 }
 
 .card-form-header,
+.card-fields-header,
 .utm-header,
 .card-status-header {
   display: grid;
@@ -406,7 +407,8 @@
 
 .card-form-header span,
 .utm-header span,
-.card-status-header span {
+.card-fields-header span,
+.color-settings-item span {
   font-size: 12px;
   font-weight: 400;
   color: rgb(101, 101, 101);
@@ -415,6 +417,7 @@
 
 .card-form-row,
 .utm-row,
+.card-fields-row,
 .card-status-row {
   display: grid;
   align-items: center;
@@ -424,6 +427,13 @@
 
 .card-form-row {
   grid-template-columns: 3fr 3fr 1fr 1fr 1fr;
+}
+
+.card-status-row,
+.card-form-header,
+.card-fields-row,
+.card-fields-header {
+  grid-template-columns: 1fr 1fr;
 }
 
 .utm-row {

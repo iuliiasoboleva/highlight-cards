@@ -2,8 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
-import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { HelpCircle } from 'lucide-react';
 
 import EditLayout from '../../components/EditLayout';
 import QRPopup from '../../components/QRPopup';
@@ -17,66 +16,96 @@ const EditInfo = () => {
   const currentCard = useSelector((state) => state.cards.currentCard);
   const [showQRPopup, setShowQRPopup] = useState(false);
 
-  const handleChange = useCallback(
-    (field) => (e) => {
-      dispatch(updateCurrentCardField({ path: field, value: e.target.value }));
-    },
-    [dispatch],
-  );
-
-  const formFields = [
-    {
-      key: 'description',
-      label: 'Описание карты',
-      type: 'textarea',
-      defaultValue: currentCard.description || 'Собирайте штампы для получения наград',
-    },
-    {
-      key: 'howToGetStamp',
-      label: 'Как клиенту получить штамп',
-      defaultValue: currentCard.howToGetStamp || 'Сделайте покупку, чтобы получить штамп',
-    },
-    { key: 'companyName', label: 'Название компании', defaultValue: currentCard.companyName || '' },
-    {
-      key: 'rewardDescription',
-      label: 'Описание награды',
-      type: 'textarea',
-      defaultValue: currentCard.rewardDescription || '',
-    },
-    {
-      key: 'stampMessage',
-      label: 'Сообщение о начисленном штампе',
-      defaultValue: currentCard.stampMessage || '',
-    },
-    {
-      key: 'claimRewardMessage',
-      label: 'Сообщение о начисленной награде',
-      defaultValue:
-        currentCard.claimRewardMessage || 'Ваша награда ждет вас! Приходите за получением подарка',
-    },
-  ];
-
-  const renderField = ({ key, label, type, defaultValue = '' }) => {
-    const InputComponent = type === 'textarea' ? 'textarea' : 'input';
-    return (
-      <div key={key}>
-        <h3>{label}</h3>
-        <InputComponent
-          value={defaultValue}
-          onChange={handleChange(key)}
-          className={`info-${type || 'input'}`}
-        />
-      </div>
-    );
+  const infoFields = currentCard.infoFields || {
+    description: 'Собирайте штампы для получения наград',
+    howToGetStamp: 'Сделайте покупку, чтобы получить штамп',
+    companyName: '',
+    rewardDescription: '',
+    stampMessage: '',
+    claimRewardMessage: 'Ваша награда ждет вас! Приходите за получением подарка',
   };
 
+  const handleFieldChange = useCallback(
+    (field) => (e) => {
+      const newInfoFields = {
+        ...infoFields,
+        [field]: e.target.value,
+      };
+      dispatch(updateCurrentCardField({ path: 'infoFields', value: newInfoFields }));
+    },
+    [dispatch, infoFields],
+  );
+
   const infoContent = (
-    <div className="design-section">
+    <div className="settings-inputs-container">
       <h2>
-        Настройки <FontAwesomeIcon icon={faCircleQuestion} style={{ fontSize: 16 }} />
+        Информация <HelpCircle size={16} />
       </h2>
       <hr />
-      {formFields.map(renderField)}
+
+      <h3 className="barcode-radio-title">
+        Описание карты <HelpCircle size={16} style={{ marginLeft: 6 }} />
+      </h3>
+      <textarea
+        className="custom-textarea"
+        value={infoFields.description}
+        onChange={handleFieldChange('description')}
+        placeholder="Введите описание карты"
+      />
+
+      <h3 className="barcode-radio-title">
+        Как клиенту получить штамп <HelpCircle size={16} style={{ marginLeft: 6 }} />
+      </h3>
+      <textarea
+        className="custom-textarea"
+        value={infoFields.howToGetStamp}
+        onChange={handleFieldChange('howToGetStamp')}
+        placeholder="Опишите, как получить штамп"
+      />
+
+      <h3 className="barcode-radio-title">
+        Название компании <HelpCircle size={16} style={{ marginLeft: 6 }} />
+      </h3>
+      <input
+        type="text"
+        className="custom-input"
+        value={infoFields.companyName}
+        onChange={handleFieldChange('companyName')}
+        placeholder="Введите название компании"
+      />
+
+      <h3 className="barcode-radio-title">
+        Описание награды <HelpCircle size={16} style={{ marginLeft: 6 }} />
+      </h3>
+      <textarea
+        className="custom-textarea"
+        value={infoFields.rewardDescription}
+        onChange={handleFieldChange('rewardDescription')}
+        placeholder="Введите описание награды"
+      />
+
+      <h3 className="barcode-radio-title">
+        Сообщение о начисленном штампе <HelpCircle size={16} style={{ marginLeft: 6 }} />
+      </h3>
+      <input
+        type="text"
+        className="custom-input"
+        value={infoFields.stampMessage}
+        onChange={handleFieldChange('stampMessage')}
+        placeholder="Введите сообщение"
+      />
+
+      <h3 className="barcode-radio-title">
+        Сообщение о начисленной награде <HelpCircle size={16} style={{ marginLeft: 6 }} />
+      </h3>
+      <input
+        type="text"
+        className="custom-input"
+        value={infoFields.claimRewardMessage}
+        onChange={handleFieldChange('claimRewardMessage')}
+        placeholder="Введите сообщение"
+      />
+
       <button onClick={() => setShowQRPopup(true)} className="create-button">
         Завершить
       </button>

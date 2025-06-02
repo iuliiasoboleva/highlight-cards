@@ -4,15 +4,15 @@ import { useSelector } from 'react-redux';
 import { Star } from 'lucide-react';
 
 import { getStampIconComponent } from '../../utils/stampIcons';
-import { statusConfig } from '../../utils/statusConfig';
 import StampGrid from './StampGrid';
 
 import './styles.css';
 
 const CardInfo = ({ card }) => {
+  const currentFields = useSelector((state) => state.cards.currentCard?.fieldsName) || [];
   const currentDesign = useSelector((state) => state.cards.currentCard?.design) || {};
   const design = card.design || currentDesign || {};
-  const fields = statusConfig[card.status] || [];
+  const fields = card.fieldsName || currentFields || [];
 
   const stampsQuantity = design?.stampsQuantity || 0;
   const activeStamp = design?.activeStamp || Star;
@@ -34,8 +34,10 @@ const CardInfo = ({ card }) => {
     stampsQuantity,
   };
 
-  const renderFieldValue = (value, { format, suffix }) => {
-    return format ? format(value) : `${value}${suffix || ''}`;
+  const renderFieldValue = (value, { type }) => {
+    if (value === undefined || value === null) return 'НЕТ ДАННЫХ';
+    if (type === 'restStamps' && value <= 0) return 'НЕТ ДАННЫХ';
+    return value;
   };
 
   return (
@@ -47,42 +49,47 @@ const CardInfo = ({ card }) => {
       }}
     >
       <div className="card-info-header">
-        {mergedCard.design.logo ? (
-          <img src={mergedCard.design.logo} alt="Лого" className="card-info-logo" />
+        {design.logo ? (
+          <img src={design.logo} alt="Лого" className="card-info-logo" />
         ) : (
           <p className="card-name">{mergedCard.name}</p>
         )}
         <span className="card-inline-value">
           {fields
-            .filter(({ valueKey }) =>
-              ['balanceMoney', 'credits', 'balance', 'expirationDate'].includes(valueKey),
+            .filter(({ type }) =>
+              ['balanceMoney', 'credits', 'balance', 'expirationDate'].includes(type),
             )
-            .map(({ label, valueKey, suffix, format, defaultValue }) => {
-              const value = mergedCard[valueKey] ?? defaultValue;
+            .map(({ name, type }) => {
+              const value = mergedCard[type];
               return (
-                <span key={valueKey} className="card-inline-value" title={label}>
-                  <span className="inline-label">{label}:</span>{' '}
-                  {renderFieldValue(value, { format, suffix })}
+                <span key={type} className="card-inline-value" title={name}>
+                  <span className="inline-label">{name}:</span> {renderFieldValue(value, { type })}
                 </span>
               );
             })}
         </span>
       </div>
 
-      <div
-        className="card-info-main-img-wrapper"
-        style={{ backgroundColor: mergedCard.centerBackground }}
-      >
-        {mergedCard.cardImg ? (
-          <img className="card-info-main-img" src={mergedCard.cardImg} alt="Card background" />
+      <div className="card-info-main-img-wrapper">
+        {mergedCard.cardImg || design.stampBackground ? (
+          <img
+            className="card-info-main-img"
+            src={mergedCard.cardImg || design.stampBackground}
+            alt="Card background"
+          />
         ) : (
-          <div className="card-background" />
+          <div
+            className="card-background"
+            style={{
+              backgroundColor: mergedCard.stampBackgroundColor,
+            }}
+          />
         )}
 
         {(card.status === 'subscription' || card.status === 'stamp') && (
           <div
             className="stamp-overlay"
-            style={{ backgroundImage: `url(${mergedCard.design.stampBackground})` }}
+            style={{ backgroundImage: `url(${design.stampBackground})` }}
           >
             <StampGrid
               totalStamps={mergedCard.stampsQuantity}
@@ -91,32 +98,35 @@ const CardInfo = ({ card }) => {
               InactiveIcon={InactiveIcon}
               activeImage={activeStampImage}
               inactiveImage={inactiveStampImage}
+              activeColor={mergedCard.activeStampColor}
+              inactiveColor={mergedCard.inactiveStampColor}
+              borderColor={mergedCard.borderColor}
+              stampColor={mergedCard.stampColor}
             />
           </div>
         )}
       </div>
 
       <div className="card-info-header">
-        {fields.map(({ label, valueKey, suffix = '', defaultValue = '', format }) => {
-          const value = mergedCard[valueKey] ?? defaultValue;
-          const shouldShowNoData = valueKey === 'restStamps' && value <= 0;
-
-          return (
-            !['balanceMoney', 'credits', 'balance', 'expirationDate'].includes(valueKey) && (
-              <div key={valueKey} className="card-info-row">
-                <p className="card-info-row-label" title={label}>
-                  {label}:
+        {fields
+          .filter(
+            ({ type }) =>
+              type && !['balanceMoney', 'credits', 'balance', 'expirationDate'].includes(type),
+          )
+          .map(({ type, name }) => {
+            const value = mergedCard[type];
+            return (
+              <div key={type} className="card-info-row">
+                <p className="card-info-row-label" title={name}>
+                  {name}:
                 </p>
-                <span>
-                  {shouldShowNoData ? 'НЕТ ДАННЫХ' : renderFieldValue(value, { format, suffix })}
-                </span>
+                <span>{renderFieldValue(value, { type })}</span>
               </div>
-            )
-          );
-        })}
+            );
+          })}
       </div>
 
-      {card.qrImg && <img className="card-info-qr-img" src={card.qrImg} alt={'QR код'} />}
+      {card.qrImg && <img className="card-info-qr-img" src={card.qrImg} alt="QR код" />}
     </div>
   );
 };

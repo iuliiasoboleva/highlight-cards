@@ -32,11 +32,11 @@
 .card-info-row {
   width: 100%;
 }
-
+/* 
 .card-info-row-label,
 .card-name {
   white-space: nowrap;
-}
+} */
 
 .card-info-row-label {
   font-size: 14px;
@@ -58,7 +58,8 @@
 }
 
 .card-info-main-img {
-  max-height: 140px;
+  max-height: 88px;
+  object-fit: cover;
   height: auto;
   display: block;
   width: 100%;

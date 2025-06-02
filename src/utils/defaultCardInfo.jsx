@@ -73,8 +73,12 @@ export const defaultCardTemplate = {
     inactiveStampImage: null,
     colors: {
       cardBackground: '#FFFFFF',
-      centerBackground: '#F6F6F6',
+      stampBackgroundColor: '#F6F6F6',
       textColor: '#1F1E1F',
+      stampColor: '#ffffff',
+      activeStampColor: '#1F1E1F',
+      borderColor: '#1F1E1F',
+      inactiveStampColor: '#1F1E1F',
     },
   },
   issueFormFields: [
@@ -90,6 +94,7 @@ export const defaultCardTemplate = {
     { name: 'Золотой', cost: '10000', percent: '5' },
   ],
   utmLinks: [],
+  fieldsName: [],
   requirePurchaseAmountOnAccrual: false,
   initialPointsOnIssue: '',
   policySettings: {
@@ -100,4 +105,14 @@ export const defaultCardTemplate = {
       'Я согласен с тем, что мои личные данные могут использоваться (полный текст)...',
   },
   issueLimit: '',
+  infoFields: [
+    {
+      description: 'Собирайте штампы для получения наград',
+      howToGetStamp: 'Сделайте покупку, чтобы получить штамп',
+      companyName: '',
+      rewardDescription: '',
+      stampMessage: '',
+      claimRewardMessage: 'Ваша награда ждет вас! Приходите за получением подарка',
+    },
+  ],
 };
