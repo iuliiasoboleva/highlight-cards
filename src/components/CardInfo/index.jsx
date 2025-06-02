@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { Star } from 'lucide-react';
+import { HelpCircle, Star } from 'lucide-react';
 
 import { getStampIconComponent } from '../../utils/stampIcons';
 import StampGrid from './StampGrid';
 
 import './styles.css';
 
-const CardInfo = ({ card }) => {
+const CardInfo = ({ card, showInfo, setShowInfo }) => {
   const currentFields = useSelector((state) => state.cards.currentCard?.fieldsName) || [];
   const currentDesign = useSelector((state) => state.cards.currentCard?.design) || {};
+
+  const toggleInfo = () => setShowInfo((prev) => !prev);
+
   const design = card.design || currentDesign || {};
   const fields = card.fieldsName || currentFields || [];
 
@@ -49,11 +52,19 @@ const CardInfo = ({ card }) => {
       }}
     >
       <div className="card-info-header">
-        {design.logo ? (
-          <img src={design.logo} alt="Лого" className="card-info-logo" />
-        ) : (
-          <p className="card-name">{mergedCard.name}</p>
-        )}
+        <div className="card-info-title-row">
+          {design.logo ? (
+            <img src={design.logo} alt="Лого" className="card-info-logo" />
+          ) : (
+            <p className="card-name">{mergedCard.name}</p>
+          )}
+          <HelpCircle
+            size={20}
+            onClick={toggleInfo}
+            className="info-button"
+            style={{ cursor: 'pointer' }}
+          />
+        </div>
         <span className="card-inline-value">
           {fields
             .filter(({ type }) =>

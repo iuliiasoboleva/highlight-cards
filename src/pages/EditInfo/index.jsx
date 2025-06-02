@@ -7,6 +7,7 @@ import { HelpCircle } from 'lucide-react';
 import EditLayout from '../../components/EditLayout';
 import QRPopup from '../../components/QRPopup';
 import { updateCurrentCardField } from '../../store/cardsSlice';
+import ReferralProgramConfig from './ReferralProgramConfig';
 
 import './styles.css';
 
@@ -17,12 +18,12 @@ const EditInfo = () => {
   const [showQRPopup, setShowQRPopup] = useState(false);
 
   const infoFields = currentCard.infoFields || {
-    description: 'Собирайте штампы для получения наград',
-    howToGetStamp: 'Сделайте покупку, чтобы получить штамп',
+    description: '',
+    howToGetStamp: '',
     companyName: '',
     rewardDescription: '',
     stampMessage: '',
-    claimRewardMessage: 'Ваша награда ждет вас! Приходите за получением подарка',
+    claimRewardMessage: '',
   };
 
   const handleFieldChange = useCallback(
@@ -54,14 +55,17 @@ const EditInfo = () => {
       />
 
       <h3 className="barcode-radio-title">
-        Как клиенту получить штамп <HelpCircle size={16} style={{ marginLeft: 6 }} />
+        Название компании <HelpCircle size={16} style={{ marginLeft: 6 }} />
       </h3>
       <textarea
         className="custom-textarea"
-        value={infoFields.howToGetStamp}
-        onChange={handleFieldChange('howToGetStamp')}
-        placeholder="Опишите, как получить штамп"
+        value={infoFields.companyName}
+        onChange={handleFieldChange('companyName')}
+        placeholder="Название компании"
       />
+
+      <hr />
+      <ReferralProgramConfig />
 
       <h3 className="barcode-radio-title">
         Название компании <HelpCircle size={16} style={{ marginLeft: 6 }} />

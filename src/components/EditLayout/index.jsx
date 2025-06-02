@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 
 import CardInfo from '../../components/CardInfo';
 import { updateCurrentCardField } from '../../store/cardsSlice';
 import { statusConfig } from '../../utils/statusConfig';
+import InfoOverlay from '../InfoOverlay';
 
 import './styles.css';
 
 const EditLayout = ({ children }) => {
   const dispatch = useDispatch();
+  const location = useLocation();
+
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
   const [activeTab, setActiveTab] = useState('description');
+  const [showInfo, setShowInfo] = useState(false);
 
   const currentCard = useSelector((state) => state.cards.currentCard);
 
@@ -35,6 +40,40 @@ const EditLayout = ({ children }) => {
       );
     }
   }, [currentCard.status, dispatch]);
+
+  const handleToggleActive = () => {
+    dispatch(
+      updateCurrentCardField({
+        path: 'isActive',
+        value: !currentCard.isActive,
+      }),
+    );
+  };
+
+  useEffect(() => {
+    const phone = document.querySelector('.edit-type-right');
+    const footer = document.querySelector('footer');
+
+    const onScroll = () => {
+      const footerTop = footer.getBoundingClientRect().top;
+      const windowHeight = window.innerHeight;
+
+      if (footerTop < windowHeight + 20) {
+        phone.style.transform = `translateY(-${windowHeight + 20 - footerTop}px)`;
+      } else {
+        phone.style.transform = 'translateY(0)';
+      }
+    };
+
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (location.pathname.includes('/edit/info')) {
+      setShowInfo(true);
+    }
+  }, [location.pathname]);
 
   return (
     <>
@@ -63,11 +102,29 @@ const EditLayout = ({ children }) => {
         )}
         {(!isMobile || activeTab === 'card') && (
           <div className="edit-type-right">
-            <div className="phone-frame">
-              <img className="phone-image" src={currentCard.frameUrl} alt={currentCard.name} />
-              <div className="phone-screen">
-                <CardInfo card={currentCard} />
+            <div className="phone-wrapper">
+              <div className="card-state">
+                <span
+                  className={`status-indicator ${currentCard.isActive ? 'active' : 'inactive'}`}
+                />
+                {currentCard.isActive ? 'Активна' : 'Не активна'}
               </div>
+              <div className="phone-frame">
+                <img className="phone-image" src={currentCard.frameUrl} alt={currentCard.name} />
+                <div className="phone-screen">
+                  <CardInfo card={currentCard} showInfo={showInfo} setShowInfo={setShowInfo} />
+                  {showInfo && (
+                    <InfoOverlay
+                      infoFields={currentCard.infoFields}
+                      onClose={() => setShowInfo(false)}
+                    />
+                  )}
+                </div>
+              </div>
+
+              <button className="activate-button" onClick={handleToggleActive}>
+                Активировать
+              </button>
             </div>
           </div>
         )}

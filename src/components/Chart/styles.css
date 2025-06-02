@@ -150,7 +150,6 @@
 
 .react-datepicker {
   position: relative;
-  font-family: 'Inter', sans-serif;
   border: none;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   border-radius: 12px;

@@ -105,14 +105,12 @@ export const defaultCardTemplate = {
       'Я согласен с тем, что мои личные данные могут использоваться (полный текст)...',
   },
   issueLimit: '',
-  infoFields: [
-    {
-      description: 'Собирайте штампы для получения наград',
-      howToGetStamp: 'Сделайте покупку, чтобы получить штамп',
-      companyName: '',
-      rewardDescription: '',
-      stampMessage: '',
-      claimRewardMessage: 'Ваша награда ждет вас! Приходите за получением подарка',
-    },
-  ],
+  infoFields: {
+    description: 'Получайте бонусные баллы за каждую покупку. ',
+    howToGetStamp: 'Сделайте покупку, чтобы получить штамп',
+    companyName: '',
+    rewardDescription: '',
+    stampMessage: '',
+    claimRewardMessage: 'Ваша награда ждет вас! Приходите за получением подарка',
+  },
 };
