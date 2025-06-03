@@ -27,9 +27,13 @@ export const userSlice = createSlice({
     setUser: (state, action) => {
       return { ...state, ...action.payload };
     },
+    toggleRole: (state) => {
+      state.role = state.role === 'employee' ? 'admin' : 'employee';
+    },
     logout: () => initialState,
   },
 });
 
-export const { updateField, setAvatar, removeAvatar, setUser, logout } = userSlice.actions;
+export const { updateField, setAvatar, removeAvatar, setUser, logout, toggleRole } =
+  userSlice.actions;
 export default userSlice.reducer;

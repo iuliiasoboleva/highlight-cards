@@ -8,13 +8,13 @@ const BarcodeRadio = ({
   selected,
   onChange,
   name,
-  additionalContentKey = null,
-  additionalContent = null,
+  subtitle,
   additionalContentByValue = {},
 }) => {
   return (
     <div className="barcode-radio-group">
       <h3 className="barcode-radio-title">{title}</h3>
+      {subtitle && <p className="labeled-textarea-subtitle">{subtitle}</p>}
       <div className="barcode-radio-options">
         {options?.map((option) => (
           <React.Fragment key={option.value}>
@@ -37,22 +37,12 @@ const BarcodeRadio = ({
                 </span>
               </span>
             </label>
-
-            {selected === option.value && additionalContentByValue?.[option.value] && (
-              <div className="barcode-radio-additional">
-                {additionalContentByValue[option.value]}
-              </div>
-            )}
-
-            {additionalContentKey === option.value &&
-              selected === option.value &&
-              additionalContent &&
-              !additionalContentByValue?.[option.value] && (
-                <div className="barcode-radio-additional">{additionalContent}</div>
-              )}
           </React.Fragment>
         ))}
       </div>
+      {additionalContentByValue?.[selected] && (
+        <div className="barcode-radio-additional">{additionalContentByValue[selected]}</div>
+      )}
     </div>
   );
 };

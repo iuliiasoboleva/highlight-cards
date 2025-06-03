@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { Trash2 } from 'lucide-react';
 import { useDebounce } from 'use-debounce';
 
 import CustomSelect from '../../components/CustomSelect';
 import PushPreview from '../../components/PushPreview';
+import ToggleSwitch from '../../components/ToggleSwitch';
 import YandexMapPicker from '../../components/YandexMapPicker';
 import { setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
 
@@ -170,8 +172,8 @@ const Locations = () => {
   };
 
   const renderMapSection = () => (
-    <div className="edit-type-page">
-      <div className="edit-type-left">
+    <div className="edit-type-left">
+      <div className="edit-type-page">
         <h2>
           Локации <span className="geo-badge">Geo-push в радиусе 100 метров</span>
         </h2>
@@ -181,7 +183,7 @@ const Locations = () => {
           вашей точки.
         </p>
         <CustomSelect
-          value={currentCard?.id || null}
+          value={cards[0]?.id || null}
           onChange={handleCardSelect}
           options={cards.map((card) => ({
             value: card.id,
@@ -244,39 +246,37 @@ const Locations = () => {
         </div>
 
         <textarea
-          className="push-textarea"
+          className="custom-textarea"
           value={pushMessage}
           onChange={(e) => setPushMessage(e.target.value)}
           placeholder="Введите текст push-уведомления"
         />
 
-        <button className="btn btn-dark" onClick={handleAddLocation} disabled={!pushMessage.trim()}>
+        <button
+          className="card-form-add-btn"
+          onClick={handleAddLocation}
+          disabled={!pushMessage.trim()}
+        >
           Добавить
         </button>
         <div className="location-list">
           {locations.map((loc, index) => (
             <div key={loc.id} className="location-card">
               <div className="location-info">
-                <strong>{loc.name}</strong>
+                <p>{loc.name}</p>
                 <div className="location-coords">
                   {loc.coords[0].toFixed(5)}, {loc.coords[1].toFixed(5)}
                 </div>
               </div>
               <div className="location-actions">
-                <label className="switch">
-                  <input
-                    type="checkbox"
-                    checked={loc.active}
-                    onChange={() => toggleLocation(index)}
-                  />
-                  <span className="slider round" />
-                </label>
+                <ToggleSwitch checked={loc.active} onChange={() => toggleLocation(index)} />
+
                 <button
-                  className="delete-location-btn"
+                  className="card-form-delete-btn"
                   onClick={() => removeLocation(index)}
-                  title="Удалить"
+                  aria-label="Удалить поле"
                 >
-                  🗑
+                  <Trash2 size={20} />
                 </button>
               </div>
             </div>
@@ -288,11 +288,18 @@ const Locations = () => {
 
   const renderPreviewSection = () => (
     <div className="edit-type-right">
-      <div className="phone-frame">
-        <img className="phone-image" src={currentCard.frameUrl} alt={currentCard.name} />
-        <div className="phone-screen">
-          <PushPreview card={currentCard} message={pushMessage} />
+      <div className="phone-sticky">
+        <div className="card-state">
+          <span className={`status-indicator ${currentCard.isActive ? 'active' : 'inactive'}`} />
+          {currentCard.isActive ? 'Активна' : 'Не активна'}
         </div>
+        <div className="phone-frame">
+          <img className="phone-image" src={currentCard.frameUrl} alt={currentCard.name} />
+          <div className="phone-screen">
+            <PushPreview card={currentCard} message={pushMessage} />
+          </div>
+        </div>
+        <p className="activate-text">Geo-push доступны только для устройств на iOS</p>
       </div>
     </div>
   );

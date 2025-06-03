@@ -51,25 +51,6 @@ const EditLayout = ({ children }) => {
   };
 
   useEffect(() => {
-    const phone = document.querySelector('.edit-type-right');
-    const footer = document.querySelector('footer');
-
-    const onScroll = () => {
-      const footerTop = footer.getBoundingClientRect().top;
-      const windowHeight = window.innerHeight;
-
-      if (footerTop < windowHeight + 20) {
-        phone.style.transform = `translateY(-${windowHeight + 20 - footerTop}px)`;
-      } else {
-        phone.style.transform = 'translateY(0)';
-      }
-    };
-
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  useEffect(() => {
     if (location.pathname.includes('/edit/info')) {
       setShowInfo(true);
     }
@@ -102,7 +83,7 @@ const EditLayout = ({ children }) => {
         )}
         {(!isMobile || activeTab === 'card') && (
           <div className="edit-type-right">
-            <div className="phone-wrapper">
+            <div className="phone-sticky">
               <div className="card-state">
                 <span
                   className={`status-indicator ${currentCard.isActive ? 'active' : 'inactive'}`}
@@ -121,10 +102,12 @@ const EditLayout = ({ children }) => {
                   )}
                 </div>
               </div>
-
               <button className="activate-button" onClick={handleToggleActive}>
                 Активировать
               </button>
+              <p className="activate-text">
+                Пока карта не активирована, вы можете выдать до 10 карт клиентам{' '}
+              </p>
             </div>
           </div>
         )}

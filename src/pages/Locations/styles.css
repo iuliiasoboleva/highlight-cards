@@ -98,9 +98,8 @@ input:checked + .slider:before {
   margin-bottom: 12px;
 }
 
-.location-push-textarea {
-  margin-top: 16px;
-  margin-bottom: 16px;
+.location-info {
+  font-size: 14px;
 }
 
 .location-actions {

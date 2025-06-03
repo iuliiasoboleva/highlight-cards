@@ -1,7 +1,7 @@
 import { Star } from 'lucide-react';
 
 export const defaultCardTemplate = {
-  id: 3,
+  id: 3333,
   status: 'stamp',
   name: 'Накопительная карта',
   isActive: false,
@@ -106,11 +106,17 @@ export const defaultCardTemplate = {
   },
   issueLimit: '',
   infoFields: {
-    description: 'Получайте бонусные баллы за каждую покупку. ',
+    description: 'Получайте бонусные баллы за каждую покупку',
     howToGetStamp: 'Сделайте покупку, чтобы получить штамп',
-    companyName: '',
-    rewardDescription: '',
-    stampMessage: '',
+    companyName: 'Название компании',
+    rewardDescription: 'Описание награды',
+    stampMessage: 'Всего {#} осталось до получения награды!',
     claimRewardMessage: 'Ваша награда ждет вас! Приходите за получением подарка',
+    multiRewards: [],
+    autoRedeem: false,
+    referralProgramActive: true,
+    referralMoment: 'visit',
+    referrerStampsQuantity: 1,
+    referralStampsQuantity: 1,
   },
 };

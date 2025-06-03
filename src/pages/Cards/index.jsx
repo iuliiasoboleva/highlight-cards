@@ -1,11 +1,9 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 
 import CardButtons from '../../components/CardButtons';
 import CardInfo from '../../components/CardInfo';
-import { initializeCards, updateCard } from '../../store/cardsSlice';
-import { statusConfig } from '../../utils/statusConfig';
 
 import './styles.css';
 
@@ -33,25 +31,14 @@ const cardDescriptions = {
 };
 
 const Cards = () => {
-  const dispatch = useDispatch();
   const location = useLocation();
 
   const cards = useSelector((state) => state.cards.cards);
   const isTemplatePage = location.pathname === '/cards/template';
 
-  useEffect(() => {
-    let useTemplates = false;
-
-    if (isTemplatePage) {
-      useTemplates = true;
-    }
-
-    dispatch(initializeCards({ useTemplates }));
-  }, [dispatch, isTemplatePage]);
-
   return (
     <div className="mailings-container">
-      <h2 className="page-title">Создайте свою карту лояльности</h2>
+      <h2>Создайте свою карту лояльности</h2>
       <p className="page-subtitle">
         Выберите тип карты, который лучше всего подходит вашему бизнесу и настройте её за несколько
         минут. После выбора вы сможете настроить логотип, цвета и правила начисления баллов.

@@ -26,7 +26,7 @@ export const initialManagers = [
 export const managersHeaders = [
   { key: 'name', label: 'Имя' },
   { key: 'surname', label: 'Фамилия' },
-  { key: 'locations', label: '📍 Точки продаж' },
-  { key: 'shift', label: '⏰ Смена' },
+  { key: 'locations', label: 'Точки продаж' },
+  { key: 'shift', label: 'Смена' },
   { key: 'status', label: 'Статус' },
 ];

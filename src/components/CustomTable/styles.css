@@ -1,6 +1,5 @@
 .table-container {
   width: 100%;
-  margin-top: 24px;
 }
 
 .custom-table {
@@ -13,10 +12,18 @@
 .custom-table td {
   padding: 12px;
   border-bottom: 1px solid #eee;
+  border-right: 1px solid #eee;
+  font-weight: 400;
+}
+
+.custom-table th:last-child,
+.custom-table td:last-child {
+  border-right: none;
 }
 
 .custom-table th {
   background-color: rgba(191, 71, 86, 0.1);
+  text-transform: uppercase;
 }
 
 .text-left {

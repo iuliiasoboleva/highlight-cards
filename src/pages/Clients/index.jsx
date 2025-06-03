@@ -97,7 +97,7 @@ const Clients = () => {
 
   return (
     <div className="clients-container">
-      <h2 className="page-title">Клиентская база</h2>
+      <h2>Клиентская база</h2>
       <p className="page-subtitle">
         Здесь вы управляете своей клиентской базой: добавляете новых клиентов, импортируете
         существующих и отправляете push-уведомления

@@ -11,7 +11,7 @@ import {
   useParams,
 } from 'react-router-dom';
 
-import { Pencil } from 'lucide-react';
+import { Mail, Pencil, SettingsIcon, Users } from 'lucide-react';
 
 import AuthForm from './components/AuthForm';
 import Header from './components/Header';
@@ -48,7 +48,7 @@ import SettingsLayout from './pages/SettingsLayout';
 import SettingsPersonal from './pages/SettingsPersonal';
 import SettingsRFMSegment from './pages/SettingsRFMSegment';
 import Workplace from './pages/Workplace';
-import { updateCurrentCardField } from './store/cardsSlice';
+import { initializeCards, updateCurrentCardField } from './store/cardsSlice';
 import { setClients } from './store/clientsSlice';
 import { setUser } from './store/userSlice';
 
@@ -56,6 +56,7 @@ const MainLayout = () => {
   const location = useLocation();
   const { id } = useParams();
   const dispatch = useDispatch();
+  const isTemplatePage = location.pathname === '/cards/template';
 
   const hideLayout = ['/login', '/register', '/scan'].includes(location.pathname);
   const matchCreate = matchPath('/cards/create', location.pathname);
@@ -74,6 +75,16 @@ const MainLayout = () => {
   }, [dispatch]);
 
   useEffect(() => {
+    let useTemplates = false;
+
+    if (isTemplatePage) {
+      useTemplates = true;
+    }
+
+    dispatch(initializeCards({ useTemplates }));
+  }, [dispatch, isTemplatePage]);
+
+  useEffect(() => {
     const root = document.documentElement;
     const showSubMenu =
       matchEdit || matchCreate || matchCardDetails || matchMailings || matchSettings;
@@ -87,6 +98,9 @@ const MainLayout = () => {
 
   const getSubMenuIcon = () => {
     if (matchCreate || matchEdit) return Pencil;
+    if (matchMailings) return Mail;
+    if (matchSettings) return SettingsIcon;
+    if (matchCardDetails) return Users;
     return null;
   };
 
@@ -151,6 +165,7 @@ const MainLayout = () => {
         <SubMenu
           menuItems={getMenuItems()}
           icon={getSubMenuIcon()}
+          showRightActions={matchEdit || matchCreate}
           showNameInput={!!matchEdit || !!matchCreate}
           initialName={currentCard?.name || ''}
           onNameChange={(newName) => {
@@ -162,8 +177,8 @@ const MainLayout = () => {
         <Sidebar />
         <div className="page-content">
           <Outlet />
+          <Footer />
         </div>
-        <Footer />
       </div>
     </div>
   );

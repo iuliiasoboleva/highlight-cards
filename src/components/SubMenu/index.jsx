@@ -5,7 +5,14 @@ import { HelpCircle, QrCode } from 'lucide-react';
 
 import './styles.css';
 
-const SubMenu = ({ menuItems, showNameInput, onNameChange, initialName, icon: Icon }) => {
+const SubMenu = ({
+  menuItems,
+  showNameInput,
+  onNameChange,
+  initialName,
+  icon: Icon,
+  showRightActions,
+}) => {
   const location = useLocation();
   const [name, setName] = React.useState(initialName || '');
 
@@ -33,12 +40,13 @@ const SubMenu = ({ menuItems, showNameInput, onNameChange, initialName, icon: Ic
             </div>
           )}
         </div>
-        <div className="submenu-center">
+
+        <div className="submenu-center" style={showRightActions ? { flex: '1' } : {}}>
           {menuItems.map((item, index) => {
             const isActive = location.pathname === item.to;
             return (
               <React.Fragment key={item.label}>
-                {index !== 0 && <span className="divider">—</span>}
+                {index !== 0 && showRightActions && <span className="divider">—</span>}
                 {item.disabled ? (
                   <button className="submenu-tab disabled" disabled>
                     {item.label}
@@ -52,15 +60,18 @@ const SubMenu = ({ menuItems, showNameInput, onNameChange, initialName, icon: Ic
             );
           })}
         </div>
-        <div className="submenu-right">
-          <button className="submenu-icon-button" title="Помощь">
-            <HelpCircle size={16} color="#aaa" />
-          </button>
-          <button className="submenu-tab submenu-save-button">Сохранить и посмотреть</button>
-          <button className="submenu-icon-button" title="QR">
-            <QrCode size={16} color="#aaa" />
-          </button>
-        </div>
+
+        {showRightActions && (
+          <div className="submenu-right">
+            <button className="submenu-icon-button" title="Помощь">
+              <HelpCircle size={16} color="#aaa" />
+            </button>
+            <button className="submenu-tab submenu-save-button">Сохранить и посмотреть</button>
+            <button className="submenu-icon-button" title="QR">
+              <QrCode size={16} color="#aaa" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

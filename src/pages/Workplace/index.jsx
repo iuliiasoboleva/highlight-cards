@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
+import { BarChart2, Camera, Search, User as UserIcon } from 'lucide-react';
+
+import RoleSwitcher from '../../components/RoleSwitcher';
+
 const Workplace = () => {
   const user = useSelector((state) => state.user);
   const locations = useSelector((state) => state.locations);
@@ -26,7 +30,7 @@ const Workplace = () => {
   return (
     <div className="managers-page">
       <div className="managers-header">
-        <h1>Рабочее место</h1>
+        <h2>Рабочее место</h2>
         <p>
           Добро пожаловать в рабочее место,{' '}
           <strong>
@@ -44,11 +48,11 @@ const Workplace = () => {
             <p>
               Ваши точки продаж: <strong>{userLocation.name}</strong>
             </p>
-            <p>📍 Адрес: {userLocation.address || 'не указан'}</p>
-            <p>🕒 Смена: —</p>
-            <p>⚙️ Статус: {user.status || 'неизвестен'}</p>
+            <p>Адрес: {userLocation.address || 'не указан'}</p>
+            <p>Смена: —</p>
+            <p>Статус: {user.status || 'неизвестен'}</p>
           </div>
-          <span className="scanner-icon">👤</span>
+          <UserIcon size={32} className="scanner-icon" />
         </div>
 
         <div className="manager-card">
@@ -57,9 +61,8 @@ const Workplace = () => {
             - Обслужено клиентов: {user.clientsServed}
             <br />- Начислено баллов: {user.pointsIssued}
             <br />- Выдано подарков: {user.giftsGiven}
-            <br />
           </p>
-          <span className="scanner-icon">📊</span>
+          <BarChart2 size={32} className="scanner-icon" />
         </div>
 
         <div className="manager-card search-card">
@@ -68,7 +71,7 @@ const Workplace = () => {
             Введите номер карты лояльности клиента, чтобы перейти к его профилю. Удобно, если нет
             приложения-сканера.
           </p>
-          <span className="scanner-icon">🔎</span>
+          <Search size={32} className="scanner-icon" />
           <input
             type="text"
             placeholder="Номер карты"
@@ -76,7 +79,7 @@ const Workplace = () => {
             className="location-modal-input"
             onChange={(e) => setCardNumber(e.target.value)}
           />
-          <button className="btn-dark" onClick={handleFindCustomer}>
+          <button className="custom-main-button" onClick={handleFindCustomer}>
             Найти клиента
           </button>
         </div>
@@ -87,12 +90,13 @@ const Workplace = () => {
             Установите приложение-сканер карт своим менеджерам в точках продаж. С помощью приложения
             они смогут пробивать штампы клиентам и выдавать награды.
           </p>
-          <span className="scanner-icon">📷</span>
-          <button className="btn-dark" onClick={() => navigate('/scan')}>
+          <Camera size={32} className="scanner-icon" />
+          <button className="custom-main-button" onClick={() => navigate('/scan')}>
             Открыть
           </button>
         </div>
       </div>
+      <RoleSwitcher />
     </div>
   );
 };

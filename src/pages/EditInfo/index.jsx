@@ -7,6 +7,8 @@ import { HelpCircle } from 'lucide-react';
 import EditLayout from '../../components/EditLayout';
 import QRPopup from '../../components/QRPopup';
 import { updateCurrentCardField } from '../../store/cardsSlice';
+import BarcodeRadio from '../EditSettings/BarcodeRadio';
+import LabeledTextarea from './LabeledTextarea';
 import ReferralProgramConfig from './ReferralProgramConfig';
 
 import './styles.css';
@@ -26,6 +28,11 @@ const EditInfo = () => {
     claimRewardMessage: '',
   };
 
+  const rewardOptions = [
+    { value: true, label: 'Да' },
+    { value: false, label: 'Нет' },
+  ];
+
   const handleFieldChange = useCallback(
     (field) => (e) => {
       const newInfoFields = {
@@ -37,6 +44,28 @@ const EditInfo = () => {
     [dispatch, infoFields],
   );
 
+  const handleMultiRewardsChange = (e) => {
+    const rawValue = e.target.value;
+
+    const numberArray = rawValue
+      .split(',')
+      .map((item) => item.trim())
+      .filter((item) => item !== '')
+      .map((item) => parseInt(item, 10))
+      .filter((num) => !isNaN(num));
+
+    dispatch(
+      updateCurrentCardField({
+        path: 'infoFields',
+        value: {
+          ...infoFields,
+          multiRewardsInput: rawValue,
+          multiRewards: numberArray,
+        },
+      }),
+    );
+  };
+
   const infoContent = (
     <div className="settings-inputs-container">
       <h2>
@@ -44,71 +73,78 @@ const EditInfo = () => {
       </h2>
       <hr />
 
-      <h3 className="barcode-radio-title">
-        Описание карты <HelpCircle size={16} style={{ marginLeft: 6 }} />
-      </h3>
-      <textarea
-        className="custom-textarea"
+      <LabeledTextarea
+        label="Описание карты"
         value={infoFields.description}
         onChange={handleFieldChange('description')}
         placeholder="Введите описание карты"
+        required
       />
-
-      <h3 className="barcode-radio-title">
-        Название компании <HelpCircle size={16} style={{ marginLeft: 6 }} />
-      </h3>
-      <textarea
-        className="custom-textarea"
+      <LabeledTextarea
+        label="Как клиенту получить штамп"
+        value={infoFields.howToGetStamp}
+        onChange={handleFieldChange('howToGetStamp')}
+        placeholder=""
+        required
+      />
+      <LabeledTextarea
+        label="Название компании"
         value={infoFields.companyName}
         onChange={handleFieldChange('companyName')}
         placeholder="Название компании"
+        required
+      />
+      <LabeledTextarea
+        label="Описание награды"
+        value={infoFields.rewardDescription}
+        onChange={handleFieldChange('rewardDescription')}
+        placeholder=""
+        required
+      />
+      <LabeledTextarea
+        label="Сообщение о начисленном штампе"
+        value={infoFields.stampMessage}
+        subtitle={'Тег {#} обязателен для заполнения'}
+        onChange={handleFieldChange('stampMessage')}
+        placeholder=""
+        required
+      />
+      <LabeledTextarea
+        label="Сообщение о начисленной награде"
+        value={infoFields.claimRewardMessage}
+        onChange={handleFieldChange('claimRewardMessage')}
+        placeholder=""
+        required
+      />
+      <hr />
+      <LabeledTextarea
+        label="Мультинаграды"
+        subtitle={
+          'Укажите через запятую, при каких количествах полученных штампов будет начисляться данная награда. Если оставить поле пустым, то награда будет начисляться при достижении максимального количества штампов.'
+        }
+        value={infoFields.multiRewardsInput || ''}
+        onChange={handleMultiRewardsChange}
+        placeholder="Например: 3,5,7"
+      />
+      <BarcodeRadio
+        options={[
+          { value: 'true', label: 'Да' },
+          { value: 'false', label: 'Нет' },
+        ]}
+        title="Списывать награду автоматически?"
+        subtitle="После накопления необходимого количества штампов награда будет списана автоматически при очередном визите"
+        selected={String(infoFields.autoRedeem)}
+        onChange={(value) => {
+          dispatch(
+            updateCurrentCardField({ path: 'infoFields.autoRedeem', value: value === 'true' }),
+          );
+        }}
+        name="auto-redeem"
+        additionalContentByValue={{}}
       />
 
       <hr />
       <ReferralProgramConfig />
-
-      <h3 className="barcode-radio-title">
-        Название компании <HelpCircle size={16} style={{ marginLeft: 6 }} />
-      </h3>
-      <input
-        type="text"
-        className="custom-input"
-        value={infoFields.companyName}
-        onChange={handleFieldChange('companyName')}
-        placeholder="Введите название компании"
-      />
-
-      <h3 className="barcode-radio-title">
-        Описание награды <HelpCircle size={16} style={{ marginLeft: 6 }} />
-      </h3>
-      <textarea
-        className="custom-textarea"
-        value={infoFields.rewardDescription}
-        onChange={handleFieldChange('rewardDescription')}
-        placeholder="Введите описание награды"
-      />
-
-      <h3 className="barcode-radio-title">
-        Сообщение о начисленном штампе <HelpCircle size={16} style={{ marginLeft: 6 }} />
-      </h3>
-      <input
-        type="text"
-        className="custom-input"
-        value={infoFields.stampMessage}
-        onChange={handleFieldChange('stampMessage')}
-        placeholder="Введите сообщение"
-      />
-
-      <h3 className="barcode-radio-title">
-        Сообщение о начисленной награде <HelpCircle size={16} style={{ marginLeft: 6 }} />
-      </h3>
-      <input
-        type="text"
-        className="custom-input"
-        value={infoFields.claimRewardMessage}
-        onChange={handleFieldChange('claimRewardMessage')}
-        placeholder="Введите сообщение"
-      />
 
       <button onClick={() => setShowQRPopup(true)} className="create-button">
         Завершить

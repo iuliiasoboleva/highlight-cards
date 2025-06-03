@@ -70,6 +70,7 @@ const EditSettings = () => {
       )}
 
       <hr />
+      <h3 className="barcode-radio-title">Локации</h3>
       {settings?.locations?.length === 0 ? (
         <div className="no-location-wrapper">
           У вас еще не создано ни одной локации
@@ -77,7 +78,6 @@ const EditSettings = () => {
         </div>
       ) : (
         <>
-          <h3 className="barcode-radio-title">Локации</h3>
           <div className="locations-wrapper">
             {settings?.locations?.map((location, index) => (
               <div key={index} className="location-tag">

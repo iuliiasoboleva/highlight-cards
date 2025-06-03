@@ -55,7 +55,7 @@ const CardButtons = ({ isFixed, cardId }) => {
 
   if (isTemplatePage) {
     const handleTemplateSelect = () => {
-      dispatch(setCurrentCard(card)); // применяем шаблон к currentCard
+      dispatch(setCurrentCard(card));
       navigate('/cards/create');
     };
 

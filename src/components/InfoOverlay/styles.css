@@ -34,15 +34,17 @@
 }
 
 .info-overlay-item strong {
-  font-weight: 500;
-  color: #555;
   margin-bottom: 4px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #656565;
 }
 
 .info-overlay-item span {
-  font-size: 14px;
-  color: #000;
-  word-break: break-word;
+  font-size: 12px;
+  line-height: 1.3333333333;
+  color: #9f9fa7;
+  cursor: pointer;
 }
 
 .info-overlay-header {

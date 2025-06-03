@@ -4,12 +4,11 @@
   padding: 16px;
   text-align: center;
   font-size: 14px;
-  margin-top: 40px;
+  margin-top: auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
   z-index: 9999;
-  margin-left: var(--sidebar-width);
 }
 
 .footer-link {
@@ -21,7 +20,6 @@
 
 @media (max-width: 999px) {
   .footer {
-    margin-left: 0;
     margin-bottom: var(--bottom-nav-height);
   }
 }

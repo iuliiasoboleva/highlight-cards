@@ -15,6 +15,11 @@ const Sidebar = () => {
 
   const isActive = (path) => {
     if (path === '/') return location.pathname === path;
+
+    if (path === '/mailings/info') {
+      return location.pathname.startsWith('/mailings');
+    }
+
     return location.pathname.startsWith(path);
   };
 

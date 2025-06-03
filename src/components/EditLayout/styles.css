@@ -1,14 +1,27 @@
 .edit-type-layout {
   display: flex;
+  justify-content: space-between;
   gap: 20px;
+  width: 100%;
+  min-height: calc(100vh - var(--header-height) - var(--bar-height));
 }
 
-.edit-type-page h2 {
+.edit-type-page h2,
+.settings-header h2,
+.managers-header h2,
+.mailings-container h2,
+.clients-container h2 {
   font-size: 24px;
   font-weight: 500;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 8px;
+}
+
+.edit-type-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .edit-type-left {
@@ -18,30 +31,29 @@
 
 .edit-type-right {
   width: 35%;
-  position: fixed;
-  right: 0;
-  top: calc(var(--header-height)+ var(--bar-height));
-  padding-bottom: var(--footer-height);
-  height: 100vh;
   background: #fff;
   border-left: 1px solid #e0e0e0;
   padding: 20px;
-  overflow: hidden;
+  position: sticky;
+  top: calc(var(--header-height) + var(--bar-height));
+  align-self: flex-start;
+  height: 100vh;
+  overflow-y: auto;
 }
 
-.phone-wrapper {
+.phone-sticky {
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
 }
 
 .phone-frame {
   position: relative;
   width: 100%;
   max-width: 320px;
-  margin-top: 40px;
+  margin-top: 30px;
   margin-bottom: 20px;
 }
 
@@ -116,6 +128,15 @@
   cursor: pointer;
   max-width: 268px;
   width: 100%;
+}
+
+.activate-text {
+  margin-top: 12px;
+  color: #656565;
+  font-size: 12px;
+  line-height: 1.7142857143;
+  max-width: 268px;
+  text-align: center;
 }
 
 @media (max-width: 999px) {

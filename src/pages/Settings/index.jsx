@@ -122,7 +122,7 @@ const Settings = () => {
               ]}
               className="tariff-period-select"
             />
-            <button className="tariff-btn-dark btn-dark btn">Выбрать тариф</button>
+            <button className="custom-main-button">Выбрать тариф</button>
           </div>,
         ]),
       ),
@@ -204,13 +204,13 @@ const Settings = () => {
                   <p className="tariff-sub">Дней осталось</p>
                 </div>
               </div>
-              <button className="btn btn-dark" onClick={() => setShowModal(true)}>
+              <button className="custom-main-button" onClick={() => setShowModal(true)}>
                 Продлить
               </button>
             </div>
           </div>
 
-          <h3>Полный функционал</h3>
+          <h3 className="settings-title">Полный функционал</h3>
           <CustomTable columns={tariffColumns} rows={tariffRows} />
         </>
       ) : (

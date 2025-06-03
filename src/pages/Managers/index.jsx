@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { Tooltip } from 'react-tooltip';
+
+import { Camera, HelpCircle, PlusCircle, Search } from 'lucide-react';
 
 import CustomTable from '../../components/CustomTable';
 import ManagerModal from '../../components/ManagerModal';
+import RoleSwitcher from '../../components/RoleSwitcher';
 import SalesPointsModal from '../../components/SalesPointsModal';
 import { managersHeaders } from '../../mocks/managersInfo';
 import { locationsHeaders } from '../../mocks/mockLocations';
@@ -95,12 +99,18 @@ const ManagersPage = () => {
   return (
     <div className="managers-page">
       <div className="managers-header">
-        <h2>Сотрудники и точки продаж</h2>
-        <p>
-          Здесь вы управляете своими сотрудниками и точками продаж: добавляйте новых сотрудников,
+        <h2>
+          Сотрудники и точки продаж
+          <HelpCircle
+            size={16}
+            style={{ marginLeft: 6, cursor: 'pointer' }}
+            data-tooltip-id="managers-help"
+            data-tooltip-content=" Здесь вы управляете своими сотрудниками и точками продаж: добавляйте новых сотрудников,
           контролируйте выдачу карт и начисление баллов клиентам. Используйте приложение-сканер,
-          чтобы упростить процесс обслуживания на местах.
-        </p>
+          чтобы упростить процесс обслуживания на местах."
+          />
+        </h2>
+        <Tooltip id="managers-help" className="custom-tooltip" />
       </div>
 
       <div className="managers-grid">
@@ -110,8 +120,10 @@ const ManagersPage = () => {
             Добавьте сотрудника, чтобы настроить выдачу карт, начисление баллов и работу по сменам в
             вашей точке продаж.
           </p>
-          <span className="scanner-icon">➕</span>
-          <button className="btn-dark" onClick={() => setShowAddModal(true)}>
+          <span className="scanner-icon">
+            <PlusCircle size={18} />
+          </span>
+          <button className="custom-main-button" onClick={() => setShowAddModal(true)}>
             Добавить сотрудника
           </button>
         </div>
@@ -122,9 +134,11 @@ const ManagersPage = () => {
             каждой локации. Вы сможете привязывать сотрудников и настраивать отдельные акции для
             каждой точки.{' '}
           </p>
-          <span className="scanner-icon">➕</span>
-          <button className="btn-dark" onClick={() => setShowLocationModal(true)}>
-            + Добавить точку
+          <span className="scanner-icon">
+            <PlusCircle size={18} />
+          </span>
+          <button className="custom-main-button" onClick={() => setShowLocationModal(true)}>
+            <span>+ </span>Добавить точку
           </button>
         </div>
         <div className="manager-card search-card">
@@ -133,7 +147,9 @@ const ManagersPage = () => {
             Введите номер карты лояльности клиента, чтобы перейти к его профилю. Удобно, если нет
             приложения-сканера.
           </p>
-          <span className="scanner-icon">🔎</span>
+          <span className="scanner-icon">
+            <Search size={18} />
+          </span>
           <input
             type="text"
             placeholder="Номер карты"
@@ -141,7 +157,7 @@ const ManagersPage = () => {
             className="location-modal-input"
             onChange={(e) => setCardNumber(e.target.value)}
           />
-          <button className="btn-dark" onClick={handleFindCustomer}>
+          <button className="custom-main-button" onClick={handleFindCustomer}>
             Найти клиента
           </button>
         </div>
@@ -151,8 +167,10 @@ const ManagersPage = () => {
             Установите приложение-сканер карт своим менеджерам в точках продаж. С помощью приложения
             они смогут пробивать штампы клиентам и выдавать награды.
           </p>
-          <span className="scanner-icon">📷</span>
-          <button className="btn-dark" onClick={() => navigate('/scan')}>
+          <span className="scanner-icon">
+            <Camera size={18} />
+          </span>
+          <button className="custom-main-button" onClick={() => navigate('/scan')}>
             Открыть
           </button>
         </div>
@@ -184,6 +202,7 @@ const ManagersPage = () => {
           setShowLocationModal(false);
         }}
       />
+      <RoleSwitcher />
     </div>
   );
 };

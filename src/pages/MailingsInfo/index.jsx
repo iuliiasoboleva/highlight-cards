@@ -8,8 +8,8 @@ import './styles.css';
 const cards = [
   { value: '0', label: 'Клиентов в базе' },
   { value: 'Бесплатно!', label: 'Push и Web-push', className: 'highlight' },
-  { value: 'Нет данных', label: 'Баланс SMS', className: 'gray small' },
-  { value: 'Нет данных', label: 'Баланс Email', className: 'gray small' },
+  { value: 'Скоро', label: 'Баланс SMS', className: 'gray small' },
+  { value: 'Скоро', label: 'Баланс Email', className: 'gray small' },
 ];
 
 const MailingsInfo = () => {
@@ -49,10 +49,10 @@ const MailingsInfo = () => {
 
   return (
     <div className="mailings-container">
-      <h2 className="page-title">Рассылки</h2>
+      <h2>Рассылки</h2>
       <p className="page-subtitle">
-        Здесь вы управляете своими рассылками: создавайте, планируйте, отправляйте Push, SMS и
-        Email-сообщения клиентам для повышения лояльности.
+        Здесь вы управляете своими рассылками: создавайте, планируйте, отправляйте Push клиентам для
+        повышения лояльности.
       </p>
       <div className="stats-cards">
         {cards.map((card, index) => (
@@ -63,11 +63,6 @@ const MailingsInfo = () => {
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="alert">
-        Чтобы отправлять SMS и Email-рассылки, подключите провайдера в настройках. Push-рассылки
-        доступны бесплатно! 🚀
       </div>
 
       <div className="table-wrapper">
