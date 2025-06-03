@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { HelpCircle } from 'lucide-react';
 import {
   CartesianGrid,
   Line,
@@ -51,7 +50,7 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
               <div className="stat-label stat-tooltip-wrapper" ref={tooltipRef}>
                 Повторные клиенты
                 <span className="stat-tooltip-icon" onClick={() => setShowTooltip((prev) => !prev)}>
-                  <FontAwesomeIcon icon={faQuestionCircle} />
+                  <HelpCircle />
                 </span>
                 {showTooltip && (
                   <div className="stat-tooltip-box">

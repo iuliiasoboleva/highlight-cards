@@ -239,7 +239,7 @@ const SettingsPersonal = () => {
                 </div>
               </div>
 
-              <button type="submit" className="settings-btn-dark">
+              <button type="submit" className="custom-main-button">
                 Сохранить изменения
               </button>
             </div>
@@ -252,7 +252,7 @@ const SettingsPersonal = () => {
               </p>
 
               <div className="checkbox-group">
-                <label>
+                <label className="custom-checkbox">
                   <input
                     type="checkbox"
                     checked={deleteFeedback.reason1}
@@ -260,7 +260,7 @@ const SettingsPersonal = () => {
                   />
                   Сложно разобраться в интерфейсе
                 </label>
-                <label>
+                <label className="custom-checkbox">
                   <input
                     type="checkbox"
                     checked={deleteFeedback.reason2}
@@ -268,7 +268,7 @@ const SettingsPersonal = () => {
                   />
                   Нет нужного мне функционала
                 </label>
-                <label>
+                <label className="custom-checkbox">
                   <input
                     type="checkbox"
                     checked={deleteFeedback.reason3}

@@ -23,10 +23,6 @@ const Header = () => {
     navigate('/login');
   };
 
-  const handleProfileClick = () => {
-    setIsDropdownOpen((prev) => !prev);
-  };
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -40,26 +36,31 @@ const Header = () => {
     };
   }, []);
 
+  const handleDropdownAction = (action) => {
+    setIsDropdownOpen(false);
+    action();
+  };
+
   const headerIcons = [
     {
       icon: <Contact size={22} strokeWidth={1.3} />,
       tooltip: 'Мой профиль',
-      onClick: handleProfileClick,
+      onClick: () => handleDropdownAction(() => setIsDropdownOpen((prev) => !prev)),
     },
     {
       icon: <Settings size={22} strokeWidth={1.3} />,
       tooltip: 'Настройки',
-      onClick: () => navigate('/settings'),
+      onClick: () => handleDropdownAction(() => navigate('/settings')),
     },
     {
       icon: <GraduationCap size={22} strokeWidth={1.3} />,
       tooltip: 'База знаний',
-      onClick: () => navigate('/education'),
+      onClick: () => handleDropdownAction(() => navigate('/education')),
     },
     {
       icon: <LogOut size={22} strokeWidth={1.3} />,
       tooltip: 'Выйти',
-      onClick: handleLogout,
+      onClick: () => handleDropdownAction(handleLogout),
     },
   ];
 
@@ -92,20 +93,20 @@ const Header = () => {
 
           {isDropdownOpen && (
             <div className="profile-dropdown">
-              <button onClick={() => navigate('/settings/personal')}>
+              <button onClick={() => handleDropdownAction(() => navigate('/settings/personal'))}>
                 <User size={16} style={{ marginRight: '8px' }} />
                 Профиль пользователя
               </button>
-              <button onClick={() => navigate('/clients')}>
+              <button onClick={() => handleDropdownAction(() => navigate('/clients'))}>
                 <BarChart size={16} style={{ marginRight: '8px' }} />
                 Статистика
               </button>
-              <button onClick={() => navigate('/scan')}>
+              <button onClick={() => handleDropdownAction(() => navigate('/scan'))}>
                 <ScanLine size={16} style={{ marginRight: '8px' }} />
                 Приложение-сканер
               </button>
               <hr className="dropdown-divider" />
-              <button onClick={handleLogout}>
+              <button onClick={() => handleDropdownAction(handleLogout)}>
                 <LogOut size={16} style={{ marginRight: '8px' }} />
                 Выйти
               </button>

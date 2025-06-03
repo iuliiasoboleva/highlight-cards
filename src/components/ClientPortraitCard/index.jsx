@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { faSun } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Sun } from 'lucide-react';
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
 
 import './styles.css';
@@ -36,7 +35,7 @@ const ClientPortraitCard = ({ title, data }) => {
         </ResponsiveContainer>
       ) : (
         <div className="empty-state">
-          <FontAwesomeIcon icon={faSun} className="empty-icon" />
+          <Sun size={18} />
           Недостаточно данных
         </div>
       )}

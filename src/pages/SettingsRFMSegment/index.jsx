@@ -58,7 +58,7 @@ const SettingsRFMSegment = () => {
 
   return (
     <div className="rfm-settings-page">
-      <h2 className="rfm-title">Сегментация клиентов</h2>
+      <h2>Сегментация клиентов</h2>
 
       <h3 className="rfm-subtitle">Что такое RFM-сегментация клиентской базы?</h3>
 
@@ -71,7 +71,6 @@ const SettingsRFMSegment = () => {
       </p>
 
       <p>
-        <br />
         <span>
           Это помогает точно выделять активных, уходящих и лояльных клиентов и делать для них
           персональные рассылки:
@@ -83,7 +82,6 @@ const SettingsRFMSegment = () => {
         - Благодарить постоянных покупателей
         <br />- Мотивировать самых активных клиентов
       </p>
-      <br />
 
       <div className="rfm-warning">
         При изменении настроек все сегменты автоматически пересчитаются.
@@ -129,7 +127,7 @@ const SettingsRFMSegment = () => {
                 />
               </div>
             </div>
-            <button className="btn-dark">Сохранить</button>
+            <button className="custom-main-button">Сохранить</button>
           </div>
         ))}
       </div>

@@ -16,7 +16,7 @@ const MailingsSettings = () => {
           <div key={service.id} className="mailings-card">
             <div>
               <div className="mailings-card-header">
-                <strong>{service.name}</strong>
+                <h3>{service.name}</h3>
                 {service.icon && (
                   <img src={service.icon} alt={service.name} className="mailings-card-icon" />
                 )}
@@ -31,10 +31,7 @@ const MailingsSettings = () => {
                 </p>
               )}
             </div>
-            <button
-              className="tariff-btn-dark btn-dark"
-              onClick={() => setSelectedService(service)}
-            >
+            <button className="custom-main-button" onClick={() => setSelectedService(service)}>
               Подключить аккаунт
             </button>
           </div>

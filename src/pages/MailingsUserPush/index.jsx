@@ -32,50 +32,59 @@ const MailingsUserPush = () => {
   }, []);
 
   const scenariosContent = (
-    <div className="mailings-push-container">
-      <h2 className="mailings-push-title">Пользовательские push</h2>
-      <p className="mailings-push-description">
-        Задайте свои правила отправки PUSH-уведомлений клиенту. Выберите после какого события и
-        через сколько времени будет отправлено уведомление
-      </p>
-
-      <hr />
-
-      {hasAccess ? (
-        <div className="automation-table">
-          <h3>Сценарии пользовательских пушей</h3>
-          <ul className="automation-list">
-            {mockUserPushes.map((item) => (
-              <li key={item.id} className="automation-item">
-                <div className="automation-item-title">{item.title}</div>
-                <div className="automation-item-description">{item.description}</div>
-                <div className="automation-item-status">
-                  {item.enabled ? 'Включено' : 'Выключено'}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : (
-        <div className="tariff-lock-box">
-          <p>
-            Данный функционал не доступен на вашем тарифе <strong>«Start»</strong>
-          </p>
-          <button className="btn btn-dark">Выбрать тариф</button>
-        </div>
-      )}
+    <div className="edit-type-left">
+      <div className="edit-type-page">
+        <h2>Пользовательские push</h2>
+        <p className="page-subtitle">
+          Задайте свои правила отправки PUSH-уведомлений клиенту. Выберите после какого события и
+          через сколько времени будет отправлено уведомление
+        </p>
+        {hasAccess ? (
+          <div className="automation-table">
+            <h3>Сценарии пользовательских пушей</h3>
+            <ul className="automation-list">
+              {mockUserPushes.map((item) => (
+                <li key={item.id} className="automation-item">
+                  <div className="automation-item-title">{item.title}</div>
+                  <div className="automation-item-description">{item.description}</div>
+                  <div className="automation-item-status">
+                    {item.enabled ? 'Включено' : 'Выключено'}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <>
+            <p className="page-subtitle">
+              Данный функционал не доступен на вашем тарифе <strong>«Start»</strong>
+            </p>
+            <button className="card-form-add-btn">Выбрать тариф</button>
+          </>
+        )}
+      </div>
     </div>
   );
 
   const previewContent = (
-    <div className="type-card-image-container">
-      <img className="card-image-add" src="/phone.svg" alt="preview" />
-      <PushPreview card={currentCard} message={pushMessage} />
+    <div className="edit-type-right">
+      <div className="phone-sticky">
+        <div className="card-state">
+          <span className={`status-indicator ${currentCard.isActive ? 'active' : 'inactive'}`} />
+          {currentCard.isActive ? 'Активна' : 'Не активна'}
+        </div>
+        <div className="phone-frame">
+          <img className="phone-image" src={currentCard.frameUrl} alt={currentCard.name} />
+          <div className="phone-screen">
+            <PushPreview card={currentCard} message={pushMessage} />
+          </div>
+        </div>
+      </div>
     </div>
   );
 
   return (
-    <div className="edit-type-main-container">
+    <div className="edit-type-layout">
       {isMobile && (
         <div className="edit-type-tabs">
           {['settings', 'card'].map((tab) => (
@@ -91,14 +100,14 @@ const MailingsUserPush = () => {
       )}
 
       {isMobile ? (
-        <div className="edit-type-content">
-          <div className="edit-type-page">
-            {activeTab === 'settings' ? scenariosContent : previewContent}
-          </div>
-        </div>
+        activeTab === 'settings' ? (
+          scenariosContent
+        ) : (
+          previewContent
+        )
       ) : (
         <>
-          <div className="edit-type-page">{scenariosContent}</div>
+          {scenariosContent}
           {previewContent}
         </>
       )}

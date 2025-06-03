@@ -57,7 +57,7 @@ const ReferralProgramConfig = () => {
                   </p>
                 </label>
                 <div className="stamp-quantity-grid">
-                  {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                  {Array.from({ length: 11 }, (_, i) => i).map((num) => (
                     <button
                       key={num}
                       className={`stamp-quantity-button ${
@@ -82,7 +82,7 @@ const ReferralProgramConfig = () => {
                   </p>
                 </label>
                 <div className="stamp-quantity-grid">
-                  {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                  {Array.from({ length: 11 }, (_, i) => i).map((num) => (
                     <button
                       key={num}
                       className={`stamp-quantity-button ${

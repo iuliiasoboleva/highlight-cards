@@ -52,7 +52,8 @@
 
 .manager-card h3 {
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .manager-card p {
@@ -150,9 +151,5 @@
   .managers-grid {
     flex-direction: column;
     display: flex;
-  }
-
-  .managers-page {
-    padding: 20px 20px 0 20px;
   }
 }

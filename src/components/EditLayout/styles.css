@@ -10,12 +10,16 @@
 .settings-header h2,
 .managers-header h2,
 .mailings-container h2,
-.clients-container h2 {
+.clients-container h2,
+.mailings-settings-container h2,
+.rfm-settings-page h2,
+.settings-wrapper h2 {
   font-size: 24px;
   font-weight: 500;
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-bottom: 8px;
 }
 
 .edit-type-page {

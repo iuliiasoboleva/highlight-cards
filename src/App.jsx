@@ -66,6 +66,7 @@ const MainLayout = () => {
     !location.pathname.startsWith('/cards/template');
   const matchMailings = matchPath('/mailings/*', location.pathname);
   const matchSettings = matchPath('/settings/*', location.pathname);
+  const matchClients = matchPath('/clients/*', location.pathname);
 
   const currentCard = useSelector((state) => state.cards.currentCard);
 
@@ -87,7 +88,12 @@ const MainLayout = () => {
   useEffect(() => {
     const root = document.documentElement;
     const showSubMenu =
-      matchEdit || matchCreate || matchCardDetails || matchMailings || matchSettings;
+      matchEdit ||
+      matchCreate ||
+      matchCardDetails ||
+      matchMailings ||
+      matchSettings ||
+      matchClients;
 
     root.style.setProperty('--bar-height', showSubMenu ? '73px' : '0px');
   }, [location.pathname]);
@@ -100,7 +106,7 @@ const MainLayout = () => {
     if (matchCreate || matchEdit) return Pencil;
     if (matchMailings) return Mail;
     if (matchSettings) return SettingsIcon;
-    if (matchCardDetails) return Users;
+    if (matchCardDetails || matchClients) return Users;
     return null;
   };
 
@@ -155,13 +161,25 @@ const MainLayout = () => {
       ];
     }
 
+    if (matchClients) {
+      return [
+        { to: `/clients`, label: 'Клиенты' },
+        { to: `/clients/reviews`, label: 'Отзывы' },
+      ];
+    }
+
     return [];
   };
 
   return (
     <div className="app">
       <Header />
-      {(matchEdit || matchCreate || matchCardDetails || matchMailings || matchSettings) && (
+      {(matchEdit ||
+        matchCreate ||
+        matchCardDetails ||
+        matchMailings ||
+        matchSettings ||
+        matchClients) && (
         <SubMenu
           menuItems={getMenuItems()}
           icon={getSubMenuIcon()}
@@ -248,6 +266,7 @@ const App = () => {
           />
           <Route path="/locations" element={<Locations />} />
           <Route path="/clients" element={<Clients />} />
+          <Route path="/clients/reviews" element={<NotFound />} />
           <Route path="*" element={<NotFound />} />
         </Route>
         <Route path="/customer/card/:cardNumber" element={<CustomerPage />} />

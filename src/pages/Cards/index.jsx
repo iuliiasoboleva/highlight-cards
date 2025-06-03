@@ -58,7 +58,7 @@ const Cards = () => {
             </div>
             <div className="card-bottom">
               <div className="card-bottom-text">
-                <h2>{card.name}</h2>
+                <h3>{card.name}</h3>
                 {/* <p>Вы можете отредактировать настройки карты или обновить дизайн</p> */}
               </div>
               <CardButtons isFixed={card.id === 'fixed'} cardId={card.id} />

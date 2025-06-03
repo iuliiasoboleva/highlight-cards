@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { faCircleQuestion, faUsers } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { HelpCircle, Users } from 'lucide-react';
 
 import CustomSelect from '../../components/CustomSelect';
 import PushPreview from '../../components/PushPreview';
@@ -99,10 +98,9 @@ const MailingsPush = () => {
 
   const pushContent = hasActiveCards ? (
     <div className="edit-type-left">
-      <div className="mailings-push-container">
-        <h2 className="mailings-push-title">
-          Отправить push
-          <FontAwesomeIcon icon={faCircleQuestion} style={{ fontSize: 16, marginLeft: 8 }} />
+      <div className="edit-type-page">
+        <h2>
+          Отправить push <HelpCircle size={16} />
         </h2>
 
         <div className="mailings-push-box">
@@ -120,7 +118,7 @@ const MailingsPush = () => {
           <PushTargetTabs onTabChange={setSelectedTab} onFilteredCountChange={setUsersCount} />
 
           <p className="push-recipient-count">
-            <FontAwesomeIcon icon={faUsers} style={{ fontSize: 14 }} />
+            <Users size={16} />
             {usersCount} {pluralize(usersCount, ['клиент', 'клиента', 'клиентов'])}{' '}
             {pluralVerb(usersCount, 'получит', 'получат')} ваше сообщение
           </p>
@@ -150,7 +148,7 @@ const MailingsPush = () => {
           />
 
           <button
-            className="btn btn-dark"
+            className="card-form-add-btn"
             onClick={handleSavePushSettings}
             disabled={!pushMessage.trim()}
           >
@@ -161,26 +159,34 @@ const MailingsPush = () => {
     </div>
   ) : (
     <div className="edit-type-left">
-      <div className="mailings-push-container">
-        <h2 className="mailings-push-title">Push-уведомления</h2>
-        <p className="no-active-cards-text">
-          У вас нет активных карт, чтобы настроить push-уведомление. Пожалуйста, создайте и
-          активируйте карту в разделе "Карты".
-        </p>
+      <div className="edit-type-page">
+        <div className="mailings-push-container">
+          <h2 className="mailings-push-title">Push-уведомления</h2>
+          <p className="no-active-cards-text">
+            У вас нет активных карт, чтобы настроить push-уведомление. Пожалуйста, создайте и
+            активируйте карту в разделе "Карты".
+          </p>
+        </div>
       </div>
     </div>
   );
 
   const cardPreview = hasActiveCards && (
     <div className="edit-type-right">
-      <div className="phone-frame">
-        <img className="phone-image" src={currentCard.frameUrl} alt={currentCard.name} />
-        <div className="phone-screen">
-          <PushPreview
-            card={currentCard}
-            message={pushMessage}
-            scheduledDate={isScheduled ? scheduledDate : null}
-          />
+      <div className="phone-sticky">
+        <div className="card-state">
+          <span className={`status-indicator ${currentCard.isActive ? 'active' : 'inactive'}`} />
+          {currentCard.isActive ? 'Активна' : 'Не активна'}
+        </div>
+        <div className="phone-frame">
+          <img className="phone-image" src={currentCard.frameUrl} alt={currentCard.name} />
+          <div className="phone-screen">
+            <PushPreview
+              card={currentCard}
+              message={pushMessage}
+              scheduledDate={isScheduled ? scheduledDate : null}
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -203,9 +209,11 @@ const MailingsPush = () => {
       )}
 
       {isMobile ? (
-        <div className="edit-type-content">
-          {activeTab === 'settings' ? pushContent : cardPreview}
-        </div>
+        activeTab === 'settings' ? (
+          pushContent
+        ) : (
+          cardPreview
+        )
       ) : (
         <>
           {pushContent}

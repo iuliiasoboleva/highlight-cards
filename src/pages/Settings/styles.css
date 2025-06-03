@@ -221,10 +221,6 @@
     flex-direction: column;
   }
 
-  .settings-container {
-    padding: 20px 20px 0 20px;
-  }
-
   .tariff-due-grid {
     flex-direction: column;
   }

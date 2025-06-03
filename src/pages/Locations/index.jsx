@@ -183,7 +183,7 @@ const Locations = () => {
           вашей точки.
         </p>
         <CustomSelect
-          value={cards[0]?.id || null}
+          value={currentCard?.id || cards[0]?.id || null}
           onChange={handleCardSelect}
           options={cards.map((card) => ({
             value: card.id,

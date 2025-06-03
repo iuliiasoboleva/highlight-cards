@@ -46,7 +46,8 @@
 .btn-light {
   background: #eee;
   color: #333;
-  padding: 10px 16px;
+  font-size: 14px;
+  padding: 14px 16px;
   border-radius: 6px;
   border: none;
   cursor: pointer;

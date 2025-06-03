@@ -1,11 +1,19 @@
 .rfm-settings-page {
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .rfm-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
   gap: 16px;
+}
+
+.rfm-grid button {
+  width: 100%;
+  max-width: 100%;
 }
 
 .rfm-card {
@@ -60,14 +68,5 @@
 }
 
 .rfm-subtitle {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin: 8px 0;
-}
-
-@media (max-width: 768px) {
-  .rfm-settings-page {
-    padding: 20px 20px 0 20px;
-  }
+  font-weight: 500;
 }

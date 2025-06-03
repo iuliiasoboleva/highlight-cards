@@ -167,7 +167,6 @@
 }
 
 .checkbox-group label {
-  display: block;
   margin: 8px 0;
 }
 
@@ -203,10 +202,6 @@
 }
 
 @media (max-width: 768px) {
-  .settings-wrapper {
-    padding: 20px 20px 0 20px;
-  }
-
   .profile-section,
   .form-row {
     flex-direction: column;

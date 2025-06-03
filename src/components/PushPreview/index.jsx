@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { faBell } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Bell } from 'lucide-react';
 
 import './styles.css';
 
@@ -10,7 +9,7 @@ const PushPreview = ({ card, message, scheduledDate }) => {
     <div className="card-info" style={{ maxWidth: '210px' }}>
       {scheduledDate && (
         <div className="push-preview-header">
-          <FontAwesomeIcon icon={faBell} className="push-app-icon" />
+          <Bell className="push-app-icon" size={16} />
           <div className="push-time">
             Запланировано на: {new Date(scheduledDate).toLocaleString()}
           </div>

@@ -48,7 +48,7 @@ const DefaultCardInfo = () => {
         <DashboardStats />
       </div>
       <div className="table-wrapper">
-        <h3>Последние транзакции по карте</h3>
+        <h3 className="table-name">Последние транзакции по карте</h3>
         <CustomTable columns={transactionHeaders} rows={mockTransactions} />
       </div>
     </div>

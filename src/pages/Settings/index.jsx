@@ -37,8 +37,7 @@ const Settings = () => {
     {
       feature: (
         <>
-          <strong>Стоимость в месяц</strong>
-          <br />
+          <p>Стоимость в месяц</p>
           <small>
             при оплате за год
             <br />/ за квартал
@@ -56,8 +55,7 @@ const Settings = () => {
     {
       feature: (
         <>
-          <strong>Интеграции</strong>
-          <br />
+          <p>Интеграции</p>
           Интеграция с ПО для автоматического начисления
         </>
       ),
@@ -71,8 +69,7 @@ const Settings = () => {
     {
       feature: (
         <>
-          <strong>Пользовательские поля</strong>
-          <br />
+          <p>Пользовательские поля</p>
           Добавьте собственное наполнение без шаблона
         </>
       ),
@@ -90,8 +87,7 @@ const Settings = () => {
     {
       feature: (
         <>
-          <strong>Настройка прав менеджеров</strong>
-          <br />
+          <p>Настройка прав менеджеров</p>
           Детальный контроль доступа
         </>
       ),
@@ -107,7 +103,7 @@ const Settings = () => {
       ),
     },
     {
-      feature: <strong>Период оплаты</strong>,
+      feature: <p>Период оплаты</p>,
       ...Object.fromEntries(
         tariffPlans.map((plan) => [
           plan.name,

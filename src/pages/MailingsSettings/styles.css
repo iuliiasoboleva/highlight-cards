@@ -12,19 +12,32 @@
 
 .mailings-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: 16px;
   margin-top: 16px;
 }
 
 .mailings-card {
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 10px;
+  background: linear-gradient(244.55deg, #d4d4e44d, #ffffff4d 66.12%), #fff;
+  border: 0.1rem solid #d5d5dd;
+  border-radius: 4px;
   padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  min-height: 250px;
+}
+
+.mailings-card h3 {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.mailings-card p {
+  font-size: 14px;
+  color: #656565;
+  line-height: 1.4;
+  max-width: 400px;
 }
 
 .mailings-card-header {
@@ -35,7 +48,7 @@
 }
 
 .mailings-card-icon {
-  height: 32px;
+  height: 24px;
 }
 
 .mailing-instruction {

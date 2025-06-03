@@ -32,6 +32,14 @@
   margin-bottom: 20px;
 }
 
+.card-bottom-text h3 {
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.2;
+  color: #333;
+  letter-spacing: 0.8px;
+}
+
 .card-bottom-text h2 {
   font-size: 20px;
   white-space: nowrap;

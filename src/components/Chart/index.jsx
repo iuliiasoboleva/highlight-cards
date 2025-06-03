@@ -144,7 +144,7 @@ const Chart = ({
             ))}
           </div>
         </div>
-        <p className="chart-subtitle">{subtitle}</p>
+        <p className="page-subtitle">{subtitle}</p>
       </div>
 
       <StatisticsCard

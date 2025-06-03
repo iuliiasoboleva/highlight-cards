@@ -29,7 +29,7 @@ const Sidebar = () => {
     { icon: <Users size={20} />, label: 'Клиенты', path: '/clients' },
     { icon: <MessageSquare size={20} />, label: 'Рассылки', path: '/mailings/info' },
     { icon: <MapPin size={20} />, label: 'Локации', path: '/locations' },
-    { icon: <User size={20} />, label: 'Профиль', path: '/managers' },
+    { icon: <User size={20} />, label: 'Менеджеры', path: '/managers' },
     { icon: <Settings size={20} />, label: 'Настройки', path: '/settings' },
   ];
 

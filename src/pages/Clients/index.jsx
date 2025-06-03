@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { saveAs } from 'file-saver';
+import { Download, PlusCircle, Send } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
 import CustomTable from '../../components/CustomTable';
@@ -126,8 +127,8 @@ const Clients = () => {
       </div>
 
       <div className="clients-actions-bar">
-        <button className="clients-add-button" onClick={() => setShowModal(true)}>
-          + Добавить клиента
+        <button className="custom-main-button" onClick={() => setShowModal(true)}>
+          <span>+</span>Добавить клиента
         </button>
       </div>
 
@@ -228,27 +229,33 @@ const Clients = () => {
       )}
 
       <div className="clients-footer-grid">
-        <div className="footer-card">
+        <div className="manager-card">
           <h4 className="footer-card-title">Импорт клиентов</h4>
           <p className="footer-card-description">
             Импортируйте клиентов в систему с помощью xlsx шаблона
           </p>
+          <span className="scanner-icon">
+            <Download size={18} />
+          </span>
           <div className="footer-card-actions">
             <button
-              className="footer-button"
+              className="custom-main-button"
               onClick={() => window.open('/import_customers_template.xlsx', '_blank')}
             >
               Скачать шаблон импорта
             </button>
-            <button className="footer-button" onClick={handleExportToExcel}>
+            <button className="custom-main-button" onClick={handleExportToExcel}>
               Импортировать клиентов
             </button>
           </div>
         </div>
-        <div className="footer-card">
+        <div className="manager-card">
           <h4 className="footer-card-title">Рассылка push</h4>
           <p className="footer-card-description">Отправляйте своим клиентам push-уведомления</p>
-          <button className="footer-button" onClick={() => navigate('/mailings/push')}>
+          <span className="scanner-icon">
+            <Send size={18} />
+          </span>
+          <button className="custom-main-button" onClick={() => navigate('/mailings/push')}>
             Создать рассылку
           </button>
         </div>

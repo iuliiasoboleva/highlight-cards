@@ -12,7 +12,7 @@
 }
 
 .logo {
-  height: 80px;
+  height: 60px;
   width: auto;
   object-fit: cover;
 }
@@ -81,7 +81,7 @@
 @media (max-width: 999px) {
   .desktop-header {
     flex-direction: column;
-    gap: 12px;
+    gap: 6px;
   }
   .profile-dropdown {
     right: 50%;

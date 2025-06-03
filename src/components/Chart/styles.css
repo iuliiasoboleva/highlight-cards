@@ -29,6 +29,7 @@
 
 .filters button {
   padding: 12px 18px;
+  font-size: 14px;
   background-color: #ffffff;
   border: 1px solid transparent;
   border-radius: 4px;
@@ -275,10 +276,6 @@
     padding: 8px;
     justify-content: center;
     flex-direction: column;
-  }
-
-  .statistics-container {
-    padding: 20px 20px 0 20px;
   }
 
   .statistics-grid {

@@ -1,8 +1,8 @@
 @import '@fontsource/manrope';
 
 :root {
-  --header-height: 100px;
-  --header-mobile-height: 188px;
+  --header-height: 80px;
+  --header-mobile-height: 160px;
   --bar-height: 73px;
   --sidebar-width: 72px;
   --footer-height: 143px;
