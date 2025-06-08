@@ -11,6 +11,7 @@ import { setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
 import PushTargetTabs from './PushTargetTabs';
 
 import './styles.css';
+import PushHistory from './PushHistory';
 
 const MailingsPush = () => {
   const dispatch = useDispatch();
@@ -51,7 +52,7 @@ const MailingsPush = () => {
       }
     }
   }, [currentCard]);
-
+console.log('currentCard.pushNotification', currentCard.pushNotification)
   const handleCardSelect = (cardId) => {
     const selected = cards.find((c) => c.id === cardId);
     if (selected) {
@@ -155,6 +156,7 @@ const MailingsPush = () => {
             Отправить
           </button>
         </div>
+        <PushHistory />
       </div>
     </div>
   ) : (

@@ -135,9 +135,65 @@
   color: #4caf50;
 }
 
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4rem;
+  gap: 20px;
+}
+
+.tabs span {
+  flex: 1;
+  font-size: 36px;
+  line-height: 3.2rem;
+  margin: 0;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  color: #83848d;
+  border: none;
+  background-color: transparent;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tabs span.active {
+  color: #1f1e1f;
+}
+
+.input-error {
+  border-color: #bf4756 !important;
+}
+
+.error-message,
+.loading-message {
+  font-size: 13px;
+  margin: -10px 0 2px 0;
+}
+
+.error-message {
+  color: #bf4756;
+}
+
+.loading-message {
+  color: #45a049;
+}
+
+.custom-button:disabled {
+  background-color: #d3d3d3;
+  color: #999;
+  cursor: not-allowed;
+}
+
 @media (max-width: 768px) {
   .tabs {
     margin-bottom: 20px;
+  }
+
+  .tabs span {
+    font-size: 24px;
   }
 
   .auth-form-wrapper {

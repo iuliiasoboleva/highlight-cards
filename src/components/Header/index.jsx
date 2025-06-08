@@ -67,7 +67,7 @@ const Header = () => {
   return (
     <header className="header">
       <div className="desktop-header">
-        <img src="/logoColored.png" alt="Logo" className="logo" />
+        <img src="/logoColored.png" alt="Logo" className="logo" onClick={() => navigate('/')} />
         <div className="user-section">
           Привет, <span>{user.firstName}</span>
         </div>

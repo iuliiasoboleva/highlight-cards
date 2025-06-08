@@ -36,7 +36,7 @@ const Home = () => {
         periodLabels={periodLabels}
         periods={periods}
       />
-      <h2 className="title">Портрет клиента</h2>
+      <h2 className="subtitle">Портрет клиента</h2>
       <div className="portrait-chart">
         <ClientPortraitCard title={genderStats.title} data={genderStats.data} />
         <ClientPortraitCard title={ageStats.title} data={ageStats.data} />

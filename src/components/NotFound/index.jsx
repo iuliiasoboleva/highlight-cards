@@ -7,7 +7,7 @@ const NotFound = () => {
   return (
     <div className="not-found">
       <h1>Такой страницы не существует</h1>
-      <Link to="/" className="btn">
+      <Link to="/" className="custom-main-button">
         Вернуться на главную страницу
       </Link>
     </div>

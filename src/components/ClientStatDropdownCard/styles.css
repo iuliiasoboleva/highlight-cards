@@ -1,0 +1,128 @@
+.client-stat-dropdown-card {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 16px;
+    font-family: 'Manrope', sans-serif;
+    border-right: 1px solid #e5e5e5;
+    position: relative;
+  }
+
+  .client-stat-dropdown-card:last-child {
+    border-right: none;
+    border-bottom: none;
+  }
+  
+  /* Верхняя строка */
+  .client-stat-dropdown-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Заголовок (с кликабельным селектом) */
+  .client-stat-dropdown-label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #555;
+    gap: 6px;
+  }
+  
+  .client-stat-dropdown-label.clickable {
+    cursor: pointer;
+  }
+  
+  .client-stat-dropdown-label.clickable:hover {
+    text-decoration: underline;
+  }
+  
+  /* Значение изменения */
+  .client-stat-dropdown-change {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .client-stat-dropdown-change-value {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .client-stat-dropdown-change-value.positive {
+    color: #1cc568;
+  }
+  
+  .client-stat-dropdown-change-value.neutral {
+    color: #f0a000;
+  }
+  
+  .client-stat-dropdown-change-value.negative {
+    color: #f44336;
+  }
+  
+  /* Кружок с иконкой */
+  .client-stat-dropdown-icon-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .client-stat-dropdown-icon-circle.positive {
+    background-color: #e9fdf3;
+  }
+  
+  .client-stat-dropdown-icon-circle.neutral {
+    background-color: #fff7ea;
+  }
+  
+  .client-stat-dropdown-icon-circle.negative {
+    background-color: #fdecea;
+  }
+  
+  /* Значение (большая цифра) */
+  .client-stat-dropdown-value {
+    margin-top: 8px;
+    font-size: 32px;
+    font-weight: 600;
+    color: #000;
+  }
+  
+  /* Выпадающее меню */
+  .client-stat-dropdown-options {
+    position: absolute;
+    top: 42px;
+    left: 16px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    z-index: 10;
+    width: fit-content;
+  }
+  
+  .client-stat-dropdown-option {
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    color: #333;
+  }
+  
+  .client-stat-dropdown-option:hover {
+    background-color: #f3f3f3;
+  }
+  
+  .client-stat-dropdown-option.active {
+    font-weight: 600;
+    background-color: #f0f0f0;
+  }
+
+  @media (max-width: 999px) {
+    .client-stat-dropdown-card {
+        border-bottom: 1px solid #e5e5e5;
+        border-right: none;
+    }
+  }
+  

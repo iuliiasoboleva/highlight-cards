@@ -432,7 +432,6 @@
 }
 
 .card-status-row,
-.card-form-header,
 .card-fields-row,
 .card-fields-header {
   grid-template-columns: 1fr 1fr;

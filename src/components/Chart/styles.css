@@ -7,12 +7,18 @@
 .title-filter-wrapper {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .title {
   font-size: 24px;
   font-weight: 500;
   margin-bottom: 16px;
+}
+
+.subtitle {
+  font-size: 20px;
+  font-weight: 500;
 }
 
 .chart-subtitle {
@@ -23,7 +29,6 @@
 .filters {
   display: flex;
   gap: 8px;
-  margin-bottom: 16px;
   position: relative;
 }
 
@@ -61,6 +66,7 @@
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 16px;
+  border-bottom: 1px solid #e5e5e5;
 }
 
 .statistics-grid {
@@ -272,6 +278,10 @@
     flex-direction: column;
   }
 
+  .filters {
+    flex-wrap: wrap;
+  }
+
   .filters button {
     padding: 8px;
     justify-content: center;
@@ -286,5 +296,10 @@
     align-items: center;
     justify-content: space-between;
     flex-direction: row;
+  }
+
+  .title-filter-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

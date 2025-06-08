@@ -7,10 +7,6 @@
   flex-direction: column;
 }
 
-.statistics-header {
-  margin-bottom: 16px;
-}
-
 .filters-block {
   font-size: 14px;
   color: #555;
@@ -34,10 +30,11 @@
   border-left: 1px solid #eee;
 }
 
-.statistics-grid {
-  display: flex;
-  gap: 24px;
-  margin-bottom: 16px;
+.statistics-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
 .stat-item {
@@ -154,4 +151,19 @@
 
 .summary-change.negative {
   color: #d50000;
+}
+
+@media (max-width: 999px) {
+  .statistics-content {
+    flex-direction: column;
+  }
+
+  .statistics-right {
+    border-left: none;
+  }
+
+  .statistics-card-grid {
+    display: flex;
+    flex-direction: column;
+  }
 }

@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 
-import { HelpCircle } from 'lucide-react';
 import {
   CartesianGrid,
   Line,
@@ -12,24 +11,10 @@ import {
 } from 'recharts';
 
 import './styles.css';
+import StatisticInfo from '../StatisticInfo';
+import ClientStatDropdownCard from '../ClientStatDropdownCard';
 
 const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, getDateRange }) => {
-  const [showTooltip, setShowTooltip] = useState(false);
-  const tooltipRef = useRef(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (tooltipRef.current && !tooltipRef.current.contains(event.target)) {
-        setShowTooltip(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
   return (
     <div className="statistics-card">
       <div className="statistics-header">
@@ -40,29 +25,29 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
 
       <div className="statistics-content">
         <div className="statistics-left">
-          <div className="statistics-grid">
-            <div className="stat-item">
-              <div className="stat-label">Всего визитов</div>
-              <div className="stat-value">{chartData[chartData.length - 1]?.visits || 0}</div>
-              <div className="stat-change neutral">{overallStats?.totalVisits?.change ?? 0}</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-label stat-tooltip-wrapper" ref={tooltipRef}>
-                Повторные клиенты
-                <span className="stat-tooltip-icon" onClick={() => setShowTooltip((prev) => !prev)}>
-                  <HelpCircle />
-                </span>
-                {showTooltip && (
-                  <div className="stat-tooltip-box">
-                    Клиенты, которые вернулись повторно после первого визита
-                  </div>
-                )}
-              </div>
-              <div className="stat-value">
-                {chartData[chartData.length - 1]?.repeatClients || 0}
-              </div>
-              <div className="stat-change neutral">{overallStats?.repeatClients?.change ?? 0}</div>
-            </div>
+          <div className="statistics-card-grid">
+            <ClientStatDropdownCard
+              selectable={false}
+              initialKey="referral"
+              statsByType={{
+                referral: { value: 0, change: 0 },
+              }}
+            />
+            <ClientStatDropdownCard
+              selectable={true}
+              statsByType={{
+                new: { value: 1, change: 1 },
+                repeat: { value: 0, change: 0 },
+                referral: { value: 0, change: 0 },
+              }}
+            />
+            <ClientStatDropdownCard
+              selectable={false}
+              initialKey="referral"
+              statsByType={{
+                referral: { value: 0, change: 0 },
+              }}
+            />
           </div>
 
           <div className="chart-wrapper">
@@ -76,9 +61,9 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
                       selectedPeriod === 'day'
                         ? `${new Date(value).getHours()}:00`
                         : new Date(value).toLocaleDateString('ru-RU', {
-                            month: 'short',
-                            day: '2-digit',
-                          })
+                          month: 'short',
+                          day: '2-digit',
+                        })
                     }
                   />
                   <YAxis />
@@ -111,42 +96,24 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
         </div>
 
         <div className="statistics-right">
-          <div className="summary-item">
-            <div className="summary-left">
-              <span className="summary-dot repeat"></span>
-              <span className="summary-label">Повторные клиенты</span>
-            </div>
-            <div className="summary-values">
-              <span className="summary-count">{overallStats?.repeatClients?.value ?? 0}</span>
-              <span className="summary-change neutral">
-                {overallStats?.repeatClients?.change ?? 0}
-              </span>
-            </div>
-          </div>
-
-          <div className="summary-item">
-            <div className="summary-left">
-              <span className="summary-dot new"></span>
-              <span className="summary-label">Новые клиенты</span>
-            </div>
-            <div className="summary-values">
-              <span className="summary-count">{overallStats?.newClients?.value ?? 0}</span>
-              <span className="summary-change positive">
-                {overallStats?.newClients?.change ?? 0}
-              </span>
-            </div>
-          </div>
-
-          <div className="summary-item">
-            <div className="summary-left">
-              <span className="summary-dot referral"></span>
-              <span className="summary-label">Рефералы</span>
-            </div>
-            <div className="summary-values">
-              <span className="summary-count">{overallStats?.referrals?.value ?? 0}</span>
-              <span className="summary-change neutral">{overallStats?.referrals?.change ?? 0}</span>
-            </div>
-          </div>
+          <StatisticInfo
+            colorClass="repeat"
+            label="Повторные клиенты"
+            value={overallStats?.repeatClients?.value}
+            change={overallStats?.repeatClients?.change}
+          />
+          <StatisticInfo
+            colorClass="new"
+            label="Новые клиенты"
+            value={overallStats?.newClients?.value}
+            change={overallStats?.newClients?.change}
+          />
+          <StatisticInfo
+            colorClass="referral"
+            label="Рефералы"
+            value={overallStats?.referrals?.value}
+            change={overallStats?.referrals?.change}
+          />
         </div>
       </div>
     </div>

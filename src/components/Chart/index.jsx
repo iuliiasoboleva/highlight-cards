@@ -7,6 +7,8 @@ import { ru } from 'date-fns/locale';
 import StatisticsCard from '../StatisticsCard';
 
 import './styles.css';
+import { HelpCircle } from 'lucide-react';
+import { Tooltip } from 'react-tooltip';
 
 const Chart = ({
   title = 'Статистика аккаунта',
@@ -130,7 +132,17 @@ const Chart = ({
     <>
       <div className="title-block">
         <div className="title-filter-wrapper">
-          <h2 className="title">{title}</h2>
+          <div>
+            <h2 className="title">{title}
+              <HelpCircle
+                size={16}
+                style={{ marginLeft: 6, cursor: 'pointer' }}
+                data-tooltip-id="managers-help"
+                data-tooltip-content={subtitle}
+              />
+            </h2>
+            <Tooltip id="managers-help" className="custom-tooltip" />
+          </div>
           <div className="filters">
             {Object.keys(periods).map((key) => (
               <button
@@ -144,7 +156,6 @@ const Chart = ({
             ))}
           </div>
         </div>
-        <p className="page-subtitle">{subtitle}</p>
       </div>
 
       <StatisticsCard
