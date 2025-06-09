@@ -10,10 +10,9 @@ import {
 } from 'recharts';
 
 import './styles.css';
-import StatisticInfo from '../StatisticInfo';
-import ClientStatDropdownCard from '../ClientStatDropdownCard';
+import { ArrowDown, ArrowUp, Minus } from 'lucide-react';
 
-const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, getDateRange }) => {
+const ClientsActivityChart = ({ chartData, lineLabels, selectedPeriod, change, value, label, colorClass }) => {
   const axisStyle = {
     fontSize: '12px',
     lineHeight: 1.6666666667,
@@ -22,57 +21,36 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
     fontFamily: 'Manrope, sans-serif',
   };
 
+  const isPositive = change > 0;
+  const isNegative = change < 0;
+  const changeType = isPositive ? 'positive' : isNegative ? 'negative' : 'neutral';
+
   return (
     <div className="statistics-card">
-      <div className="statistics-header">
-        <div className="filters-block">
-          <span>{getDateRange()}</span>
+      <div className="client-stat-header">
+      <div className="client-stat-left">
+        <span className="client-stat-title">{label}</span>
+        <span className="client-stat-subtitle">{value}</span>
+      </div>
+      <div className="client-stat-right">
+        <span className={`client-stat-change-value ${changeType}`}>
+          {isPositive ? `+${change}` : change}
+        </span>
+        <div className={`client-stat-change-wrapper ${changeType}`}>
+          <div className={`client-stat-dropdown-icon-circle ${changeType}`}>
+            {isPositive ? (
+              <ArrowUp size={14} className={`client-stat-icon ${changeType}`} />
+            ) : isNegative ? (
+              <ArrowDown size={14} className={`client-stat-icon ${changeType}`} />
+            ) : (
+              <Minus size={14} className={`client-stat-icon ${changeType}`} />
+            )}
+          </div>
         </div>
       </div>
-
+      </div>
       <div className="statistics-content">
         <div className="statistics-left">
-          <div className="statistics-card-grid">
-            <ClientStatDropdownCard
-              selectable={false}
-              initialKey="lastPeriod"
-              statsByType={{
-                referral: {
-                  value: overallStats?.referrals?.value ?? 0,
-                  change: overallStats?.referrals?.change ?? 0,
-                },
-              }}
-            />
-
-            <ClientStatDropdownCard
-              selectable={true}
-              statsByType={{
-                new: {
-                  value: overallStats?.newClients?.value ?? 0,
-                  change: overallStats?.newClients?.change ?? 0,
-                },
-                repeat: {
-                  value: overallStats?.repeatClients?.value ?? 0,
-                  change: overallStats?.repeatClients?.change ?? 0,
-                },
-                referral: {
-                  value: overallStats?.referrals?.value ?? 0,
-                  change: overallStats?.referrals?.change ?? 0,
-                },
-              }}
-            />
-
-            <ClientStatDropdownCard
-              selectable={false}
-              initialKey="visits"
-              statsByType={{
-                visits: {
-                  value: overallStats?.totalVisits?.value ?? 0,
-                  change: overallStats?.totalVisits?.change ?? 0,
-                },
-              }}
-            />
-          </div>
 
           <div className="chart-wrapper">
             <div className="chart-container">
@@ -133,30 +111,9 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
             </div>
           </div>
         </div>
-
-        <div className="statistics-right">
-          <StatisticInfo
-            colorClass="repeat"
-            label="Повторные клиенты"
-            value={overallStats?.repeatClients?.value ?? 0}
-            change={overallStats?.repeatClients?.change ?? 0}
-          />
-          <StatisticInfo
-            colorClass="new"
-            label="Новые клиенты"
-            value={overallStats?.newClients?.value ?? 0}
-            change={overallStats?.newClients?.change ?? 0}
-          />
-          <StatisticInfo
-            colorClass="referral"
-            label="Рефералы"
-            value={overallStats?.referrals?.value ?? 0}
-            change={overallStats?.referrals?.change ?? 0}
-          />
-        </div>
       </div>
     </div>
   );
 };
 
-export default StatisticsCard;
+export default ClientsActivityChart;

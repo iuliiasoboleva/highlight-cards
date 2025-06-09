@@ -5,11 +5,12 @@
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
-.filters-block {
-  font-size: 14px;
-  color: #555;
+.charts-block {
+  display: flex;
+  gap: 8px;
 }
 
 .statistics-content {
@@ -25,15 +26,12 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding-left: 16px;
   border-left: 1px solid #eee;
 }
 
 .statistics-card-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
   margin-bottom: 20px;
 }
 
@@ -164,6 +162,10 @@
 
   .statistics-card-grid {
     display: flex;
+    flex-direction: column;
+  }
+
+  .charts-block {
     flex-direction: column;
   }
 }

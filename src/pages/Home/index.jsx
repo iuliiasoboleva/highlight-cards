@@ -2,28 +2,11 @@ import React from 'react';
 
 import Chart from '../../components/Chart';
 import ClientPortraitCard from '../../components/ClientPortraitCard';
-import { generateData, overallStats } from '../../mocks/chartData';
 import { ageStats, genderStats } from '../../mocks/portraitMockData';
 
 import './styles.css';
-
-const periods = {
-  day: 'День',
-  week: 'Неделя',
-  month: 'Месяц',
-  year: 'Год',
-  allTime: 'Все время',
-  custom: 'Период',
-};
-
-const periodLabels = {
-  day: 'день',
-  week: 'неделю',
-  month: 'месяц',
-  year: 'год',
-  allTime: 'всё время',
-  custom: 'период',
-};
+import ClientActivityChart from '../../components/ClientActivityChart';
+import ClientsChart from '../../components/ClientsChart';
 
 const Home = () => {
   return (
@@ -31,11 +14,8 @@ const Home = () => {
       <Chart
         title="Статистика аккаунта"
         subtitle="Следите за тем, сколько людей приходит к вам, кто возвращается, и как меняется активность клиентов. Выбирайте удобный период — день, неделя, месяц или год — чтобы видеть полную картину и находить точки роста."
-        generateData={generateData}
-        overallStats={overallStats}
-        periodLabels={periodLabels}
-        periods={periods}
       />
+    <ClientsChart/>
       <h2 className="subtitle">Портрет клиента</h2>
       <div className="portrait-chart">
         <ClientPortraitCard title={genderStats.title} data={genderStats.data} />

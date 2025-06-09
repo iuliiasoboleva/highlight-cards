@@ -1,67 +1,106 @@
-export const generateData = (period) => {
-  const today = new Date();
-  let result = [];
+export const mockStatsDataDay = [
+  { date: '2025-06-07T00:00:00', visits: 5, repeatClients: 2, newClients: 1 },
+  { date: '2025-06-07T01:00:00', visits: 6, repeatClients: 1, newClients: 2 },
+  { date: '2025-06-07T02:00:00', visits: 4, repeatClients: 1, newClients: 1 },
+  { date: '2025-06-07T03:00:00', visits: 3, repeatClients: 0, newClients: 1 },
+  { date: '2025-06-07T04:00:00', visits: 2, repeatClients: 0, newClients: 0 },
+  { date: '2025-06-07T05:00:00', visits: 3, repeatClients: 1, newClients: 0 },
+  { date: '2025-06-07T06:00:00', visits: 4, repeatClients: 1, newClients: 1 },
+  { date: '2025-06-07T07:00:00', visits: 6, repeatClients: 2, newClients: 1 },
+  { date: '2025-06-07T08:00:00', visits: 8, repeatClients: 3, newClients: 2 },
+  { date: '2025-06-07T09:00:00', visits: 10, repeatClients: 3, newClients: 2 },
+  { date: '2025-06-07T10:00:00', visits: 12, repeatClients: 4, newClients: 3 },
+  { date: '2025-06-07T11:00:00', visits: 14, repeatClients: 5, newClients: 3 },
+  { date: '2025-06-07T12:00:00', visits: 16, repeatClients: 6, newClients: 4 },
+  { date: '2025-06-07T13:00:00', visits: 18, repeatClients: 7, newClients: 5 },
+  { date: '2025-06-07T14:00:00', visits: 17, repeatClients: 6, newClients: 4 },
+  { date: '2025-06-07T15:00:00', visits: 15, repeatClients: 5, newClients: 3 },
+  { date: '2025-06-07T16:00:00', visits: 14, repeatClients: 5, newClients: 2 },
+  { date: '2025-06-07T17:00:00', visits: 12, repeatClients: 4, newClients: 2 },
+  { date: '2025-06-07T18:00:00', visits: 11, repeatClients: 3, newClients: 2 },
+  { date: '2025-06-07T19:00:00', visits: 10, repeatClients: 3, newClients: 1 },
+  { date: '2025-06-07T20:00:00', visits: 9, repeatClients: 2, newClients: 1 },
+  { date: '2025-06-07T21:00:00', visits: 8, repeatClients: 2, newClients: 1 },
+  { date: '2025-06-07T22:00:00', visits: 6, repeatClients: 1, newClients: 1 },
+  { date: '2025-06-07T23:00:00', visits: 5, repeatClients: 1, newClients: 1 },
+];
 
-  if (period === 'day') {
-    for (let i = 0; i < 24; i++) {
-      const date = new Date(today);
-      date.setHours(i, 0, 0, 0);
+export const mockStatsDataWeek = [
+  { date: '2025-06-01', visits: 20, repeatClients: 5, newClients: 2 },
+  { date: '2025-06-02', visits: 22, repeatClients: 6, newClients: 2 },
+  { date: '2025-06-03', visits: 24, repeatClients: 5, newClients: 3 },
+  { date: '2025-06-04', visits: 26, repeatClients: 7, newClients: 2 },
+  { date: '2025-06-05', visits: 28, repeatClients: 6, newClients: 3 },
+  { date: '2025-06-06', visits: 30, repeatClients: 7, newClients: 3 },
+  { date: '2025-06-07', visits: 32, repeatClients: 8, newClients: 3 },
+];
 
-      result.push({
-        date: date.toISOString(),
-        visits: Math.floor(Math.random() * 50),
-        repeatClients: Math.floor(Math.random() * 20),
-        newClients: Math.floor(Math.random() * 30),
-      });
-    }
-  } else {
-    let daysCount = 7;
-    switch (period) {
-      case 'week':
-        daysCount = 7;
-        break;
-      case 'month':
-        daysCount = 30;
-        break;
-      case 'year':
-        daysCount = 12;
-        break;
-      default:
-        daysCount = 7;
-    }
+export const mockStatsDataMonth = [
+  { date: '2025-05-09', visits: 20, repeatClients: 4, newClients: 2 },
+  { date: '2025-05-10', visits: 22, repeatClients: 5, newClients: 2 },
+  { date: '2025-05-11', visits: 19, repeatClients: 4, newClients: 1 },
+  { date: '2025-05-12', visits: 25, repeatClients: 6, newClients: 3 },
+  { date: '2025-05-13', visits: 28, repeatClients: 7, newClients: 3 },
+  { date: '2025-05-14', visits: 24, repeatClients: 5, newClients: 2 },
+  { date: '2025-05-15', visits: 26, repeatClients: 6, newClients: 2 },
+  { date: '2025-05-16', visits: 27, repeatClients: 7, newClients: 3 },
+  { date: '2025-05-17', visits: 29, repeatClients: 8, newClients: 4 },
+  { date: '2025-05-18', visits: 30, repeatClients: 7, newClients: 3 },
+  { date: '2025-05-19', visits: 31, repeatClients: 6, newClients: 4 },
+  { date: '2025-05-20', visits: 28, repeatClients: 5, newClients: 3 },
+  { date: '2025-05-21', visits: 33, repeatClients: 8, newClients: 4 },
+  { date: '2025-05-22', visits: 34, repeatClients: 7, newClients: 5 },
+  { date: '2025-05-23', visits: 35, repeatClients: 9, newClients: 4 },
+  { date: '2025-05-24', visits: 32, repeatClients: 7, newClients: 3 },
+  { date: '2025-05-25', visits: 36, repeatClients: 8, newClients: 4 },
+  { date: '2025-05-26', visits: 37, repeatClients: 9, newClients: 4 },
+  { date: '2025-05-27', visits: 38, repeatClients: 9, newClients: 5 },
+  { date: '2025-05-28', visits: 36, repeatClients: 8, newClients: 3 },
+  { date: '2025-05-29', visits: 39, repeatClients: 10, newClients: 5 },
+  { date: '2025-05-30', visits: 40, repeatClients: 9, newClients: 4 },
+  { date: '2025-05-31', visits: 42, repeatClients: 10, newClients: 6 },
+  { date: '2025-06-01', visits: 43, repeatClients: 11, newClients: 5 },
+  { date: '2025-06-02', visits: 45, repeatClients: 12, newClients: 6 },
+  { date: '2025-06-03', visits: 47, repeatClients: 13, newClients: 6 },
+  { date: '2025-06-04', visits: 49, repeatClients: 12, newClients: 5 },
+  { date: '2025-06-05', visits: 50, repeatClients: 13, newClients: 6 },
+  { date: '2025-06-06', visits: 52, repeatClients: 14, newClients: 7 },
+  { date: '2025-06-07', visits: 55, repeatClients: 15, newClients: 8 },
+];
 
-    for (let i = daysCount - 1; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(today.getDate() - i);
+export const mockStatsDataYear = [
+  { date: '2024-07-01', visits: 300, repeatClients: 90, newClients: 45 },
+  { date: '2024-08-01', visits: 320, repeatClients: 100, newClients: 50 },
+  { date: '2024-09-01', visits: 310, repeatClients: 95, newClients: 48 },
+  { date: '2024-10-01', visits: 330, repeatClients: 105, newClients: 52 },
+  { date: '2024-11-01', visits: 340, repeatClients: 110, newClients: 55 },
+  { date: '2024-12-01', visits: 350, repeatClients: 115, newClients: 60 },
+  { date: '2025-01-01', visits: 360, repeatClients: 120, newClients: 65 },
+  { date: '2025-02-01', visits: 370, repeatClients: 125, newClients: 70 },
+  { date: '2025-03-01', visits: 380, repeatClients: 130, newClients: 75 },
+  { date: '2025-04-01', visits: 390, repeatClients: 135, newClients: 80 },
+  { date: '2025-05-01', visits: 400, repeatClients: 140, newClients: 85 },
+  { date: '2025-06-01', visits: 420, repeatClients: 150, newClients: 90 },
+];
 
-      result.push({
-        date: date.toISOString(),
-        visits: Math.floor(Math.random() * 50),
-        repeatClients: Math.floor(Math.random() * 20),
-        newClients: Math.floor(Math.random() * 30),
-      });
-    }
-  }
-
-  return result;
-};
-
-export const overallStats = {
+export const mockOverallStats = {
   totalVisits: {
-    value: 50,
-    change: '+10%',
+    value: 182,
+    change: 14,
   },
   repeatClients: {
-    value: 20,
-    change: '+5%',
-  },
-  lastPeriod: {
-    value: 40,
+    value: 44,
+    change: 6,
   },
   newClients: {
-    value: 1,
+    value: 20,
+    change: 2,
   },
   referrals: {
-    value: 1,
+    value: 8,
+    change: 0,
+  },
+  lastPeriod: {
+    value: 168,
   },
 };

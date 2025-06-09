@@ -2,9 +2,10 @@
     display: flex;
     flex-direction: column;
     border-bottom: 1px solid #e5e5e5;
+    justify-content: space-between;
     padding: 12px 16px;
-    font-family: 'Manrope', sans-serif;
-  }
+    height: 100%;
+    }
 
   .client-stat-card:last-child {
     border-bottom: none;
@@ -40,17 +41,24 @@
   }
   
   .client-stat-change-value {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
+    letter-spacing: -.024rem;
+    line-height: 1.25;
+    margin-right: 8px;
   }
   
-  .client-stat-change-value.green {
+  .client-stat-change-value.positive {
     color: #1cc568;
   }
   
-  .client-stat-change-value.orange {
+  .client-stat-change-value.neutral {
     color: #f0a000;
   }
+  
+  .client-stat-change-value.negative {
+    color: #f44336;
+  }  
   
   .client-stat-label {
     display: flex;

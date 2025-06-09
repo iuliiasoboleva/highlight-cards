@@ -6,7 +6,13 @@ const OPTIONS = [
   { key: 'new', label: 'Новые клиенты' },
   { key: 'repeat', label: 'Повторные клиенты' },
   { key: 'referral', label: 'Рефералы' },
-  { key: 'visits', label: 'Всего визитов' },
+  { key: 'lastPeriod', label: 'Прошлый период' },
+];
+
+const selectOptions = [
+  { key: 'new', label: 'Новые клиенты' },
+  { key: 'repeat', label: 'Повторные клиенты' },
+  { key: 'referral', label: 'Рефералы' },
 ];
 
 const ClientStatDropdownCard = ({ statsByType = {}, initialKey = 'new', selectable = false }) => {
@@ -44,33 +50,40 @@ const ClientStatDropdownCard = ({ statsByType = {}, initialKey = 'new', selectab
           <span className={`client-stat-dropdown-change-value ${changeType}`}>
             {change > 0 ? `+${change}` : change}
           </span>
-          <div className={`client-stat-dropdown-icon-circle ${changeType}`}>
-            {isPositive ? (
-              <ArrowUp size={14} />
-            ) : isNegative ? (
-              <ArrowDown size={14} />
-            ) : (
-              <Minus size={14} />
-            )}
-          </div>
+
         </div>
       </div>
 
       {selectable && open && (
-        <div className="client-stat-dropdown-options">
-          {OPTIONS.map((opt) => (
-            <div
-              key={opt.key}
-              className={`client-stat-dropdown-option ${selected === opt.key ? 'active' : ''}`}
-              onClick={() => handleSelect(opt.key)}
-            >
-              {opt.label}
-            </div>
-          ))}
+        <div className="client-stat-dropdown-popover">
+          <div className="client-stat-dropdown-options">
+            {selectOptions.map((opt) => (
+              <div
+                key={opt.key}
+                className={`client-stat-dropdown-option ${selected === opt.key ? 'active' : ''}`}
+                onClick={() => handleSelect(opt.key)}
+              >
+                {opt.label}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
-      <div className="client-stat-dropdown-value">{value}</div>
+      <div className="client-stat-dropdown-bottom">
+        <div className="client-stat-dropdown-value">{value}</div>
+        <div className={`client-stat-dropdown-icon-circle ${changeType}`}>
+          {isPositive ? (
+            <ArrowUp size={14} className={`client-stat-icon ${changeType}`} />
+          ) : isNegative ? (
+            <ArrowDown size={14} className={`client-stat-icon ${changeType}`} />
+          ) : (
+            <Minus size={14} className={`client-stat-icon ${changeType}`} />
+          )}
+        </div>
+
+      </div>
+
     </div>
   );
 };

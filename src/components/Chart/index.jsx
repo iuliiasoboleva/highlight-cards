@@ -1,22 +1,42 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-
 import { ru } from 'date-fns/locale';
-
-import StatisticsCard from '../StatisticsCard';
-
-import './styles.css';
 import { HelpCircle } from 'lucide-react';
 import { Tooltip } from 'react-tooltip';
+
+import StatisticsCard from '../StatisticsCard';
+import {
+  mockStatsDataDay,
+  mockStatsDataWeek,
+  mockStatsDataMonth,
+  mockStatsDataYear,
+} from '../../mocks/chartData';
+
+import './styles.css';
+import { calculateOverallStats } from '../../utils/calculateOverallStats';
+
+const periods = {
+  day: 'День',
+  week: 'Неделя',
+  month: 'Месяц',
+  year: 'Год',
+  allTime: 'Все время',
+  custom: 'Период',
+};
+
+const periodLabels = {
+  day: 'день',
+  week: 'неделю',
+  month: 'месяц',
+  year: 'год',
+  allTime: 'всё время',
+  custom: 'период',
+};
 
 const Chart = ({
   title = 'Статистика аккаунта',
   subtitle,
-  generateData,
-  overallStats,
-  periodLabels,
-  periods,
   lineLabels = {
     visits: 'Визиты',
     repeatClients: 'Повторные клиенты',
@@ -27,11 +47,41 @@ const Chart = ({
   const [chartData, setChartData] = useState([]);
   const [customStartDate, setCustomStartDate] = useState(new Date());
   const [customEndDate, setCustomEndDate] = useState(new Date());
+  const [selectedRange, setSelectedRange] = useState({ start: null, end: null });
   const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
+  const [overallStats, setOverallStats] = useState({});
 
   const periodButtonRef = useRef(null);
   const calendarRef = useRef(null);
+
+  const dataMap = {
+    day: mockStatsDataDay,
+    week: mockStatsDataWeek,
+    month: mockStatsDataMonth,
+    year: mockStatsDataYear,
+    allTime: mockStatsDataYear,
+  };
+
+  const sortedChartData = useMemo(() => {
+    return [...chartData].sort((a, b) => new Date(a.date) - new Date(b.date));
+  }, [chartData]);
+
+  useEffect(() => {
+    const newData = selectedPeriod === 'custom'
+      ? chartData
+      : (dataMap[selectedPeriod] || []);
+  
+    const sortedData = [...newData].sort((a, b) => new Date(a.date) - new Date(b.date));
+    setChartData(sortedData);
+  
+    const mid = Math.floor(sortedData.length / 2);
+    const previousData = sortedData.slice(0, mid);
+  
+    const stats = calculateOverallStats(sortedData, previousData);
+    setOverallStats(stats);
+  }, [selectedPeriod, chartData]);
+  
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -39,19 +89,16 @@ const Chart = ({
         setIsCalendarVisible(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   useEffect(() => {
     if (selectedPeriod !== 'custom') {
-      const newData = generateData(selectedPeriod);
-      setChartData(newData);
+      setChartData(dataMap[selectedPeriod] || []);
+      setSelectedRange({ start: null, end: null });
     }
-  }, [selectedPeriod, generateData]);
+  }, [selectedPeriod]);
 
   useEffect(() => {
     if (selectedPeriod === 'custom' && periodButtonRef.current) {
@@ -80,43 +127,50 @@ const Chart = ({
     setCustomEndDate(end);
 
     if (start && end) {
-      const allData = generateData('month');
-      const filteredData = allData.filter((item) => {
+      setSelectedRange({ start, end });
+      const allData = Object.values(dataMap).flat();
+      const filtered = allData.filter((item) => {
         const itemDate = new Date(item.date);
         return itemDate >= start && itemDate <= end;
       });
-      setChartData(filteredData);
+      setChartData(filtered);
     }
   };
 
   const getDateRange = () => {
     if (selectedPeriod === 'custom') {
-      if (chartData.length === 0) {
-        return `За ${periodLabels[selectedPeriod]}: данных нет`;
-      }
-    } else {
-      if (chartData.length === 0) return '';
-    }
+      const { start, end } = selectedRange;
+      if (!start || !end) return `За период: данных нет`;
 
-    if (selectedPeriod === 'day') {
-      const currentDate = new Date(chartData[0].date).toLocaleDateString('ru-RU', {
-        month: 'short',
+      return `За период, ${start.toLocaleDateString('ru-RU', {
         day: '2-digit',
-      });
-      return `За ${periodLabels[selectedPeriod]}, ${currentDate}`;
+        month: 'short',
+      })} — ${end.toLocaleDateString('ru-RU', {
+        day: '2-digit',
+        month: 'short',
+      })}`;
     }
 
-    const startDate = new Date(chartData[0].date).toLocaleDateString('ru-RU', {
-      month: 'short',
-      day: '2-digit',
-    });
+    if (!sortedChartData.length) {
+      return `За ${periodLabels[selectedPeriod]}: данных нет`;
+    }
 
-    const endDate = new Date(chartData[chartData.length - 1].date).toLocaleDateString('ru-RU', {
-      month: 'short',
-      day: '2-digit',
-    });
+    const start = new Date(sortedChartData[0].date);
+    const end = new Date(sortedChartData[sortedChartData.length - 1].date);
 
-    return `За ${periodLabels[selectedPeriod]}, ${startDate} - ${endDate}`;
+    const format = { day: '2-digit', month: 'short' };
+
+    if (selectedPeriod === 'allTime') {
+      return `За всё время, ${start.toLocaleDateString('ru-RU', {
+        ...format,
+        year: 'numeric',
+      })} — ${end.toLocaleDateString('ru-RU', {
+        ...format,
+        year: 'numeric',
+      })}`;
+    }
+
+    return `За ${periodLabels[selectedPeriod]}, ${start.toLocaleDateString('ru-RU', format)} — ${end.toLocaleDateString('ru-RU', format)}`;
   };
 
   const handlePeriodClick = (key) => {
@@ -133,7 +187,8 @@ const Chart = ({
       <div className="title-block">
         <div className="title-filter-wrapper">
           <div>
-            <h2 className="title">{title}
+            <h2 className="title">
+              {title}
               <HelpCircle
                 size={16}
                 style={{ marginLeft: 6, cursor: 'pointer' }}
@@ -159,14 +214,13 @@ const Chart = ({
       </div>
 
       <StatisticsCard
-        chartData={chartData}
+        chartData={sortedChartData}
         overallStats={overallStats}
         lineLabels={lineLabels}
         selectedPeriod={selectedPeriod}
         getDateRange={getDateRange}
       />
 
-      {/* === Календарь === */}
       {selectedPeriod === 'custom' && isCalendarVisible && (
         <div
           className="datepicker-wrapper"
