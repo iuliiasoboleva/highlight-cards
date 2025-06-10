@@ -16,7 +16,7 @@ export const statusConfig = {
     { label: 'Текущий статус кешбэка', valueKey: 'cashbackStatus' },
   ],
   subscription: [
-    { label: 'Текуще визиты', valueKey: 'score' },
+    { label: 'Текущие визиты', valueKey: 'score' },
     { label: 'Всего визитов', valueKey: 'visitsCount' },
     { label: 'Срок действия', valueKey: 'expirationDate' },
   ],

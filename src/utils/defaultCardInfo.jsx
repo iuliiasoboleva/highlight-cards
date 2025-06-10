@@ -1,5 +1,3 @@
-import { Star } from 'lucide-react';
-
 export const defaultCardTemplate = {
   id: 3333,
   status: 'stamp',
@@ -67,8 +65,8 @@ export const defaultCardTemplate = {
     stampBackground: null,
     background: null,
     stampsQuantity: 10,
-    activeStamp: Star,
-    inactiveStamp: Star,
+    activeStamp: 'Star',
+    inactiveStamp: 'Star',
     activeStampImage: null,
     inactiveStampImage: null,
     colors: {

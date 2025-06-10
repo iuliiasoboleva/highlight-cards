@@ -1,4 +1,6 @@
 import React from 'react';
+
+import { ArrowDown, ArrowUp, Minus } from 'lucide-react';
 import {
   CartesianGrid,
   Line,
@@ -10,9 +12,16 @@ import {
 } from 'recharts';
 
 import './styles.css';
-import { ArrowDown, ArrowUp, Minus } from 'lucide-react';
 
-const ClientsActivityChart = ({ chartData, lineLabels, selectedPeriod, change, value, label, colorClass }) => {
+const ClientsActivityChart = ({
+  chartData,
+  lineLabels,
+  selectedPeriod,
+  change,
+  value,
+  label,
+  dataKey,
+}) => {
   const axisStyle = {
     fontSize: '12px',
     lineHeight: 1.6666666667,
@@ -28,39 +37,34 @@ const ClientsActivityChart = ({ chartData, lineLabels, selectedPeriod, change, v
   return (
     <div className="statistics-card">
       <div className="client-stat-header">
-      <div className="client-stat-left">
-        <span className="client-stat-title">{label}</span>
-        <span className="client-stat-subtitle">{value}</span>
-      </div>
-      <div className="client-stat-right">
-        <span className={`client-stat-change-value ${changeType}`}>
-          {isPositive ? `+${change}` : change}
-        </span>
-        <div className={`client-stat-change-wrapper ${changeType}`}>
-          <div className={`client-stat-dropdown-icon-circle ${changeType}`}>
-            {isPositive ? (
-              <ArrowUp size={14} className={`client-stat-icon ${changeType}`} />
-            ) : isNegative ? (
-              <ArrowDown size={14} className={`client-stat-icon ${changeType}`} />
-            ) : (
-              <Minus size={14} className={`client-stat-icon ${changeType}`} />
-            )}
+        <div className="client-stat-left">
+          <span className="client-stat-title">{label}</span>
+          <span className="client-stat-subtitle">{value}</span>
+        </div>
+        <div className="client-stat-right">
+          <span className={`client-stat-change-value ${changeType}`}>
+            {isPositive ? `+${change}` : change}
+          </span>
+          <div className={`client-stat-change-wrapper ${changeType}`}>
+            <div className={`client-stat-dropdown-icon-circle ${changeType}`}>
+              {isPositive ? (
+                <ArrowUp size={14} className={`client-stat-icon ${changeType}`} />
+              ) : isNegative ? (
+                <ArrowDown size={14} className={`client-stat-icon ${changeType}`} />
+              ) : (
+                <Minus size={14} className={`client-stat-icon ${changeType}`} />
+              )}
+            </div>
           </div>
         </div>
       </div>
-      </div>
       <div className="statistics-content">
         <div className="statistics-left">
-
           <div className="chart-wrapper">
             <div className="chart-container">
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={chartData}>
-                  <CartesianGrid
-                    stroke="#e6e6e6"
-                    strokeDasharray="2 4"
-                    strokeWidth={1}
-                  />
+                  <CartesianGrid stroke="#e6e6e6" strokeDasharray="2 4" strokeWidth={1} />
                   <XAxis
                     dataKey="date"
                     tick={axisStyle}
@@ -70,9 +74,9 @@ const ClientsActivityChart = ({ chartData, lineLabels, selectedPeriod, change, v
                       selectedPeriod === 'day'
                         ? `${new Date(value).getHours()}:00`
                         : new Date(value).toLocaleDateString('ru-RU', {
-                          month: 'short',
-                          day: '2-digit',
-                        })
+                            month: 'short',
+                            day: '2-digit',
+                          })
                     }
                   />
                   <YAxis
@@ -87,23 +91,9 @@ const ClientsActivityChart = ({ chartData, lineLabels, selectedPeriod, change, v
 
                   <Line
                     type="monotone"
-                    dataKey="visits"
-                    stroke="#8884d8"
-                    name={lineLabels.visits}
-                    strokeWidth={2}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="repeatClients"
-                    stroke="#82ca9d"
-                    name={lineLabels.repeatClients}
-                    strokeWidth={2}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="newClients"
+                    dataKey={dataKey} // ✅ теперь работает правильно
                     stroke="#ffc658"
-                    name={lineLabels.newClients}
+                    name={lineLabels?.[dataKey] ?? label}
                     strokeWidth={2}
                   />
                 </LineChart>

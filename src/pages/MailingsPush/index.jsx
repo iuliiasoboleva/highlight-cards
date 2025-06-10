@@ -8,10 +8,10 @@ import PushPreview from '../../components/PushPreview';
 import { getMinDateTime } from '../../helpers/date';
 import { pluralVerb, pluralize } from '../../helpers/pluralize';
 import { setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
+import PushHistory from './PushHistory';
 import PushTargetTabs from './PushTargetTabs';
 
 import './styles.css';
-import PushHistory from './PushHistory';
 
 const MailingsPush = () => {
   const dispatch = useDispatch();
@@ -52,7 +52,7 @@ const MailingsPush = () => {
       }
     }
   }, [currentCard]);
-console.log('currentCard.pushNotification', currentCard.pushNotification)
+
   const handleCardSelect = (cardId) => {
     const selected = cards.find((c) => c.id === cardId);
     if (selected) {

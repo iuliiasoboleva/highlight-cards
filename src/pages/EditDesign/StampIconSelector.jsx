@@ -6,22 +6,24 @@ import CustomSelect from '../../components/CustomSelect';
 
 const StampIconSelector = ({ label, value, options, onChange }) => {
   const formattedOptions = options.map((opt) => ({
-    value: opt.value,
+    value: opt.value, // строка, например: 'Star'
     label: (
       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-        <opt.component size={16} />
+        {opt.component && <opt.component size={16} />}
         {opt.name}
       </div>
     ),
   }));
 
-  const selectedOption = formattedOptions.find((opt) => opt.value === value) || formattedOptions[0];
+  const normalizedValue = typeof value === 'string' ? value : '';
+  const selectedOption =
+    formattedOptions.find((opt) => opt.value === normalizedValue) || formattedOptions[0];
 
   useEffect(() => {
-    if (!value && formattedOptions.length > 0) {
+    if (!normalizedValue && formattedOptions.length > 0) {
       onChange(formattedOptions[0].value);
     }
-  }, [value, onChange, formattedOptions]);
+  }, [normalizedValue, onChange, formattedOptions]);
 
   return (
     <div className="stamp-icon-selector">
@@ -31,7 +33,7 @@ const StampIconSelector = ({ label, value, options, onChange }) => {
 
       <CustomSelect
         value={selectedOption.value}
-        onChange={(selectedValue) => onChange(selectedValue)}
+        onChange={onChange}
         options={formattedOptions}
         className="stamp-icon-select"
       />

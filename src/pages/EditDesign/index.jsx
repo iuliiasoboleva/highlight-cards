@@ -67,7 +67,7 @@ const EditDesign = () => {
         <div className="stamp-settings-block">
           <StampIconSelector
             label="Активный штамп"
-            value={design.activeStamp}
+            value={typeof design.activeStamp === 'string' ? design.activeStamp : 'Star'}
             options={stampIcons}
             onChange={(val) => {
               handleStampIconChange(`design.activeStamp`, val);
@@ -85,7 +85,7 @@ const EditDesign = () => {
         <div className="stamp-settings-block">
           <StampIconSelector
             label="Неактивный штамп"
-            value={design.inactiveStamp}
+            value={typeof design.inactiveStamp === 'string' ? design.inactiveStamp : 'Star'}
             options={stampIcons}
             onChange={(val) => {
               handleStampIconChange(`design.inactiveStamp`, val);

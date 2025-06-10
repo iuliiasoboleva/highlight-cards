@@ -1,20 +1,21 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { ru } from 'date-fns/locale';
-import { HelpCircle } from 'lucide-react';
 import { Tooltip } from 'react-tooltip';
 
-import StatisticsCard from '../StatisticsCard';
+import { ru } from 'date-fns/locale';
+import { HelpCircle } from 'lucide-react';
+
 import {
   mockStatsDataDay,
-  mockStatsDataWeek,
   mockStatsDataMonth,
+  mockStatsDataWeek,
   mockStatsDataYear,
 } from '../../mocks/chartData';
+import { calculateOverallStats } from '../../utils/calculateOverallStats';
+import StatisticsCard from '../StatisticsCard';
 
 import './styles.css';
-import { calculateOverallStats } from '../../utils/calculateOverallStats';
 
 const periods = {
   day: 'День',
@@ -68,20 +69,20 @@ const Chart = ({
   }, [chartData]);
 
   useEffect(() => {
-    const newData = selectedPeriod === 'custom'
-      ? chartData
-      : (dataMap[selectedPeriod] || []);
-  
-    const sortedData = [...newData].sort((a, b) => new Date(a.date) - new Date(b.date));
-    setChartData(sortedData);
-  
-    const mid = Math.floor(sortedData.length / 2);
-    const previousData = sortedData.slice(0, mid);
-  
-    const stats = calculateOverallStats(sortedData, previousData);
+    if (selectedPeriod !== 'custom') {
+      const newData = dataMap[selectedPeriod] || [];
+      const sortedData = [...newData].sort((a, b) => new Date(a.date) - new Date(b.date));
+      setChartData(sortedData);
+    }
+  }, [selectedPeriod]);
+
+  useEffect(() => {
+    const sorted = [...chartData].sort((a, b) => new Date(a.date) - new Date(b.date));
+    const mid = Math.floor(sorted.length / 2);
+    const previousData = sorted.slice(0, mid);
+    const stats = calculateOverallStats(sorted, previousData);
     setOverallStats(stats);
-  }, [selectedPeriod, chartData]);
-  
+  }, [chartData]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {

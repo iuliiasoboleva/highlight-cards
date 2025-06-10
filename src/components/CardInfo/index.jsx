@@ -8,7 +8,7 @@ import StampGrid from './StampGrid';
 
 import './styles.css';
 
-const CardInfo = ({ card, showInfo, setShowInfo }) => {
+const CardInfo = ({ card, setShowInfo }) => {
   const currentFields = useSelector((state) => state.cards.currentCard?.fieldsName) || [];
   const currentDesign = useSelector((state) => state.cards.currentCard?.design) || {};
 
@@ -17,14 +17,18 @@ const CardInfo = ({ card, showInfo, setShowInfo }) => {
   const design = card.design || currentDesign || {};
   const fields = card.fieldsName || currentFields || [];
 
-  const stampsQuantity = design?.stampsQuantity || 0;
-  const activeStamp = design?.activeStamp || Star;
-  const inactiveStamp = design?.inactiveStamp || Star;
+  const stampsQuantity = typeof design?.stampsQuantity === 'number' ? design.stampsQuantity : 10;
+
   const activeStampImage = design?.activeStampImage || null;
   const inactiveStampImage = design?.inactiveStampImage || null;
 
-  const ActiveIcon = getStampIconComponent(activeStamp);
-  const InactiveIcon = getStampIconComponent(inactiveStamp);
+  const normalizeIcon = (icon) => {
+    const component = typeof icon === 'string' ? getStampIconComponent(icon) : icon;
+    return component ?? Star;
+  };
+
+  const ActiveIcon = normalizeIcon(design?.activeStamp || 'Star');
+  const InactiveIcon = normalizeIcon(design?.inactiveStamp || 'Star');
 
   const restStamps =
     card.status === 'stamp' ? (design?.stampsQuantity || 10) - (card.stamps || 0) : 0;
@@ -82,10 +86,10 @@ const CardInfo = ({ card, showInfo, setShowInfo }) => {
       </div>
 
       <div className="card-info-main-img-wrapper">
-        {mergedCard.cardImg || design.stampBackground ? (
+        {design.stampBackground || mergedCard.cardImg ? (
           <img
             className="card-info-main-img"
-            src={mergedCard.cardImg || design.stampBackground}
+            src={design.stampBackground || mergedCard.cardImg}
             alt="Card background"
           />
         ) : (
@@ -104,7 +108,7 @@ const CardInfo = ({ card, showInfo, setShowInfo }) => {
           >
             <StampGrid
               totalStamps={mergedCard.stampsQuantity}
-              activeStamps={card.stamps || 0}
+              activeStamps={typeof card.stamps === 'number' ? card.stamps : 0}
               ActiveIcon={ActiveIcon}
               InactiveIcon={InactiveIcon}
               activeImage={activeStampImage}
@@ -118,7 +122,7 @@ const CardInfo = ({ card, showInfo, setShowInfo }) => {
         )}
       </div>
 
-      <div className="card-info-header">
+      <div className="card-info-footer">
         {fields
           .filter(
             ({ type }) =>

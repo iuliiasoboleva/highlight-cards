@@ -1,157 +1,155 @@
 .client-stat-dropdown-card {
-    display: flex;
-    flex-direction: column;
-    padding: 12px 16px;
-    font-family: 'Manrope', sans-serif;
-    border-right: 1px solid #e5e5e5;
-    justify-content: space-between;
-    position: relative;
-    height: 100%;
-  }
+  display: flex;
+  flex-direction: column;
+  padding: 12px 16px;
+  font-family: 'Manrope', sans-serif;
+  border-right: 1px solid #e5e5e5;
+  justify-content: space-between;
+  position: relative;
+  height: 100%;
+}
 
-  .client-stat-dropdown-card:last-child {
+.client-stat-dropdown-card:last-child {
+  border-right: none;
+  border-bottom: none;
+}
+
+/* Верхняя строка */
+.client-stat-dropdown-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.client-stat-dropdown-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+/* Заголовок (с кликабельным селектом) */
+.client-stat-dropdown-label {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  gap: 6px;
+  line-height: 1.6666666667;
+  color: #656565;
+  letter-spacing: -0.024rem;
+}
+
+.client-stat-dropdown-label.clickable {
+  cursor: pointer;
+}
+
+.client-stat-dropdown-label.clickable:hover {
+  text-decoration: underline;
+}
+
+/* Значение изменения */
+.client-stat-dropdown-change {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.client-stat-dropdown-change-value {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.024rem;
+  line-height: 1.25;
+  margin-right: 10px;
+}
+
+.client-stat-dropdown-change-value.positive {
+  color: #1cc568;
+}
+
+.client-stat-dropdown-change-value.neutral {
+  color: #f0a000;
+}
+
+.client-stat-dropdown-change-value.negative {
+  color: #f44336;
+}
+
+/* Кружок с иконкой */
+.client-stat-dropdown-icon-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.client-stat-dropdown-icon-circle.positive {
+  background-color: #e9fdf3;
+  color: #1cc568;
+}
+
+.client-stat-dropdown-icon-circle.neutral {
+  background-color: #fff7ea;
+  color: #f0a000;
+}
+
+.client-stat-dropdown-icon-circle.negative {
+  background-color: #fdecea;
+  color: #f44336;
+}
+
+/* Значение (большая цифра) */
+.client-stat-dropdown-value {
+  margin-top: 8px;
+  font-size: 40px;
+  color: #000;
+  line-height: 1.3;
+  font-weight: 300;
+}
+
+.client-stat-dropdown-popover {
+  position: absolute;
+  top: 40px;
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 100;
+}
+
+.client-stat-dropdown-options {
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e5e5;
+  overflow: hidden;
+  min-width: 160px;
+  z-index: 2;
+}
+
+.client-stat-dropdown-option {
+  padding: 10px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  line-height: 1.6666666667;
+  color: #656565;
+  letter-spacing: -0.024rem;
+  background: white;
+  transition: background 0.2s;
+}
+
+.client-stat-dropdown-option:hover {
+  background-color: #f5f5f5;
+}
+
+.client-stat-dropdown-option.active {
+  background-color: #f0f0f0;
+}
+
+@media (max-width: 999px) {
+  .client-stat-dropdown-card {
+    border-bottom: 1px solid #e5e5e5;
     border-right: none;
-    border-bottom: none;
   }
-  
-  /* Верхняя строка */
-  .client-stat-dropdown-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .client-stat-dropdown-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: auto;
-  }
-  
-  /* Заголовок (с кликабельным селектом) */
-  .client-stat-dropdown-label {
-    display: flex;
-    align-items: center;
-    font-size: 12px;
-    gap: 6px;
-    line-height: 1.6666666667;
-    color: #656565;
-    letter-spacing: -.024rem;
-  }
-  
-  .client-stat-dropdown-label.clickable {
-    cursor: pointer;
-  }
-  
-  .client-stat-dropdown-label.clickable:hover {
-    text-decoration: underline;
-  }
-  
-  /* Значение изменения */
-  .client-stat-dropdown-change {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .client-stat-dropdown-change-value {
-    font-size: 16px;
-    font-weight: 500;
-    letter-spacing: -.024rem;
-    line-height: 1.25;
-    margin-right: 10px;
-  }
-  
-  .client-stat-dropdown-change-value.positive {
-    color: #1cc568;
-  }
-  
-  .client-stat-dropdown-change-value.neutral {
-    color: #f0a000;
-  }
-  
-  .client-stat-dropdown-change-value.negative {
-    color: #f44336;
-  }
-  
-  /* Кружок с иконкой */
-  .client-stat-dropdown-icon-circle {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .client-stat-dropdown-icon-circle.positive {
-    background-color: #e9fdf3;
-    color: #1cc568;
-  }
-  
-  .client-stat-dropdown-icon-circle.neutral {
-    background-color: #fff7ea;
-    color: #f0a000;
-  }
-  
-  .client-stat-dropdown-icon-circle.negative {
-    background-color: #fdecea;
-    color: #f44336;
-  }
-  
-  /* Значение (большая цифра) */
-  .client-stat-dropdown-value {
-    margin-top: 8px;
-    font-size: 40px;
-    color: #000;
-    line-height: 1.3;
-    font-weight: 300;
-
-  }
-  
-  .client-stat-dropdown-popover {
-    position: absolute;
-    top: 40px;
-    left: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    z-index: 100;
-  }
-  
-  .client-stat-dropdown-options {
-    background: white;
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e5e5e5;
-    overflow: hidden;
-    min-width: 160px;
-    z-index: 2;
-  }
-  
-  .client-stat-dropdown-option {
-    padding: 10px 16px;
-    font-size: 14px;
-    cursor: pointer;
-    line-height: 1.6666666667;
-    color: #656565;
-    letter-spacing: -.024rem;    
-    background: white;
-    transition: background 0.2s;
-  }
-  
-  .client-stat-dropdown-option:hover {
-    background-color: #f5f5f5;
-  }
-  
-  .client-stat-dropdown-option.active {
-    background-color: #f0f0f0;
-  }
-  
-  @media (max-width: 999px) {
-    .client-stat-dropdown-card {
-        border-bottom: 1px solid #e5e5e5;
-        border-right: none;
-    }
-  }
-  
+}

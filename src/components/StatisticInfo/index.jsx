@@ -1,6 +1,8 @@
 import React from 'react';
-import './styles.css';
+
 import { ArrowDown, ArrowUp, Minus } from 'lucide-react';
+
+import './styles.css';
 
 const StatisticInfo = ({ colorClass, label, value = 0, change = 0 }) => {
   const isPositive = change > 0;

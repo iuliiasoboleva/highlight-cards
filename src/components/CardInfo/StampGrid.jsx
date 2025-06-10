@@ -9,7 +9,7 @@ const StampGrid = ({
   inactiveImage,
   stampColor,
   activeColor = '#000',
-  inactiveColor = '#000',
+  inactiveColor = 'gray',
   borderColor = '#000',
   containerWidth = 200,
   containerHeight = 88,

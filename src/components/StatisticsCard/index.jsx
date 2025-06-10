@@ -1,4 +1,5 @@
 import React from 'react';
+
 import {
   CartesianGrid,
   Line,
@@ -9,9 +10,10 @@ import {
   YAxis,
 } from 'recharts';
 
-import './styles.css';
-import StatisticInfo from '../StatisticInfo';
 import ClientStatDropdownCard from '../ClientStatDropdownCard';
+import StatisticInfo from '../StatisticInfo';
+
+import './styles.css';
 
 const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, getDateRange }) => {
   const axisStyle = {
@@ -78,11 +80,7 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
             <div className="chart-container">
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={chartData}>
-                  <CartesianGrid
-                    stroke="#e6e6e6"
-                    strokeDasharray="2 4"
-                    strokeWidth={1}
-                  />
+                  <CartesianGrid stroke="#e6e6e6" strokeDasharray="2 4" strokeWidth={1} />
                   <XAxis
                     dataKey="date"
                     tick={axisStyle}
@@ -92,9 +90,9 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
                       selectedPeriod === 'day'
                         ? `${new Date(value).getHours()}:00`
                         : new Date(value).toLocaleDateString('ru-RU', {
-                          month: 'short',
-                          day: '2-digit',
-                        })
+                            month: 'short',
+                            day: '2-digit',
+                          })
                     }
                   />
                   <YAxis

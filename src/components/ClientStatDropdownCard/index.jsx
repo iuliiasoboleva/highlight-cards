@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+
+import { ArrowDown, ArrowUp, ChevronDown, Minus } from 'lucide-react';
+
 import './styles.css';
-import { ArrowUp, ArrowDown, Minus, ChevronDown } from 'lucide-react';
 
 const OPTIONS = [
   { key: 'new', label: 'Новые клиенты' },
@@ -50,7 +52,6 @@ const ClientStatDropdownCard = ({ statsByType = {}, initialKey = 'new', selectab
           <span className={`client-stat-dropdown-change-value ${changeType}`}>
             {change > 0 ? `+${change}` : change}
           </span>
-
         </div>
       </div>
 
@@ -81,9 +82,7 @@ const ClientStatDropdownCard = ({ statsByType = {}, initialKey = 'new', selectab
             <Minus size={14} className={`client-stat-icon ${changeType}`} />
           )}
         </div>
-
       </div>
-
     </div>
   );
 };
