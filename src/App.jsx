@@ -25,7 +25,9 @@ import { mockUserProfile } from './mocks/mockUserProfile';
 import AuthRedirectGuard from './pages/AuthRedirectGuard';
 import CardDetails from './pages/CardDetails';
 import Cards from './pages/Cards';
+import ClientDetails from './pages/ClientDetails';
 import Clients from './pages/Clients';
+import ClientsLayout from './pages/ClientsLayout';
 import CustomerPage from './pages/CustomerPage';
 import DefaultCardInfo from './pages/DefaultCardInfo';
 import EditDesign from './pages/EditDesign';
@@ -66,7 +68,9 @@ const MainLayout = () => {
     !location.pathname.startsWith('/cards/template');
   const matchMailings = matchPath('/mailings/*', location.pathname);
   const matchSettings = matchPath('/settings/*', location.pathname);
-  const matchClients = matchPath('/clients/*', location.pathname);
+  const matchClientsRoot = matchPath({ path: '/clients', end: true }, location.pathname);
+  const matchClientsReviews = matchPath('/clients/reviews', location.pathname);
+  const matchClientDetails = matchPath('/clients/:id', location.pathname);
 
   const currentCard = useSelector((state) => state.cards.currentCard);
 
@@ -93,7 +97,9 @@ const MainLayout = () => {
       matchCardDetails ||
       matchMailings ||
       matchSettings ||
-      matchClients;
+      matchClientsRoot ||
+      matchClientsReviews ||
+      matchClientDetails;
 
     root.style.setProperty('--bar-height', showSubMenu ? '73px' : '0px');
   }, [location.pathname]);
@@ -106,7 +112,8 @@ const MainLayout = () => {
     if (matchCreate || matchEdit) return Pencil;
     if (matchMailings) return Mail;
     if (matchSettings) return SettingsIcon;
-    if (matchCardDetails || matchClients) return Users;
+    if (matchCardDetails || matchClientsRoot || matchClientsReviews || matchClientDetails)
+      return Users;
     return null;
   };
 
@@ -161,9 +168,18 @@ const MainLayout = () => {
       ];
     }
 
-    if (matchClients) {
+    if (matchClientsRoot || matchClientsReviews) {
       return [
         { to: `/clients`, label: 'Клиенты' },
+        { to: `/clients/reviews`, label: 'Отзывы' },
+      ];
+    }
+
+    if (matchClientDetails) {
+      return [
+        { to: location.pathname, label: 'Профиль' },
+        { to: `/mailings/push`, label: 'Отправить push' },
+        { to: `/settings/personal`, label: 'Персональная информация' },
         { to: `/clients/reviews`, label: 'Отзывы' },
       ];
     }
@@ -179,7 +195,9 @@ const MainLayout = () => {
         matchCardDetails ||
         matchMailings ||
         matchSettings ||
-        matchClients) && (
+        matchClientsRoot ||
+        matchClientDetails ||
+        matchClientsReviews) && (
         <SubMenu
           menuItems={getMenuItems()}
           icon={getSubMenuIcon()}
@@ -254,8 +272,11 @@ const App = () => {
             element={user.role === 'employee' ? <Workplace /> : <Managers />}
           />
           <Route path="/locations" element={<Locations />} />
-          <Route path="/clients" element={<Clients />} />
-          <Route path="/clients/reviews" element={<NotFound />} />
+          <Route path="/clients" element={<ClientsLayout />}>
+            <Route index element={<Clients />} />
+            <Route path=":id" element={<ClientDetails />} />
+            <Route path="reviews" element={<NotFound />} />
+          </Route>
           <Route path="*" element={<NotFound />} />
         </Route>
         <Route path="/customer/card/:cardNumber" element={<CustomerPage />} />

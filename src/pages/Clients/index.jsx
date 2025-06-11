@@ -133,7 +133,11 @@ const Clients = () => {
       </div>
 
       <div className="table-wrapper">
-        <CustomTable columns={columns} rows={clients} />
+        <CustomTable
+          columns={columns}
+          rows={clients}
+          onRowClick={(row) => navigate(`/clients/${row.id}`)}
+        />
       </div>
 
       {showModal && (

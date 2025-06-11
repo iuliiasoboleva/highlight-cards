@@ -2,7 +2,7 @@ import React from 'react';
 
 import './styles.css';
 
-const CustomTable = ({ columns, rows }) => {
+const CustomTable = ({ columns, rows, onRowClick }) => {
   return (
     <div className="table-container">
       <table className="custom-table">
@@ -17,7 +17,11 @@ const CustomTable = ({ columns, rows }) => {
         </thead>
         <tbody>
           {rows.map((row, rowIndex) => (
-            <tr key={rowIndex}>
+            <tr
+              key={rowIndex}
+              className={onRowClick ? 'clickable-row' : ''}
+              onClick={onRowClick ? () => onRowClick(row) : undefined}
+            >
               {columns.map((column, colIndex) => (
                 <td key={colIndex} className={column.cellClassName || ''}>
                   {Array.isArray(row[column.key])

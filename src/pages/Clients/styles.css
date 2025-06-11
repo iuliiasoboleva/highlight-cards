@@ -283,9 +283,3 @@
 .copy-link-button {
   text-decoration: dashed;
 }
-
-@media (max-width: 768px) {
-  .clients-container {
-    padding: 20px 20px 0px 20px;
-  }
-}
