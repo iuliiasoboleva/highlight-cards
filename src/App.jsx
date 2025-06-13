@@ -227,63 +227,63 @@ const App = () => {
   return (
     <Router>
       <ScrollToTop />
-      {/* <AuthRedirectGuard> */}
-      <Routes>
-        <Route
-          path="/auth"
-          element={
-            <AuthLayout>
-              <AuthForm />
-            </AuthLayout>
-          }
-        />
-        <Route path="/login" element={<LoginVerify />} />
-        <Route element={<MainLayout />}>
-          <Route index element={<Home />} />
-          <Route path="/cards" element={<Cards />} />
-          <Route path="/scan" element={<ScanPage />} />
-
-          <Route path="/cards/create" element={<EditType />} />
-          <Route path="/cards/template" element={<Cards />} />
-          <Route path="/mailings" element={<Mailings />}>
-            <Route path="info" element={<MailingsInfo />} />
-            <Route path="push" element={<MailingsPush />} />
-            <Route path="auto-push" element={<MailingsAutoPush />} />
-            <Route path="user-push" element={<MailingsUserPush />} />
-            <Route path="settings" element={<MailingsSettings />} />
-            <Route path="rfm-segment" element={<SettingsRFMSegment />} />
-          </Route>
-          <Route path="/cards/:id/edit" element={<CardEditGuard />}>
-            <Route path="type" element={<EditType />} />
-            <Route path="settings" element={<EditSettings />} />
-            <Route path="design" element={<EditDesign />} />
-            <Route path="info" element={<EditInfo />} />
-          </Route>
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/settings" element={<SettingsLayout />}>
-            <Route path="personal" element={<SettingsPersonal />} />
-          </Route>
-          <Route path="/cards/:id" element={<CardDetails />}>
-            <Route path="info" element={<DefaultCardInfo />} />
-            <Route path="clients" element={<Clients />} />
-            <Route path="push" element={<MailingsPush />} />
-            <Route path="stats" element={<Home />} />
-          </Route>
+      <AuthRedirectGuard>
+        <Routes>
           <Route
-            path="/managers"
-            element={user.role === 'employee' ? <Workplace /> : <Managers />}
+            path="/auth"
+            element={
+              <AuthLayout>
+                <AuthForm />
+              </AuthLayout>
+            }
           />
-          <Route path="/locations" element={<Locations />} />
-          <Route path="/clients" element={<ClientsLayout />}>
-            <Route index element={<Clients />} />
-            <Route path=":id" element={<ClientDetails />} />
-            <Route path="reviews" element={<NotFound />} />
+          <Route path="/login" element={<LoginVerify />} />
+          <Route element={<MainLayout />}>
+            <Route index element={<Home />} />
+            <Route path="/cards" element={<Cards />} />
+            <Route path="/scan" element={<ScanPage />} />
+
+            <Route path="/cards/create" element={<EditType />} />
+            <Route path="/cards/template" element={<Cards />} />
+            <Route path="/mailings" element={<Mailings />}>
+              <Route path="info" element={<MailingsInfo />} />
+              <Route path="push" element={<MailingsPush />} />
+              <Route path="auto-push" element={<MailingsAutoPush />} />
+              <Route path="user-push" element={<MailingsUserPush />} />
+              <Route path="settings" element={<MailingsSettings />} />
+              <Route path="rfm-segment" element={<SettingsRFMSegment />} />
+            </Route>
+            <Route path="/cards/:id/edit" element={<CardEditGuard />}>
+              <Route path="type" element={<EditType />} />
+              <Route path="settings" element={<EditSettings />} />
+              <Route path="design" element={<EditDesign />} />
+              <Route path="info" element={<EditInfo />} />
+            </Route>
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/settings" element={<SettingsLayout />}>
+              <Route path="personal" element={<SettingsPersonal />} />
+            </Route>
+            <Route path="/cards/:id" element={<CardDetails />}>
+              <Route path="info" element={<DefaultCardInfo />} />
+              <Route path="clients" element={<Clients />} />
+              <Route path="push" element={<MailingsPush />} />
+              <Route path="stats" element={<Home />} />
+            </Route>
+            <Route
+              path="/managers"
+              element={user.role === 'employee' ? <Workplace /> : <Managers />}
+            />
+            <Route path="/locations" element={<Locations />} />
+            <Route path="/clients" element={<ClientsLayout />}>
+              <Route index element={<Clients />} />
+              <Route path=":id" element={<ClientDetails />} />
+              <Route path="reviews" element={<NotFound />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
           </Route>
-          <Route path="*" element={<NotFound />} />
-        </Route>
-        <Route path="/customer/card/:cardNumber" element={<CustomerPage />} />
-      </Routes>
-      {/* </AuthRedirectGuard> */}
+          <Route path="/customer/card/:cardNumber" element={<CustomerPage />} />
+        </Routes>
+      </AuthRedirectGuard>
     </Router>
   );
 };

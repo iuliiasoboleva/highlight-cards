@@ -18,7 +18,7 @@ const AuthRedirectGuard = ({ children }) => {
     }
   }, [dispatch, token, user.email]);
 
-  if (!token && location.pathname !== '/auth') {
+  if (!token && location.pathname !== '/auth' && location.pathname !== '/login') {
     return <Navigate to="/auth" replace />;
   }
 

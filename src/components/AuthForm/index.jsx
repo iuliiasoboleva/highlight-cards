@@ -121,8 +121,32 @@ const AuthForm = () => {
     e.preventDefault();
 
     if (mode === 'login') {
-      await dispatch(requestMagicLink({ email: formData.email }));
-      setStep('sent');
+      if (step === 'pinLogin') {
+        try {
+          await dispatch(verifyPin({ email: formData.email, pin: formData.pin })).unwrap();
+          navigate('/');
+        } catch (err) {
+          setApiError(extractError(err));
+        }
+        return;
+      }
+
+      try {
+        const resCheck = await axiosInstance.get('/auth/check-email', {
+          params: { email: formData.email },
+        });
+
+        if (resCheck.data.has_pin) {
+          goToPinLogin();
+          return;
+        }
+
+        // нет пина — шлём magic link
+        await dispatch(requestMagicLink({ email: formData.email })).unwrap();
+        setStep('sent');
+      } catch (err) {
+        setApiError(extractError(err));
+      }
       return;
     }
 
@@ -175,6 +199,20 @@ const AuthForm = () => {
 
     if (digits && index < 3) {
       pinRefs[index + 1].current?.focus();
+    }
+  };
+
+  const goToPinLogin = () => {
+    setStep('pinLogin');
+    setApiError('');
+  };
+
+  const handleSendLinkAgain = async () => {
+    try {
+      await dispatch(requestMagicLink({ email: formData.email })).unwrap();
+      setStep('sent');
+    } catch (err) {
+      setApiError(extractError(err));
     }
   };
 
@@ -248,10 +286,10 @@ const AuthForm = () => {
               />
               <button
                 type="submit"
-                className="custom-button"
+                className={`custom-button ${status==='loading' ? 'loading':''}`}
                 disabled={status === 'loading' || !isEmailValid}
               >
-                Войти
+                {status==='loading' ? '' : 'Войти'}
               </button>
             </>
           )}
@@ -349,18 +387,18 @@ const AuthForm = () => {
 
               <button
                 type="submit"
-                className="custom-button"
+                className={`custom-button ${status==='loading' ? 'loading':''}`}
                 disabled={status === 'loading' || !isFormValid}
               >
-                Зарегистрироваться
+                {status==='loading' ? '' : 'Зарегистрироваться'}
               </button>
             </>
           )}
 
-          {step === 'pin' && (
+          {(step === 'pin' || step === 'pinLogin') && (
             <>
               <p className="pin-title" style={{textAlign:'center', color:'#888', marginBottom:'20px'}}>
-                {mode === 'register' ? 'Для быстрого входа придумайте PIN' : 'Введите код для быстрого входа'}
+                {step==='pinLogin' ? 'Введите код для быстрого входа' : 'Для быстрого входа придумайте PIN'}
               </p>
               <div className="pin-input-wrapper" style={{display:'flex', gap:'12px', justifyContent:'center', marginBottom:'20px'}}>
                 {[0,1,2,3].map((i)=>(
@@ -375,8 +413,13 @@ const AuthForm = () => {
                   />))}
               </div>
               <button type="submit" disabled={status === 'loading' || formData.pin.length!==4} className="custom-button">
-                {mode==='register' ? 'Сохранить PIN' : 'Войти'}
+                {step==='pinLogin' ? 'Войти' : 'Сохранить PIN'}
               </button>
+              {step==='pinLogin' && (
+                <p style={{marginTop:'16px', textAlign:'center'}}>
+                  <span onClick={handleSendLinkAgain} style={{color:'#0b5cff', cursor:'pointer'}}>Не помню PIN — отправить ссылку</span>
+                </p>
+              )}
             </>
           )}
           {apiError && (

@@ -103,6 +103,8 @@
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.2s;
+  position: relative;
+  overflow: hidden;
 }
 
 .custom-button:hover {
@@ -112,6 +114,26 @@
 .custom-button:active {
   background-color: #000;
   opacity: 0.8;
+}
+
+.custom-button.loading {
+  pointer-events: none;
+  color: #fff;
+}
+
+.custom-button.loading::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg,#b71c32 0%,#000 100%);
+  animation: fillBar 10s linear forwards;
+}
+
+@keyframes fillBar {
+  to { width: 100%; }
 }
 
 .forgot-password,

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -6,12 +6,16 @@ import axiosInstance from '../../axiosInstance';
 import { setUser } from '../../store/userSlice';
 import { setCookie } from '../../cookieUtils';
 
+import './styles.css';
+
 const LoginVerify = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const called = useRef(false);
 
   useEffect(() => {
+    if (called.current) return;
     const token = searchParams.get('token');
 
     if (!token) {
@@ -36,9 +40,20 @@ const LoginVerify = () => {
     };
 
     verify();
+    called.current = true;
   }, [dispatch, navigate, searchParams]);
 
-  return <p style={{ textAlign: 'center', marginTop: '40px' }}>Проверяем ссылку...</p>;
+  return (
+    <div className="verify-wrapper">
+      <img
+        src="https://optim.tildacdn.com/tild6639-6664-4537-b134-353639383763/-/resize/86x/-/format/webp/svg.png.webp"
+        alt="Loyal Club"
+        className="verify-logo"
+      />
+      <div className="spinner" />
+      <p style={{color:'#555'}}>Проверяем ссылку...</p>
+    </div>
+  );
 };
 
 export default LoginVerify; 
