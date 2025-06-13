@@ -6,13 +6,14 @@ import { eraseCookie, getCookie, setCookie } from '../cookieUtils';
 export const requestMagicLink = createAsyncThunk(
   'auth/requestMagicLink',
   async ({ email, inn, role, firstName, lastName }) => {
-    await axiosInstance.post('auth/magic-link-request', {
-      email,
-      inn,
-      role,
-      firstName,
-      lastName,
-    });
+    const payload = { email };
+
+    if (inn) payload.inn = inn;
+    if (role) payload.role = role;
+    if (firstName) payload.firstName = firstName;
+    if (lastName) payload.lastName = lastName;
+
+    await axiosInstance.post('auth/magic-link-request', payload);
     return { email };
   },
 );

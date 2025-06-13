@@ -53,6 +53,7 @@ import Workplace from './pages/Workplace';
 import { initializeCards, updateCurrentCardField } from './store/cardsSlice';
 import { setClients } from './store/clientsSlice';
 import { setUser } from './store/userSlice';
+import LoginVerify from './pages/LoginVerify';
 
 const MainLayout = () => {
   const location = useLocation();
@@ -236,6 +237,7 @@ const App = () => {
             </AuthLayout>
           }
         />
+        <Route path="/login" element={<LoginVerify />} />
         <Route element={<MainLayout />}>
           <Route index element={<Home />} />
           <Route path="/cards" element={<Cards />} />

@@ -12,7 +12,8 @@ const AuthForm = () => {
   const dispatch = useDispatch();
   const { status } = useSelector((state) => state.auth);
 
-  const [step, setStep] = useState('request');
+  const [mode, setMode] = useState('register'); // 'register' | 'login'
+  const [step, setStep] = useState('request'); // сохраняем для регистрации
   const [userType, setUserType] = useState('company');
   const [touchedFields, setTouchedFields] = useState({ inn: false, email: false });
 
@@ -91,6 +92,14 @@ const AuthForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (mode === 'login') {
+      await dispatch(requestMagicLink({ email: formData.email }));
+      setStep('sent');
+      return;
+    }
+
+    // mode === 'register'
     if (step === 'request') {
       const role = userType === 'company' ? 'admin' : 'employee';
       await dispatch(
@@ -126,29 +135,55 @@ const AuthForm = () => {
 
   return (
     <>
-      <div className="tabs">
-        <span
-          className={userType === 'company' ? 'active' : ''}
-          onClick={() => {
-            setUserType('company');
-            resetForm();
-          }}
-        >
-          Компания
-        </span>
-        <span
-          className={userType === 'employee' ? 'active' : ''}
-          onClick={() => {
-            setUserType('employee');
-            resetForm();
-          }}
-        >
-          Сотрудник
-        </span>
-      </div>
+      {mode === 'register' ? (
+        <div className="tabs">
+          <span
+            className={userType === 'company' ? 'active' : ''}
+            onClick={() => {
+              setUserType('company');
+              resetForm();
+            }}
+          >
+            Компания
+          </span>
+          <span
+            className={userType === 'employee' ? 'active' : ''}
+            onClick={() => {
+              setUserType('employee');
+              resetForm();
+            }}
+          >
+            Сотрудник
+          </span>
+        </div>
+      ) : null}
       <div className="auth-form-wrapper">
         <form onSubmit={handleSubmit} className="auth-form">
-          {step === 'request' && (
+          {mode === 'login' && step === 'request' && (
+            <>
+              <input
+                name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleChange}
+                className="custom-input"
+                required
+              />
+              <button
+                type="submit"
+                className="custom-button"
+                disabled={status === 'loading' || !isEmailValid}
+              >
+                Получить ссылку
+              </button>
+            </>
+          )}
+
+          {mode === 'login' && step === 'sent' && (
+            <p>Ссылка отправлена на {formData.email}. Проверьте почту.</p>
+          )}
+
+          {mode === 'register' && step === 'request' && (
             <>
               <input
                 name="email"
@@ -236,7 +271,7 @@ const AuthForm = () => {
             </>
           )}
 
-          {step === 'pin' && (
+          {mode === 'register' && step === 'pin' && (
             <>
               <input
                 name="pin"
@@ -252,6 +287,17 @@ const AuthForm = () => {
             </>
           )}
         </form>
+        <p
+          className="toggle-auth"
+          onClick={() => {
+            setMode(mode === 'register' ? 'login' : 'register');
+            resetForm();
+            setStep('request');
+          }}
+          style={{ cursor: 'pointer', marginTop: '20px', textAlign: 'center' }}
+        >
+          {mode === 'register' ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрируйтесь'}
+        </p>
       </div>
     </>
   );
