@@ -59,12 +59,12 @@ const AuthForm = () => {
         if (trimmedValue.length === 10 || trimmedValue.length === 12) {
           try {
             setLoadingCompany(true);
-            const res = await axiosInstance.get(
-              `http://147.45.229.94:8000/company?inn=${trimmedValue}`,
-            );
+            const res = await axiosInstance.get('/company', { params: { inn: trimmedValue } });
+            console.log('Company data', res.data);
             setFormData((prev) => ({ ...prev, companyName: res.data.name }));
             setCompanyError('');
           } catch (err) {
+            console.error('Ошибка получения компании', err?.response?.status);
             setFormData((prev) => ({ ...prev, companyName: '' }));
             setCompanyError('Компания не найдена');
           } finally {
@@ -74,7 +74,7 @@ const AuthForm = () => {
           setFormData((prev) => ({ ...prev, companyName: '' }));
           setCompanyError('');
         }
-      }, 700);
+      }, 400);
 
       return;
     }
@@ -135,7 +135,7 @@ const AuthForm = () => {
 
   return (
     <>
-      {mode === 'register' ? (
+      {/* {mode === 'register' ? (
         <div className="tabs">
           <span
             className={userType === 'company' ? 'active' : ''}
@@ -156,7 +156,12 @@ const AuthForm = () => {
             Сотрудник
           </span>
         </div>
-      ) : null}
+      ) : null} */}
+      <div className="tabs">
+        <span className="active">
+          {mode === 'register' ? 'Регистрация' : 'Вход'}
+        </span>
+      </div>
       <div className="auth-form-wrapper">
         <form onSubmit={handleSubmit} className="auth-form">
           {mode === 'login' && step === 'request' && (
@@ -174,7 +179,7 @@ const AuthForm = () => {
                 className="custom-button"
                 disabled={status === 'loading' || !isEmailValid}
               >
-                Получить ссылку
+                Войти
               </button>
             </>
           )}
@@ -246,6 +251,7 @@ const AuthForm = () => {
                       className="custom-input"
                       value={formData.companyName}
                       readOnly
+                      disabled
                     />
                   )}
                 </>
@@ -266,7 +272,7 @@ const AuthForm = () => {
                 className="custom-button"
                 disabled={status === 'loading' || !isFormValid}
               >
-                Получить ссылку
+                Зарегистрироваться
               </button>
             </>
           )}
