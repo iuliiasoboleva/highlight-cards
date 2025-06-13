@@ -5,13 +5,14 @@ import { eraseCookie, getCookie, setCookie } from '../cookieUtils';
 
 export const requestMagicLink = createAsyncThunk(
   'auth/requestMagicLink',
-  async ({ email, inn, role, firstName, lastName }) => {
+  async ({ email, inn, role, firstName, lastName, phone }) => {
     const payload = { email };
 
     if (inn) payload.inn = inn;
     if (role) payload.role = role;
     if (firstName) payload.firstName = firstName;
     if (lastName) payload.lastName = lastName;
+    if (phone) payload.phone = phone;
 
     await axiosInstance.post('auth/magic-link-request', payload);
     return { email };

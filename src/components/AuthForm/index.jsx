@@ -21,6 +21,7 @@ const AuthForm = () => {
     email: '',
     inn: '',
     pin: '',
+    phone: '',
     companyName: '',
     firstName: '',
     lastName: '',
@@ -35,6 +36,7 @@ const AuthForm = () => {
       email: '',
       inn: '',
       pin: '',
+      phone: '',
       companyName: '',
       firstName: '',
       lastName: '',
@@ -79,6 +81,24 @@ const AuthForm = () => {
       return;
     }
 
+    if (name === 'phone') {
+      let digits = value.replace(/\D/g, '').slice(0, 11);
+
+      if (digits) {
+        if (digits[0] === '8') digits = '7' + digits.slice(1);
+        if (digits[0] !== '7') digits = '7' + digits;
+      }
+
+      const format = (d) => {
+        if (!d) return '';
+        if (d.length === 1) return '+' + d;
+        return `+${d[0]}(${d.slice(1, 4)}${d.length >=4?')':''}${d.slice(4,7)}${d.length >=7?'-':''}${d.slice(7,9)}${d.length>=9?'-':''}${d.slice(9,11)}`;
+      };
+
+      setFormData((prev) => ({ ...prev, phone: format(digits) }));
+      return;
+    }
+
     if (type === 'checkbox') {
       setFormData((prev) => ({ ...prev, [name]: checked }));
     } else {
@@ -109,6 +129,7 @@ const AuthForm = () => {
           role,
           firstName: formData.firstName,
           lastName: formData.lastName,
+          phone: formData.phone.replace(/\D/g, ''),
         }),
       );
       setStep('pin');
@@ -123,6 +144,7 @@ const AuthForm = () => {
   const isCompanyLoaded = userType === 'employee' || !!formData.companyName;
   const isNameValid = formData.firstName.trim().length > 0;
   const isSurnameValid = formData.lastName.trim().length > 0;
+  const isPhoneValid = formData.phone.replace(/\D/g, '').length === 11;
   const isTermsAccepted = formData.acceptTerms === true;
 
   const isFormValid =
@@ -131,6 +153,7 @@ const AuthForm = () => {
     isCompanyLoaded &&
     isNameValid &&
     isSurnameValid &&
+    isPhoneValid &&
     isTermsAccepted;
 
   return (
@@ -214,6 +237,14 @@ const AuthForm = () => {
                 name="lastName"
                 placeholder="Фамилия"
                 value={formData.lastName}
+                onChange={handleChange}
+                className="custom-input"
+                required
+              />
+              <input
+                name="phone"
+                placeholder="Телефон"
+                value={formData.phone}
                 onChange={handleChange}
                 className="custom-input"
                 required
