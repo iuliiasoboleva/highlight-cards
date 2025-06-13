@@ -5,7 +5,10 @@ import { eraseCookie, getCookie, setCookie } from '../cookieUtils';
 
 export const requestMagicLink = createAsyncThunk(
   'auth/requestMagicLink',
-  async ({ email, inn, role, firstName, lastName, phone }) => {
+  async (
+    { email, inn, role, firstName, lastName, phone, sendEmail = true },
+    { rejectWithValue },
+  ) => {
     const payload = { email };
 
     if (inn) payload.inn = inn;
@@ -14,8 +17,15 @@ export const requestMagicLink = createAsyncThunk(
     if (lastName) payload.lastName = lastName;
     if (phone) payload.phone = phone;
 
-    await axiosInstance.post('auth/magic-link-request', payload);
-    return { email };
+    payload.sendEmail = sendEmail;
+
+    try {
+      const res = await axiosInstance.post('auth/magic-link-request', payload);
+      return { email, token: res.data.token };
+    } catch (err) {
+      const msg = err?.response?.data?.detail || err?.response?.data || err.message;
+      return rejectWithValue(msg);
+    }
   },
 );
 
@@ -23,6 +33,11 @@ export const verifyPin = createAsyncThunk('auth/verifyPin', async ({ email, pin 
   const res = await axiosInstance.post('auth/verify-pin', { email, pin });
   setCookie('authToken', res.data.token, 14);
   return res.data.token;
+});
+
+export const setPinThunk = createAsyncThunk('auth/setPin', async ({ token, pin }) => {
+  const res = await axiosInstance.post('auth/set-pin', { token, pin });
+  return res.data;
 });
 
 export const authSlice = createSlice({
@@ -55,6 +70,9 @@ export const authSlice = createSlice({
       })
       .addCase(verifyPin.fulfilled, (state, action) => {
         state.token = action.payload;
+      })
+      .addCase(setPinThunk.fulfilled, (state) => {
+        state.status = 'success';
       });
   },
 });

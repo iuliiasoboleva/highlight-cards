@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import axiosInstance from '../../axiosInstance';
-import { requestMagicLink, verifyPin } from '../../store/authSlice';
+import { requestMagicLink, verifyPin, setPinThunk } from '../../store/authSlice';
 
 import './styles.css';
 
@@ -11,6 +12,7 @@ let debounceTimeout = null;
 const AuthForm = () => {
   const dispatch = useDispatch();
   const { status } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
 
   const [mode, setMode] = useState('register'); // 'register' | 'login'
   const [step, setStep] = useState('request'); // сохраняем для регистрации
@@ -30,6 +32,11 @@ const AuthForm = () => {
 
   const [companyError, setCompanyError] = useState('');
   const [loadingCompany, setLoadingCompany] = useState(false);
+  const [magicToken, setMagicToken] = useState('');
+  const [apiError, setApiError] = useState('');
+
+  // refs для ячеек PIN
+  const pinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
 
   const resetForm = () => {
     setFormData({
@@ -122,19 +129,52 @@ const AuthForm = () => {
     // mode === 'register'
     if (step === 'request') {
       const role = userType === 'company' ? 'admin' : 'employee';
-      await dispatch(
-        requestMagicLink({
-          email: formData.email,
-          inn: formData.inn,
-          role,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          phone: formData.phone.replace(/\D/g, ''),
-        }),
-      );
-      setStep('pin');
+      try {
+        const res = await dispatch(
+          requestMagicLink({
+            email: formData.email,
+            inn: formData.inn,
+            role,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            phone: formData.phone.replace(/\D/g, ''),
+            sendEmail: false,
+          }),
+        ).unwrap();
+        if (res.token) setMagicToken(res.token);
+        setStep('pin');
+        setApiError('');
+      } catch (err) {
+        setApiError(extractError(err));
+      }
     } else {
-      await dispatch(verifyPin({ email: formData.email, pin: formData.pin }));
+      if (mode === 'register') {
+        try {
+          await dispatch(setPinThunk({ token: magicToken, pin: formData.pin })).unwrap();
+          navigate('/');
+        } catch (err) {
+          setApiError(extractError(err));
+        }
+      } else {
+        try {
+          await dispatch(verifyPin({ email: formData.email, pin: formData.pin })).unwrap();
+        } catch (err) {
+          setApiError(extractError(err));
+        }
+      }
+    }
+  };
+
+  const handlePinChange = (index, value) => {
+    if (!/\d?/.test(value)) return;
+    const digits = value.slice(-1);
+    const newPinArr = formData.pin.padEnd(4, ' ').split('');
+    newPinArr[index] = digits;
+    const newPin = newPinArr.join('').trim();
+    setFormData((prev) => ({ ...prev, pin: newPin }));
+
+    if (digits && index < 3) {
+      pinRefs[index + 1].current?.focus();
     }
   };
 
@@ -155,6 +195,15 @@ const AuthForm = () => {
     isSurnameValid &&
     isPhoneValid &&
     isTermsAccepted;
+
+  const extractError = (err) => {
+    if (!err) return 'Ошибка';
+    if (typeof err === 'string') return err;
+    if (err.response?.data?.detail) return err.response.data.detail;
+    if (typeof err.response?.data === 'string') return err.response.data;
+    if (Array.isArray(err.response?.data?.detail)) return err.response.data.detail[0]?.msg;
+    return err.detail || err.message || 'Ошибка';
+  };
 
   return (
     <>
@@ -308,33 +357,45 @@ const AuthForm = () => {
             </>
           )}
 
-          {mode === 'register' && step === 'pin' && (
+          {step === 'pin' && (
             <>
-              <input
-                name="pin"
-                placeholder="PIN-код"
-                value={formData.pin}
-                onChange={handleChange}
-                className="custom-input"
-                required
-              />
-              <button type="submit" disabled={status === 'loading'} className="custom-button">
-                Войти
+              <p className="pin-title" style={{textAlign:'center', color:'#888', marginBottom:'20px'}}>
+                {mode === 'register' ? 'Для быстрого входа придумайте PIN' : 'Введите код для быстрого входа'}
+              </p>
+              <div className="pin-input-wrapper" style={{display:'flex', gap:'12px', justifyContent:'center', marginBottom:'20px'}}>
+                {[0,1,2,3].map((i)=>(
+                  <input key={i}
+                    ref={pinRefs[i]}
+                    type="tel"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={formData.pin[i] || ''}
+                    onChange={(e)=>handlePinChange(i,e.target.value)}
+                    style={{width:'60px',height:'60px',textAlign:'center',fontSize:'32px',border:'1px solid #d1d5db',background:'#f3f4f6',borderRadius:'8px'}}
+                  />))}
+              </div>
+              <button type="submit" disabled={status === 'loading' || formData.pin.length!==4} className="custom-button">
+                {mode==='register' ? 'Сохранить PIN' : 'Войти'}
               </button>
             </>
           )}
+          {apiError && (
+            <p style={{color:'#d00', textAlign:'center', marginBottom:'16px'}}>{apiError}</p>
+          )}
         </form>
+        {step!=='pin' && (
         <p
           className="toggle-auth"
           onClick={() => {
             setMode(mode === 'register' ? 'login' : 'register');
             resetForm();
             setStep('request');
+            setApiError('');
           }}
           style={{ cursor: 'pointer', marginTop: '20px', textAlign: 'center' }}
         >
           {mode === 'register' ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрируйтесь'}
-        </p>
+        </p> )}
       </div>
     </>
   );
