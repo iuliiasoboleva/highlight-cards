@@ -1,0 +1,101 @@
+.client-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tariff-box-left {
+  width: 60%;
+  align-items: center;
+}
+
+.tariff-box-right {
+  width: 40%;
+}
+
+.avatar-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: #1a1a1a;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  font-size: 16px;
+  margin-right: 16px;
+}
+
+.client-subtitle {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.client-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.client-card-tag {
+  background-color: #1a1a1a;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.no-cards {
+  color: #999;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.stat-card {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px #eee;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100px;
+}
+
+.stat-card-value {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.stat-card-title {
+  font-size: 14px;
+  color: #555;
+}
+
+.stat-card-sub {
+  font-size: 12px;
+  color: #888;
+  margin-top: 4px;
+}
+
+.stat-grid {
+  display: grid;
+  gap: 16px;
+  margin-top: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+@media (max-width: 999px) {
+  .tariff-box-left,
+  .tariff-box-right {
+    width: 100%;
+  }
+
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+}

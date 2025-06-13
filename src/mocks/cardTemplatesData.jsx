@@ -2,7 +2,7 @@ export const mockTemplateCards = [
   {
     id: 1,
     status: 'stamp',
-    urlCopy: 'https://take.cards/cMla3',
+    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
     qrImg: '',
     title: 'Штампы',
     isActive: false,
@@ -39,7 +39,7 @@ export const mockTemplateCards = [
   {
     id: 2,
     status: 'stamp',
-    urlCopy: 'https://take.cards/cMla3',
+    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
     qrImg: '',
     title: 'Штампы',
     isActive: false,
@@ -74,7 +74,7 @@ export const mockTemplateCards = [
   {
     id: 3,
     status: 'stamp',
-    urlCopy: 'https://take.cards/cMla3',
+    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
     qrImg: '',
     title: 'Штампы',
     isActive: false,
@@ -104,7 +104,7 @@ export const mockTemplateCards = [
   {
     id: 4,
     status: 'stamp',
-    urlCopy: 'https://take.cards/cMla3',
+    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
     qrImg: '',
     title: 'Штампы',
     isActive: false,

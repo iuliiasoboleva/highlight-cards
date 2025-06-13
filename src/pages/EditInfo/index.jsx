@@ -28,11 +28,6 @@ const EditInfo = () => {
     claimRewardMessage: '',
   };
 
-  const rewardOptions = [
-    { value: true, label: 'Да' },
-    { value: false, label: 'Нет' },
-  ];
-
   const handleFieldChange = useCallback(
     (field) => (e) => {
       const newInfoFields = {

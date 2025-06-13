@@ -6,6 +6,7 @@ import CardInfo from '../../components/CardInfo';
 import CustomTable from '../../components/CustomTable';
 import DashboardStats from '../../components/DashboardStats';
 import { mockTransactions, transactionHeaders } from '../../mocks/mockTransactions';
+import { generatePDF } from '../../utils/pdfGenerator';
 
 import './styles.css';
 
@@ -41,7 +42,7 @@ const DefaultCardInfo = () => {
 
             <div className="card-buttons">
               <button>Скопировать ссылку</button>
-              <button>Скачать PDF</button>
+              <button onClick={() => generatePDF(card)}>Скачать PDF</button>
             </div>
           </div>
         </div>

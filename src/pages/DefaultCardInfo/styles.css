@@ -71,8 +71,11 @@
 }
 
 .card-info-link {
-  max-width: 100%;
-  width: -webkit-fill-available;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: break-all;
 }
 
 .table-wrapper {

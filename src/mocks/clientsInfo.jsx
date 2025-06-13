@@ -12,6 +12,7 @@ export const mockClients = [
     cards: [
       {
         cardNumber: '1234562',
+        name: 'Накопительная карта 1',
         type: 'stamp',
         stamps: 3,
         activeStorage: 0,
@@ -25,6 +26,7 @@ export const mockClients = [
       },
       {
         cardNumber: '7891012',
+        name: 'Накопительная карта 2',
         type: 'cashback',
         cashbackBalance: 120,
         activeStorage: 0,
@@ -49,6 +51,7 @@ export const mockClients = [
     cards: [
       {
         cardNumber: '123',
+        name: 'Накопительная карта 3',
         type: 'stamp',
         stamps: 3,
         activeStorage: 0,
@@ -62,6 +65,7 @@ export const mockClients = [
       },
       {
         cardNumber: '000',
+        name: 'Накопительная карта 4',
         type: 'cashback',
         cashbackBalance: 120,
         activeStorage: 0,
@@ -90,6 +94,7 @@ export const mockClients = [
     cards: [
       {
         cardNumber: '1234560',
+        name: 'Накопительная карта 5',
         type: 'stamp',
         stamps: 3,
         activeStorage: 0,
@@ -114,6 +119,7 @@ export const mockClients = [
     cards: [
       {
         cardNumber: '1234561',
+        name: 'Накопительная карта 6',
         type: 'stamp',
         stamps: 3,
         activeStorage: 0,

@@ -138,7 +138,7 @@ const EditSettings = () => {
               path: 'utmLinks',
               item: {
                 source,
-                url: `https://take.cards/${Math.random().toString(36).substr(2, 5)}`,
+                url: `http://147.45.229.94:3000/${Math.random().toString(36).substr(2, 5)}`,
               },
             }),
           )

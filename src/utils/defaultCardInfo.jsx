@@ -3,7 +3,7 @@ export const defaultCardTemplate = {
   status: 'stamp',
   name: 'Накопительная карта',
   isActive: false,
-  urlCopy: 'https://take.cards/cMla3',
+  urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
   qrImg: '/qr-code.svg',
   frameUrl: '/phone.svg',
   balanceMoney: 1800,

@@ -1,7 +1,9 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useLocation, useParams } from 'react-router-dom';
 
 import { HelpCircle, QrCode } from 'lucide-react';
+
+import QRPopup from '../QRPopup';
 
 import './styles.css';
 
@@ -13,8 +15,10 @@ const SubMenu = ({
   icon: Icon,
   showRightActions,
 }) => {
+  const { id } = useParams();
   const location = useLocation();
-  const [name, setName] = React.useState(initialName || '');
+  const [name, setName] = useState(initialName || '');
+  const [showQRPopup, setShowQRPopup] = useState(false);
 
   const handleNameChange = (e) => {
     const newName = e.target.value;
@@ -66,12 +70,18 @@ const SubMenu = ({
             <button className="submenu-icon-button" title="Помощь">
               <HelpCircle size={16} color="#aaa" />
             </button>
-            <button className="submenu-tab submenu-save-button">Сохранить и посмотреть</button>
+            <button
+              className="submenu-tab submenu-save-button"
+              onClick={() => setShowQRPopup(true)}
+            >
+              Сохранить и посмотреть
+            </button>
             <button className="submenu-icon-button" title="QR">
               <QrCode size={16} color="#aaa" />
             </button>
           </div>
         )}
+        {showQRPopup && <QRPopup cardId={id} onClose={() => setShowQRPopup(false)} />}
       </div>
     </div>
   );
