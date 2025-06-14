@@ -139,9 +139,10 @@
   margin-top: 12px;
   color: #656565;
   font-size: 12px;
-  line-height: 1.7142857143;
-  max-width: 268px;
+  line-height: 1.6;
+  max-width: 90%;
   text-align: center;
+  word-break: break-word;
 }
 
 @media (max-width: 999px) {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
 
 import CardButtons from '../../components/CardButtons';
 import CardInfo from '../../components/CardInfo';
@@ -33,8 +34,17 @@ const cardDescriptions = {
 const Cards = () => {
   const location = useLocation();
 
-  const cards = useSelector((state) => state.cards.cards);
+  const cardsState = useSelector((state) => state.cards);
+  const { cards, loading } = cardsState;
   const isTemplatePage = location.pathname === '/cards/template';
+
+  if (loading) {
+    return (
+      <div style={{display:'flex',justifyContent:'center',alignItems:'center',height:'calc(100vh - 200px)'}}>
+        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
+      </div>
+    );
+  }
 
   return (
     <div className="mailings-container">

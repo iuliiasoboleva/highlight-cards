@@ -39,6 +39,7 @@ const initialState = {
 export const fetchCards = createAsyncThunk('cards/fetchCards', async (_, { getState, rejectWithValue }) => {
   try {
     const orgId = getState().user.organization_id;
+    if (!orgId) return [];
     const res = await axiosInstance.get('/cards', { params: { organization_id: orgId } });
     return res.data;
   } catch (err) {
@@ -155,12 +156,32 @@ export const cardsSlice = createSlice({
         document.body.removeChild(downloadAnchorNode);
       }
     },
+
+    initializeCards: (state, action) => {
+      try {
+        const useTemplates = action.payload?.useTemplates || false;
+        state.cards = getAllCards(useTemplates).map((card) => ({
+          ...card,
+          fieldsName: (statusConfig[card.status] || []).map((item) => ({
+            type: item.valueKey,
+            name: item.label,
+          })),
+        }));
+        state.error = null;
+      } catch (err) {
+        state.error = err.message;
+        state.cards = [];
+      } finally {
+        state.loading = false;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchCards.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.cards = [fixedCard];
       })
       .addCase(fetchCards.fulfilled, (state, action) => {
         state.cards = [fixedCard, ...action.payload].map((card) => ({
@@ -175,6 +196,7 @@ export const cardsSlice = createSlice({
       .addCase(fetchCards.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.cards = [fixedCard];
       });
   },
 });
@@ -189,6 +211,7 @@ export const {
   deleteCard,
   copyCard,
   downloadCard,
+  initializeCards,
 } = cardsSlice.actions;
 
 export default cardsSlice.reducer;
