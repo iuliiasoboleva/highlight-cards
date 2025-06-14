@@ -49,7 +49,7 @@ import SettingsLayout from './pages/SettingsLayout';
 import SettingsPersonal from './pages/SettingsPersonal';
 import SettingsRFMSegment from './pages/SettingsRFMSegment';
 import Workplace from './pages/Workplace';
-import { initializeCards, updateCurrentCardField } from './store/cardsSlice';
+import { fetchCards, updateCurrentCardField } from './store/cardsSlice';
 import { setClients } from './store/clientsSlice';
 import LoginVerify from './pages/LoginVerify';
 import ResetPin from './pages/ResetPin';
@@ -85,7 +85,7 @@ const MainLayout = () => {
       useTemplates = true;
     }
 
-    dispatch(initializeCards({ useTemplates }));
+    dispatch(fetchCards());
   }, [dispatch, isTemplatePage]);
 
   useEffect(() => {

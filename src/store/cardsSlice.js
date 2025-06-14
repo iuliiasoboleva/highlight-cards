@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axiosInstance from '../axiosInstance';
 
 import { mockCards } from '../mocks/cardData';
 import { mockTemplateCards } from '../mocks/cardTemplatesData';
@@ -35,29 +36,20 @@ const initialState = {
   currentCard: mergeCardWithDefault({}),
 };
 
+export const fetchCards = createAsyncThunk('cards/fetchCards', async (_, { getState, rejectWithValue }) => {
+  try {
+    const orgId = getState().user.organization_id;
+    const res = await axiosInstance.get('/cards', { params: { organization_id: orgId } });
+    return res.data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data || err.message);
+  }
+});
+
 export const cardsSlice = createSlice({
   name: 'cards',
   initialState,
   reducers: {
-    initializeCards: (state, action) => {
-      try {
-        const useTemplates = action.payload?.useTemplates || false;
-        state.cards = getAllCards(useTemplates).map((card) => ({
-          ...card,
-          fieldsName: (statusConfig[card.status] || []).map((item) => ({
-            type: item.valueKey,
-            name: item.label,
-          })),
-        }));
-        state.error = null;
-      } catch (err) {
-        state.error = err.message;
-        state.cards = [];
-      } finally {
-        state.loading = false;
-      }
-    },
-
     setCurrentCard: (state, action) => {
       state.currentCard = mergeCardWithDefault(action.payload);
     },
@@ -164,10 +156,30 @@ export const cardsSlice = createSlice({
       }
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchCards.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCards.fulfilled, (state, action) => {
+        state.cards = [fixedCard, ...action.payload].map((card) => ({
+          ...card,
+          fieldsName: (statusConfig[card.status] || []).map((item) => ({
+            type: item.valueKey,
+            name: item.label,
+          })),
+        }));
+        state.loading = false;
+      })
+      .addCase(fetchCards.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+  },
 });
 
 export const {
-  initializeCards,
   setCurrentCard,
   updateCurrentCardField,
   addCurrentCardArrayItem,
