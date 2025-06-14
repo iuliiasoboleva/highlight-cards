@@ -54,6 +54,7 @@ import { initializeCards, updateCurrentCardField } from './store/cardsSlice';
 import { setClients } from './store/clientsSlice';
 import { setUser } from './store/userSlice';
 import LoginVerify from './pages/LoginVerify';
+import ResetPin from './pages/ResetPin';
 
 const MainLayout = () => {
   const location = useLocation();
@@ -238,6 +239,7 @@ const App = () => {
             }
           />
           <Route path="/login" element={<LoginVerify />} />
+          <Route path="/reset-pin" element={<ResetPin />} />
           <Route element={<MainLayout />}>
             <Route index element={<Home />} />
             <Route path="/cards" element={<Cards />} />

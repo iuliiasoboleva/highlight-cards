@@ -55,6 +55,29 @@ export const setPinThunk = createAsyncThunk('auth/setPin', async ({ token, pin }
   return res.data;
 });
 
+export const resetPinRequest = createAsyncThunk('auth/resetPinRequest', async ({ email }, { rejectWithValue }) => {
+  try {
+    await axiosInstance.post('auth/reset-pin-request', { email });
+    return true;
+  } catch (err) {
+    const msg = err?.response?.data?.detail || err?.response?.data || err.message;
+    return rejectWithValue(msg);
+  }
+});
+
+export const resetPinConfirm = createAsyncThunk('auth/resetPinConfirm', async ({ token, pin }, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.post('auth/reset-pin-confirm', { token, new_pin: pin });
+    if (res.data?.token) {
+      setCookie('userToken', res.data.token, 14);
+    }
+    return res.data;
+  } catch (err) {
+    const msg = err?.response?.data?.detail || err?.response?.data || err.message;
+    return rejectWithValue(msg);
+  }
+});
+
 export const authSlice = createSlice({
   name: 'auth',
   initialState: {
@@ -87,6 +110,9 @@ export const authSlice = createSlice({
         state.status = 'success';
       })
       .addCase(setPinThunk.fulfilled, (state) => {
+        state.status = 'success';
+      })
+      .addCase(resetPinConfirm.fulfilled, (state) => {
         state.status = 'success';
       });
   },

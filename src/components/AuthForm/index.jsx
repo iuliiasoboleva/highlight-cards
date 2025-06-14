@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import axiosInstance from '../../axiosInstance';
-import { requestMagicLink, verifyPin, setPinThunk } from '../../store/authSlice';
+import { requestMagicLink, verifyPin, setPinThunk, resetPinRequest } from '../../store/authSlice';
 import { setUser } from '../../store/userSlice';
 
 import './styles.css';
@@ -265,11 +265,12 @@ const AuthForm = () => {
   };
 
   const handleSendLinkAgain = async () => {
+    setStep('sent'); // сразу показываем сообщение
     try {
-      await dispatch(requestMagicLink({ email: formData.email })).unwrap();
-      setStep('sent');
+      await dispatch(resetPinRequest({ email: formData.email })).unwrap();
     } catch (err) {
       setApiError(extractError(err));
+      setStep('pinLogin');
     }
   };
 

@@ -12,13 +12,15 @@ const AuthRedirectGuard = ({ children }) => {
   const location = useLocation();
   const token = getCookie('userToken');
 
+  const isPublic = ['/auth', '/login'].includes(location.pathname) || location.pathname.startsWith('/reset-pin');
+
   useEffect(() => {
     if (token && !user.email) {
       dispatch(fetchUserData());
     }
   }, [dispatch, token, user.email]);
 
-  if (!token && location.pathname !== '/auth' && location.pathname !== '/login') {
+  if (!token && !isPublic) {
     return <Navigate to="/auth" replace />;
   }
 
