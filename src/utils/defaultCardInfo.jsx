@@ -35,8 +35,8 @@ export const defaultCardTemplate = {
     visitStamps: 1,
     limitVisitPerDay: false,
     locations: [],
-    language: 'ru',
-    phoneMask: 'Russia',
+    language: { value: 'ru', label: 'Русский (ru)' },
+    phoneMask: { value: 'Russia', label: 'РФ (+7)' },
     redemptionRule: 'multiple', // multiple | single
   },
   score: 10,
@@ -95,6 +95,7 @@ export const defaultCardTemplate = {
   fieldsName: [],
   requirePurchaseAmountOnAccrual: false,
   initialPointsOnIssue: '',
+  initialStampsOnIssue: 1,
   policySettings: {
     policyEnabled: true,
     consentEnabled: false,
@@ -102,7 +103,7 @@ export const defaultCardTemplate = {
     fullPolicyText:
       'Я согласен с тем, что мои личные данные могут использоваться (полный текст)...',
   },
-  issueLimit: '',
+  issueLimit: 0,
   infoFields: {
     description: 'Получайте бонусные баллы за каждую покупку',
     howToGetStamp: 'Сделайте покупку, чтобы получить штамп',

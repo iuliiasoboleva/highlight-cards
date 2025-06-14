@@ -102,10 +102,7 @@ const EditSettings = () => {
       <CustomSelect
         value={settings.language?.value || 'ru'}
         onChange={(value) => updateSettingsField('language', { ...settings.language, value })}
-        options={[
-          { value: 'ru', label: 'Русский (ru)' },
-          { value: 'en', label: 'Английский (en)' },
-        ]}
+        options={[{ value: 'ru', label: 'Русский (ru)' }]}
       />
       <hr />
 
@@ -151,10 +148,7 @@ const EditSettings = () => {
       <CustomSelect
         value={settings.phoneMask?.value || 'Russia'}
         onChange={(value) => updateSettingsField('phoneMask', { ...settings.phoneMask, value })}
-        options={[
-          { value: 'Russia', label: 'РФ (+7)' },
-          { value: 'UAE', label: 'ОАЭ (+971)' },
-        ]}
+        options={[{ value: 'Russia', label: 'РФ (+7)' }]}
       />
       <hr />
 
