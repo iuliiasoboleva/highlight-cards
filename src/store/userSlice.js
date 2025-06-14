@@ -7,6 +7,13 @@ const initialState = {
   firstName: '',
   lastName: '',
   email: '',
+  phone: '',
+  company: '',
+  contact: '',
+  dateFormat: 'DD/MM/YYYY',
+  country: 'Russia',
+  language: 'Russian',
+  timezone: '(UTC+03:00) Moscow',
   avatar: null,
   role: '',
   isLoading: false,
@@ -24,6 +31,15 @@ export const fetchUserData = createAsyncThunk(
     }
   },
 );
+
+export const fetchOrganization = createAsyncThunk('user/fetchOrganization', async (orgId, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.get(`/organizations/${orgId}`);
+    return res.data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data || err.message);
+  }
+});
 
 export const userSlice = createSlice({
   name: 'user',
@@ -49,7 +65,18 @@ export const userSlice = createSlice({
       } else {
         firstName = state.firstName;
       }
-      return { ...state, ...data, firstName };
+      let lastName;
+      if (data.lastName !== undefined) {
+        lastName = data.lastName;
+      } else if (data.surname) {
+        lastName = data.surname;
+      } else if (data.name) {
+        const parts = data.name.split(' ');
+        lastName = parts.length > 1 ? parts.slice(1).join(' ') : state.lastName;
+      } else {
+        lastName = state.lastName;
+      }
+      return { ...state, ...data, firstName, lastName };
     },
     toggleRole: (state) => {
       state.role = state.role === 'employee' ? 'admin' : 'employee';
@@ -75,13 +102,29 @@ export const userSlice = createSlice({
         } else {
           firstName = state.firstName;
         }
+        let lastName;
+        if (data.lastName !== undefined) {
+          lastName = data.lastName;
+        } else if (data.surname) {
+          lastName = data.surname;
+        } else if (data.name) {
+          const parts = data.name.split(' ');
+          lastName = parts.length > 1 ? parts.slice(1).join(' ') : state.lastName;
+        } else {
+          lastName = state.lastName;
+        }
 
-        Object.assign(state, data, { firstName });
+        Object.assign(state, data, { firstName, lastName });
         state.isLoading = false;
       })
       .addCase(fetchUserData.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+      })
+      .addCase(fetchOrganization.fulfilled, (state, action) => {
+        if (action.payload?.name) {
+          state.company = action.payload.name;
+        }
       });
   },
 });

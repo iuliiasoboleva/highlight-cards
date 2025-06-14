@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import CustomSelect from '../../components/CustomSelect';
-import { logout, removeAvatar, setAvatar, updateField } from '../../store/userSlice';
+import { logout, removeAvatar, setAvatar, updateField, fetchOrganization } from '../../store/userSlice';
 
 import './styles.css';
 
@@ -16,6 +16,10 @@ const SettingsPersonal = () => {
     reason3: false,
     other: '',
   });
+  const [newPin, setNewPin] = useState('');
+  const [confirmPin, setConfirmPin] = useState('');
+  const newPinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
+  const confirmPinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
 
   const handleChange = (field, value) => {
     dispatch(updateField({ field, value }));
@@ -53,6 +57,41 @@ const SettingsPersonal = () => {
     }
   };
 
+  const handlePinChange = (type, i, value) => {
+    if (!/\d?/.test(value)) return;
+    const digit = value.slice(-1);
+    const arr = (type === 'new' ? newPin : confirmPin).padEnd(4, ' ').split('');
+    arr[i] = digit;
+    const pin = arr.join('').trim();
+    if (type === 'new') setNewPin(pin);
+    else setConfirmPin(pin);
+    if (digit && i < 3) {
+      (type === 'new' ? newPinRefs : confirmPinRefs)[i + 1].current?.focus();
+    }
+  };
+
+  const handlePinKey = (type, i, e) => {
+    if (e.key !== 'Backspace') return;
+
+    e.preventDefault();
+    const isNew = type === 'new';
+    const value = isNew ? newPin : confirmPin;
+    const refs = isNew ? newPinRefs : confirmPinRefs;
+
+    const arr = value.padEnd(4, ' ').split('');
+
+    if (arr[i]) {
+      arr[i] = '';
+      if (i > 0) refs[i - 1].current?.focus();
+    } else if (i > 0) {
+      refs[i - 1].current?.focus();
+      arr[i - 1] = '';
+    }
+
+    const pin = arr.join('').trim();
+    isNew ? setNewPin(pin) : setConfirmPin(pin);
+  };
+
   // Опции для селектов
   const dateFormats = [
     { value: 'DD/MM/YYYY', label: 'День/Месяц/Год (31/12/2023)' },
@@ -61,15 +100,20 @@ const SettingsPersonal = () => {
 
   const countries = [
     { value: 'Russia', label: 'Россия' },
-    { value: 'Argentina', label: 'Аргентина' },
   ];
 
   const languages = [
     { value: 'Russian', label: 'Русский' },
-    { value: 'English', label: 'Английский' },
   ];
 
   const timezones = [{ value: '(UTC+03:00) Moscow', label: '(UTC+03:00) Москва' }];
+
+  useEffect(() => {
+    if (user.organization_id && !user.company) {
+      dispatch(fetchOrganization(user.organization_id));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user.organization_id]);
 
   return (
     <div className="settings-wrapper">
@@ -136,7 +180,7 @@ const SettingsPersonal = () => {
                   <label>Название компании</label>
                   <input
                     value={user.company}
-                    onChange={(e) => handleChange('company', e.target.value)}
+                    readOnly
                   />
                 </div>
               </div>
@@ -155,8 +199,7 @@ const SettingsPersonal = () => {
                   <input
                     type="email"
                     value={user.email}
-                    onChange={(e) => handleChange('email', e.target.value)}
-                    required
+                    readOnly
                   />
                 </div>
               </div>
@@ -175,7 +218,7 @@ const SettingsPersonal = () => {
                   <input
                     type="tel"
                     value={user.phone}
-                    onChange={(e) => handleChange('phone', e.target.value)}
+                    readOnly
                   />
                 </div>
               </div>
@@ -190,13 +233,21 @@ const SettingsPersonal = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Новый пароль</label>
-                  <input
-                    type="password"
-                    value={user.password}
-                    onChange={(e) => handleChange('password', e.target.value)}
-                    placeholder="Введите новый пароль"
-                  />
+                  <label>Новый PIN</label>
+                  <div style={{display:'flex',gap:12}}>
+                    {[0,1,2,3].map((i)=>(
+                      <input key={i}
+                        ref={newPinRefs[i]}
+                        type="tel"
+                        inputMode="numeric"
+                        maxLength={1}
+                        value={newPin[i] || ''}
+                        onChange={(e)=>handlePinChange('new',i,e.target.value)}
+                        onKeyDown={(e)=>handlePinKey('new',i,e)}
+                        style={{width:60,height:60,textAlign:'center',fontSize:32,border:'1px solid #d1d5db',background:'#f3f4f6',borderRadius:8}}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -210,13 +261,21 @@ const SettingsPersonal = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Подтверждение пароля</label>
-                  <input
-                    type="password"
-                    value={user.confirmPassword}
-                    onChange={(e) => handleChange('confirmPassword', e.target.value)}
-                    placeholder="Повторите новый пароль"
-                  />
+                  <label>Подтверждение PIN</label>
+                  <div style={{display:'flex',gap:12}}>
+                    {[0,1,2,3].map((i)=>(
+                      <input key={i}
+                        ref={confirmPinRefs[i]}
+                        type="tel"
+                        inputMode="numeric"
+                        maxLength={1}
+                        value={confirmPin[i] || ''}
+                        onChange={(e)=>handlePinChange('confirm',i,e.target.value)}
+                        onKeyDown={(e)=>handlePinKey('confirm',i,e)}
+                        style={{width:60,height:60,textAlign:'center',fontSize:32,border:'1px solid #d1d5db',background:'#f3f4f6',borderRadius:8}}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
 
