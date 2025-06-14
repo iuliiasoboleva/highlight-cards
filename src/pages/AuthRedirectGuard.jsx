@@ -22,6 +22,10 @@ const AuthRedirectGuard = ({ children }) => {
     return <Navigate to="/auth" replace />;
   }
 
+  if (token && location.pathname === '/auth') {
+    return <Navigate to="/" replace />;
+  }
+
   return children;
 };
 

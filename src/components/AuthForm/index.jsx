@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import axiosInstance from '../../axiosInstance';
 import { requestMagicLink, verifyPin, setPinThunk } from '../../store/authSlice';
+import { setUser } from '../../store/userSlice';
 
 import './styles.css';
 
@@ -37,6 +38,8 @@ const AuthForm = () => {
 
   // refs для ячеек PIN
   const pinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
+
+  const [submitting, setSubmitting] = useState(false);
 
   const resetForm = () => {
     setFormData({
@@ -119,16 +122,23 @@ const AuthForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
 
     if (mode === 'login') {
       if (step === 'pinLogin') {
         try {
-          await dispatch(verifyPin({ email: formData.email, pin: formData.pin })).unwrap();
+          const userData = await dispatch(
+            verifyPin({ token: magicToken, pin: formData.pin }),
+          ).unwrap();
+          dispatch(setUser(userData));
           navigate('/');
         } catch (err) {
           setApiError(extractError(err));
+        } finally {
+          setSubmitting(false);
+          return;
         }
-        return;
       }
 
       try {
@@ -136,9 +146,24 @@ const AuthForm = () => {
           params: { email: formData.email },
         });
 
-        if (resCheck.data.has_pin) {
-          goToPinLogin();
+        if (!resCheck.data.exists) {
+          setApiError('Пользователь не найден. Зарегистрируйтесь');
           return;
+        }
+
+        if (resCheck.data.has_pin) {
+          try {
+            const resTok = await dispatch(
+              requestMagicLink({ email: formData.email, sendEmail: false }),
+            ).unwrap();
+            if (resTok.token) setMagicToken(resTok.token);
+            setStep('pinLogin');
+          } catch (err) {
+            setApiError(extractError(err));
+          } finally {
+            setSubmitting(false);
+            return;
+          }
         }
 
         // нет пина — шлём magic link
@@ -146,8 +171,10 @@ const AuthForm = () => {
         setStep('sent');
       } catch (err) {
         setApiError(extractError(err));
+      } finally {
+        setSubmitting(false);
+        return;
       }
-      return;
     }
 
     // mode === 'register'
@@ -170,20 +197,32 @@ const AuthForm = () => {
         setApiError('');
       } catch (err) {
         setApiError(extractError(err));
+      } finally {
+        setSubmitting(false);
+        return;
       }
     } else {
       if (mode === 'register') {
         try {
-          await dispatch(setPinThunk({ token: magicToken, pin: formData.pin })).unwrap();
+          const userData = await dispatch(
+            setPinThunk({ token: magicToken, pin: formData.pin }),
+          ).unwrap();
+          dispatch(setUser(userData));
           navigate('/');
         } catch (err) {
           setApiError(extractError(err));
+        } finally {
+          setSubmitting(false);
+          return;
         }
       } else {
         try {
-          await dispatch(verifyPin({ email: formData.email, pin: formData.pin })).unwrap();
+          await dispatch(verifyPin({ token: magicToken, pin: formData.pin })).unwrap();
         } catch (err) {
           setApiError(extractError(err));
+        } finally {
+          setSubmitting(false);
+          return;
         }
       }
     }
@@ -199,6 +238,35 @@ const AuthForm = () => {
 
     if (digits && index < 3) {
       pinRefs[index + 1].current?.focus();
+    }
+
+    // авто отправка, когда ввели 4 цифры
+    if (newPin.length === 4) {
+      if (mode === 'login' && step === 'pinLogin') {
+        // небольшая задержка, чтобы вошёл последний символ в стейт
+        setTimeout(() => handleSubmit(new Event('submit', { cancelable: true })), 0);
+      }
+      if (mode === 'register' && step === 'pin') {
+        setTimeout(() => handleSubmit(new Event('submit', { cancelable: true })), 0);
+      }
+    }
+  };
+
+  const handlePinKeyDown = (index, e) => {
+    if (e.key === 'Backspace') {
+      e.preventDefault();
+      const currentVal = formData.pin[index] || '';
+      const pinArr = formData.pin.padEnd(4, ' ').split('');
+      if (currentVal) {
+        // стираем текущую цифру
+        pinArr[index] = '';
+        setFormData((prev) => ({ ...prev, pin: pinArr.join('').trim() }));
+      } else if (index > 0) {
+        // переходим на предыдущую ячейку и стираем
+        pinRefs[index - 1].current?.focus();
+        pinArr[index - 1] = '';
+        setFormData((prev) => ({ ...prev, pin: pinArr.join('').trim() }));
+      }
     }
   };
 
@@ -287,7 +355,7 @@ const AuthForm = () => {
               <button
                 type="submit"
                 className={`custom-button ${status==='loading' ? 'loading':''}`}
-                disabled={status === 'loading' || !isEmailValid}
+                disabled={submitting || status === 'loading' || !isEmailValid}
               >
                 {status==='loading' ? '' : 'Войти'}
               </button>
@@ -388,7 +456,7 @@ const AuthForm = () => {
               <button
                 type="submit"
                 className={`custom-button ${status==='loading' ? 'loading':''}`}
-                disabled={status === 'loading' || !isFormValid}
+                disabled={submitting || status === 'loading' || !isFormValid}
               >
                 {status==='loading' ? '' : 'Зарегистрироваться'}
               </button>
@@ -409,10 +477,11 @@ const AuthForm = () => {
                     maxLength={1}
                     value={formData.pin[i] || ''}
                     onChange={(e)=>handlePinChange(i,e.target.value)}
+                    onKeyDown={(e)=>handlePinKeyDown(i,e)}
                     style={{width:'60px',height:'60px',textAlign:'center',fontSize:'32px',border:'1px solid #d1d5db',background:'#f3f4f6',borderRadius:'8px'}}
                   />))}
               </div>
-              <button type="submit" disabled={status === 'loading' || formData.pin.length!==4} className="custom-button">
+              <button type="submit" disabled={submitting || status === 'loading' || formData.pin.length!==4} className="custom-button">
                 {step==='pinLogin' ? 'Войти' : 'Сохранить PIN'}
               </button>
               {step==='pinLogin' && (
