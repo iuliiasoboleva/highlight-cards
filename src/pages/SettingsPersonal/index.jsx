@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import CustomSelect from '../../components/CustomSelect';
-import { logout, removeAvatar, setAvatar, updateField, fetchOrganization, updateUserSettings, updateProfile, changePin } from '../../store/userSlice';
+import { logout, removeAvatar, setAvatar, updateField, fetchOrganization, updateUserSettings, updateProfile, changePin, uploadAvatar } from '../../store/userSlice';
 
 import './styles.css';
 
@@ -33,14 +33,14 @@ const SettingsPersonal = () => {
     // dispatch(updateDeleteFeedback(updatedFeedback));
   };
 
-  const handleAvatarChange = (e) => {
+  const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        dispatch(setAvatar(reader.result));
-      };
-      reader.readAsDataURL(file);
+    if(!file) return;
+    try{
+      await dispatch(uploadAvatar(file)).unwrap();
+      showToast('Фото обновлено', true);
+    }catch(err){
+      showToast('Не удалось загрузить фото', false);
     }
   };
 

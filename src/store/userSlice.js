@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import axiosInstance from '../axiosInstance';
 import { eraseCookie } from '../cookieUtils';
+import BASE_URL from '../config';
 
 const initialState = {
   firstName: '',
@@ -68,6 +69,17 @@ export const changePin = createAsyncThunk('user/changePin', async (pin, { reject
   }
 });
 
+export const uploadAvatar = createAsyncThunk('user/uploadAvatar', async (file, { rejectWithValue }) => {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await axiosInstance.post('/auth/upload-avatar', formData, { headers:{ 'Content-Type':'multipart/form-data' } });
+    return res.data.avatar_url;
+  } catch(err){
+    return rejectWithValue(err.response?.data || err.message);
+  }
+});
+
 export const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -103,7 +115,9 @@ export const userSlice = createSlice({
       } else {
         lastName = state.lastName;
       }
-      return { ...state, ...data, firstName, lastName };
+      let avatarUrl = data.avatar_url || data.avatar;
+      if (avatarUrl && avatarUrl.startsWith('/')) avatarUrl = BASE_URL.replace(/\/$/,'') + avatarUrl;
+      return { ...state, ...data, firstName, lastName, avatar: avatarUrl };
     },
     toggleRole: (state) => {
       state.role = state.role === 'employee' ? 'admin' : 'employee';
@@ -140,8 +154,10 @@ export const userSlice = createSlice({
         } else {
           lastName = state.lastName;
         }
+        let avatarUrl = data.avatar_url || data.avatar;
+        if (avatarUrl && avatarUrl.startsWith('/')) avatarUrl = BASE_URL.replace(/\/$/,'') + avatarUrl;
 
-        Object.assign(state, data, { firstName, lastName });
+        Object.assign(state, data, { firstName, lastName, avatar: avatarUrl });
         state.isLoading = false;
       })
       .addCase(fetchUserData.rejected, (state, action) => {
@@ -162,6 +178,10 @@ export const userSlice = createSlice({
         if (surname !== undefined) state.lastName = surname;
         if (phone !== undefined) state.phone = phone;
         if (extra_contacts !== undefined) state.contact = extra_contacts;
+      })
+      .addCase(uploadAvatar.fulfilled, (state, action) => {
+        const url = action.payload.startsWith('/') ? BASE_URL.replace(/\/$/,'') + action.payload : action.payload;
+        state.avatar = url;
       });
   },
 });
