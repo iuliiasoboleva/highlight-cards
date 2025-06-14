@@ -6,6 +6,7 @@ import clientsReducer from './clientsSlice';
 import managersReducer from './managersSlice';
 import salesPointsReducer from './salesPointsSlice';
 import userReducer from './userSlice';
+import tariffsReducer from './tariffsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -15,5 +16,6 @@ export const store = configureStore({
     clients: clientsReducer,
     managers: managersReducer,
     locations: salesPointsReducer,
+    tariffs: tariffsReducer,
   },
 });

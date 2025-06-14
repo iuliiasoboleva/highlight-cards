@@ -1,21 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Loader2 } from 'lucide-react';
 
 import AgreementModal from '../../components/AgreementModal';
 import CustomSelect from '../../components/CustomSelect';
 import CustomTable from '../../components/CustomTable';
-import { mockPaymentHistory, mockTariff, tariffPlans } from '../../mocks/mockTariff';
+import { mockPaymentHistory } from '../../mocks/mockTariff';
+import { fetchTariffs } from '../../store/tariffsSlice';
 
 import './styles.css';
 
 const Settings = () => {
-  const [period, setPeriod] = useState({
-    START: 'Год',
-    GROW: 'Год',
-    BUSINESS: 'Год',
-  });
+  const dispatch = useDispatch();
+  const { plans: tariffPlans, loading } = useSelector((state) => state.tariffs);
+
+  useEffect(() => {
+    if (!tariffPlans.length) {
+      dispatch(fetchTariffs());
+    }
+  }, [dispatch, tariffPlans.length]);
+
+  const [period, setPeriod] = useState({});
+
+  useEffect(() => {
+    if (tariffPlans.length) {
+      const init = tariffPlans.reduce((acc, plan) => {
+        acc[plan.name] = 'Месяц';
+        return acc;
+      }, {});
+      setPeriod(init);
+    }
+  }, [tariffPlans]);
 
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState('plan');
+
+  if (loading) {
+    return (
+      <div style={{display:'flex',justifyContent:'center',alignItems:'center',height:'calc(100vh - 200px)'}}>
+        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
+      </div>
+    );
+  }
+
+  if (!tariffPlans.length) return <p>Тарифы не найдены</p>;
+
+  // текущий тариф временно берём первый
+  const currentTariff = tariffPlans[0];
 
   // Подготовка данных для таблицы тарифов
   const tariffColumns = [
@@ -39,16 +70,14 @@ const Settings = () => {
         <>
           <p>Стоимость в месяц</p>
           <small>
-            при оплате за год
-            <br />/ за квартал
-            <br />/ за месяц
+            при оплате за год<br />/ за месяц
           </small>
         </>
       ),
       ...Object.fromEntries(
         tariffPlans.map((plan) => [
           plan.name,
-          `${plan.prices.year} $ / ${plan.prices.quarter} $ / ${plan.prices.month} $`,
+          `${Math.round(plan.prices.year / 12)} ₽ / ${plan.prices.month} ₽`,
         ]),
       ),
     },
@@ -109,11 +138,10 @@ const Settings = () => {
           plan.name,
           <div className="tariff-selector">
             <CustomSelect
-              value={period[plan.name]}
+              value={period[plan.name] || 'Месяц'}
               onChange={(value) => setPeriod((prev) => ({ ...prev, [plan.name]: value }))}
               options={[
                 { value: 'Год', label: 'Год' },
-                { value: 'Квартал', label: 'Квартал' },
                 { value: 'Месяц', label: 'Месяц' },
               ]}
               className="tariff-period-select"
@@ -170,15 +198,15 @@ const Settings = () => {
                 <p>Ваш тариф</p>
                 <hr />
                 <div className="tariff-box-content">
-                  <div className="tariff-name">{mockTariff.name}</div>
-                  <div className="tariff-sub">{mockTariff.billing}</div>
+                  <div className="tariff-name">{currentTariff.name}</div>
+                  <div className="tariff-sub">Годовая оплата</div>
                 </div>
               </div>
               <div className="tariff-box-column">
                 <p>Стоимость</p>
                 <hr />
                 <div className="tariff-box-content">
-                  <div className="tariff-price">{mockTariff.price} $</div>
+                  <div className="tariff-price">{currentTariff.prices.month} ₽</div>
                   <div className="tariff-sub">В месяц</div>
                 </div>
               </div>
@@ -189,14 +217,14 @@ const Settings = () => {
               <hr />
               <div className="tariff-due-grid">
                 <div className="tariff-box-content">
-                  <div className="tariff-due-date">{mockTariff.nextPaymentDate}</div>
+                  <div className="tariff-due-date">10.04.2025</div>
                   <p className="tariff-sub">Дата следующего списания</p>
                 </div>
                 <div className="tariff-box-content">
-                  <div className="tariff-due-time">{mockTariff.nextPaymentTime}</div>
+                  <div className="tariff-due-time">00:33</div>
                 </div>
                 <div className="tariff-box-content">
-                  <div className="tariff-due-days">{mockTariff.daysLeft}</div>
+                  <div className="tariff-due-days">10</div>
                   <p className="tariff-sub">Дней осталось</p>
                 </div>
               </div>

@@ -1,41 +1,41 @@
 export const mockTariff = {
-  name: 'Start (Пробный)',
-  billing: 'С годовой оплатой',
-  price: 25,
-  nextPaymentDate: '10/04/2025',
+  name: 'Старт',
+  billing: 'Помесячная оплата',
+  price: 2990,
+  nextPaymentDate: '10.04.2025',
   nextPaymentTime: '00:33',
   daysLeft: 10,
 };
 
 export const tariffPlans = [
   {
-    name: 'START',
+    name: 'СТАРТ',
     prices: {
-      year: 19,
-      quarter: 22,
-      month: 25,
+      year: 20990,
+      quarter: 8970,
+      month: 2990,
     },
     integrations: '—',
     customFields: false,
     permissions: false,
   },
   {
-    name: 'GROW',
+    name: 'РОСТ',
     prices: {
-      year: 35,
-      quarter: 39,
-      month: 45,
+      year: 40900,
+      quarter: 14700,
+      month: 4900,
     },
     integrations: '—',
     customFields: true,
     permissions: false,
   },
   {
-    name: 'BUSINESS',
+    name: 'БИЗНЕС',
     prices: {
-      year: 69,
-      quarter: 79,
-      month: 85,
+      year: 80900,
+      quarter: 26700,
+      month: 8900,
     },
     integrations: '3 интеграции',
     customFields: true,
