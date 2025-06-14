@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import CustomSelect from '../../components/CustomSelect';
-import { logout, removeAvatar, setAvatar, updateField, fetchOrganization } from '../../store/userSlice';
+import { logout, removeAvatar, setAvatar, updateField, fetchOrganization, updateUserSettings, updateProfile, changePin } from '../../store/userSlice';
 
 import './styles.css';
 
@@ -20,6 +20,7 @@ const SettingsPersonal = () => {
   const [confirmPin, setConfirmPin] = useState('');
   const newPinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
   const confirmPinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
+  const [toast, setToast] = useState(null);
 
   const handleChange = (field, value) => {
     dispatch(updateField({ field, value }));
@@ -42,9 +43,31 @@ const SettingsPersonal = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const showToast = (msg, ok=true) => {
+    setToast({msg, ok});
+    setTimeout(()=>setToast(null),3000);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert('Настройки успешно сохранены (мок)');
+    try{
+      const promises=[];
+      promises.push(dispatch(updateProfile({ name:user.firstName, surname:user.lastName, phone:user.phone, extra_contacts:user.contact })).unwrap());
+      promises.push(dispatch(updateUserSettings({ date_format:user.dateFormat, country:user.country, language:user.language, timezone:user.timezone, extra_contacts:user.contact, avatar_url:user.avatar })).unwrap());
+      if(newPin || confirmPin){
+        if(newPin.length!==4 || newPin!==confirmPin){
+          showToast('PIN-коды не совпадают', false);
+          return;
+        }
+        promises.push(dispatch(changePin(newPin)).unwrap());
+        setNewPin('');
+        setConfirmPin('');
+      }
+      await Promise.all(promises);
+      showToast('Настройки сохранены', true);
+    }catch(err){
+      showToast(typeof err==='string'?err:'Ошибка сохранения', false);
+    }
   };
 
   const handleDeleteAccount = (e) => {
@@ -375,6 +398,9 @@ const SettingsPersonal = () => {
           </div>
         </div>
       </form>
+      {toast && (
+        <div style={{position:'fixed',top:90,right:40,background:toast.ok?'#00c853':'#e53935',color:'#fff',padding:'12px 24px',borderRadius:8,boxShadow:'0 4px 12px rgba(0,0,0,.15)',zIndex:999}}>{toast.msg}</div>
+      )}
     </div>
   );
 };

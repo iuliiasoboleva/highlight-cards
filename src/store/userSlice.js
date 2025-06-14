@@ -41,6 +41,33 @@ export const fetchOrganization = createAsyncThunk('user/fetchOrganization', asyn
   }
 });
 
+export const updateUserSettings = createAsyncThunk('user/updateUserSettings', async (settings, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.put('/user-settings/me', settings);
+    return res.data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data || err.message);
+  }
+});
+
+export const updateProfile = createAsyncThunk('user/updateProfile', async (data, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.put('/auth/profile', data);
+    return res.data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data || err.message);
+  }
+});
+
+export const changePin = createAsyncThunk('user/changePin', async (pin, { rejectWithValue }) => {
+  try {
+    await axiosInstance.post('/auth/change-pin', { pin });
+    return true;
+  } catch (err) {
+    return rejectWithValue(err.response?.data || err.message);
+  }
+});
+
 export const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -125,6 +152,16 @@ export const userSlice = createSlice({
         if (action.payload?.name) {
           state.company = action.payload.name;
         }
+      })
+      .addCase(updateUserSettings.fulfilled, (state, action) => {
+        Object.assign(state, action.payload);
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        const { name, surname, phone, extra_contacts } = action.payload || {};
+        if (name) state.firstName = name.split(' ')[0];
+        if (surname !== undefined) state.lastName = surname;
+        if (phone !== undefined) state.phone = phone;
+        if (extra_contacts !== undefined) state.contact = extra_contacts;
       });
   },
 });
