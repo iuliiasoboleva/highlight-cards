@@ -38,6 +38,7 @@ export const verifyPin = createAsyncThunk(
       const res = await axiosInstance.post('auth/verify-pin', { token, pin });
       if (res.data?.token) {
         setCookie(TOKEN_COOKIE, res.data.token, 14);
+        localStorage.setItem('quickJwt', res.data.token);
       }
       return res.data;
     } catch (err) {
@@ -51,6 +52,7 @@ export const setPinThunk = createAsyncThunk('auth/setPin', async ({ token, pin }
   const res = await axiosInstance.post('auth/set-pin', { token, pin });
   if (res.data?.token) {
     setCookie(TOKEN_COOKIE, res.data.token, 14);
+    localStorage.setItem('quickJwt', res.data.token);
   }
   return res.data;
 });
@@ -70,6 +72,7 @@ export const resetPinConfirm = createAsyncThunk('auth/resetPinConfirm', async ({
     const res = await axiosInstance.post('auth/reset-pin-confirm', { token, new_pin: pin });
     if (res.data?.token) {
       setCookie('userToken', res.data.token, 14);
+      localStorage.setItem('quickJwt', res.data.token);
     }
     return res.data;
   } catch (err) {

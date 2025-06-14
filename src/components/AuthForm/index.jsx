@@ -152,6 +152,12 @@ const AuthForm = () => {
         }
 
         if (resCheck.data.has_pin) {
+          const quick = localStorage.getItem('quickJwt');
+          let authHeader;
+          if (quick) {
+            authHeader = axiosInstance.defaults.headers['Authorization'];
+            axiosInstance.defaults.headers['Authorization'] = `Bearer ${quick}`;
+          }
           try {
             const resTok = await dispatch(
               requestMagicLink({ email: formData.email, sendEmail: false }),
@@ -159,8 +165,17 @@ const AuthForm = () => {
             if (resTok.token) setMagicToken(resTok.token);
             setStep('pinLogin');
           } catch (err) {
-            setApiError(extractError(err));
+            // 403 или другая ошибка → шлём письмо
+            try {
+              await dispatch(requestMagicLink({ email: formData.email })).unwrap();
+              setStep('sent');
+            } catch (e) {
+              setApiError(extractError(e));
+            }
           } finally {
+            if (quick) {
+              axiosInstance.defaults.headers['Authorization'] = authHeader;
+            }
             setSubmitting(false);
             return;
           }

@@ -30,6 +30,7 @@ const LoginVerify = () => {
         // Если бэкенд начнёт отдавать JWT, сохраним его в cookie
         if (res.data?.token) {
           setCookie('userToken', res.data.token, 14);
+          localStorage.setItem('quickJwt', res.data.token);
         }
 
         dispatch(setUser(res.data));
