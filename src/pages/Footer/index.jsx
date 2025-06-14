@@ -1,30 +1,26 @@
 import React from 'react';
 
-import { HelpCircle } from 'lucide-react';
-
 import './styles.css';
 
 const Footer = () => (
   <footer className="footer">
-    <div className="footer-section">
-      <a href="mailto:support@example.com" className="footer-link">
-        <HelpCircle size={16} />
-        Написать в техподдержку
-      </a>
+    <div className="footer-left">
+      <p className="company">ООО "ПРО М8"</p>
+      <p className="inn">ИНН 7743406170</p>
     </div>
 
-    <div className="footer-section">
-      <a href="/oferta" className="footer-link" target="_blank" rel="noopener noreferrer">
-        Оферта
-      </a>
-      <a href="/consent" className="footer-link" target="_blank" rel="noopener noreferrer">
-        Согласие на обработку
-      </a>
+    <div className="footer-center">
+      <a href="mailto:info@loyalclub.ru" className="footer-link">info@loyalclub.ru</a>
+      <span className="separator">|</span>
+      <a href="mailto:support@loyalclub.ru" className="footer-link">support@loyalclub.ru</a>
+      <span className="separator">|</span>
+      <span className="phone">8 (800) 770-71-58</span>
     </div>
 
-    <div className="footer-section">
-      <p>ООО "Моя Компания" • ИНН 1234567890</p>
-      <p>Email: support@example.com • Тел: +7 (999) 123-45-67</p>
+    <div className="footer-right">
+      <a href="/oferta" target="_blank" rel="noopener noreferrer" className="footer-link">Публичная оферта</a>
+      <span className="separator">|</span>
+      <a href="/privacy" target="_blank" rel="noopener noreferrer" className="footer-link">Политика конфиденциальности</a>
     </div>
   </footer>
 );
