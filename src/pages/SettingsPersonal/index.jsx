@@ -1,8 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Loader2 } from 'lucide-react';
 
 import CustomSelect from '../../components/CustomSelect';
-import { logout, removeAvatar, setAvatar, updateField, fetchOrganization, updateUserSettings, updateProfile, changePin, uploadAvatar } from '../../store/userSlice';
+import { logout, removeAvatar, updateField, updateUserSettings, updateProfile, changePin, uploadAvatar } from '../../store/userSlice';
 
 import './styles.css';
 
@@ -22,6 +23,14 @@ const SettingsPersonal = () => {
   const confirmPinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
   const [toast, setToast] = useState(null);
   const [saving, setSaving] = useState(false);
+
+  if (user.isLoading) {
+    return (
+      <div style={{display:'flex',justifyContent:'center',alignItems:'center',height:'calc(100vh - 200px)'}}>
+        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
+      </div>
+    );
+  }
 
   const handleChange = (field, value) => {
     dispatch(updateField({ field, value }));
@@ -134,13 +143,6 @@ const SettingsPersonal = () => {
   ];
 
   const timezones = [{ value: '(UTC+03:00) Moscow', label: '(UTC+03:00) Москва' }];
-
-  useEffect(() => {
-    if (user.organization_id && !user.company) {
-      dispatch(fetchOrganization(user.organization_id));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user.organization_id]);
 
   return (
     <div className="settings-wrapper">

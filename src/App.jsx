@@ -51,7 +51,6 @@ import SettingsRFMSegment from './pages/SettingsRFMSegment';
 import Workplace from './pages/Workplace';
 import { initializeCards, updateCurrentCardField } from './store/cardsSlice';
 import { setClients } from './store/clientsSlice';
-import { fetchUserData } from './store/userSlice';
 import LoginVerify from './pages/LoginVerify';
 import ResetPin from './pages/ResetPin';
 
@@ -77,7 +76,6 @@ const MainLayout = () => {
 
   useEffect(() => {
     dispatch(setClients(mockClients));
-    dispatch(fetchUserData());
   }, [dispatch]);
 
   useEffect(() => {
