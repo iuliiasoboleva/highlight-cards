@@ -23,6 +23,8 @@ const SettingsPersonal = () => {
   const confirmPinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
   const [toast, setToast] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const progressTimer = useRef(null);
 
   if (user.isLoading) {
     return (
@@ -58,10 +60,23 @@ const SettingsPersonal = () => {
     setTimeout(()=>setToast(null),3000);
   };
 
+  const startProgress = ()=>{
+    setProgress(0);
+    progressTimer.current = setInterval(()=>{
+      setProgress((p)=> (p<95 ? p+2 : p));
+    },100);
+  };
+  const finishProgress = ()=>{
+    clearInterval(progressTimer.current);
+    setProgress(100);
+    setTimeout(()=> setProgress(0),500);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (saving) return;
     setSaving(true);
+    startProgress();
     try{
       const promises=[];
       promises.push(dispatch(updateProfile({ name:user.firstName, surname:user.lastName, phone:user.phone, extra_contacts:user.contact })).unwrap());
@@ -81,6 +96,7 @@ const SettingsPersonal = () => {
       showToast(typeof err==='string'?err:'Ошибка сохранения', false);
     }
     setSaving(false);
+    finishProgress();
   };
 
   const handleDeleteAccount = (e) => {
@@ -327,8 +343,11 @@ const SettingsPersonal = () => {
                 </div>
               </div>
 
-              <button type="submit" className="custom-main-button" disabled={saving} style={{opacity:saving?0.6:1}}>
-                Сохранить изменения
+              <button type="submit" className="custom-main-button" disabled={saving} style={{position:'relative',overflow:'hidden'}}>
+                <span style={{opacity: saving ? 0 : 1}}>Сохранить изменения</span>
+                {saving && (
+                  <div style={{position:'absolute',left:0,top:0,height:'100%',width:`${progress}%`,background:'linear-gradient(90deg,#b71c32 0%,#000 100%)',transition:'width 0.1s linear'}} />
+                )}
               </button>
             </div>
 
