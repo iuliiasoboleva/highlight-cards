@@ -21,6 +21,7 @@ const SettingsPersonal = () => {
   const newPinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
   const confirmPinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
   const [toast, setToast] = useState(null);
+  const [saving, setSaving] = useState(false);
 
   const handleChange = (field, value) => {
     dispatch(updateField({ field, value }));
@@ -50,6 +51,8 @@ const SettingsPersonal = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (saving) return;
+    setSaving(true);
     try{
       const promises=[];
       promises.push(dispatch(updateProfile({ name:user.firstName, surname:user.lastName, phone:user.phone, extra_contacts:user.contact })).unwrap());
@@ -68,6 +71,7 @@ const SettingsPersonal = () => {
     }catch(err){
       showToast(typeof err==='string'?err:'Ошибка сохранения', false);
     }
+    setSaving(false);
   };
 
   const handleDeleteAccount = (e) => {
@@ -321,7 +325,7 @@ const SettingsPersonal = () => {
                 </div>
               </div>
 
-              <button type="submit" className="custom-main-button">
+              <button type="submit" className="custom-main-button" disabled={saving} style={{opacity:saving?0.6:1}}>
                 Сохранить изменения
               </button>
             </div>
