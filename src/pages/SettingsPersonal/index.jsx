@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Loader2 } from 'lucide-react';
 
 import CustomSelect from '../../components/CustomSelect';
-import { logout, removeAvatar, updateField, updateUserSettings, updateProfile, changePin, uploadAvatar } from '../../store/userSlice';
+import { logout, removeAvatar, updateField, updateUserSettings, updateProfile, changePin, uploadAvatar, deleteAccount } from '../../store/userSlice';
 
 import './styles.css';
 
@@ -99,13 +99,18 @@ const SettingsPersonal = () => {
     finishProgress();
   };
 
-  const handleDeleteAccount = (e) => {
+  const handleDeleteAccount = async (e) => {
     e.preventDefault();
-    if (confirmDelete === 'ПОДТВЕРЖДАЮ') {
-      alert('Аккаунт будет удален (мок)');
-      dispatch(logout());
-    } else {
-      alert('Введите подтверждение правильно');
+    if (confirmDelete !== 'ПОДТВЕРЖДАЮ') {
+      showToast('Введите подтверждение правильно', false);
+      return;
+    }
+    try {
+      await dispatch(deleteAccount(deleteFeedback)).unwrap();
+      showToast('Аккаунт удалён', true);
+      setTimeout(()=> dispatch(logout()), 1200);
+    } catch(err){
+      showToast(typeof err==='string'?err:'Ошибка удаления', false);
     }
   };
 

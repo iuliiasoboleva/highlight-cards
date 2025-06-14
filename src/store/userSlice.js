@@ -80,6 +80,15 @@ export const uploadAvatar = createAsyncThunk('user/uploadAvatar', async (file, {
   }
 });
 
+export const deleteAccount = createAsyncThunk('user/deleteAccount', async (reasons, { rejectWithValue }) => {
+  try {
+    await axiosInstance.post('/auth/delete-account', reasons);
+    return true;
+  } catch (err) {
+    return rejectWithValue(err.response?.data || err.message);
+  }
+});
+
 export const userSlice = createSlice({
   name: 'user',
   initialState,
