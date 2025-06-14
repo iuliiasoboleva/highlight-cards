@@ -46,7 +46,7 @@ export const userSlice = createSlice({
       state.role = state.role === 'employee' ? 'admin' : 'employee';
     },
     logout: (state) => {
-      eraseCookie('authToken');
+      eraseCookie('userToken');
       return { ...initialState, token: null };
     },
   },

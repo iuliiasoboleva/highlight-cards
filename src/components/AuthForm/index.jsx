@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -239,17 +239,6 @@ const AuthForm = () => {
     if (digits && index < 3) {
       pinRefs[index + 1].current?.focus();
     }
-
-    // авто отправка, когда ввели 4 цифры
-    if (newPin.length === 4) {
-      if (mode === 'login' && step === 'pinLogin') {
-        // небольшая задержка, чтобы вошёл последний символ в стейт
-        setTimeout(() => handleSubmit(new Event('submit', { cancelable: true })), 0);
-      }
-      if (mode === 'register' && step === 'pin') {
-        setTimeout(() => handleSubmit(new Event('submit', { cancelable: true })), 0);
-      }
-    }
   };
 
   const handlePinKeyDown = (index, e) => {
@@ -310,6 +299,15 @@ const AuthForm = () => {
     if (Array.isArray(err.response?.data?.detail)) return err.response.data.detail[0]?.msg;
     return err.detail || err.message || 'Ошибка';
   };
+
+  // авто-сабмит после полной длины PIN
+  useEffect(() => {
+    if (formData.pin.length === 4 && !submitting && (step === 'pinLogin' || step === 'pin')) {
+      // создаём фейковый event для совместимости
+      handleSubmit({ preventDefault: () => {} });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.pin]);
 
   return (
     <>

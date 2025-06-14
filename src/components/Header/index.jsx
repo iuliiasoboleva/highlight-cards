@@ -6,7 +6,8 @@ import 'react-tooltip/dist/react-tooltip.css';
 
 import { BarChart, Contact, GraduationCap, LogOut, ScanLine, Settings, User } from 'lucide-react';
 
-import { logout } from '../../store/userSlice';
+import { logout as userLogout } from '../../store/userSlice';
+import { logout as authLogout } from '../../store/authSlice';
 
 import './styles.css';
 
@@ -19,7 +20,8 @@ const Header = () => {
   const dropdownRef = useRef(null);
 
   const handleLogout = () => {
-    dispatch(logout());
+    dispatch(userLogout());
+    dispatch(authLogout());
     navigate('/auth');
   };
 

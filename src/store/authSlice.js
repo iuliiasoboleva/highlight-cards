@@ -3,6 +3,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axiosInstance from '../axiosInstance';
 import { eraseCookie, getCookie, setCookie } from '../cookieUtils';
 
+const TOKEN_COOKIE = 'userToken';
+
 export const requestMagicLink = createAsyncThunk(
   'auth/requestMagicLink',
   async (
@@ -35,7 +37,7 @@ export const verifyPin = createAsyncThunk(
     try {
       const res = await axiosInstance.post('auth/verify-pin', { token, pin });
       if (res.data?.token) {
-        setCookie('userToken', res.data.token, 14);
+        setCookie(TOKEN_COOKIE, res.data.token, 14);
       }
       return res.data;
     } catch (err) {
@@ -48,7 +50,7 @@ export const verifyPin = createAsyncThunk(
 export const setPinThunk = createAsyncThunk('auth/setPin', async ({ token, pin }) => {
   const res = await axiosInstance.post('auth/set-pin', { token, pin });
   if (res.data?.token) {
-    setCookie('userToken', res.data.token, 14);
+    setCookie(TOKEN_COOKIE, res.data.token, 14);
   }
   return res.data;
 });
@@ -57,13 +59,13 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState: {
     email: '',
-    token: getCookie('authToken') || null,
+    token: getCookie(TOKEN_COOKIE) || null,
     status: 'idle',
     error: null,
   },
   reducers: {
     logout: (state) => {
-      eraseCookie('authToken');
+      eraseCookie(TOKEN_COOKIE);
       state.token = null;
       state.email = '';
     },
