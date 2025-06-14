@@ -5,20 +5,29 @@ import { Loader2 } from 'lucide-react';
 import AgreementModal from '../../components/AgreementModal';
 import CustomSelect from '../../components/CustomSelect';
 import CustomTable from '../../components/CustomTable';
-import { mockPaymentHistory } from '../../mocks/mockTariff';
 import { fetchTariffs } from '../../store/tariffsSlice';
+import { fetchPayments } from '../../store/paymentsSlice';
 
 import './styles.css';
 
 const Settings = () => {
   const dispatch = useDispatch();
   const { plans: tariffPlans, loading } = useSelector((state) => state.tariffs);
+  const { list: payments = [], loading: paymentsLoading = true } = useSelector((state) => state.payments || {});
+  const { organization_id: orgId, id: userId } = useSelector((state) => state.user);
 
   useEffect(() => {
     if (!tariffPlans.length) {
       dispatch(fetchTariffs());
     }
   }, [dispatch, tariffPlans.length]);
+
+  useEffect(() => {
+    if (!payments.length) {
+      const id = orgId || 1;
+      dispatch(fetchPayments({ orgId: id, userId }));
+    }
+  }, [dispatch, payments.length, orgId, userId]);
 
   const [period, setPeriod] = useState({});
 
@@ -154,20 +163,11 @@ const Settings = () => {
   ];
 
   const paymentHistoryColumns = [
-    { key: 'date', title: 'Дата', className: 'text-left' },
-    { key: 'amount', title: 'Сумма', className: 'text-left' },
-    { key: 'plan', title: 'Тарифный план', className: 'text-left' },
-    {
-      key: 'status',
-      title: 'Статус',
-      className: 'text-left',
-      render: (row) => (
-        <span className={`status-badge ${row.status === 'Успешно' ? 'success' : ''}`}>
-          {row.status}
-        </span>
-      ),
-    },
-    { key: 'invoice', title: 'Инвойс', className: 'text-left' },
+    { key: 'paid_at', title: 'Дата', className: 'text-left', render: (row)=> new Date(row.paid_at).toLocaleDateString() },
+    { key: 'amount', title: 'Сумма', className: 'text-left', render:(row)=> `${row.amount} ₽` },
+    { key: 'plan_name', title: 'Тарифный план', className: 'text-left' },
+    { key: 'status', title: 'Статус', className: 'text-left', render: (row)=>(<span className={`status-badge ${row.status==='Успешно'?'success':''}`}>{row.status}</span>) },
+    { key: 'invoice_number', title: 'Инвойс', className: 'text-left' },
   ];
 
   return (
@@ -240,7 +240,15 @@ const Settings = () => {
       ) : (
         <div className="payment-history">
           <h3>История платежей</h3>
-          <CustomTable columns={paymentHistoryColumns} rows={mockPaymentHistory} />
+          {paymentsLoading ? (
+            <div style={{display:'flex',justifyContent:'center',alignItems:'center',height:'200px'}}>
+              <Loader2 className="spinner" size={32} strokeWidth={1.4} />
+            </div>
+          ) : payments.length ? (
+            <CustomTable columns={paymentHistoryColumns} rows={payments} />
+          ) : (
+            <p>Здесь появится история ваших платежей.</p>
+          )}
         </div>
       )}
 

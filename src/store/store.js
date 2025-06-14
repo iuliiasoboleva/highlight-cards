@@ -7,6 +7,7 @@ import managersReducer from './managersSlice';
 import salesPointsReducer from './salesPointsSlice';
 import userReducer from './userSlice';
 import tariffsReducer from './tariffsSlice';
+import paymentsReducer from './paymentsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -17,5 +18,6 @@ export const store = configureStore({
     managers: managersReducer,
     locations: salesPointsReducer,
     tariffs: tariffsReducer,
+    payments: paymentsReducer,
   },
 });
