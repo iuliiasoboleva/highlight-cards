@@ -70,9 +70,11 @@ const Header = () => {
     <header className="header">
       <div className="desktop-header">
         <img src="/logoColored.png" alt="Logo" className="logo" onClick={() => navigate('/')} />
-        <div className="user-section">
-          Привет, <span>{user.firstName || user.name}</span>
-        </div>
+        {(user.firstName || user.name) && (
+          <div className="user-section">
+            Привет, <span>{user.firstName || user.name}</span>
+          </div>
+        )}
 
         <div className="header-icons" ref={dropdownRef}>
           {headerIcons.map(({ icon, tooltip, onClick }, index) => {

@@ -4,6 +4,7 @@ import { Loader2 } from 'lucide-react';
 
 import CustomSelect from '../../components/CustomSelect';
 import { logout, removeAvatar, updateField, updateUserSettings, updateProfile, changePin, uploadAvatar, deleteAccount } from '../../store/userSlice';
+import { logout as authLogout } from '../../store/authSlice';
 
 import './styles.css';
 
@@ -101,14 +102,23 @@ const SettingsPersonal = () => {
 
   const handleDeleteAccount = async (e) => {
     e.preventDefault();
-    if (confirmDelete !== 'ПОДТВЕРЖДАЮ') {
-      showToast('Введите подтверждение правильно', false);
+    const reasonProvided = deleteFeedback.reason1 || deleteFeedback.reason2 || deleteFeedback.reason3 || deleteFeedback.other.trim();
+    if (!reasonProvided) {
+      showToast('Укажите причину удаления', false);
+      return;
+    }
+    if (confirmDelete.trim().toUpperCase() !== 'ПОДТВЕРЖДАЮ') {
+      showToast('Поле подтверждения обязательно', false);
       return;
     }
     try {
       await dispatch(deleteAccount(deleteFeedback)).unwrap();
       showToast('Аккаунт удалён', true);
-      setTimeout(()=> dispatch(logout()), 1200);
+      setTimeout(()=> {
+        dispatch(logout());
+        dispatch(authLogout());
+        window.location.href = '/auth';
+      }, 1200);
     } catch(err){
       showToast(typeof err==='string'?err:'Ошибка удаления', false);
     }
@@ -420,7 +430,6 @@ const SettingsPersonal = () => {
                 type="button"
                 className="settings-btn-dark danger"
                 onClick={handleDeleteAccount}
-                disabled={confirmDelete !== 'ПОДТВЕРЖДАЮ'}
               >
                 Удалить аккаунт
               </button>

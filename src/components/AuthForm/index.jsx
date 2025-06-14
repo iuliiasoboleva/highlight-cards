@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import axiosInstance from '../../axiosInstance';
 import { requestMagicLink, verifyPin, setPinThunk, resetPinRequest } from '../../store/authSlice';
-import { setUser } from '../../store/userSlice';
+import { setUser, fetchOrganization } from '../../store/userSlice';
 
 import './styles.css';
 
@@ -19,6 +19,8 @@ const AuthForm = () => {
   const [step, setStep] = useState('request'); // сохраняем для регистрации
   const [userType, setUserType] = useState('company');
   const [touchedFields, setTouchedFields] = useState({ inn: false, email: false });
+
+  const prevPhoneDigits = useRef('');
 
   const [formData, setFormData] = useState({
     email: '',
@@ -94,6 +96,12 @@ const AuthForm = () => {
     if (name === 'phone') {
       let digits = value.replace(/\D/g, '').slice(0, 11);
 
+      // корректируем, если удалён форматный символ
+      if (digits.length === prevPhoneDigits.current.length && value.length < formData.phone.length) {
+        // удалён нецифровой символ, убираем и последнюю цифру
+        digits = digits.slice(0, -1);
+      }
+
       if (digits) {
         if (digits[0] === '8') digits = '7' + digits.slice(1);
         if (digits[0] !== '7') digits = '7' + digits;
@@ -105,6 +113,7 @@ const AuthForm = () => {
         return `+${d[0]}(${d.slice(1, 4)}${d.length >=4?')':''}${d.slice(4,7)}${d.length >=7?'-':''}${d.slice(7,9)}${d.length>=9?'-':''}${d.slice(9,11)}`;
       };
 
+      prevPhoneDigits.current = digits;
       setFormData((prev) => ({ ...prev, phone: format(digits) }));
       return;
     }
@@ -132,6 +141,7 @@ const AuthForm = () => {
             verifyPin({ token: magicToken, pin: formData.pin }),
           ).unwrap();
           dispatch(setUser(userData));
+          if (userData.organization_id) dispatch(fetchOrganization(userData.organization_id));
           navigate('/');
         } catch (err) {
           setApiError(extractError(err));
@@ -223,6 +233,7 @@ const AuthForm = () => {
             setPinThunk({ token: magicToken, pin: formData.pin }),
           ).unwrap();
           dispatch(setUser(userData));
+          if (userData.organization_id) dispatch(fetchOrganization(userData.organization_id));
           navigate('/');
         } catch (err) {
           setApiError(extractError(err));
