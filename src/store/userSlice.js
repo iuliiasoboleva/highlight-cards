@@ -117,7 +117,13 @@ export const userSlice = createSlice({
       }
       let avatarUrl = data.avatar_url || data.avatar;
       if (avatarUrl && avatarUrl.startsWith('/')) avatarUrl = BASE_URL.replace(/\/$/,'') + avatarUrl;
-      return { ...state, ...data, firstName, lastName, avatar: avatarUrl };
+      let contact;
+      if (data.extra_contacts !== undefined) {
+        contact = data.extra_contacts;
+      } else {
+        contact = state.contact;
+      }
+      return { ...state, ...data, firstName, lastName, avatar: avatarUrl, contact };
     },
     toggleRole: (state) => {
       state.role = state.role === 'employee' ? 'admin' : 'employee';
@@ -156,6 +162,9 @@ export const userSlice = createSlice({
         }
         let avatarUrl = data.avatar_url || data.avatar;
         if (avatarUrl && avatarUrl.startsWith('/')) avatarUrl = BASE_URL.replace(/\/$/,'') + avatarUrl;
+        if (data.extra_contacts !== undefined) {
+          state.contact = data.extra_contacts;
+        }
 
         Object.assign(state, data, { firstName, lastName, avatar: avatarUrl });
         state.isLoading = false;
