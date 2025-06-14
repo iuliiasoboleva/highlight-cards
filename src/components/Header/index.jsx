@@ -71,7 +71,7 @@ const Header = () => {
       <div className="desktop-header">
         <img src="/logoColored.png" alt="Logo" className="logo" onClick={() => navigate('/')} />
         <div className="user-section">
-          Привет, <span>{user.firstName}</span>
+          Привет, <span>{user.firstName || user.name}</span>
         </div>
 
         <div className="header-icons" ref={dropdownRef}>

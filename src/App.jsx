@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Navigate,
@@ -21,7 +21,6 @@ import Sidebar from './components/Sidebar';
 import SubMenu from './components/SubMenu';
 import AuthLayout from './layouts/AuthLayout';
 import { mockClients } from './mocks/clientsInfo';
-import { mockUserProfile } from './mocks/mockUserProfile';
 import AuthRedirectGuard from './pages/AuthRedirectGuard';
 import CardDetails from './pages/CardDetails';
 import Cards from './pages/Cards';
@@ -52,7 +51,7 @@ import SettingsRFMSegment from './pages/SettingsRFMSegment';
 import Workplace from './pages/Workplace';
 import { initializeCards, updateCurrentCardField } from './store/cardsSlice';
 import { setClients } from './store/clientsSlice';
-import { setUser } from './store/userSlice';
+import { fetchUserData } from './store/userSlice';
 import LoginVerify from './pages/LoginVerify';
 import ResetPin from './pages/ResetPin';
 
@@ -78,7 +77,7 @@ const MainLayout = () => {
 
   useEffect(() => {
     dispatch(setClients(mockClients));
-    dispatch(setUser(mockUserProfile));
+    dispatch(fetchUserData());
   }, [dispatch]);
 
   useEffect(() => {

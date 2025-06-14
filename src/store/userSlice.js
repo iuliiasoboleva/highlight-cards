@@ -40,7 +40,16 @@ export const userSlice = createSlice({
       state.avatar = null;
     },
     setUser: (state, action) => {
-      return { ...state, ...action.payload };
+      const data = action.payload;
+      let firstName;
+      if (data.firstName !== undefined) {
+        firstName = data.firstName;
+      } else if (data.name) {
+        firstName = data.name.split(' ')[0];
+      } else {
+        firstName = state.firstName;
+      }
+      return { ...state, ...data, firstName };
     },
     toggleRole: (state) => {
       state.role = state.role === 'employee' ? 'admin' : 'employee';
@@ -57,7 +66,17 @@ export const userSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchUserData.fulfilled, (state, action) => {
-        Object.assign(state, action.payload);
+        const data = action.payload;
+        let firstName;
+        if (data.firstName !== undefined) {
+          firstName = data.firstName;
+        } else if (data.name) {
+          firstName = data.name.split(' ')[0];
+        } else {
+          firstName = state.firstName;
+        }
+
+        Object.assign(state, data, { firstName });
         state.isLoading = false;
       })
       .addCase(fetchUserData.rejected, (state, action) => {
