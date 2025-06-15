@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { saveAs } from 'file-saver';
-import { Download, PlusCircle, Send } from 'lucide-react';
+import { Download, PlusCircle, Send, Loader2 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
 import CustomTable from '../../components/CustomTable';
-import { mockClientStats, mockClientsHeaders } from '../../mocks/clientsInfo';
-import { addClient } from '../../store/clientsSlice';
+import { mockClientsHeaders } from '../../mocks/clientsInfo';
+import { addClientLocal, fetchClients, createClient } from '../../store/clientsSlice';
 
 import './styles.css';
 
@@ -26,6 +26,9 @@ const Clients = () => {
     birthday: '',
   });
   const [isCopied, setIsCopied] = useState(false);
+
+  const { list: clients, loading } = useSelector((state) => state.clients);
+  const orgId = useSelector((state)=> state.user.organization_id);
 
   const handleCopy = () => {
     navigator.clipboard
@@ -46,8 +49,6 @@ const Clients = () => {
         setTimeout(() => setIsCopied(false), 2000);
       });
   };
-
-  const clients = useSelector((state) => state.clients);
 
   const columns = [
     ...mockClientsHeaders.map((header) => ({
@@ -74,15 +75,14 @@ const Clients = () => {
   };
 
   const handleAddClient = () => {
-    const clientId = Date.now();
-    dispatch(
-      addClient({
-        ...newClient,
-        id: clientId,
-        createdAt: new Date().toLocaleString(),
-      }),
-    );
-    generateClientLink(clientId);
+    const payload = {
+      ...newClient,
+      organization_id: orgId,
+    };
+    dispatch(createClient(payload)).unwrap().then((res)=>{
+      generateClientLink(res.id);
+      dispatch(fetchClients());
+    });
     setShowModal(false);
     setNewClient({ surname: '', name: '', phone: '', email: '', birthday: '' });
   };
@@ -96,6 +96,23 @@ const Clients = () => {
     saveAs(data, 'clients.xlsx');
   };
 
+  useEffect(()=>{
+    dispatch(fetchClients());
+  },[dispatch]);
+
+  const totalClients = clients.length;
+  const transactions = 0; // пока нет API
+  const cardsIssued = 0;
+  const returnRate = 0;
+
+  if(loading){
+    return (
+      <div style={{display:'flex',justifyContent:'center',alignItems:'center',height:'calc(100vh - 200px)'}}>
+        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
+      </div>
+    );
+  }
+
   return (
     <div className="clients-container">
       <h2>Клиентская база</h2>
@@ -106,19 +123,19 @@ const Clients = () => {
 
       <div className="clients-stats-grid">
         <div className="clients-stat-card">
-          <span className="stat-clients-value">{clients.length}</span>
+          <span className="stat-clients-value">{totalClients}</span>
           <span className="stat-clients-label">Клиентов в базе</span>
         </div>
         <div className="clients-stat-card">
-          <span className="stat-clients-value">{mockClientStats.transactions}</span>
+          <span className="stat-clients-value">{transactions}</span>
           <span className="stat-clients-label">Транзакций по картам</span>
         </div>
         <div className="clients-stat-card">
-          <span className="stat-clients-value">{mockClientStats.cardsIssued}</span>
+          <span className="stat-clients-value">{cardsIssued}</span>
           <span className="stat-clients-label">Карт установлено</span>
         </div>
         <div className="clients-stat-card clients-tooltip-wrapper">
-          <span className="stat-clients-value">{mockClientStats.returnRate}%</span>
+          <span className="stat-clients-value">{returnRate}%</span>
           <span className="stat-clients-label">Возвращаемость</span>
           <div className="clients-tooltip">
             Процент клиентов, которые вернулись к вам хотя бы один раз.
@@ -132,13 +149,17 @@ const Clients = () => {
         </button>
       </div>
 
-      <div className="table-wrapper">
-        <CustomTable
-          columns={columns}
-          rows={clients}
-          onRowClick={(row) => navigate(`/clients/${row.id}`)}
-        />
-      </div>
+      {clients.length === 0 ? (
+        <div style={{marginTop:40, textAlign:'center', color:'#666'}}>Здесь будут отображены клиенты</div>
+      ):(
+        <div className="table-wrapper">
+          <CustomTable
+            columns={columns}
+            rows={clients}
+            onRowClick={(row) => navigate(`/clients/${row.id}`)}
+          />
+        </div>
+      )}
 
       {showModal && (
         <div className="clients-modal-overlay">
