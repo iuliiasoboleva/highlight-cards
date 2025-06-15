@@ -254,7 +254,9 @@ const Clients = () => {
       )}
 
       <div className="clients-footer-grid">
-        <div className="manager-card">
+        {/* НЕ УДАЛЯТЬ! ЭТО БУДЕТ ИСПОЛЬЗОВАНО ПОЗЖЕ */}
+        
+        {/* <div className="manager-card">
           <h4 className="footer-card-title">Импорт клиентов</h4>
           <p className="footer-card-description">
             Импортируйте клиентов в систему с помощью xlsx шаблона
@@ -273,8 +275,8 @@ const Clients = () => {
               Импортировать клиентов
             </button>
           </div>
-        </div>
-        <div className="manager-card">
+        </div> */}
+        <div className="manager-card" style={{width:'35%'}}>
           <h4 className="footer-card-title">Рассылка push</h4>
           <p className="footer-card-description">Отправляйте своим клиентам push-уведомления</p>
           <span className="scanner-icon">
