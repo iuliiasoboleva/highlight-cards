@@ -77,18 +77,9 @@ const Clients = () => {
     ...mockClientsHeaders.map((header) => ({
       key: header.key,
       title: header.label,
-      className: 'text-left',
-      cellClassName: 'text-left',
+      className: 'text-center',
+      cellClassName: 'text-center',
     })),
-    {
-      key: 'actions',
-      title: 'Действия',
-      render: (row) => (
-        <a className="copy-link-button" onClick={() => generateClientLink(row.id)}>
-          Получить ссылку
-        </a>
-      ),
-    },
   ];
 
   const generateClientLink = (clientId) => {

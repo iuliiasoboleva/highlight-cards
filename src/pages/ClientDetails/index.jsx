@@ -10,7 +10,7 @@ import './styles.css';
 
 const ClientDetails = () => {
   const { id } = useParams();
-  const client = useSelector((state) => state.clients.find((client) => String(client.id) === id));
+  const client = useSelector((state) => state.clients.list.find((c) => String(c.id) === id));
 
   if (!client) {
     return <p>Клиент не найден</p>;
