@@ -8,16 +8,20 @@ import { assignManagerToSalesPoint } from '../../store/managersSlice';
 import CustomSelect from '../CustomSelect';
 import YandexMapPicker from '../YandexMapPicker';
 
-const SalesPointsModalWithMap = ({ isOpen, onClose, onSave }) => {
+const SalesPointsModalWithMap = ({ isOpen, onClose, onSave, initialData = {}, isEdit = false }) => {
   const dispatch = useDispatch();
   const allManagers = useSelector((state) => state.managers.list);
 
   const mapRef = useRef(null);
 
   const [selectedManager, setSelectedManager] = useState(null);
-  const [name, setName] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [name, setName] = useState(initialData.name || '');
+  const [searchQuery, setSearchQuery] = useState(initialData.address || '');
+  const [selectedLocation, setSelectedLocation] = useState(
+    initialData.address && initialData.coords
+      ? { address: initialData.address, coords: initialData.coords }
+      : null,
+  );
   const [isSearching, setIsSearching] = useState(false);
 
   const [debouncedSearchQuery] = useDebounce(searchQuery, 1500);
@@ -55,6 +59,13 @@ const SalesPointsModalWithMap = ({ isOpen, onClose, onSave }) => {
     searchAddress();
   }, [debouncedSearchQuery]);
 
+  useEffect(() => {
+    if (isOpen) {
+      setName(initialData.name || '');
+      setSearchQuery(initialData.address || '');
+    }
+  }, [initialData, isOpen]);
+
   const handleMapSelect = (location) => {
     setSelectedLocation(location);
   };
@@ -73,13 +84,13 @@ const SalesPointsModalWithMap = ({ isOpen, onClose, onSave }) => {
       return;
     }
 
-    const generatedId = nanoid();
+    const generatedId = initialData.id || nanoid();
     const newSalesPoint = {
       id: generatedId,
       name,
       address: selectedLocation.address,
       coords: selectedLocation.coords,
-      employees: selectedManager ? [selectedManager] : [],
+      employees: selectedManager ? [selectedManager] : initialData.employees || [],
     };
 
     onSave(newSalesPoint);
@@ -97,7 +108,7 @@ const SalesPointsModalWithMap = ({ isOpen, onClose, onSave }) => {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <h3>Добавить точку продаж с картой</h3>
+        <h3>{isEdit ? 'Редактировать точку продаж' : 'Добавить точку продаж с картой'}</h3>
 
         <input
           type="text"

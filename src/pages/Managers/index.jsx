@@ -12,7 +12,7 @@ import SalesPointsModal from '../../components/SalesPointsModal';
 import { managersHeaders } from '../../mocks/managersInfo';
 import { locationsHeaders } from '../../mocks/mockLocations';
 import { createManager, deleteManager, editManager, fetchManagers } from '../../store/managersSlice';
-import { addLocation, fetchBranches } from '../../store/salesPointsSlice';
+import { addLocation, fetchBranches, createBranch, deleteBranch, editBranch } from '../../store/salesPointsSlice';
 
 import './styles.css';
 
@@ -37,8 +37,8 @@ const ManagersPage = () => {
         return {
           key: header.key,
           title: header.label,
-          className: 'text-left',
-          cellClassName: 'text-left',
+          className: 'text-center',
+          cellClassName: 'text-center',
           render: (row) => {
             if (row.shift) return `${row.shift.startShift || ''} - ${row.shift.endShift || ''}`;
             return `${row.start_shift || ''} - ${row.end_shift || ''}`;
@@ -48,27 +48,54 @@ const ManagersPage = () => {
       return {
         key: header.key,
         title: header.label,
-        className: 'text-left',
-        cellClassName: 'text-left',
+        className: 'text-center',
+        cellClassName: 'text-center',
       };
     }),
     {
       key: 'actions',
       title: 'Действия',
+      className: 'text-center',
+      cellClassName: 'text-center',
       render: (row) => (
-        <div className="manager-edit-button" onClick={() => setEditModalData(row)}>
+        <div className="manager-edit-button" style={{cursor:'pointer'}} onClick={() => setEditModalData(row)}>
           ✏️
         </div>
       ),
     },
   ];
 
-  const locationColumns = locationsHeaders.map((header) => ({
-    key: header.key,
-    title: header.label,
-    className: 'text-left',
-    cellClassName: 'text-left',
-  }));
+  const locationColumns = locationsHeaders.map((header) => {
+    if (['clientsCount', 'cardsIssued', 'pointsAccumulated'].includes(header.key)) {
+      return {
+        key: header.key,
+        title: header.label,
+        className: 'text-center',
+        cellClassName: 'text-center',
+        render: (row) => row[header.key] ?? 0,
+      };
+    }
+    return {
+      key: header.key,
+      title: header.label,
+      className: 'text-center',
+      cellClassName: 'text-center',
+    };
+  });
+
+  locationColumns.push({
+    key: 'actions',
+    title: 'Действия',
+    className: 'text-center',
+    cellClassName: 'text-center',
+    render: (row) => (
+      <div className="manager-edit-button" style={{cursor:'pointer'}} onClick={() => {setInitialLocationData(row);setShowLocationModal(true);}}>
+        ✏️
+      </div>
+    ),
+  });
+
+  const [initialLocationData, setInitialLocationData] = useState(null);
 
   const handleSave = (manager) => {
     if (manager.id) {
@@ -253,9 +280,28 @@ const ManagersPage = () => {
       />
       <SalesPointsModal
         isOpen={showLocationModal}
-        onClose={() => setShowLocationModal(false)}
+        onClose={() => {
+          setShowLocationModal(false);
+          setInitialLocationData(null);
+        }}
+        initialData={initialLocationData || {}}
+        isEdit={!!initialLocationData}
         onSave={(data) => {
-          dispatch(addLocation(data));
+          const payload = {
+            name: data.name,
+            address: data.address,
+            coords_lat: data.coords.lat,
+            coords_lon: data.coords.lon,
+            organization_id: orgId,
+            employees: (data.employees || []).map((id) => {
+              const m = managers.find((man) => man.id === id);
+              return m ? `${m.surname} ${m.name}`.trim() : id.toString();
+            }),
+          };
+          const action = data.id ? editBranch({ id: data.id, ...payload }) : createBranch(payload);
+          dispatch(action).unwrap().then(()=>{
+            dispatch(fetchBranches(orgId));
+          });
           setShowLocationModal(false);
         }}
       />

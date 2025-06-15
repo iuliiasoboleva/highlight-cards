@@ -141,11 +141,13 @@ const YandexMapPicker = forwardRef(({ onSelect, initialCoords }, ref) => {
           <FullscreenControl />
 
           {/* Основной выбранный Placemark */}
-          <Placemark
-            geometry={coords}
-            options={{ draggable: true, preset: 'islands#blueDotIcon' }}
-            onDragEnd={(e) => updateCoords(e.get('target').geometry.getCoordinates())}
-          />
+          {Array.isArray(coords) && coords.length === 2 && (
+            <Placemark
+              geometry={coords}
+              options={{ draggable: true, preset: 'islands#blueDotIcon' }}
+              onDragEnd={(e) => updateCoords(e.get('target').geometry.getCoordinates())}
+            />
+          )}
 
           {/* Отображение найденных организаций */}
           {foundOrganizations.map((org, idx) => (
