@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 
-import { Camera, HelpCircle, PlusCircle, Search, Loader2 } from 'lucide-react';
+import { Camera, HelpCircle, Loader2, PlusCircle, Search } from 'lucide-react';
 
 import CustomTable from '../../components/CustomTable';
 import ManagerModal from '../../components/ManagerModal';
@@ -11,8 +11,19 @@ import RoleSwitcher from '../../components/RoleSwitcher';
 import SalesPointsModal from '../../components/SalesPointsModal';
 import { managersHeaders } from '../../mocks/managersInfo';
 import { locationsHeaders } from '../../mocks/mockLocations';
-import { createManager, deleteManager, editManager, fetchManagers } from '../../store/managersSlice';
-import { addLocation, fetchBranches, createBranch, deleteBranch, editBranch } from '../../store/salesPointsSlice';
+import {
+  createManager,
+  deleteManager,
+  editManager,
+  fetchManagers,
+} from '../../store/managersSlice';
+import {
+  addLocation,
+  createBranch,
+  deleteBranch,
+  editBranch,
+  fetchBranches,
+} from '../../store/salesPointsSlice';
 
 import './styles.css';
 
@@ -27,7 +38,7 @@ const ManagersPage = () => {
 
   const { list: managers, loading: mLoading } = useSelector((state) => state.managers);
   const { list: locations, loading: lLoading } = useSelector((state) => state.locations);
-  const orgId = useSelector((state)=> state.user.organization_id);
+  const orgId = useSelector((state) => state.user.organization_id);
 
   const clients = useSelector((state) => state.clients);
 
@@ -58,7 +69,11 @@ const ManagersPage = () => {
       className: 'text-center',
       cellClassName: 'text-center',
       render: (row) => (
-        <div className="manager-edit-button" style={{cursor:'pointer'}} onClick={() => setEditModalData(row)}>
+        <div
+          className="manager-edit-button"
+          style={{ cursor: 'pointer' }}
+          onClick={() => setEditModalData(row)}
+        >
           ✏️
         </div>
       ),
@@ -89,7 +104,14 @@ const ManagersPage = () => {
     className: 'text-center',
     cellClassName: 'text-center',
     render: (row) => (
-      <div className="manager-edit-button" style={{cursor:'pointer'}} onClick={() => {setInitialLocationData(row);setShowLocationModal(true);}}>
+      <div
+        className="manager-edit-button"
+        style={{ cursor: 'pointer' }}
+        onClick={() => {
+          setInitialLocationData(row);
+          setShowLocationModal(true);
+        }}
+      >
         ✏️
       </div>
     ),
@@ -112,9 +134,11 @@ const ManagersPage = () => {
         start_shift: manager.shift?.startShift || manager.start_shift,
         end_shift: manager.shift?.endShift || manager.end_shift,
       };
-      dispatch(editManager(payload)).unwrap().then(()=>{
-        dispatch(fetchManagers(orgId));
-      });
+      dispatch(editManager(payload))
+        .unwrap()
+        .then(() => {
+          dispatch(fetchManagers(orgId));
+        });
     } else {
       const payload = {
         name: manager.name,
@@ -129,18 +153,22 @@ const ManagersPage = () => {
         start_shift: manager.shift?.startShift,
         end_shift: manager.shift?.endShift,
       };
-      dispatch(createManager(payload)).unwrap().then(()=>{
-        dispatch(fetchManagers(orgId));
-      });
+      dispatch(createManager(payload))
+        .unwrap()
+        .then(() => {
+          dispatch(fetchManagers(orgId));
+        });
     }
     setEditModalData(null);
     setShowAddModal(false);
   };
 
   const handleDelete = (id) => {
-    dispatch(deleteManager(id)).unwrap().then(() => {
-      dispatch(fetchManagers(orgId));
-    });
+    dispatch(deleteManager(id))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchManagers(orgId));
+      });
     setEditModalData(null);
   };
 
@@ -159,18 +187,26 @@ const ManagersPage = () => {
     }
   };
 
-  useEffect(()=>{
-    if(orgId){
+  useEffect(() => {
+    if (orgId) {
       dispatch(fetchManagers(orgId));
       dispatch(fetchBranches(orgId));
     }
-  },[dispatch, orgId]);
+  }, [dispatch, orgId]);
 
-  if(mLoading || lLoading) return (
-    <div style={{display:'flex',justifyContent:'center',alignItems:'center',height:'calc(100vh - 200px)'}}>
-      <Loader2 className="spinner" size={48} strokeWidth={1.4} />
-    </div>
-  );
+  if (mLoading || lLoading)
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: 'calc(100vh - 200px)',
+        }}
+      >
+        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
+      </div>
+    );
 
   return (
     <div className="managers-page">
@@ -300,17 +336,21 @@ const ManagersPage = () => {
           };
           const idNum = data.id ? parseInt(data.id, 10) : undefined;
           const action = idNum ? editBranch({ id: idNum, ...payload }) : createBranch(payload);
-          dispatch(action).unwrap().then(()=>{
-            dispatch(fetchBranches(orgId));
-          });
+          dispatch(action)
+            .unwrap()
+            .then(() => {
+              dispatch(fetchBranches(orgId));
+            });
           setShowLocationModal(false);
         }}
         onDelete={(id) => {
           const idNum = parseInt(id, 10);
-          if(!idNum) return;
-          dispatch(deleteBranch(idNum)).unwrap().then(()=>{
-            dispatch(fetchBranches(orgId));
-          });
+          if (!idNum) return;
+          dispatch(deleteBranch(idNum))
+            .unwrap()
+            .then(() => {
+              dispatch(fetchBranches(orgId));
+            });
           setShowLocationModal(false);
           setInitialLocationData(null);
         }}

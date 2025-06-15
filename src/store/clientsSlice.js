@@ -1,4 +1,5 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
 import axiosInstance from '../axiosInstance';
 
 const initialState = {
@@ -7,25 +8,31 @@ const initialState = {
   error: null,
 };
 
-export const fetchClients = createAsyncThunk('clients/fetch', async (_, { getState, rejectWithValue }) => {
-  try {
-    const orgId = getState().user.organization_id;
-    if (!orgId) return [];
-    const res = await axiosInstance.get('/clients', { params: { organization_id: orgId } });
-    return res.data;
-  } catch (err) {
-    return rejectWithValue(err.response?.data || err.message);
-  }
-});
+export const fetchClients = createAsyncThunk(
+  'clients/fetch',
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const orgId = getState().user.organization_id;
+      if (!orgId) return [];
+      const res = await axiosInstance.get('/clients', { params: { organization_id: orgId } });
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
 
-export const createClient = createAsyncThunk('clients/create', async (payload, { rejectWithValue }) => {
-  try {
-    const res = await axiosInstance.post('/clients', payload);
-    return res.data;
-  } catch (err) {
-    return rejectWithValue(err.response?.data || err.message);
-  }
-});
+export const createClient = createAsyncThunk(
+  'clients/create',
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.post('/clients', payload);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
 
 const clientsSlice = createSlice({
   name: 'clients',
@@ -39,7 +46,9 @@ const clientsSlice = createSlice({
     },
     updateCard(state, action) {
       const { cardNumber, updates } = action.payload;
-      const client = state.list.find((client) => client.cards.some((card) => card.cardNumber === cardNumber));
+      const client = state.list.find((client) =>
+        client.cards.some((card) => card.cardNumber === cardNumber),
+      );
       if (!client) return;
       const card = client.cards.find((c) => c.cardNumber === cardNumber);
       if (!card) return;

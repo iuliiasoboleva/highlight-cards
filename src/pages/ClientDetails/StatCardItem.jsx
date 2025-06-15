@@ -85,7 +85,10 @@ const StatCardItem = ({
   return (
     <div className="dashboard-stat-card" ref={wrapperRef}>
       <div className="dashboard-stat-row">
-        <div className="dashboard-stat-value" style={small ? {fontSize:'30px',fontWeight:500,lineHeight:1.2} : {}}>
+        <div
+          className="dashboard-stat-value"
+          style={small ? { fontSize: '30px', fontWeight: 500, lineHeight: 1.2 } : {}}
+        >
           {isFormPopup ? (
             <button className="form-popup-button" onClick={onFormClick}>
               Посмотреть поля

@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { saveAs } from 'file-saver';
-import { Download, PlusCircle, Send, Loader2 } from 'lucide-react';
+import { Download, Loader2, PlusCircle, Send } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
 import CustomTable from '../../components/CustomTable';
 import { mockClientsHeaders } from '../../mocks/clientsInfo';
-import { addClientLocal, fetchClients, createClient } from '../../store/clientsSlice';
+import { addClientLocal, createClient, fetchClients } from '../../store/clientsSlice';
 
 import './styles.css';
 
@@ -29,7 +29,7 @@ const Clients = () => {
   const [isCopied, setIsCopied] = useState(false);
 
   const { list: clients, loading } = useSelector((state) => state.clients);
-  const orgId = useSelector((state)=> state.user.organization_id);
+  const orgId = useSelector((state) => state.user.organization_id);
 
   const formatPhone = (value) => {
     const digits = value.replace(/\D/g, '').slice(0, 11);
@@ -96,10 +96,12 @@ const Clients = () => {
       ...newClient,
       organization_id: orgId,
     };
-    dispatch(createClient(payload)).unwrap().then((res)=>{
-      generateClientLink(res.id);
-      dispatch(fetchClients());
-    });
+    dispatch(createClient(payload))
+      .unwrap()
+      .then((res) => {
+        generateClientLink(res.id);
+        dispatch(fetchClients());
+      });
     setShowModal(false);
     setNewClient({ surname: '', name: '', phone: '', email: '', birthday: '' });
   };
@@ -113,18 +115,25 @@ const Clients = () => {
     saveAs(data, 'clients.xlsx');
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(fetchClients());
-  },[dispatch]);
+  }, [dispatch]);
 
   const totalClients = clients.length;
   const transactions = 0; // пока нет API
   const cardsIssued = 0;
   const returnRate = 0;
 
-  if(loading){
+  if (loading) {
     return (
-      <div style={{display:'flex',justifyContent:'center',alignItems:'center',height:'calc(100vh - 200px)'}}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: 'calc(100vh - 200px)',
+        }}
+      >
         <Loader2 className="spinner" size={48} strokeWidth={1.4} />
       </div>
     );
@@ -167,8 +176,10 @@ const Clients = () => {
       </div>
 
       {clients.length === 0 ? (
-        <div style={{marginTop:40, textAlign:'center', color:'#666'}}>Здесь будут отображены клиенты</div>
-      ):(
+        <div style={{ marginTop: 40, textAlign: 'center', color: '#666' }}>
+          Здесь будут отображены клиенты
+        </div>
+      ) : (
         <div className="table-wrapper">
           <CustomTable
             columns={columns}
@@ -179,8 +190,8 @@ const Clients = () => {
       )}
 
       {showModal && (
-        <div className="clients-modal-overlay" onClick={()=>setShowModal(false)}>
-          <div className="clients-modal" onClick={(e)=>e.stopPropagation()}>
+        <div className="clients-modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="clients-modal" onClick={(e) => e.stopPropagation()}>
             <h3 className="clients-modal-title">Добавить клиента</h3>
             <div className="clients-modal-form-group">
               <input
@@ -222,7 +233,9 @@ const Clients = () => {
               />
             </div>
             <div className="clients-modal-form-group">
-              <label style={{fontSize:12, marginBottom:4, display:'block'}}>Дата рождения</label>
+              <label style={{ fontSize: 12, marginBottom: 4, display: 'block' }}>
+                Дата рождения
+              </label>
               <input
                 className="clients-modal-input"
                 type="date"
@@ -230,19 +243,30 @@ const Clients = () => {
                 value={newClient.birthday}
                 onChange={(e) => setNewClient({ ...newClient, birthday: e.target.value })}
               />
-              <label style={{display:'flex', alignItems:'center', gap:6, marginTop:6}}>
-                 <input type="checkbox" checked={noBirthday} onChange={(e)=>{
-                   setNoBirthday(e.target.checked);
-                   if(e.target.checked) setNewClient({...newClient, birthday:''});
-                 }}/>
-                 Без даты рождения
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6 }}>
+                <input
+                  type="checkbox"
+                  checked={noBirthday}
+                  onChange={(e) => {
+                    setNoBirthday(e.target.checked);
+                    if (e.target.checked) setNewClient({ ...newClient, birthday: '' });
+                  }}
+                />
+                Без даты рождения
               </label>
             </div>
             <div className="clients-modal-actions">
               <button
                 className="clients-modal-button clients-modal-button-primary"
                 onClick={handleAddClient}
-                disabled={!(newClient.name && newClient.surname && phoneDigits.length===11 && isEmailValid)}
+                disabled={
+                  !(
+                    newClient.name &&
+                    newClient.surname &&
+                    phoneDigits.length === 11 &&
+                    isEmailValid
+                  )
+                }
               >
                 Добавить клиента
               </button>
@@ -258,8 +282,8 @@ const Clients = () => {
       )}
 
       {showLinkModal && (
-        <div className="clients-modal-overlay" onClick={()=>setShowLinkModal(false)}>
-          <div className="clients-modal" onClick={(e)=>e.stopPropagation()}>
+        <div className="clients-modal-overlay" onClick={() => setShowLinkModal(false)}>
+          <div className="clients-modal" onClick={(e) => e.stopPropagation()}>
             <h3 className="clients-modal-title">Ссылка для клиента</h3>
             <p className="clients-modal-description">
               Отправьте эту ссылку клиенту для добавления карты лояльности:
@@ -285,7 +309,7 @@ const Clients = () => {
 
       <div className="clients-footer-grid">
         {/* НЕ УДАЛЯТЬ! ЭТО БУДЕТ ИСПОЛЬЗОВАНО ПОЗЖЕ */}
-        
+
         {/* <div className="manager-card">
           <h4 className="footer-card-title">Импорт клиентов</h4>
           <p className="footer-card-description">
@@ -306,7 +330,7 @@ const Clients = () => {
             </button>
           </div>
         </div> */}
-        <div className="manager-card" style={{width:'35%'}}>
+        <div className="manager-card" style={{ width: '35%' }}>
           <h4 className="footer-card-title">Рассылка push</h4>
           <p className="footer-card-description">Отправляйте своим клиентам push-уведомления</p>
           <span className="scanner-icon">

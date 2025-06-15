@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import PhoneInput from 'react-phone-input-2';
@@ -9,9 +9,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ru } from 'date-fns/locale';
 import { Calendar, Loader2 } from 'lucide-react';
 
+import axiosInstance from '../../axiosInstance';
 import { setClients } from '../../store/clientsSlice';
 import DeleteClientModal from './DeleteClientModal';
-import axiosInstance from '../../axiosInstance';
 
 import './styles.css';
 
@@ -46,7 +46,9 @@ const PersonalClientInfo = () => {
           surname: res.data.surname || '',
           email: res.data.email || '',
           phone: res.data.phone || '',
-          birthdate: res.data.birthdate ? new Date(res.data.birthdate.split('/').reverse().join('-')) : null,
+          birthdate: res.data.birthdate
+            ? new Date(res.data.birthdate.split('/').reverse().join('-'))
+            : null,
         });
       } catch (e) {
         console.error(e);
@@ -62,13 +64,20 @@ const PersonalClientInfo = () => {
 
   if (loading) {
     return (
-      <div style={{display:'flex',justifyContent:'center',alignItems:'center',height:'calc(100vh - 200px)'}}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: 'calc(100vh - 200px)',
+        }}
+      >
         <Loader2 className="spinner" size={48} strokeWidth={1.4} />
       </div>
     );
   }
 
-  if (!client) return <p style={{textAlign:'center'}}>Клиент не найден</p>;
+  if (!client) return <p style={{ textAlign: 'center' }}>Клиент не найден</p>;
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));

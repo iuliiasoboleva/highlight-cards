@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axiosInstance from '../../axiosInstance';
 
+import { Loader2 } from 'lucide-react';
+
+import axiosInstance from '../../axiosInstance';
 import CustomTable from '../../components/CustomTable';
 import { clientHeaders } from '../../mocks/mockClientTable';
 import StatCard from './StatCard';
-import { Loader2 } from 'lucide-react';
 
 import './styles.css';
 
@@ -42,13 +43,20 @@ const ClientDetails = () => {
 
   if (loading) {
     return (
-      <div style={{display:'flex',justifyContent:'center',alignItems:'center',height:'calc(100vh - 200px)'}}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: 'calc(100vh - 200px)',
+        }}
+      >
         <Loader2 className="spinner" size={48} strokeWidth={1.4} />
       </div>
     );
   }
 
-  if (!client) return <p style={{textAlign:'center'}}>Клиент не найден</p>;
+  if (!client) return <p style={{ textAlign: 'center' }}>Клиент не найден</p>;
 
   return (
     <div className="client-container">

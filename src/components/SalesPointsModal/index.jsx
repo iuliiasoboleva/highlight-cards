@@ -5,11 +5,18 @@ import { nanoid } from '@reduxjs/toolkit';
 import { useDebounce } from 'use-debounce';
 
 import { assignManagerToSalesPoint } from '../../store/managersSlice';
+import ConfirmModal from '../ConfirmModal';
 import CustomSelect from '../CustomSelect';
 import YandexMapPicker from '../YandexMapPicker';
-import ConfirmModal from '../ConfirmModal';
 
-const SalesPointsModalWithMap = ({ isOpen, onClose, onSave, onDelete = () => {}, initialData = {}, isEdit = false }) => {
+const SalesPointsModalWithMap = ({
+  isOpen,
+  onClose,
+  onSave,
+  onDelete = () => {},
+  initialData = {},
+  isEdit = false,
+}) => {
   const dispatch = useDispatch();
   const allManagers = useSelector((state) => state.managers.list);
 
@@ -27,7 +34,8 @@ const SalesPointsModalWithMap = ({ isOpen, onClose, onSave, onDelete = () => {},
 
   const [debouncedSearchQuery] = useDebounce(searchQuery, 1500);
 
-  const isDeletable = !initialData.clientsCount && !initialData.cardsIssued && !initialData.pointsAccumulated;
+  const isDeletable =
+    !initialData.clientsCount && !initialData.cardsIssued && !initialData.pointsAccumulated;
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {

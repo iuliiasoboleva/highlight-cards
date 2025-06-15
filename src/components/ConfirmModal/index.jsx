@@ -1,6 +1,13 @@
 import React from 'react';
 
-const ConfirmModal = ({ isOpen, message, confirmText = 'Да', cancelText = 'Отмена', onConfirm, onCancel }) => {
+const ConfirmModal = ({
+  isOpen,
+  message,
+  confirmText = 'Да',
+  cancelText = 'Отмена',
+  onConfirm,
+  onCancel,
+}) => {
   if (!isOpen) return null;
   return (
     <div className="modal-overlay" onClick={onCancel}>
@@ -19,4 +26,4 @@ const ConfirmModal = ({ isOpen, message, confirmText = 'Да', cancelText = 'О�
   );
 };
 
-export default ConfirmModal; 
+export default ConfirmModal;

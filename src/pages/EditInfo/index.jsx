@@ -2,14 +2,23 @@ import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
+import { YMaps } from '@pbe/react-yandex-maps';
 import { HelpCircle } from 'lucide-react';
 
 import EditLayout from '../../components/EditLayout';
 import QRPopup from '../../components/QRPopup';
-import { updateCurrentCardField } from '../../store/cardsSlice';
+import {
+  addCurrentCardArrayItem,
+  removeCurrentCardArrayItem,
+  updateCurrentCardField,
+} from '../../store/cardsSlice';
 import BarcodeRadio from '../EditSettings/BarcodeRadio';
+import ActiveLinks from './ActiveLinks';
+import ClientContactFields from './ClientContactFields';
 import LabeledTextarea from './LabeledTextarea';
+import PolicyFields from './PolicyFields';
 import ReferralProgramConfig from './ReferralProgramConfig';
+import ReviewLinks from './ReviewLinks';
 
 import './styles.css';
 
@@ -140,7 +149,78 @@ const EditInfo = () => {
 
       <hr />
       <ReferralProgramConfig />
-
+      <hr />
+      <h3 className="barcode-radio-title">Активные ссылки</h3>
+      <YMaps
+        query={{
+          apikey: 'a886f296-c974-43b3-aa06-a94c782939c2',
+          lang: 'ru_RU',
+          load: 'package.suggest',
+        }}
+      >
+        <ActiveLinks
+          formFields={currentCard.infoFields.activeLinks}
+          onFieldChange={(index, key, value) =>
+            dispatch(
+              updateCurrentCardField({ path: `infoFields.activeLinks.${index}.${key}`, value }),
+            )
+          }
+          onAddField={() =>
+            dispatch(
+              addCurrentCardArrayItem({
+                path: 'infoFields.activeLinks',
+                item: { type: 'url', link: 'https://', text: '' },
+              }),
+            )
+          }
+          onRemoveField={(index) =>
+            dispatch(removeCurrentCardArrayItem({ path: 'infoFields.activeLinks', index }))
+          }
+        />
+      </YMaps>
+      <hr />
+      <div>
+        <h3 className="barcode-radio-title">Отзывы в сервисах </h3>
+        <p className="labeled-textarea-subtitle">
+          Добавьте ссылки на ваш бизнес. Это поможет клиенту оставить положительный отзыв, а вам
+          поднимет рейтинг в поиске.
+        </p>
+      </div>
+      <ReviewLinks
+        formFields={currentCard.infoFields.reviewLinks}
+        onFieldChange={(index, key, value) =>
+          dispatch(
+            updateCurrentCardField({ path: `infoFields.reviewLinks.${index}.${key}`, value }),
+          )
+        }
+        onAddField={() =>
+          dispatch(
+            addCurrentCardArrayItem({
+              path: 'infoFields.reviewLinks',
+              item: { type: '2gis', link: 'https://', text: '' },
+            }),
+          )
+        }
+        onRemoveField={(index) =>
+          dispatch(removeCurrentCardArrayItem({ path: 'infoFields.reviewLinks', index }))
+        }
+      />
+      <hr />
+      <PolicyFields
+        policyEnabled={infoFields.policyEnabled}
+        fullPolicyText={infoFields.fullPolicyText}
+        linkToFullTerms={infoFields.linkToFullTerms}
+      />
+      <hr />
+      <h3 className="barcode-radio-title">Сведения об эмитенте карты </h3>
+      <ClientContactFields
+        name={infoFields.issuerName}
+        email={infoFields.issuerEmail}
+        phone={infoFields.issuerPhone}
+        onChange={(field, value) =>
+          dispatch(updateCurrentCardField({ path: `infoFields.${field}`, value }))
+        }
+      />
       <button onClick={() => setShowQRPopup(true)} className="create-button">
         Завершить
       </button>

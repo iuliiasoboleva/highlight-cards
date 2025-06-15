@@ -1,14 +1,18 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
 import axiosInstance from '../axiosInstance';
 
-export const fetchManagers = createAsyncThunk('managers/fetchManagers', async (orgId, { rejectWithValue }) => {
-  try {
-    const res = await axiosInstance.get('/managers', { params: { organization_id: orgId } });
-    return res.data;
-  } catch (err) {
-    return rejectWithValue(err.response?.data || err.message);
-  }
-});
+export const fetchManagers = createAsyncThunk(
+  'managers/fetchManagers',
+  async (orgId, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get('/managers', { params: { organization_id: orgId } });
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
 
 export const createManager = createAsyncThunk(
   'managers/createManager',
@@ -22,24 +26,30 @@ export const createManager = createAsyncThunk(
   },
 );
 
-export const deleteManager = createAsyncThunk('managers/deleteManager', async (empId, { rejectWithValue }) => {
-  try {
-    await axiosInstance.delete(`/employees/${empId}`);
-    return empId;
-  } catch (err) {
-    return rejectWithValue(err.response?.data || err.message);
-  }
-});
+export const deleteManager = createAsyncThunk(
+  'managers/deleteManager',
+  async (empId, { rejectWithValue }) => {
+    try {
+      await axiosInstance.delete(`/employees/${empId}`);
+      return empId;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
 
-export const editManager = createAsyncThunk('managers/editManager', async (manager, { rejectWithValue }) => {
-  try {
-    const { id, ...data } = manager;
-    const res = await axiosInstance.put(`/employees/${id}`, data);
-    return res.data;
-  } catch (err) {
-    return rejectWithValue(err.response?.data || err.message);
-  }
-});
+export const editManager = createAsyncThunk(
+  'managers/editManager',
+  async (manager, { rejectWithValue }) => {
+    try {
+      const { id, ...data } = manager;
+      const res = await axiosInstance.put(`/employees/${id}`, data);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
 
 const managersSlice = createSlice({
   name: 'managers',
@@ -104,5 +114,6 @@ const managersSlice = createSlice({
   },
 });
 
-export const { addManager, removeManager, updateManager, assignManagerToSalesPoint } = managersSlice.actions;
+export const { addManager, removeManager, updateManager, assignManagerToSalesPoint } =
+  managersSlice.actions;
 export default managersSlice.reducer;

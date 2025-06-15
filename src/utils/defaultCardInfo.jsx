@@ -117,5 +117,18 @@ export const defaultCardTemplate = {
     referralMoment: 'visit',
     referrerStampsQuantity: 1,
     referralStampsQuantity: 1,
+    activeLinks: [{ type: 'url', link: '', text: '' }],
+    reviewLinks: [{ type: '2gis', link: '', text: '' }],
+    fullPolicyText: `1. Получите 1 штамп за каждую покупку.
+2. Соберите 10 штампов для получения награды.
+3. Срок действия карты, штампов и наград не ограничен.
+4. Штампы и вознаграждения не могут быть обменены, возвращены, заменены или выкуплены за наличные.
+5. Карты не подлежат передаче и не могут быть объединены с другими картами.
+6. Компания оставляет за собой право окончательного решения в случае возникновения споров.`,
+    linkToFullTerms: '',
+    policyEnabled: false,
+    issuerName: '',
+    issuerEmail: '',
+    issuerPhone: '',
   },
 };

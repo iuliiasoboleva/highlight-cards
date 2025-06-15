@@ -50,17 +50,20 @@ export const fetchCards = createAsyncThunk(
   },
 );
 
-export const saveCard = createAsyncThunk('cards/saveCard', async (_, { getState, rejectWithValue }) => {
-  try {
-    const { currentCard } = getState().cards;
-    if (!currentCard?.id || currentCard.id === 'fixed') throw new Error('Нет id карты');
-    const payload = { push_notification: currentCard.pushNotification };
-    await axiosInstance.put(`/cards/${currentCard.id}`, payload);
-    return { id: currentCard.id, changes: { pushNotification: currentCard.pushNotification } };
-  } catch (err) {
-    return rejectWithValue(err.response?.data || err.message);
-  }
-});
+export const saveCard = createAsyncThunk(
+  'cards/saveCard',
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const { currentCard } = getState().cards;
+      if (!currentCard?.id || currentCard.id === 'fixed') throw new Error('Нет id карты');
+      const payload = { push_notification: currentCard.pushNotification };
+      await axiosInstance.put(`/cards/${currentCard.id}`, payload);
+      return { id: currentCard.id, changes: { pushNotification: currentCard.pushNotification } };
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
 
 export const cardsSlice = createSlice({
   name: 'cards',

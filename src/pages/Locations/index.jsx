@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Trash2, Loader2 } from 'lucide-react';
+import { Loader2, Trash2 } from 'lucide-react';
 import { useDebounce } from 'use-debounce';
 
 import CustomSelect from '../../components/CustomSelect';
@@ -10,10 +10,10 @@ import ToggleSwitch from '../../components/ToggleSwitch';
 import YandexMapPicker from '../../components/YandexMapPicker';
 import { setCurrentCard } from '../../store/cardsSlice';
 import {
-  fetchBranches,
   createBranch as createBranchThunk,
   deleteBranch as deleteBranchThunk,
   editBranch,
+  fetchBranches,
 } from '../../store/salesPointsSlice';
 
 import './styles.css';
@@ -311,7 +311,14 @@ const Locations = () => {
 
   if (locationsLoading) {
     return (
-      <div style={{display:'flex',justifyContent:'center',alignItems:'center',height:'calc(100vh - 200px)'}}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: 'calc(100vh - 200px)',
+        }}
+      >
         <Loader2 className="spinner" size={48} strokeWidth={1.4} />
       </div>
     );

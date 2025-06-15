@@ -46,6 +46,35 @@
   resize: vertical;
 }
 
+.card-info-form-header {
+  grid-template-columns: 1fr 2fr 3fr 1fr;
+  display: grid;
+  margin-bottom: 10px;
+  align-items: center;
+  gap: 20px;
+}
+
+.card-info-form-header span {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgb(101, 101, 101);
+  line-height: 1.66667;
+}
+
+.card-info-form-row {
+  grid-template-columns: 1fr 2fr 3fr 1fr;
+  display: grid;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 20px;
+}
+
+.client-contact-row {
+  display: flex;
+  gap: 16px;
+  flex-direction: column;
+}
+
 @media (min-width: 1025px) {
   .type-card-image-container {
     width: 400px;
