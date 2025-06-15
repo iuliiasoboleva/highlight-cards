@@ -7,8 +7,9 @@ import { useDebounce } from 'use-debounce';
 import { assignManagerToSalesPoint } from '../../store/managersSlice';
 import CustomSelect from '../CustomSelect';
 import YandexMapPicker from '../YandexMapPicker';
+import ConfirmModal from '../ConfirmModal';
 
-const SalesPointsModalWithMap = ({ isOpen, onClose, onSave, initialData = {}, isEdit = false }) => {
+const SalesPointsModalWithMap = ({ isOpen, onClose, onSave, onDelete = () => {}, initialData = {}, isEdit = false }) => {
   const dispatch = useDispatch();
   const allManagers = useSelector((state) => state.managers.list);
 
@@ -25,6 +26,9 @@ const SalesPointsModalWithMap = ({ isOpen, onClose, onSave, initialData = {}, is
   const [isSearching, setIsSearching] = useState(false);
 
   const [debouncedSearchQuery] = useDebounce(searchQuery, 1500);
+
+  const isDeletable = !initialData.clientsCount && !initialData.cardsIssued && !initialData.pointsAccumulated;
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     if (Array.isArray(allManagers) && allManagers.length > 0 && !selectedManager) {
@@ -161,6 +165,18 @@ const SalesPointsModalWithMap = ({ isOpen, onClose, onSave, initialData = {}, is
           <button className="btn btn-dark" onClick={handleSave}>
             Сохранить
           </button>
+          {isEdit && (
+            <button
+              className="btn btn-danger"
+              disabled={!isDeletable}
+              onClick={() => {
+                if (!isDeletable) return;
+                setShowDeleteConfirm(true);
+              }}
+            >
+              Удалить
+            </button>
+          )}
           <button
             className="btn-light"
             onClick={() => {
@@ -171,6 +187,18 @@ const SalesPointsModalWithMap = ({ isOpen, onClose, onSave, initialData = {}, is
             Отмена
           </button>
         </div>
+
+        <ConfirmModal
+          isOpen={showDeleteConfirm}
+          message="Удалить точку продаж без возможности восстановления? Все данные будут потеряны."
+          confirmText="Удалить"
+          cancelText="Отмена"
+          onConfirm={() => {
+            onDelete(initialData.id);
+            setShowDeleteConfirm(false);
+          }}
+          onCancel={() => setShowDeleteConfirm(false)}
+        />
       </div>
     </div>
   );

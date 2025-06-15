@@ -298,11 +298,21 @@ const ManagersPage = () => {
               return m ? `${m.surname} ${m.name}`.trim() : id.toString();
             }),
           };
-          const action = data.id ? editBranch({ id: data.id, ...payload }) : createBranch(payload);
+          const idNum = data.id ? parseInt(data.id, 10) : undefined;
+          const action = idNum ? editBranch({ id: idNum, ...payload }) : createBranch(payload);
           dispatch(action).unwrap().then(()=>{
             dispatch(fetchBranches(orgId));
           });
           setShowLocationModal(false);
+        }}
+        onDelete={(id) => {
+          const idNum = parseInt(id, 10);
+          if(!idNum) return;
+          dispatch(deleteBranch(idNum)).unwrap().then(()=>{
+            dispatch(fetchBranches(orgId));
+          });
+          setShowLocationModal(false);
+          setInitialLocationData(null);
         }}
       />
       <RoleSwitcher />

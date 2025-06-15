@@ -4,6 +4,7 @@ import axiosInstance from '../axiosInstance';
 import BASE_URL from '../config';
 import { eraseCookie } from '../cookieUtils';
 
+const storedOrg = localStorage.getItem('orgId');
 const initialState = {
   firstName: '',
   lastName: '',
@@ -17,6 +18,7 @@ const initialState = {
   timezone: '(UTC+03:00) Moscow',
   avatar: null,
   role: '',
+  organization_id: storedOrg ? Number(storedOrg) : undefined,
   isLoading: false,
   error: null,
 };
@@ -150,13 +152,19 @@ export const userSlice = createSlice({
       } else {
         contact = state.contact;
       }
-      return { ...state, ...data, firstName, lastName, avatar: avatarUrl, contact };
+      const newState = { ...state, ...data, firstName, lastName, avatar: avatarUrl, contact };
+      if (data.organization_id) {
+        newState.organization_id = data.organization_id;
+        localStorage.setItem('orgId', data.organization_id);
+      }
+      return newState;
     },
     toggleRole: (state) => {
       state.role = state.role === 'employee' ? 'admin' : 'employee';
     },
     logout: (state) => {
       eraseCookie('userToken');
+      localStorage.removeItem('orgId');
       return { ...initialState, token: null };
     },
   },
@@ -195,6 +203,10 @@ export const userSlice = createSlice({
         }
 
         Object.assign(state, data, { firstName, lastName, avatar: avatarUrl });
+        if (data.organization_id) {
+          state.organization_id = data.organization_id;
+          localStorage.setItem('orgId', data.organization_id);
+        }
         state.isLoading = false;
       })
       .addCase(fetchUserData.rejected, (state, action) => {
