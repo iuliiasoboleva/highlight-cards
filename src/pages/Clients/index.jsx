@@ -162,8 +162,8 @@ const Clients = () => {
       )}
 
       {showModal && (
-        <div className="clients-modal-overlay">
-          <div className="clients-modal">
+        <div className="clients-modal-overlay" onClick={()=>setShowModal(false)}>
+          <div className="clients-modal" onClick={(e)=>e.stopPropagation()}>
             <h3 className="clients-modal-title">Добавить клиента</h3>
             <div className="clients-modal-form-group">
               <input
@@ -228,8 +228,8 @@ const Clients = () => {
       )}
 
       {showLinkModal && (
-        <div className="clients-modal-overlay">
-          <div className="clients-modal">
+        <div className="clients-modal-overlay" onClick={()=>setShowLinkModal(false)}>
+          <div className="clients-modal" onClick={(e)=>e.stopPropagation()}>
             <h3 className="clients-modal-title">Ссылка для клиента</h3>
             <p className="clients-modal-description">
               Отправьте эту ссылку клиенту для добавления карты лояльности:

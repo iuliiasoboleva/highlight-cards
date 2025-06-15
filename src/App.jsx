@@ -169,7 +169,7 @@ const MainLayout = () => {
     if (matchClientsRoot || matchClientsReviews) {
       return [
         { to: `/clients`, label: 'Клиенты' },
-        { to: `/clients/reviews`, label: 'Отзывы' },
+        // { to: `/clients/reviews`, label: 'Отзывы' },
       ];
     }
 
