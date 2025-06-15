@@ -84,3 +84,9 @@
     overflow-x: auto;
   }
 }
+
+.no-data-row {
+  text-align: center;
+  padding: 24px;
+  color: #999;
+}

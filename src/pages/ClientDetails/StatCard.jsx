@@ -18,7 +18,7 @@ const linkCards = [
   },
 ];
 
-const stats = [
+const defaultStats = [
   { key: 'ltv', label: 'LTV', value: 7, showRightCircle: false },
   {
     key: 'stamps_given',
@@ -81,7 +81,7 @@ const stats = [
   {
     key: 'loyalty_level',
     label: 'Уровень лояльности',
-    value: 3, // рейтинг от 0 до 5
+    value: 3,
     isRating: true,
     tooltip: 'Показатель активности и вовлеченности клиентов',
   },
@@ -147,17 +147,20 @@ const stats = [
   },
 ];
 
-const StatCard = () => {
-  const [modalType, setModalType] = useState(null); // increase / decrease
+const StatCard = ({ stats = null, links = null }) => {
+  const [modalType, setModalType] = useState(null);
   const [formFields, setFormFields] = useState(null);
 
   const handleOpenModal = (type) => setModalType(type);
   const handleCloseModal = () => setModalType(null);
 
+  const statsToRender = stats && stats.length ? stats : defaultStats;
+  const linksToRender = links && links.length ? links : linkCards;
+
   return (
     <div className="client-dashboard-wrapper">
       <div className="client-dashboard-stats">
-        {stats.map((item) => (
+        {statsToRender.map((item) => (
           <StatCardItem
             key={item.key}
             {...item}
@@ -180,7 +183,7 @@ const StatCard = () => {
         )}
       </div>
       <div className="client-link-wrapper">
-        {linkCards.map((item, index) => (
+        {linksToRender.map((item, index) => (
           <LinkCardItem key={index} url={item.url} label={item.label} />
         ))}
       </div>

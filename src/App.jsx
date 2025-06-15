@@ -180,7 +180,7 @@ const MainLayout = () => {
         { to: `${base}`, label: 'Профиль' },
         { to: `${base}/push`, label: 'Отправить push' },
         { to: `${base}/edit`, label: 'Персональная информация' },
-        { to: `${base}/reviews`, label: 'Отзывы' },
+        // { to: `${base}/reviews`, label: 'Отзывы' },
       ];
     }
 

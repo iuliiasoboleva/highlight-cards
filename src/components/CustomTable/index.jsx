@@ -16,23 +16,31 @@ const CustomTable = ({ columns, rows, onRowClick }) => {
           </tr>
         </thead>
         <tbody>
-          {rows.map((row, rowIndex) => (
-            <tr
-              key={rowIndex}
-              className={onRowClick ? 'clickable-row' : ''}
-              onClick={onRowClick ? () => onRowClick(row) : undefined}
-            >
-              {columns.map((column, colIndex) => (
-                <td key={colIndex} className={column.cellClassName || ''}>
-                  {Array.isArray(row[column.key])
-                    ? row[column.key].join(', ')
-                    : column.render
-                      ? column.render(row)
-                      : row[column.key]}
-                </td>
-              ))}
+          {rows.length === 0 ? (
+            <tr>
+              <td colSpan={columns.length} className="no-data-row">
+                Здесь будут ваши транзакции по карте
+              </td>
             </tr>
-          ))}
+          ) : (
+            rows.map((row, rowIndex) => (
+              <tr
+                key={rowIndex}
+                className={onRowClick ? 'clickable-row' : ''}
+                onClick={onRowClick ? () => onRowClick(row) : undefined}
+              >
+                {columns.map((column, colIndex) => (
+                  <td key={colIndex} className={column.cellClassName || ''}>
+                    {Array.isArray(row[column.key])
+                      ? row[column.key].join(', ')
+                      : column.render
+                        ? column.render(row)
+                        : row[column.key]}
+                  </td>
+                ))}
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>
