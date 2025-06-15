@@ -12,12 +12,8 @@ const DeleteClientModal = ({ fullName, onConfirm, onCancel }) => {
             ×
           </span>
         </div>
-        <p className="client-modal-sub">Подтвердите удаление клиента</p>
-        <p>
-          Вы действительно хотите удалить клиента
-          <br />
-          {fullName}?
-        </p>
+        <p className="client-modal-sub">Информация будет удалена безвозвратно</p>
+        <p className="client-modal-question">Удалить клиента {fullName}?</p>
         <div className="client-modal-actions">
           <button className="client-personal-btn save" onClick={onConfirm}>
             Удалить

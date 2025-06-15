@@ -90,3 +90,12 @@
     flex-direction: column;
   }
 }
+
+.client-modal-sub {
+  margin: 12px 0;
+  font-weight: 500;
+}
+
+.client-modal-question {
+  margin: 16px 0 24px 0;
+}

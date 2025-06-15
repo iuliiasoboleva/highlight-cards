@@ -76,10 +76,6 @@ const MainLayout = () => {
   const currentCard = useSelector((state) => state.cards.currentCard);
 
   useEffect(() => {
-    dispatch(setClients(mockClients));
-  }, [dispatch]);
-
-  useEffect(() => {
     if (isTemplatePage) {
       dispatch(initializeCards({ useTemplates: true }));
     } else {
