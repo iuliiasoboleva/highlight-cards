@@ -10,7 +10,7 @@ import YandexMapPicker from '../YandexMapPicker';
 
 const SalesPointsModalWithMap = ({ isOpen, onClose, onSave }) => {
   const dispatch = useDispatch();
-  const allManagers = useSelector((state) => state.managers);
+  const allManagers = useSelector((state) => state.managers.list);
 
   const mapRef = useRef(null);
 
@@ -23,7 +23,7 @@ const SalesPointsModalWithMap = ({ isOpen, onClose, onSave }) => {
   const [debouncedSearchQuery] = useDebounce(searchQuery, 1500);
 
   useEffect(() => {
-    if (allManagers.length > 0 && !selectedManager) {
+    if (Array.isArray(allManagers) && allManagers.length > 0 && !selectedManager) {
       setSelectedManager(allManagers[0].id);
     }
   }, [allManagers, selectedManager]);
@@ -95,8 +95,8 @@ const SalesPointsModalWithMap = ({ isOpen, onClose, onSave }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
         <h3>Добавить точку продаж с картой</h3>
 
         <input
@@ -139,7 +139,7 @@ const SalesPointsModalWithMap = ({ isOpen, onClose, onSave }) => {
           <CustomSelect
             value={selectedManager}
             onChange={setSelectedManager}
-            options={allManagers.map((manager) => ({
+            options={(Array.isArray(allManagers) ? allManagers : []).map((manager) => ({
               value: manager.id,
               label: `${manager.name} ${manager.surname}`,
             }))}

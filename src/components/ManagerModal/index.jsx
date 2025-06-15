@@ -26,8 +26,8 @@ const ManagerModal = ({ isOpen, onClose, onSave, onDelete, initialData = {}, isE
   const isFormValid = manager.name && manager.surname && manager.location && manager.shift;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
         <h3>{isEdit ? 'Редактировать менеджера' : 'Добавить менеджера'}</h3>
         <input
           type="text"

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 
-import { Camera, HelpCircle, PlusCircle, Search } from 'lucide-react';
+import { Camera, HelpCircle, PlusCircle, Search, Loader2 } from 'lucide-react';
 
 import CustomTable from '../../components/CustomTable';
 import ManagerModal from '../../components/ManagerModal';
@@ -11,8 +11,8 @@ import RoleSwitcher from '../../components/RoleSwitcher';
 import SalesPointsModal from '../../components/SalesPointsModal';
 import { managersHeaders } from '../../mocks/managersInfo';
 import { locationsHeaders } from '../../mocks/mockLocations';
-import { addManager, removeManager, updateManager } from '../../store/managersSlice';
-import { addLocation } from '../../store/salesPointsSlice';
+import { addManager, removeManager, updateManager, fetchManagers } from '../../store/managersSlice';
+import { addLocation, fetchBranches } from '../../store/salesPointsSlice';
 
 import './styles.css';
 
@@ -25,8 +25,9 @@ const ManagersPage = () => {
   const [editModalData, setEditModalData] = useState(null);
   const [showLocationModal, setShowLocationModal] = useState(false);
 
-  const managers = useSelector((state) => state.managers);
-  const locations = useSelector((state) => state.locations);
+  const { list: managers, loading: mLoading } = useSelector((state) => state.managers);
+  const { list: locations, loading: lLoading } = useSelector((state) => state.locations);
+  const orgId = useSelector((state)=> state.user.organization_id);
 
   const clients = useSelector((state) => state.clients);
 
@@ -95,6 +96,19 @@ const ManagersPage = () => {
       alert('Клиент с такой картой не найден');
     }
   };
+
+  useEffect(()=>{
+    if(orgId){
+      dispatch(fetchManagers(orgId));
+      dispatch(fetchBranches(orgId));
+    }
+  },[dispatch, orgId]);
+
+  if(mLoading || lLoading) return (
+    <div style={{display:'flex',justifyContent:'center',alignItems:'center',height:'calc(100vh - 200px)'}}>
+      <Loader2 className="spinner" size={48} strokeWidth={1.4} />
+    </div>
+  );
 
   return (
     <div className="managers-page">
@@ -177,11 +191,19 @@ const ManagersPage = () => {
       </div>
       <div className="table-wrapper">
         <h3 className="table-name">Информация о сотрудниках</h3>
-        <CustomTable columns={managersColumns} rows={managers} />
+        {managers.length ? (
+          <CustomTable columns={managersColumns} rows={managers} />
+        ) : (
+          <p>Здесь будет информация о сотрудниках.</p>
+        )}
       </div>
       <div className="table-wrapper">
         <h3 className="table-name">Информация о точках продаж</h3>
-        <CustomTable columns={locationColumns} rows={locations} />
+        {locations.length ? (
+          <CustomTable columns={locationColumns} rows={locations} />
+        ) : (
+          <p>Здесь будет информация о точках продаж.</p>
+        )}
       </div>
       <ManagerModal
         isOpen={showAddModal || !!editModalData}

@@ -1,14 +1,26 @@
-import { createSlice, nanoid } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, nanoid } from '@reduxjs/toolkit';
+import axiosInstance from '../axiosInstance';
 
-import { mockLocations } from '../mocks/mockLocations';
+export const fetchBranches = createAsyncThunk('locations/fetchBranches', async (orgId, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.get('/branches', { params: { organization_id: orgId } });
+    return res.data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data || err.message);
+  }
+});
 
 const salesPointsSlice = createSlice({
   name: 'locations',
-  initialState: mockLocations,
+  initialState: {
+    list: [],
+    loading: false,
+    error: null,
+  },
   reducers: {
     addLocation: {
       reducer(state, action) {
-        state.push(action.payload);
+        state.list.push(action.payload);
       },
       prepare(location) {
         return {
@@ -21,12 +33,27 @@ const salesPointsSlice = createSlice({
       },
     },
     updateLocation(state, action) {
-      const index = state.findIndex((loc) => loc.id === action.payload.id);
-      if (index !== -1) state[index] = action.payload;
+      const idx = state.list.findIndex((l) => l.id === action.payload.id);
+      if (idx !== -1) state.list[idx] = action.payload;
     },
     removeLocation(state, action) {
-      return state.filter((loc) => loc.id !== action.payload);
+      state.list = state.list.filter((l) => l.id !== action.payload);
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchBranches.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchBranches.fulfilled, (state, action) => {
+        state.loading = false;
+        state.list = action.payload;
+      })
+      .addCase(fetchBranches.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 
