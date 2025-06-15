@@ -1,14 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Trash2 } from 'lucide-react';
+import { Trash2, Loader2 } from 'lucide-react';
 import { useDebounce } from 'use-debounce';
 
 import CustomSelect from '../../components/CustomSelect';
 import PushPreview from '../../components/PushPreview';
 import ToggleSwitch from '../../components/ToggleSwitch';
 import YandexMapPicker from '../../components/YandexMapPicker';
-import { setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
+import { setCurrentCard } from '../../store/cardsSlice';
+import {
+  fetchBranches,
+  createBranch as createBranchThunk,
+  deleteBranch as deleteBranchThunk,
+  editBranch,
+} from '../../store/salesPointsSlice';
 
 import './styles.css';
 
@@ -20,9 +26,9 @@ const Locations = () => {
 
   const currentCard = useSelector((state) => state.cards.currentCard);
   const allCards = useSelector((state) => state.cards.cards);
-  const cards = allCards.filter((card) => card.id !== 'fixed');
+  const { list: locations, loading: locationsLoading } = useSelector((state) => state.locations);
+  const orgId = useSelector((state) => state.user.organization_id);
 
-  const [locations, setLocations] = useState([]);
   const [organizationResults, setOrganizationResults] = useState([]);
   const [limitReached, setLimitReached] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -37,6 +43,8 @@ const Locations = () => {
   const [activeTab, setActiveTab] = useState('map');
 
   const [debouncedSearchQuery] = useDebounce(searchQuery, 2000);
+
+  const [showAddForm, setShowAddForm] = useState(false);
 
   useEffect(() => {
     const searchAddress = async () => {
@@ -66,7 +74,7 @@ const Locations = () => {
   }, [debouncedSearchQuery]);
 
   const handleCardSelect = (cardId) => {
-    const selected = cards.find((c) => c.id === cardId);
+    const selected = allCards.find((c) => c.id === cardId);
     if (selected) {
       dispatch(
         setCurrentCard({
@@ -87,24 +95,11 @@ const Locations = () => {
   }, []);
 
   useEffect(() => {
-    if (currentCard.pushNotification?.locations) {
-      setLocations(currentCard.pushNotification.locations);
-    }
-  }, [currentCard]);
+    if (orgId) dispatch(fetchBranches(orgId));
+  }, [orgId]);
 
-  const toggleLocation = (index) => {
-    const updated = locations.map((loc, i) =>
-      i === index ? { ...loc, active: !loc.active } : loc,
-    );
-
-    setLocations(updated);
-
-    dispatch(
-      updateCurrentCardField({
-        path: 'pushNotification.locations',
-        value: updated,
-      }),
-    );
+  const removeLocation = (id) => {
+    dispatch(deleteBranchThunk(id));
   };
 
   const handleAddLocation = () => {
@@ -114,23 +109,17 @@ const Locations = () => {
       return;
     }
 
-    const newLocations = organizationResults.slice(0, remaining).map((org) => ({
-      id: crypto.randomUUID(),
-      name: org.name,
-      coords: [org.coords[0], org.coords[1]],
-      active: true,
-      message: '',
-    }));
+    const newLoc = organizationResults[0];
+    if (!newLoc) return;
 
-    const updatedLocations = [...locations, ...newLocations];
-    setLocations(updatedLocations);
-
-    dispatch(
-      updateCurrentCardField({
-        path: 'pushNotification.locations',
-        value: updatedLocations,
-      }),
-    );
+    const payload = {
+      name: newLoc.name,
+      address: newLoc.name,
+      coords_lat: newLoc.coords[0],
+      coords_lon: newLoc.coords[1],
+      organization_id: orgId,
+    };
+    dispatch(createBranchThunk(payload));
 
     setOrganizationResults([]);
     setSelectedLocation(null);
@@ -158,15 +147,11 @@ const Locations = () => {
     }
   };
 
-  const removeLocation = (indexToRemove) => {
-    const updated = locations.filter((_, index) => index !== indexToRemove);
-    setLocations(updated);
-    setLimitReached(false);
-
+  const toggleGeo = (loc) => {
     dispatch(
-      updateCurrentCardField({
-        path: 'pushNotification.locations',
-        value: updated,
+      editBranch({
+        id: loc.id,
+        geo_active: !loc.active,
       }),
     );
   };
@@ -183,11 +168,11 @@ const Locations = () => {
           вашей точки.
         </p>
         <CustomSelect
-          value={currentCard?.id || cards[0]?.id || null}
+          value={currentCard?.id || allCards[0]?.id || null}
           onChange={handleCardSelect}
-          options={cards.map((card) => ({
+          options={allCards.map((card) => ({
             value: card.id,
-            label: card.title,
+            label: card.name || card.title,
           }))}
           className="tariff-period-select"
         />
@@ -260,20 +245,21 @@ const Locations = () => {
           Добавить
         </button>
         <div className="location-list">
-          {locations.map((loc, index) => (
+          {locations.map((loc) => (
             <div key={loc.id} className="location-card">
               <div className="location-info">
                 <p>{loc.name}</p>
-                <div className="location-coords">
-                  {loc.coords[0].toFixed(5)}, {loc.coords[1].toFixed(5)}
-                </div>
+                {loc.coords && (
+                  <div className="location-coords">
+                    {loc.coords.lat.toFixed(5)}, {loc.coords.lon.toFixed(5)}
+                  </div>
+                )}
               </div>
               <div className="location-actions">
-                <ToggleSwitch checked={loc.active} onChange={() => toggleLocation(index)} />
-
+                <ToggleSwitch checked={loc.active} onChange={() => toggleGeo(loc)} />
                 <button
                   className="card-form-delete-btn"
-                  onClick={() => removeLocation(index)}
+                  onClick={() => removeLocation(loc.id)}
                   aria-label="Удалить поле"
                 >
                   <Trash2 size={20} />
@@ -303,6 +289,38 @@ const Locations = () => {
       </div>
     </div>
   );
+
+  // пустой экран при отсутствии локаций
+  const renderEmptyState = () => (
+    <div className="locations-empty-state">
+      <h2>
+        Локации <span className="geo-badge">Geo-push в радиусе 100 метров</span>
+      </h2>
+      <p className="locations-subtext">
+        На&nbsp;вашем тарифе доступно {MAX_LOCATIONS} локаций. В&nbsp;радиусе 100&nbsp;метров от
+        локаций у&nbsp;пользователей с&nbsp;картами будет появляться push-сообщение.
+      </p>
+      <hr style={{ margin: '24px 0' }} />
+      <button className="card-form-add-btn" onClick={() => setShowAddForm(true)}>
+        Добавить локацию
+      </button>
+    </div>
+  );
+
+  const noLocations = locations.length === 0;
+
+  if (locationsLoading) {
+    return (
+      <div style={{display:'flex',justifyContent:'center',alignItems:'center',height:'calc(100vh - 200px)'}}>
+        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
+      </div>
+    );
+  }
+
+  // если нет локаций и форма не открыта — показываем пустой экран
+  if (noLocations && !showAddForm) {
+    return renderEmptyState();
+  }
 
   return (
     <div className="edit-type-layout">
@@ -334,6 +352,17 @@ const Locations = () => {
           {renderMapSection()}
           {renderPreviewSection()}
         </>
+      )}
+
+      {/* если локаций ещё нет, даём кнопку скрыть форму */}
+      {noLocations && isMobile === false && (
+        <button
+          className="btn-light"
+          style={{ marginTop: 24 }}
+          onClick={() => setShowAddForm(false)}
+        >
+          Скрыть добавление локации
+        </button>
       )}
     </div>
   );
