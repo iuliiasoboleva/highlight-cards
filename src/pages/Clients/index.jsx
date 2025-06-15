@@ -25,10 +25,33 @@ const Clients = () => {
     email: '',
     birthday: '',
   });
+  const [noBirthday, setNoBirthday] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
   const { list: clients, loading } = useSelector((state) => state.clients);
   const orgId = useSelector((state)=> state.user.organization_id);
+
+  const formatPhone = (value) => {
+    const digits = value.replace(/\D/g, '').slice(0, 11);
+    if (!digits) return '';
+
+    const parts = [
+      '+7',
+      digits.slice(1, 4),
+      digits.slice(4, 7),
+      digits.slice(7, 9),
+      digits.slice(9, 11),
+    ];
+
+    let formatted = `${parts[0]}`;
+    if (parts[1]) formatted += `(${parts[1]}`;
+    if (digits.length > 3) formatted += ')';
+    if (parts[2]) formatted += `-${parts[2]}`;
+    if (parts[3]) formatted += `-${parts[3]}`;
+    if (parts[4]) formatted += `-${parts[4]}`;
+
+    return formatted;
+  };
 
   const handleCopy = () => {
     navigator.clipboard
@@ -73,6 +96,9 @@ const Clients = () => {
     setGeneratedLink(link);
     setShowLinkModal(true);
   };
+
+  const phoneDigits = newClient.phone.replace(/\D/g, '');
+  const isEmailValid = newClient.email ? /^\S+@\S+\.\S+$/.test(newClient.email) : false;
 
   const handleAddClient = () => {
     const payload = {
@@ -187,9 +213,12 @@ const Clients = () => {
               <input
                 className="clients-modal-input"
                 placeholder="Телефон"
-                type="number"
+                type="tel"
                 value={newClient.phone}
-                onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
+                onChange={(e) => {
+                  const formatted = formatPhone(e.target.value);
+                  setNewClient({ ...newClient, phone: formatted });
+                }}
               />
             </div>
             <div className="clients-modal-form-group">
@@ -202,17 +231,27 @@ const Clients = () => {
               />
             </div>
             <div className="clients-modal-form-group">
+              <label style={{fontSize:12, marginBottom:4, display:'block'}}>Дата рождения</label>
               <input
                 className="clients-modal-input"
                 type="date"
+                disabled={noBirthday}
                 value={newClient.birthday}
                 onChange={(e) => setNewClient({ ...newClient, birthday: e.target.value })}
               />
+              <label style={{display:'flex', alignItems:'center', gap:6, marginTop:6}}>
+                 <input type="checkbox" checked={noBirthday} onChange={(e)=>{
+                   setNoBirthday(e.target.checked);
+                   if(e.target.checked) setNewClient({...newClient, birthday:''});
+                 }}/>
+                 Без даты рождения
+              </label>
             </div>
             <div className="clients-modal-actions">
               <button
                 className="clients-modal-button clients-modal-button-primary"
                 onClick={handleAddClient}
+                disabled={!(newClient.name && newClient.surname && phoneDigits.length===11 && isEmailValid)}
               >
                 Добавить клиента
               </button>
