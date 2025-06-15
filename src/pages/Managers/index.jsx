@@ -11,7 +11,7 @@ import RoleSwitcher from '../../components/RoleSwitcher';
 import SalesPointsModal from '../../components/SalesPointsModal';
 import { managersHeaders } from '../../mocks/managersInfo';
 import { locationsHeaders } from '../../mocks/mockLocations';
-import { addManager, removeManager, updateManager, fetchManagers } from '../../store/managersSlice';
+import { createManager, deleteManager, editManager, fetchManagers } from '../../store/managersSlice';
 import { addLocation, fetchBranches } from '../../store/salesPointsSlice';
 
 import './styles.css';
@@ -39,7 +39,10 @@ const ManagersPage = () => {
           title: header.label,
           className: 'text-left',
           cellClassName: 'text-left',
-          render: (row) => `${row.shift.startShift} - ${row.shift.endShift}`,
+          render: (row) => {
+            if (row.shift) return `${row.shift.startShift || ''} - ${row.shift.endShift || ''}`;
+            return `${row.start_shift || ''} - ${row.end_shift || ''}`;
+          },
         };
       }
       return {
@@ -69,16 +72,48 @@ const ManagersPage = () => {
 
   const handleSave = (manager) => {
     if (manager.id) {
-      dispatch(updateManager(manager));
+      const payload = {
+        id: manager.id,
+        name: manager.name,
+        surname: manager.surname,
+        email: manager.email,
+        phone: manager.phone,
+        branch_id: null,
+        role: 'manager',
+        locations: manager.location ? [manager.location] : manager.locations,
+        status: manager.status,
+        start_shift: manager.shift?.startShift || manager.start_shift,
+        end_shift: manager.shift?.endShift || manager.end_shift,
+      };
+      dispatch(editManager(payload)).unwrap().then(()=>{
+        dispatch(fetchManagers(orgId));
+      });
     } else {
-      dispatch(addManager(manager));
+      const payload = {
+        name: manager.name,
+        surname: manager.surname,
+        email: manager.email,
+        phone: manager.phone,
+        organization_id: orgId,
+        branch_id: null,
+        role: 'manager',
+        locations: manager.location ? [manager.location] : [],
+        status: manager.status,
+        start_shift: manager.shift?.startShift,
+        end_shift: manager.shift?.endShift,
+      };
+      dispatch(createManager(payload)).unwrap().then(()=>{
+        dispatch(fetchManagers(orgId));
+      });
     }
     setEditModalData(null);
     setShowAddModal(false);
   };
 
   const handleDelete = (id) => {
-    dispatch(removeManager(id));
+    dispatch(deleteManager(id)).unwrap().then(() => {
+      dispatch(fetchManagers(orgId));
+    });
     setEditModalData(null);
   };
 

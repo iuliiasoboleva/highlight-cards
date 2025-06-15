@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import './styles.css';
 
-const CustomSelect = ({ value, onChange, options, className = '' }) => {
+const CustomSelect = ({ value, onChange, options, placeholder = '', className = '' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef(null);
 
@@ -23,7 +23,7 @@ const CustomSelect = ({ value, onChange, options, className = '' }) => {
   }, []);
 
   const selectedOption = options.find((opt) => opt.value === value);
-  const displayValue = selectedOption ? selectedOption.label : '';
+  const displayValue = selectedOption ? selectedOption.label : placeholder;
 
   return (
     <div className={`tariff-period-select ${className}`} ref={selectRef}>
