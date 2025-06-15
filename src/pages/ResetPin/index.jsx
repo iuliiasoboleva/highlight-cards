@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -59,25 +59,42 @@ const ResetPin = () => {
   }, [pin]);
 
   return (
-    <div style={{ display:'flex',flexDirection:'column',alignItems:'center',gap:24,marginTop:120 }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 24,
+        marginTop: 120,
+      }}
+    >
       <h2>Придумайте новый PIN</h2>
-      <div style={{display:'flex',gap:12}}>
-        {[0,1,2,3].map((i)=>(
-          <input key={i}
+      <div style={{ display: 'flex', gap: 12 }}>
+        {[0, 1, 2, 3].map((i) => (
+          <input
+            key={i}
             ref={pinRefs[i]}
             type="tel"
             inputMode="numeric"
             maxLength={1}
             value={pin[i] || ''}
-            onChange={(e)=>handleChange(i,e.target.value)}
-            onKeyDown={(e)=>handleKeyDown(i,e)}
-            style={{width:60,height:60,textAlign:'center',fontSize:32,border:'1px solid #d1d5db',background:'#f3f4f6',borderRadius:8}}
+            onChange={(e) => handleChange(i, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(i, e)}
+            style={{
+              width: 60,
+              height: 60,
+              textAlign: 'center',
+              fontSize: 32,
+              border: '1px solid #d1d5db',
+              background: '#f3f4f6',
+              borderRadius: 8,
+            }}
           />
         ))}
       </div>
-      <p style={{color:'#888'}}>Введите 4-значный код</p>
+      <p style={{ color: '#888' }}>Введите 4-значный код</p>
     </div>
   );
 };
 
-export default ResetPin; 
+export default ResetPin;

@@ -1,14 +1,20 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
 import axiosInstance from '../axiosInstance';
 
-export const fetchPayments = createAsyncThunk('payments/fetchPayments', async ({ orgId, userId }, { rejectWithValue }) => {
-  try {
-    const res = await axiosInstance.get('/payments', { params: { organization_id: orgId, user_id: userId } });
-    return res.data;
-  } catch (err) {
-    return rejectWithValue(err.response?.data || err.message);
-  }
-});
+export const fetchPayments = createAsyncThunk(
+  'payments/fetchPayments',
+  async ({ orgId, userId }, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get('/payments', {
+        params: { organization_id: orgId, user_id: userId },
+      });
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
 
 const paymentsSlice = createSlice({
   name: 'payments',
@@ -35,4 +41,4 @@ const paymentsSlice = createSlice({
   },
 });
 
-export default paymentsSlice.reducer; 
+export default paymentsSlice.reducer;

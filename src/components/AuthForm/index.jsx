@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import axiosInstance from '../../axiosInstance';
-import { requestMagicLink, verifyPin, setPinThunk, resetPinRequest } from '../../store/authSlice';
-import { setUser, fetchOrganization } from '../../store/userSlice';
+import { requestMagicLink, resetPinRequest, setPinThunk, verifyPin } from '../../store/authSlice';
+import { fetchOrganization, setUser } from '../../store/userSlice';
 
 import './styles.css';
 
@@ -97,7 +97,10 @@ const AuthForm = () => {
       let digits = value.replace(/\D/g, '').slice(0, 11);
 
       // корректируем, если удалён форматный символ
-      if (digits.length === prevPhoneDigits.current.length && value.length < formData.phone.length) {
+      if (
+        digits.length === prevPhoneDigits.current.length &&
+        value.length < formData.phone.length
+      ) {
         // удалён нецифровой символ, убираем и последнюю цифру
         digits = digits.slice(0, -1);
       }
@@ -110,7 +113,7 @@ const AuthForm = () => {
       const format = (d) => {
         if (!d) return '';
         if (d.length === 1) return '+' + d;
-        return `+${d[0]}(${d.slice(1, 4)}${d.length >=4?')':''}${d.slice(4,7)}${d.length >=7?'-':''}${d.slice(7,9)}${d.length>=9?'-':''}${d.slice(9,11)}`;
+        return `+${d[0]}(${d.slice(1, 4)}${d.length >= 4 ? ')' : ''}${d.slice(4, 7)}${d.length >= 7 ? '-' : ''}${d.slice(7, 9)}${d.length >= 9 ? '-' : ''}${d.slice(9, 11)}`;
       };
 
       prevPhoneDigits.current = digits;
@@ -361,9 +364,7 @@ const AuthForm = () => {
         </div>
       ) : null} */}
       <div className="tabs">
-        <span className="active">
-          {mode === 'register' ? 'Регистрация' : 'Вход'}
-        </span>
+        <span className="active">{mode === 'register' ? 'Регистрация' : 'Вход'}</span>
       </div>
       <div className="auth-form-wrapper">
         <form onSubmit={handleSubmit} className="auth-form">
@@ -379,10 +380,10 @@ const AuthForm = () => {
               />
               <button
                 type="submit"
-                className={`custom-button ${status==='loading' ? 'loading':''}`}
+                className={`custom-button ${status === 'loading' ? 'loading' : ''}`}
                 disabled={submitting || status === 'loading' || !isEmailValid}
               >
-                {status==='loading' ? '' : 'Войти'}
+                {status === 'loading' ? '' : 'Войти'}
               </button>
             </>
           )}
@@ -480,59 +481,92 @@ const AuthForm = () => {
 
               <button
                 type="submit"
-                className={`custom-button ${status==='loading' ? 'loading':''}`}
+                className={`custom-button ${status === 'loading' ? 'loading' : ''}`}
                 disabled={submitting || status === 'loading' || !isFormValid}
               >
-                {status==='loading' ? '' : 'Зарегистрироваться'}
+                {status === 'loading' ? '' : 'Зарегистрироваться'}
               </button>
             </>
           )}
 
           {(step === 'pin' || step === 'pinLogin') && (
             <>
-              <p className="pin-title" style={{textAlign:'center', color:'#888', marginBottom:'20px'}}>
-                {step==='pinLogin' ? 'Введите код для быстрого входа' : 'Для быстрого входа придумайте PIN'}
+              <p
+                className="pin-title"
+                style={{ textAlign: 'center', color: '#888', marginBottom: '20px' }}
+              >
+                {step === 'pinLogin'
+                  ? 'Введите код для быстрого входа'
+                  : 'Для быстрого входа придумайте PIN'}
               </p>
-              <div className="pin-input-wrapper" style={{display:'flex', gap:'12px', justifyContent:'center', marginBottom:'20px'}}>
-                {[0,1,2,3].map((i)=>(
-                  <input key={i}
+              <div
+                className="pin-input-wrapper"
+                style={{
+                  display: 'flex',
+                  gap: '12px',
+                  justifyContent: 'center',
+                  marginBottom: '20px',
+                }}
+              >
+                {[0, 1, 2, 3].map((i) => (
+                  <input
+                    key={i}
                     ref={pinRefs[i]}
                     type="tel"
                     inputMode="numeric"
                     maxLength={1}
                     value={formData.pin[i] || ''}
-                    onChange={(e)=>handlePinChange(i,e.target.value)}
-                    onKeyDown={(e)=>handlePinKeyDown(i,e)}
-                    style={{width:'60px',height:'60px',textAlign:'center',fontSize:'32px',border:'1px solid #d1d5db',background:'#f3f4f6',borderRadius:'8px'}}
-                  />))}
+                    onChange={(e) => handlePinChange(i, e.target.value)}
+                    onKeyDown={(e) => handlePinKeyDown(i, e)}
+                    style={{
+                      width: '60px',
+                      height: '60px',
+                      textAlign: 'center',
+                      fontSize: '32px',
+                      border: '1px solid #d1d5db',
+                      background: '#f3f4f6',
+                      borderRadius: '8px',
+                    }}
+                  />
+                ))}
               </div>
-              <button type="submit" disabled={submitting || status === 'loading' || formData.pin.length!==4} className="custom-button">
-                {step==='pinLogin' ? 'Войти' : 'Сохранить PIN'}
+              <button
+                type="submit"
+                disabled={submitting || status === 'loading' || formData.pin.length !== 4}
+                className="custom-button"
+              >
+                {step === 'pinLogin' ? 'Войти' : 'Сохранить PIN'}
               </button>
-              {step==='pinLogin' && (
-                <p style={{marginTop:'16px', textAlign:'center'}}>
-                  <span onClick={handleSendLinkAgain} style={{color:'#0b5cff', cursor:'pointer'}}>Не помню PIN — отправить ссылку</span>
+              {step === 'pinLogin' && (
+                <p style={{ marginTop: '16px', textAlign: 'center' }}>
+                  <span
+                    onClick={handleSendLinkAgain}
+                    style={{ color: '#0b5cff', cursor: 'pointer' }}
+                  >
+                    Не помню PIN — отправить ссылку
+                  </span>
                 </p>
               )}
             </>
           )}
           {apiError && (
-            <p style={{color:'#d00', textAlign:'center', marginBottom:'16px'}}>{apiError}</p>
+            <p style={{ color: '#d00', textAlign: 'center', marginBottom: '16px' }}>{apiError}</p>
           )}
         </form>
-        {step!=='pin' && (
-        <p
-          className="toggle-auth"
-          onClick={() => {
-            setMode(mode === 'register' ? 'login' : 'register');
-            resetForm();
-            setStep('request');
-            setApiError('');
-          }}
-          style={{ cursor: 'pointer', marginTop: '20px', textAlign: 'center' }}
-        >
-          {mode === 'register' ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрируйтесь'}
-        </p> )}
+        {step !== 'pin' && (
+          <p
+            className="toggle-auth"
+            onClick={() => {
+              setMode(mode === 'register' ? 'login' : 'register');
+              resetForm();
+              setStep('request');
+              setApiError('');
+            }}
+            style={{ cursor: 'pointer', marginTop: '20px', textAlign: 'center' }}
+          >
+            {mode === 'register' ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрируйтесь'}
+          </p>
+        )}
       </div>
     </>
   );

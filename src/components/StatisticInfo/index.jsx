@@ -12,7 +12,9 @@ const StatisticInfo = ({ colorClass, label, value = 0, change = 0 }) => {
   return (
     <div className="client-stat-card">
       <div className="client-stat-top">
-        <span className="client-stat-dropdown-value">{value}</span>
+        <span className={`client-stat-change-value ${changeType}`}>
+          {isPositive ? `+${change}` : change}
+        </span>
         <div className={`client-stat-change-wrapper ${changeType}`}>
           <div className={`client-stat-dropdown-icon-circle ${changeType}`}>
             {isPositive ? (

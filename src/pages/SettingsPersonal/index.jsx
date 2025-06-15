@@ -1,10 +1,20 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { Loader2 } from 'lucide-react';
 
 import CustomSelect from '../../components/CustomSelect';
-import { logout, removeAvatar, updateField, updateUserSettings, updateProfile, changePin, uploadAvatar, deleteAccount } from '../../store/userSlice';
 import { logout as authLogout } from '../../store/authSlice';
+import {
+  changePin,
+  deleteAccount,
+  logout,
+  removeAvatar,
+  updateField,
+  updateProfile,
+  updateUserSettings,
+  uploadAvatar,
+} from '../../store/userSlice';
 
 import './styles.css';
 
@@ -29,7 +39,14 @@ const SettingsPersonal = () => {
 
   if (user.isLoading) {
     return (
-      <div style={{display:'flex',justifyContent:'center',alignItems:'center',height:'calc(100vh - 200px)'}}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: 'calc(100vh - 200px)',
+        }}
+      >
         <Loader2 className="spinner" size={48} strokeWidth={1.4} />
       </div>
     );
@@ -47,30 +64,30 @@ const SettingsPersonal = () => {
 
   const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
-    if(!file) return;
-    try{
+    if (!file) return;
+    try {
       await dispatch(uploadAvatar(file)).unwrap();
       showToast('Фото обновлено', true);
-    }catch(err){
+    } catch (err) {
       showToast('Не удалось загрузить фото', false);
     }
   };
 
-  const showToast = (msg, ok=true) => {
-    setToast({msg, ok});
-    setTimeout(()=>setToast(null),3000);
+  const showToast = (msg, ok = true) => {
+    setToast({ msg, ok });
+    setTimeout(() => setToast(null), 3000);
   };
 
-  const startProgress = ()=>{
+  const startProgress = () => {
     setProgress(0);
-    progressTimer.current = setInterval(()=>{
-      setProgress((p)=> (p<95 ? p+2 : p));
-    },100);
+    progressTimer.current = setInterval(() => {
+      setProgress((p) => (p < 95 ? p + 2 : p));
+    }, 100);
   };
-  const finishProgress = ()=>{
+  const finishProgress = () => {
     clearInterval(progressTimer.current);
     setProgress(100);
-    setTimeout(()=> setProgress(0),500);
+    setTimeout(() => setProgress(0), 500);
   };
 
   const handleSubmit = async (e) => {
@@ -78,12 +95,32 @@ const SettingsPersonal = () => {
     if (saving) return;
     setSaving(true);
     startProgress();
-    try{
-      const promises=[];
-      promises.push(dispatch(updateProfile({ name:user.firstName, surname:user.lastName, phone:user.phone, extra_contacts:user.contact })).unwrap());
-      promises.push(dispatch(updateUserSettings({ date_format:user.dateFormat, country:user.country, language:user.language, timezone:user.timezone, extra_contacts:user.contact, avatar_url:user.avatar })).unwrap());
-      if(newPin || confirmPin){
-        if(newPin.length!==4 || newPin!==confirmPin){
+    try {
+      const promises = [];
+      promises.push(
+        dispatch(
+          updateProfile({
+            name: user.firstName,
+            surname: user.lastName,
+            phone: user.phone,
+            extra_contacts: user.contact,
+          }),
+        ).unwrap(),
+      );
+      promises.push(
+        dispatch(
+          updateUserSettings({
+            date_format: user.dateFormat,
+            country: user.country,
+            language: user.language,
+            timezone: user.timezone,
+            extra_contacts: user.contact,
+            avatar_url: user.avatar,
+          }),
+        ).unwrap(),
+      );
+      if (newPin || confirmPin) {
+        if (newPin.length !== 4 || newPin !== confirmPin) {
           showToast('PIN-коды не совпадают', false);
           return;
         }
@@ -93,8 +130,8 @@ const SettingsPersonal = () => {
       }
       await Promise.all(promises);
       showToast('Настройки сохранены', true);
-    }catch(err){
-      showToast(typeof err==='string'?err:'Ошибка сохранения', false);
+    } catch (err) {
+      showToast(typeof err === 'string' ? err : 'Ошибка сохранения', false);
     }
     setSaving(false);
     finishProgress();
@@ -102,7 +139,11 @@ const SettingsPersonal = () => {
 
   const handleDeleteAccount = async (e) => {
     e.preventDefault();
-    const reasonProvided = deleteFeedback.reason1 || deleteFeedback.reason2 || deleteFeedback.reason3 || deleteFeedback.other.trim();
+    const reasonProvided =
+      deleteFeedback.reason1 ||
+      deleteFeedback.reason2 ||
+      deleteFeedback.reason3 ||
+      deleteFeedback.other.trim();
     if (!reasonProvided) {
       showToast('Укажите причину удаления', false);
       return;
@@ -114,13 +155,13 @@ const SettingsPersonal = () => {
     try {
       await dispatch(deleteAccount(deleteFeedback)).unwrap();
       showToast('Аккаунт удалён', true);
-      setTimeout(()=> {
+      setTimeout(() => {
         dispatch(logout());
         dispatch(authLogout());
         window.location.href = '/auth';
       }, 1200);
-    } catch(err){
-      showToast(typeof err==='string'?err:'Ошибка удаления', false);
+    } catch (err) {
+      showToast(typeof err === 'string' ? err : 'Ошибка удаления', false);
     }
   };
 
@@ -165,13 +206,9 @@ const SettingsPersonal = () => {
     { value: 'MM/DD/YYYY', label: 'Месяц/День/Год (12/31/2023)' },
   ];
 
-  const countries = [
-    { value: 'Russia', label: 'Россия' },
-  ];
+  const countries = [{ value: 'Russia', label: 'Россия' }];
 
-  const languages = [
-    { value: 'Russian', label: 'Русский' },
-  ];
+  const languages = [{ value: 'Russian', label: 'Русский' }];
 
   const timezones = [{ value: '(UTC+03:00) Moscow', label: '(UTC+03:00) Москва' }];
 
@@ -238,10 +275,7 @@ const SettingsPersonal = () => {
                 </div>
                 <div className="form-group">
                   <label>Название компании</label>
-                  <input
-                    value={user.company}
-                    readOnly
-                  />
+                  <input value={user.company} readOnly />
                 </div>
               </div>
 
@@ -256,11 +290,7 @@ const SettingsPersonal = () => {
                 </div>
                 <div className="form-group">
                   <label>Email*</label>
-                  <input
-                    type="email"
-                    value={user.email}
-                    readOnly
-                  />
+                  <input type="email" value={user.email} readOnly />
                 </div>
               </div>
 
@@ -275,11 +305,7 @@ const SettingsPersonal = () => {
                 </div>
                 <div className="form-group">
                   <label>Телефон</label>
-                  <input
-                    type="tel"
-                    value={user.phone}
-                    readOnly
-                  />
+                  <input type="tel" value={user.phone} readOnly />
                 </div>
               </div>
 
@@ -294,17 +320,26 @@ const SettingsPersonal = () => {
                 </div>
                 <div className="form-group">
                   <label>Новый PIN</label>
-                  <div style={{display:'flex',gap:12}}>
-                    {[0,1,2,3].map((i)=>(
-                      <input key={i}
+                  <div style={{ display: 'flex', gap: 12 }}>
+                    {[0, 1, 2, 3].map((i) => (
+                      <input
+                        key={i}
                         ref={newPinRefs[i]}
                         type="tel"
                         inputMode="numeric"
                         maxLength={1}
                         value={newPin[i] || ''}
-                        onChange={(e)=>handlePinChange('new',i,e.target.value)}
-                        onKeyDown={(e)=>handlePinKey('new',i,e)}
-                        style={{width:60,height:60,textAlign:'center',fontSize:32,border:'1px solid #d1d5db',background:'#f3f4f6',borderRadius:8}}
+                        onChange={(e) => handlePinChange('new', i, e.target.value)}
+                        onKeyDown={(e) => handlePinKey('new', i, e)}
+                        style={{
+                          width: 60,
+                          height: 60,
+                          textAlign: 'center',
+                          fontSize: 32,
+                          border: '1px solid #d1d5db',
+                          background: '#f3f4f6',
+                          borderRadius: 8,
+                        }}
                       />
                     ))}
                   </div>
@@ -322,17 +357,26 @@ const SettingsPersonal = () => {
                 </div>
                 <div className="form-group">
                   <label>Подтверждение PIN</label>
-                  <div style={{display:'flex',gap:12}}>
-                    {[0,1,2,3].map((i)=>(
-                      <input key={i}
+                  <div style={{ display: 'flex', gap: 12 }}>
+                    {[0, 1, 2, 3].map((i) => (
+                      <input
+                        key={i}
                         ref={confirmPinRefs[i]}
                         type="tel"
                         inputMode="numeric"
                         maxLength={1}
                         value={confirmPin[i] || ''}
-                        onChange={(e)=>handlePinChange('confirm',i,e.target.value)}
-                        onKeyDown={(e)=>handlePinKey('confirm',i,e)}
-                        style={{width:60,height:60,textAlign:'center',fontSize:32,border:'1px solid #d1d5db',background:'#f3f4f6',borderRadius:8}}
+                        onChange={(e) => handlePinChange('confirm', i, e.target.value)}
+                        onKeyDown={(e) => handlePinKey('confirm', i, e)}
+                        style={{
+                          width: 60,
+                          height: 60,
+                          textAlign: 'center',
+                          fontSize: 32,
+                          border: '1px solid #d1d5db',
+                          background: '#f3f4f6',
+                          borderRadius: 8,
+                        }}
                       />
                     ))}
                   </div>
@@ -358,10 +402,25 @@ const SettingsPersonal = () => {
                 </div>
               </div>
 
-              <button type="submit" className="custom-main-button" disabled={saving} style={{position:'relative',overflow:'hidden'}}>
-                <span style={{opacity: saving ? 0 : 1}}>Сохранить изменения</span>
+              <button
+                type="submit"
+                className="custom-main-button"
+                disabled={saving}
+                style={{ position: 'relative', overflow: 'hidden' }}
+              >
+                <span style={{ opacity: saving ? 0 : 1 }}>Сохранить изменения</span>
                 {saving && (
-                  <div style={{position:'absolute',left:0,top:0,height:'100%',width:`${progress}%`,background:'linear-gradient(90deg,#b71c32 0%,#000 100%)',transition:'width 0.1s linear'}} />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      top: 0,
+                      height: '100%',
+                      width: `${progress}%`,
+                      background: 'linear-gradient(90deg,#b71c32 0%,#000 100%)',
+                      transition: 'width 0.1s linear',
+                    }}
+                  />
                 )}
               </button>
             </div>
@@ -438,7 +497,21 @@ const SettingsPersonal = () => {
         </div>
       </form>
       {toast && (
-        <div style={{position:'fixed',top:90,right:40,background:toast.ok?'#00c853':'#e53935',color:'#fff',padding:'12px 24px',borderRadius:8,boxShadow:'0 4px 12px rgba(0,0,0,.15)',zIndex:999}}>{toast.msg}</div>
+        <div
+          style={{
+            position: 'fixed',
+            top: 90,
+            right: 40,
+            background: toast.ok ? '#00c853' : '#e53935',
+            color: '#fff',
+            padding: '12px 24px',
+            borderRadius: 8,
+            boxShadow: '0 4px 12px rgba(0,0,0,.15)',
+            zIndex: 999,
+          }}
+        >
+          {toast.msg}
+        </div>
       )}
     </div>
   );

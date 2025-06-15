@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import axiosInstance from '../axiosInstance';
-import { eraseCookie } from '../cookieUtils';
 import BASE_URL from '../config';
+import { eraseCookie } from '../cookieUtils';
 
 const initialState = {
   firstName: '',
@@ -33,32 +33,41 @@ export const fetchUserData = createAsyncThunk(
   },
 );
 
-export const fetchOrganization = createAsyncThunk('user/fetchOrganization', async (orgId, { rejectWithValue }) => {
-  try {
-    const res = await axiosInstance.get(`/organizations/${orgId}`);
-    return res.data;
-  } catch (err) {
-    return rejectWithValue(err.response?.data || err.message);
-  }
-});
+export const fetchOrganization = createAsyncThunk(
+  'user/fetchOrganization',
+  async (orgId, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get(`/organizations/${orgId}`);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
 
-export const updateUserSettings = createAsyncThunk('user/updateUserSettings', async (settings, { rejectWithValue }) => {
-  try {
-    const res = await axiosInstance.put('/user-settings/me', settings);
-    return res.data;
-  } catch (err) {
-    return rejectWithValue(err.response?.data || err.message);
-  }
-});
+export const updateUserSettings = createAsyncThunk(
+  'user/updateUserSettings',
+  async (settings, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.put('/user-settings/me', settings);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
 
-export const updateProfile = createAsyncThunk('user/updateProfile', async (data, { rejectWithValue }) => {
-  try {
-    const res = await axiosInstance.put('/auth/profile', data);
-    return res.data;
-  } catch (err) {
-    return rejectWithValue(err.response?.data || err.message);
-  }
-});
+export const updateProfile = createAsyncThunk(
+  'user/updateProfile',
+  async (data, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.put('/auth/profile', data);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
 
 export const changePin = createAsyncThunk('user/changePin', async (pin, { rejectWithValue }) => {
   try {
@@ -69,25 +78,33 @@ export const changePin = createAsyncThunk('user/changePin', async (pin, { reject
   }
 });
 
-export const uploadAvatar = createAsyncThunk('user/uploadAvatar', async (file, { rejectWithValue }) => {
-  try {
-    const formData = new FormData();
-    formData.append('file', file);
-    const res = await axiosInstance.post('/auth/upload-avatar', formData, { headers:{ 'Content-Type':'multipart/form-data' } });
-    return res.data.avatar_url;
-  } catch(err){
-    return rejectWithValue(err.response?.data || err.message);
-  }
-});
+export const uploadAvatar = createAsyncThunk(
+  'user/uploadAvatar',
+  async (file, { rejectWithValue }) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await axiosInstance.post('/auth/upload-avatar', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return res.data.avatar_url;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
 
-export const deleteAccount = createAsyncThunk('user/deleteAccount', async (reasons, { rejectWithValue }) => {
-  try {
-    await axiosInstance.post('/auth/delete-account', reasons);
-    return true;
-  } catch (err) {
-    return rejectWithValue(err.response?.data || err.message);
-  }
-});
+export const deleteAccount = createAsyncThunk(
+  'user/deleteAccount',
+  async (reasons, { rejectWithValue }) => {
+    try {
+      await axiosInstance.post('/auth/delete-account', reasons);
+      return true;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
 
 export const userSlice = createSlice({
   name: 'user',
@@ -125,7 +142,8 @@ export const userSlice = createSlice({
         lastName = state.lastName;
       }
       let avatarUrl = data.avatar_url || data.avatar;
-      if (avatarUrl && avatarUrl.startsWith('/')) avatarUrl = BASE_URL.replace(/\/$/,'') + avatarUrl;
+      if (avatarUrl && avatarUrl.startsWith('/'))
+        avatarUrl = BASE_URL.replace(/\/$/, '') + avatarUrl;
       let contact;
       if (data.extra_contacts !== undefined) {
         contact = data.extra_contacts;
@@ -170,7 +188,8 @@ export const userSlice = createSlice({
           lastName = state.lastName;
         }
         let avatarUrl = data.avatar_url || data.avatar;
-        if (avatarUrl && avatarUrl.startsWith('/')) avatarUrl = BASE_URL.replace(/\/$/,'') + avatarUrl;
+        if (avatarUrl && avatarUrl.startsWith('/'))
+          avatarUrl = BASE_URL.replace(/\/$/, '') + avatarUrl;
         if (data.extra_contacts !== undefined) {
           state.contact = data.extra_contacts;
         }
@@ -198,7 +217,9 @@ export const userSlice = createSlice({
         if (extra_contacts !== undefined) state.contact = extra_contacts;
       })
       .addCase(uploadAvatar.fulfilled, (state, action) => {
-        const url = action.payload.startsWith('/') ? BASE_URL.replace(/\/$/,'') + action.payload : action.payload;
+        const url = action.payload.startsWith('/')
+          ? BASE_URL.replace(/\/$/, '') + action.payload
+          : action.payload;
         state.avatar = url;
       });
   },

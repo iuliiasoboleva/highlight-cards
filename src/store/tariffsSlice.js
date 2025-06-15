@@ -1,14 +1,18 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
 import axiosInstance from '../axiosInstance';
 
-export const fetchTariffs = createAsyncThunk('tariffs/fetchTariffs', async (_, { rejectWithValue }) => {
-  try {
-    const res = await axiosInstance.get('/tariffs');
-    return res.data;
-  } catch (err) {
-    return rejectWithValue(err.response?.data || err.message);
-  }
-});
+export const fetchTariffs = createAsyncThunk(
+  'tariffs/fetchTariffs',
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get('/tariffs');
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
 
 const tariffsSlice = createSlice({
   name: 'tariffs',
@@ -35,4 +39,4 @@ const tariffsSlice = createSlice({
   },
 });
 
-export default tariffsSlice.reducer; 
+export default tariffsSlice.reducer;

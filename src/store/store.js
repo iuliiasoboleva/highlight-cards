@@ -4,10 +4,10 @@ import authReducer from './authSlice';
 import cardsReducer from './cardsSlice';
 import clientsReducer from './clientsSlice';
 import managersReducer from './managersSlice';
-import salesPointsReducer from './salesPointsSlice';
-import userReducer from './userSlice';
-import tariffsReducer from './tariffsSlice';
 import paymentsReducer from './paymentsSlice';
+import salesPointsReducer from './salesPointsSlice';
+import tariffsReducer from './tariffsSlice';
+import userReducer from './userSlice';
 
 export const store = configureStore({
   reducer: {

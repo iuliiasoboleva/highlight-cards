@@ -1,19 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { Loader2 } from 'lucide-react';
 
 import AgreementModal from '../../components/AgreementModal';
 import CustomSelect from '../../components/CustomSelect';
 import CustomTable from '../../components/CustomTable';
-import { fetchTariffs } from '../../store/tariffsSlice';
 import { fetchPayments } from '../../store/paymentsSlice';
+import { fetchTariffs } from '../../store/tariffsSlice';
 
 import './styles.css';
 
 const Settings = () => {
   const dispatch = useDispatch();
   const { plans: tariffPlans, loading } = useSelector((state) => state.tariffs);
-  const { list: payments = [], loading: paymentsLoading = true } = useSelector((state) => state.payments || {});
+  const { list: payments = [], loading: paymentsLoading = true } = useSelector(
+    (state) => state.payments || {},
+  );
   const { organization_id: orgId, id: userId } = useSelector((state) => state.user);
 
   useEffect(() => {
@@ -46,7 +49,14 @@ const Settings = () => {
 
   if (loading) {
     return (
-      <div style={{display:'flex',justifyContent:'center',alignItems:'center',height:'calc(100vh - 200px)'}}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: 'calc(100vh - 200px)',
+        }}
+      >
         <Loader2 className="spinner" size={48} strokeWidth={1.4} />
       </div>
     );
@@ -79,7 +89,8 @@ const Settings = () => {
         <>
           <p>Стоимость в месяц</p>
           <small>
-            при оплате за год<br />/ за месяц
+            при оплате за год
+            <br />/ за месяц
           </small>
         </>
       ),
@@ -163,10 +174,24 @@ const Settings = () => {
   ];
 
   const paymentHistoryColumns = [
-    { key: 'paid_at', title: 'Дата', className: 'text-left', render: (row)=> new Date(row.paid_at).toLocaleDateString() },
-    { key: 'amount', title: 'Сумма', className: 'text-left', render:(row)=> `${row.amount} ₽` },
+    {
+      key: 'paid_at',
+      title: 'Дата',
+      className: 'text-left',
+      render: (row) => new Date(row.paid_at).toLocaleDateString(),
+    },
+    { key: 'amount', title: 'Сумма', className: 'text-left', render: (row) => `${row.amount} ₽` },
     { key: 'plan_name', title: 'Тарифный план', className: 'text-left' },
-    { key: 'status', title: 'Статус', className: 'text-left', render: (row)=>(<span className={`status-badge ${row.status==='Успешно'?'success':''}`}>{row.status}</span>) },
+    {
+      key: 'status',
+      title: 'Статус',
+      className: 'text-left',
+      render: (row) => (
+        <span className={`status-badge ${row.status === 'Успешно' ? 'success' : ''}`}>
+          {row.status}
+        </span>
+      ),
+    },
     { key: 'invoice_number', title: 'Инвойс', className: 'text-left' },
   ];
 
@@ -241,7 +266,14 @@ const Settings = () => {
         <div className="payment-history">
           <h3>История платежей</h3>
           {paymentsLoading ? (
-            <div style={{display:'flex',justifyContent:'center',alignItems:'center',height:'200px'}}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '200px',
+              }}
+            >
               <Loader2 className="spinner" size={32} strokeWidth={1.4} />
             </div>
           ) : payments.length ? (

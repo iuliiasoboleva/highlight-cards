@@ -7,6 +7,8 @@ import { ru } from 'date-fns/locale';
 import { clientActivityMockData } from '../../mocks/clientActivityMockData';
 import ClientsActivityChart from '../ClientActivityChart';
 
+import '../../components/Chart/datepickerOverrides.css';
+
 const periods = {
   day: 'День',
   week: 'Неделя',

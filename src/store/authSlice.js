@@ -57,29 +57,35 @@ export const setPinThunk = createAsyncThunk('auth/setPin', async ({ token, pin }
   return res.data;
 });
 
-export const resetPinRequest = createAsyncThunk('auth/resetPinRequest', async ({ email }, { rejectWithValue }) => {
-  try {
-    await axiosInstance.post('auth/reset-pin-request', { email });
-    return true;
-  } catch (err) {
-    const msg = err?.response?.data?.detail || err?.response?.data || err.message;
-    return rejectWithValue(msg);
-  }
-});
-
-export const resetPinConfirm = createAsyncThunk('auth/resetPinConfirm', async ({ token, pin }, { rejectWithValue }) => {
-  try {
-    const res = await axiosInstance.post('auth/reset-pin-confirm', { token, new_pin: pin });
-    if (res.data?.token) {
-      setCookie('userToken', res.data.token, 14);
-      localStorage.setItem('quickJwt', res.data.token);
+export const resetPinRequest = createAsyncThunk(
+  'auth/resetPinRequest',
+  async ({ email }, { rejectWithValue }) => {
+    try {
+      await axiosInstance.post('auth/reset-pin-request', { email });
+      return true;
+    } catch (err) {
+      const msg = err?.response?.data?.detail || err?.response?.data || err.message;
+      return rejectWithValue(msg);
     }
-    return res.data;
-  } catch (err) {
-    const msg = err?.response?.data?.detail || err?.response?.data || err.message;
-    return rejectWithValue(msg);
-  }
-});
+  },
+);
+
+export const resetPinConfirm = createAsyncThunk(
+  'auth/resetPinConfirm',
+  async ({ token, pin }, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.post('auth/reset-pin-confirm', { token, new_pin: pin });
+      if (res.data?.token) {
+        setCookie('userToken', res.data.token, 14);
+        localStorage.setItem('quickJwt', res.data.token);
+      }
+      return res.data;
+    } catch (err) {
+      const msg = err?.response?.data?.detail || err?.response?.data || err.message;
+      return rejectWithValue(msg);
+    }
+  },
+);
 
 export const authSlice = createSlice({
   name: 'auth',

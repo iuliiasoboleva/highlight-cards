@@ -26,7 +26,9 @@
   margin: 0 4px;
 }
 
-.footer-left, .footer-center, .footer-right {
+.footer-left,
+.footer-center,
+.footer-right {
   display: flex;
   align-items: center;
   flex-wrap: wrap;

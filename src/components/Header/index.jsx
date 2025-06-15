@@ -6,8 +6,8 @@ import 'react-tooltip/dist/react-tooltip.css';
 
 import { BarChart, Contact, GraduationCap, LogOut, ScanLine, Settings, User } from 'lucide-react';
 
-import { logout as userLogout } from '../../store/userSlice';
 import { logout as authLogout } from '../../store/authSlice';
+import { logout as userLogout } from '../../store/userSlice';
 
 import './styles.css';
 

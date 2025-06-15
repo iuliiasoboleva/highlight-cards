@@ -11,7 +11,6 @@
 .managers-header h2,
 .mailings-container h2,
 .clients-container h2,
-.client-container h2,
 .mailings-settings-container h2,
 .rfm-settings-page h2,
 .settings-wrapper h2 {
@@ -119,7 +118,7 @@
   border-radius: 6px;
   padding: 11px;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 500;
   line-height: 18px;
   border: 1.6px solid transparent;
   margin: 0;

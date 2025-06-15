@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axiosInstance from '../axiosInstance';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
+import axiosInstance from '../axiosInstance';
 import { mockCards } from '../mocks/cardData';
 import { mockTemplateCards } from '../mocks/cardTemplatesData';
 import { mergeCardWithDefault } from '../utils/mergeCardWithDefault';
@@ -36,16 +36,19 @@ const initialState = {
   currentCard: mergeCardWithDefault({}),
 };
 
-export const fetchCards = createAsyncThunk('cards/fetchCards', async (_, { getState, rejectWithValue }) => {
-  try {
-    const orgId = getState().user.organization_id;
-    if (!orgId) return [];
-    const res = await axiosInstance.get('/cards', { params: { organization_id: orgId } });
-    return res.data;
-  } catch (err) {
-    return rejectWithValue(err.response?.data || err.message);
-  }
-});
+export const fetchCards = createAsyncThunk(
+  'cards/fetchCards',
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const orgId = getState().user.organization_id;
+      if (!orgId) return [];
+      const res = await axiosInstance.get('/cards', { params: { organization_id: orgId } });
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
 
 export const cardsSlice = createSlice({
   name: 'cards',

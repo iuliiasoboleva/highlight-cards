@@ -1,0 +1,92 @@
+.client-personal-container {
+  padding: 20px;
+}
+
+.client-personal-title {
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.client-personal-form {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 0 0 1px #e0e0e0;
+}
+
+.client-personal-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.client-personal-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.client-personal-group label {
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.client-personal-group input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+}
+
+.client-personal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.client-personal-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.client-date-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.client-date-input-wrapper .custom-input {
+  width: 100%;
+  padding-right: 30px; /* место под иконку */
+}
+
+.calendar-icon-overlay {
+  position: absolute;
+  right: 10px;
+  pointer-events: none;
+  color: #888;
+}
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.client-personal-btn.save {
+  background-color: #000;
+  color: white;
+}
+
+.client-personal-btn.delete {
+  background-color: #eee;
+  color: #333;
+}
+
+@media (max-width: 999px) {
+  .client-personal-row,
+  .client-personal-actions {
+    flex-direction: column;
+  }
+}

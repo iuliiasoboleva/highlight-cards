@@ -3,8 +3,8 @@ import { useDispatch } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import axiosInstance from '../../axiosInstance';
-import { setUser } from '../../store/userSlice';
 import { setCookie } from '../../cookieUtils';
+import { setUser } from '../../store/userSlice';
 
 import './styles.css';
 
@@ -52,9 +52,9 @@ const LoginVerify = () => {
         className="verify-logo"
       />
       <div className="spinner" />
-      <p style={{color:'#555'}}>Проверяем ссылку...</p>
+      <p style={{ color: '#555' }}>Проверяем ссылку...</p>
     </div>
   );
 };
 
-export default LoginVerify; 
+export default LoginVerify;

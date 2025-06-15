@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import CustomTable from '../../components/CustomTable';
-import { mockTransactions, transactionHeaders } from '../../mocks/mockTransactions';
+import { clientHeaders, mockClients } from '../../mocks/mockClientTable';
 import StatCard from './StatCard';
 
 import './styles.css';
@@ -18,7 +18,7 @@ const ClientDetails = () => {
 
   return (
     <div className="client-container">
-      <h2>Профиль пользователя</h2>
+      <h2 className="client-container-title">Профиль пользователя</h2>
       <div className="tariff-boxes">
         <div className="tariff-box tariff-box-left">
           <div className="avatar-circle">
@@ -52,18 +52,11 @@ const ClientDetails = () => {
         )}
       </div>
       <div className="stat-grid">
-        <StatCard title="Штампов получено" value={client.totalStamps || 0} />
-        <StatCard title="Наград начислено" value={client.rewardsGranted || 0} />
-        <StatCard title="Наград получено" value={client.rewardsReceived || 0} />
-        <StatCard title="Всего визитов" value={client.totalVisits || 0} />
-        <StatCard title="Уровень лояльности" value="★★★★★" />
-        <StatCard title="Статус" value="Установлена" color="green" />
-        <StatCard title="Серийный номер карты" value={client.cardSerial} />
-        <StatCard title="Дата выпуска карты" value={client.issueDate || '—'} />
+        <StatCard />
       </div>
       <div className="table-wrapper">
         <h3 className="table-name">Последние транзакции по карте</h3>
-        <CustomTable columns={transactionHeaders} rows={mockTransactions} />
+        <CustomTable columns={clientHeaders} rows={mockClients} />
       </div>
     </div>
   );

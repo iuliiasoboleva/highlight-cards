@@ -15,6 +15,7 @@ import {
 import { calculateOverallStats } from '../../utils/calculateOverallStats';
 import StatisticsCard from '../StatisticsCard';
 
+import './datepickerOverrides.css';
 import './styles.css';
 
 const periods = {
