@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+// import { useNavigate } from 'react-router-dom';
 
 import { Loader2 } from 'lucide-react';
 import CustomTable from '../../components/CustomTable';
 import { mailingsHeaders } from '../../mocks/mockMailings';
 import axiosInstance from '../../axiosInstance';
+import MailingDetailsModal from './MailingDetailsModal';
 
 import './styles.css';
 
@@ -18,8 +20,10 @@ const cards = [
 const MailingsInfo = () => {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedId, setSelectedId] = useState(null);
 
   const orgId = useSelector((state) => state.user.organization_id);
+  // const navigate = useNavigate();
 
   useEffect(() => {
     if (!orgId) return;
@@ -44,6 +48,7 @@ const MailingsInfo = () => {
   }));
 
   const statusColumnIndex = columns.findIndex((col) => col.key === 'status');
+  const recipientsIdx = columns.findIndex((col) => col.key === 'recipients');
 
   if (statusColumnIndex !== -1) {
     columns[statusColumnIndex].render = (row) => {
@@ -68,6 +73,13 @@ const MailingsInfo = () => {
     };
     columns[statusColumnIndex].className = 'text-center';
     columns[statusColumnIndex].cellClassName = 'text-center';
+  }
+
+  if (recipientsIdx !== -1) {
+    columns[recipientsIdx].render = (row) => {
+      if (row.recipients === 'all') return 'Всем';
+      return row.recipients;
+    };
   }
 
   if (loading) {
@@ -99,8 +111,19 @@ const MailingsInfo = () => {
       </div>
 
       <div className="table-wrapper">
-        <CustomTable columns={columns} rows={rows} emptyText="Здесь будут ваши рассылки" />
+        <CustomTable
+          columns={columns}
+          rows={rows}
+          emptyText="Здесь будут ваши рассылки"
+          onRowClick={(row) => setSelectedId(row.id)}
+        />
       </div>
+
+      <MailingDetailsModal
+        isOpen={!!selectedId}
+        mailingId={selectedId}
+        onClose={() => setSelectedId(null)}
+      />
     </div>
   );
 };

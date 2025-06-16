@@ -53,6 +53,7 @@ import SettingsRFMSegment from './pages/SettingsRFMSegment';
 import Workplace from './pages/Workplace';
 import { fetchCards, initializeCards, updateCurrentCardField } from './store/cardsSlice';
 import CardStats from './pages/CardStats';
+import MailingDetails from './pages/MailingDetails';
 
 const MainLayout = () => {
   const location = useLocation();
@@ -247,6 +248,7 @@ const App = () => {
             <Route path="user-push" element={<MailingsUserPush />} />
             <Route path="settings" element={<MailingsSettings />} />
             <Route path="rfm-segment" element={<SettingsRFMSegment />} />
+            <Route path=":mailingId" element={<MailingDetails />} />
           </Route>
           <Route path="/cards/:id/edit" element={<CardEditGuard />}>
             <Route path="type" element={<EditType />} />
