@@ -21,7 +21,7 @@ const PushTargetTabs = ({ onTabChange, onFilteredCountChange }) => {
     { label: '<', value: 'less' },
   ];
 
-  const clients = useSelector((state) => state.clients);
+  const clients = useSelector((state) => state.clients.list || []);
 
   useEffect(() => {
     onTabChange(selectedTab);

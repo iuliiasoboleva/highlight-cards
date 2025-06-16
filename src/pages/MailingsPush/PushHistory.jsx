@@ -1,22 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Copy, HelpCircle, Trash2 } from 'lucide-react';
 
-import { mockPushHistory as initialHistory } from '../../mocks/mockPushHistory';
-
 import './styles.css';
 
-const PushHistory = () => {
-  const [history, setHistory] = useState(initialHistory);
-
+const PushHistory = ({ history = [], onDelete }) => {
   const handleCopy = (message) => {
-    navigator.clipboard.writeText(message || '').then(() => {
-      console.log('Сообщение скопировано');
-    });
-  };
-
-  const handleDelete = (id) => {
-    setHistory((prev) => prev.filter((item) => item.id !== id));
+    navigator.clipboard.writeText(message || '');
   };
 
   return (
@@ -26,13 +16,13 @@ const PushHistory = () => {
       </h3>
 
       <div className="push-history-list">
-        {history.map(({ id, date, message, delivered }) => (
+        {history.map(({ id, dateTime, message, status }) => (
           <div key={id} className="push-history-item">
             <div className="push-history-top">
-              <div className="push-history-dates">{date}</div>
+              <div className="push-history-dates">{dateTime}</div>
 
               <div className="push-history-controls">
-                <span className="push-history-delivered">Доставлено:{delivered}</span>
+                <span className="push-history-delivered">{status}</span>
                 <Copy
                   size={16}
                   className="push-history-icon"
@@ -42,7 +32,7 @@ const PushHistory = () => {
                 <Trash2
                   size={16}
                   className="push-history-icon"
-                  onClick={() => handleDelete(id)}
+                  onClick={() => onDelete && onDelete(id)}
                   title="Удалить"
                 />
               </div>

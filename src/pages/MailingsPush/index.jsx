@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { HelpCircle, Users } from 'lucide-react';
@@ -10,6 +10,7 @@ import { pluralVerb, pluralize } from '../../helpers/pluralize';
 import { setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
 import PushHistory from './PushHistory';
 import PushTargetTabs from './PushTargetTabs';
+import axiosInstance from '../../axiosInstance';
 
 import './styles.css';
 
@@ -28,6 +29,26 @@ const MailingsPush = () => {
   const [isScheduled, setIsScheduled] = useState(false);
   const [selectedTab, setSelectedTab] = useState('all');
   const [usersCount, setUsersCount] = useState(0);
+
+  const user = useSelector((state) => state.user);
+
+  const [history, setHistory] = useState([]);
+
+  const fetchHistory = useCallback(async () => {
+    if (!currentCard) return;
+    try {
+      const res = await axiosInstance.get('/mailings', {
+        params: { organization_id: user.organization_id, card_id: currentCard.id },
+      });
+      setHistory(res.data.filter((m) => m.mailingType === 'Push'));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [currentCard, user.organization_id]);
+
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
 
   useEffect(() => {
     if ((!currentCard || !cards.find((c) => c.id === currentCard.id)) && cards.length > 0) {
@@ -79,7 +100,10 @@ const MailingsPush = () => {
     }
   };
 
-  const handleSavePushSettings = () => {
+  const handleSavePushSettings = async () => {
+    if (!currentCard) return;
+
+    // сохраняем в карте pushNotification через redux (для UI)
     dispatch(
       updateCurrentCardField({
         path: 'pushNotification',
@@ -89,6 +113,24 @@ const MailingsPush = () => {
         },
       }),
     );
+
+    // создаём запись рассылки
+    try {
+      await axiosInstance.post('/mailings', {
+        card_id: currentCard.id,
+        name: `Push по карте ${currentCard.title}`,
+        date_time: isScheduled ? scheduledDate : new Date().toISOString(),
+        recipients: selectedTab === 'all' ? 'all' : 'segment',
+        mailing_type: 'Push',
+        status: isScheduled ? 'Запланирована' : 'Отправлена',
+        organization_id: user.organization_id,
+        author_id: user.id,
+        message: pushMessage,
+      });
+      fetchHistory();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   useEffect(() => {
@@ -156,7 +198,14 @@ const MailingsPush = () => {
             Отправить
           </button>
         </div>
-        <PushHistory />
+        <PushHistory history={history} onDelete={async (id) => {
+          try {
+            await axiosInstance.delete(`/mailings/${id}`);
+            setHistory((prev) => prev.filter((m) => m.id !== id));
+          } catch (e) {
+            console.error(e);
+          }
+        }} />
       </div>
     </div>
   ) : (
