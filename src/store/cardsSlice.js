@@ -65,6 +65,28 @@ export const saveCard = createAsyncThunk(
   },
 );
 
+export const createCard = createAsyncThunk(
+  'cards/createCard',
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const state = getState();
+      const { currentCard } = state.cards;
+      const orgId = state.user.organization_id;
+      if (!orgId) throw new Error('Нет organization_id');
+
+      const payload = {
+        ...currentCard,
+        organization_id: orgId,
+      };
+
+      const res = await axiosInstance.post('/cards', payload);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
+
 export const cardsSlice = createSlice({
   name: 'cards',
   initialState,
@@ -225,6 +247,21 @@ export const cardsSlice = createSlice({
         if (idx !== -1) {
           state.cards[idx] = { ...state.cards[idx], ...changes };
         }
+      })
+      .addCase(createCard.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createCard.fulfilled, (state, action) => {
+        state.loading = false;
+        const newCard = action.payload;
+        const rest = state.cards.slice(1).filter((c) => c.id !== newCard.id);
+        state.cards = [state.cards[0], ...rest, newCard];
+        state.currentCard = mergeCardWithDefault(newCard);
+      })
+      .addCase(createCard.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });

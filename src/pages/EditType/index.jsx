@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { BadgePercent, DollarSign, Gift, HelpCircle, Stamp, Ticket } from 'lucide-react';
 
 import EditLayout from '../../components/EditLayout';
-import { addCard, setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
+import { createCard, setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
 
 import './styles.css';
 
@@ -45,8 +45,9 @@ const EditType = () => {
 
   const handleCreateCard = () => {
     if (!selectedType) return;
-    dispatch(addCard());
-    navigate(`/cards/${currentCard.id}/edit/settings`);
+    dispatch(createCard()).unwrap().then((created)=>{
+      navigate(`/cards/${created.id}/edit/settings`);
+    });
   };
 
   const typeContent = (
