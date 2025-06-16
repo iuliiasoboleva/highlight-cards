@@ -2,7 +2,7 @@ import React from 'react';
 
 import './styles.css';
 
-const CustomTable = ({ columns, rows, onRowClick }) => {
+const CustomTable = ({ columns, rows, onRowClick, emptyText = 'Здесь будут ваши транзакции по карте' }) => {
   return (
     <div className="table-container">
       <table className="custom-table">
@@ -19,7 +19,7 @@ const CustomTable = ({ columns, rows, onRowClick }) => {
           {rows.length === 0 ? (
             <tr>
               <td colSpan={columns.length} className="no-data-row">
-                Здесь будут ваши транзакции по карте
+                {emptyText}
               </td>
             </tr>
           ) : (

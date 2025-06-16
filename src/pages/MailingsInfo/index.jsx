@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
+import { Loader2 } from 'lucide-react';
 import CustomTable from '../../components/CustomTable';
-import { mailingsHeaders, mockMailings } from '../../mocks/mockMailings';
+import { mailingsHeaders } from '../../mocks/mockMailings';
+import axiosInstance from '../../axiosInstance';
 
 import './styles.css';
 
@@ -13,6 +16,26 @@ const cards = [
 ];
 
 const MailingsInfo = () => {
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const orgId = useSelector((state) => state.user.organization_id);
+
+  useEffect(() => {
+    if (!orgId) return;
+
+    (async () => {
+      try {
+        const res = await axiosInstance.get('/mailings', { params: { organization_id: orgId } });
+        setRows(res.data);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [orgId]);
+
   const columns = mailingsHeaders.map((header) => ({
     key: header.key,
     title: header.label,
@@ -47,6 +70,16 @@ const MailingsInfo = () => {
     columns[statusColumnIndex].cellClassName = 'text-center';
   }
 
+  if (loading) {
+    return (
+      <div
+        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100vh - 200px)' }}
+      >
+        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
+      </div>
+    );
+  }
+
   return (
     <div className="mailings-container">
       <h2>Рассылки</h2>
@@ -66,7 +99,7 @@ const MailingsInfo = () => {
       </div>
 
       <div className="table-wrapper">
-        <CustomTable columns={columns} rows={mockMailings} />
+        <CustomTable columns={columns} rows={rows} emptyText="Здесь будут ваши рассылки" />
       </div>
     </div>
   );
