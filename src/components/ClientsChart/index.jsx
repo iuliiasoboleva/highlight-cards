@@ -18,9 +18,9 @@ const periods = {
   custom: 'Период',
 };
 
-const ClientsChart = ({ title = 'Клиентская активность' }) => {
+const ClientsChart = ({ title = 'Клиентская активность', externalData = null }) => {
   const [selectedPeriod, setSelectedPeriod] = useState('month');
-  const [chartData, setChartData] = useState([]);
+  const [chartData, setChartData] = useState(externalData || []);
   const [customRange, setCustomRange] = useState({ start: null, end: null });
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
 
@@ -28,6 +28,7 @@ const ClientsChart = ({ title = 'Клиентская активность' }) =
   const clientCalendarRef = useRef(null);
 
   useEffect(() => {
+    if (externalData) return;
     if (selectedPeriod === 'custom' && customRange.start && customRange.end) {
       const all = Object.values(clientActivityMockData).flat();
       const filtered = all.filter((item) => {
@@ -38,7 +39,7 @@ const ClientsChart = ({ title = 'Клиентская активность' }) =
     } else {
       setChartData(clientActivityMockData[selectedPeriod] || []);
     }
-  }, [selectedPeriod, customRange]);
+  }, [selectedPeriod, customRange, externalData]);
 
   const sortedChartData = useMemo(() => {
     return [...chartData].sort((a, b) => new Date(a.date) - new Date(b.date));

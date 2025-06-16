@@ -2,17 +2,22 @@ import React from 'react';
 
 import './styles.css';
 
-const stats = [
-  { label: 'Установленных карт', value: 0 },
-  { label: 'Клиентов в базе', value: 0 },
-  { label: 'Штампов начислено', value: 0 },
-  { label: 'Транзакций', value: 0 },
-  { label: 'Наград заработано', value: 0 },
-  { label: 'Отзывов', value: 0 },
-  { label: 'Наград получено', value: 0 },
+const defaultStats = [
+  { label: 'Установленных карт', key: 'installed', value: 0 },
+  { label: 'Клиентов в базе', key: 'clients', value: 0 },
+  { label: 'Штампов начислено', key: 'stamps', value: 0 },
+  { label: 'Транзакций', key: 'transactions', value: 0 },
+  { label: 'Наград заработано', key: 'rewards', value: 0 },
+  { label: 'Отзывов', key: 'reviews', value: 0 },
+  { label: 'Наград получено', key: 'rewardsReceived', value: 0 },
 ];
 
-const DashboardStats = () => {
+const DashboardStats = ({ data = null }) => {
+  const stats = defaultStats.map((item) => ({
+    ...item,
+    value: data && data[item.key] !== undefined ? data[item.key] : item.value,
+  }));
+
   return (
     <div className="dashboard-stats">
       {stats.map((stat, index) => (

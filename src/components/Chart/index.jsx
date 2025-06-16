@@ -44,9 +44,10 @@ const Chart = ({
     repeatClients: 'Повторные клиенты',
     newClients: 'Новые клиенты',
   },
+  externalData = null,
 }) => {
   const [selectedPeriod, setSelectedPeriod] = useState('month');
-  const [chartData, setChartData] = useState([]);
+  const [chartData, setChartData] = useState(externalData || []);
   const [customStartDate, setCustomStartDate] = useState(new Date());
   const [customEndDate, setCustomEndDate] = useState(new Date());
   const [selectedRange, setSelectedRange] = useState({ start: null, end: null });
@@ -70,6 +71,7 @@ const Chart = ({
   }, [chartData]);
 
   useEffect(() => {
+    if (externalData) return;
     if (selectedPeriod !== 'custom') {
       const newData = dataMap[selectedPeriod] || [];
       const sortedData = [...newData].sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -96,6 +98,7 @@ const Chart = ({
   }, []);
 
   useEffect(() => {
+    if (externalData) return;
     if (selectedPeriod !== 'custom') {
       setChartData(dataMap[selectedPeriod] || []);
       setSelectedRange({ start: null, end: null });

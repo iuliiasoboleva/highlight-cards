@@ -9,11 +9,12 @@ const periods = {
   days240: '240 дней',
 };
 
-const RetentionChart = ({ title = 'Возвращаемость' }) => {
+const RetentionChart = ({ title = 'Возвращаемость', externalData = null }) => {
   const [selectedPeriod, setSelectedPeriod] = useState('days60');
-  const [chartData, setChartData] = useState([]);
+  const [chartData, setChartData] = useState(externalData || []);
 
   useEffect(() => {
+    if (externalData) return;
     setChartData(retentionMockData[selectedPeriod] || []);
   }, [selectedPeriod]);
 

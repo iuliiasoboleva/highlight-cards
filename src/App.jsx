@@ -52,6 +52,7 @@ import SettingsPersonal from './pages/SettingsPersonal';
 import SettingsRFMSegment from './pages/SettingsRFMSegment';
 import Workplace from './pages/Workplace';
 import { fetchCards, initializeCards, updateCurrentCardField } from './store/cardsSlice';
+import CardStats from './pages/CardStats';
 
 const MainLayout = () => {
   const location = useLocation();
@@ -148,7 +149,7 @@ const MainLayout = () => {
         { to: `/mailings/push`, label: 'Отправить push' },
         { to: `/mailings/auto-push`, label: 'Автоматизация push' },
         { to: `/mailings/user-push`, label: 'Пользовательские авто-push' },
-        { to: `/mailings/settings`, label: 'Настройки' },
+        // { to: `/mailings/settings`, label: 'Настройки' },
         { to: `/mailings/rfm-segment`, label: 'Сегментация клиентов' },
       ];
     }
@@ -261,7 +262,7 @@ const App = () => {
             <Route path="info" element={<DefaultCardInfo />} />
             <Route path="clients" element={<Clients />} />
             <Route path="push" element={<MailingsPush />} />
-            <Route path="stats" element={<Home />} />
+            <Route path="stats" element={<CardStats />} />
           </Route>
           <Route
             path="/managers"
