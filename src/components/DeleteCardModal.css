@@ -1,0 +1,9 @@
+.client-modal h3{
+  font-size:24px;
+  color:#000;
+}
+.client-modal-sub,
+.client-modal-question{
+  font-size:18px;
+  color:#000;
+} 

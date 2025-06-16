@@ -56,7 +56,11 @@ export const saveCard = createAsyncThunk(
     try {
       const { currentCard } = getState().cards;
       if (!currentCard?.id || currentCard.id === 'fixed') throw new Error('Нет id карты');
-      const payload = { push_notification: currentCard.pushNotification };
+      const { frameUrl, ...rest } = currentCard;
+      const payload = {
+        ...rest,
+        frame_url: frameUrl || 'phone.svg',
+      };
       await axiosInstance.put(`/cards/${currentCard.id}`, payload);
       return { id: currentCard.id, changes: { pushNotification: currentCard.pushNotification } };
     } catch (err) {
@@ -74,8 +78,10 @@ export const createCard = createAsyncThunk(
       const orgId = state.user.organization_id;
       if (!orgId) throw new Error('Нет organization_id');
 
+      const { frameUrl, ...rest } = currentCard;
       const payload = {
-        ...currentCard,
+        ...rest,
+        frame_url: frameUrl || 'phone.svg',
         organization_id: orgId,
       };
 
@@ -86,6 +92,15 @@ export const createCard = createAsyncThunk(
     }
   },
 );
+
+export const deleteCardAsync = createAsyncThunk('cards/deleteCard', async (id, { rejectWithValue }) => {
+  try {
+    await axiosInstance.delete(`/cards/${id}`);
+    return id;
+  } catch (err) {
+    return rejectWithValue(err.response?.data || err.message);
+  }
+});
 
 export const cardsSlice = createSlice({
   name: 'cards',
@@ -262,6 +277,9 @@ export const cardsSlice = createSlice({
       .addCase(createCard.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(deleteCardAsync.fulfilled, (state, action) => {
+        state.cards = state.cards.filter((c) => c.id !== action.payload);
       });
   },
 });

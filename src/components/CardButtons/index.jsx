@@ -6,11 +6,13 @@ import { Copy, Download, Power, X } from 'lucide-react';
 
 import {
   copyCard,
-  deleteCard,
   downloadCard,
   setCurrentCard,
   updateCard,
+  deleteCardAsync,
 } from '../../store/cardsSlice';
+
+import DeleteCardModal from '../DeleteCardModal';
 
 import './styles.css';
 
@@ -21,6 +23,8 @@ const CardButtons = ({ isFixed, cardId }) => {
   const isTemplatePage = location.pathname === '/cards/template';
 
   const card = useSelector((state) => state.cards.cards.find((c) => c.id === cardId));
+
+  const [showDel, setShowDel] = React.useState(false);
 
   if (!card) return null;
 
@@ -85,8 +89,11 @@ const CardButtons = ({ isFixed, cardId }) => {
     dispatch(copyCard(cardId));
   };
 
-  const handleDelete = () => {
-    dispatch(deleteCard(cardId));
+  const handleDelete = () => setShowDel(true);
+
+  const confirmDelete = () => {
+    dispatch(deleteCardAsync(cardId));
+    setShowDel(false);
   };
 
   return (
@@ -106,6 +113,13 @@ const CardButtons = ({ isFixed, cardId }) => {
           <X size={20} />
         </button>
       </div>
+      {showDel && (
+        <DeleteCardModal
+          cardName={card.name}
+          onConfirm={confirmDelete}
+          onCancel={() => setShowDel(false)}
+        />
+      )}
     </div>
   );
 };
