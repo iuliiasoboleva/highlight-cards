@@ -6,6 +6,7 @@ import { Copy, Download, Power, X } from 'lucide-react';
 
 import {
   copyCard,
+  copyCardAsync,
   downloadCard,
   setCurrentCard,
   updateCard,
@@ -25,6 +26,7 @@ const CardButtons = ({ isFixed, cardId }) => {
   const card = useSelector((state) => state.cards.cards.find((c) => c.id === cardId));
 
   const [showDel, setShowDel] = React.useState(false);
+  const [copyLoading, setCopyLoading] = React.useState(false);
 
   if (!card) return null;
 
@@ -86,7 +88,10 @@ const CardButtons = ({ isFixed, cardId }) => {
   };
 
   const handleCopy = () => {
-    dispatch(copyCard(cardId));
+    setCopyLoading(true);
+    dispatch(copyCardAsync(cardId))
+      .unwrap()
+      .finally(() => setCopyLoading(false));
   };
 
   const handleDelete = () => setShowDel(true);
@@ -106,7 +111,7 @@ const CardButtons = ({ isFixed, cardId }) => {
         <button onClick={handleDownload} title="Скачать">
           <Download size={20} />
         </button>
-        <button onClick={handleCopy} title="Копировать">
+        <button onClick={handleCopy} title="Копировать" disabled={copyLoading}>
           <Copy size={20} />
         </button>
         <button onClick={handleDelete} title="Удалить">
