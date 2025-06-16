@@ -6,7 +6,7 @@ import { saveAs } from 'file-saver';
 import { Download, Loader2, PlusCircle, Send } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
-import CustomTable from '../../components/CustomTable';
+import FilterableTable from '../../components/FilterableTable';
 import { mockClientsHeaders } from '../../mocks/clientsInfo';
 import { addClientLocal, createClient, fetchClients } from '../../store/clientsSlice';
 
@@ -181,10 +181,11 @@ const Clients = () => {
         </div>
       ) : (
         <div className="table-wrapper">
-          <CustomTable
+          <FilterableTable
             columns={columns}
             rows={clients}
             onRowClick={(row) => navigate(`/clients/${row.id}`)}
+            onShowModal={() => setShowModal(true)}
           />
         </div>
       )}

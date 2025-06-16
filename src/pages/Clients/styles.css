@@ -283,3 +283,9 @@
 .copy-link-button {
   text-decoration: dashed;
 }
+
+@media (max-width: 999px) {
+  .manager-card {
+    width: 100%;
+  }
+}
