@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import CardInfo from '../../components/CardInfo';
 import CustomTable from '../../components/CustomTable';
 import DashboardStats from '../../components/DashboardStats';
-import { mockTransactions, transactionHeaders } from '../../mocks/mockTransactions';
+import { transactionHeaders } from '../../mocks/mockTransactions';
 import { generatePDF } from '../../utils/pdfGenerator';
+import { Loader2 } from 'lucide-react';
+import axiosInstance from '../../axiosInstance';
 
 import './styles.css';
 
@@ -14,11 +16,58 @@ const DefaultCardInfo = () => {
   const { id } = useParams();
   const { cards } = useSelector((state) => state.cards);
 
-  const card = cards.find((card) => card.id === +id);
+  const [card, setCard] = useState(cards.find((c) => c.id === +id) || null);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(!card);
 
-  if (!card) {
-    return <div>Карточка не найдена</div>;
+  useEffect(() => {
+    if (card) return;
+    (async () => {
+      try {
+        const res = await axiosInstance.get(`/cards/${id}`);
+        const data = res.data;
+        const mapped = {
+          ...data,
+          frameUrl: data.frame_url || data.frameUrl,
+          qrImg: data.qr_img || data.qrImg,
+          urlCopy: data.url_copy || data.urlCopy,
+          isActive: data.is_active ?? data.isActive,
+        };
+        setCard(mapped);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [card, id]);
+
+  useEffect(() => {
+    if (!card) return;
+    (async () => {
+      try {
+        const res = await axiosInstance.get(`/clients/transactions/${card.id}`);
+        const mappedRows = res.data.map((tr) => ({
+          ...tr,
+          userName: tr.user_name || tr.userName,
+          dateTime: tr.date_time || tr.dateTime || tr.created_at,
+        }));
+        setTransactions(mappedRows);
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+  }, [card]);
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100vh - 200px)' }}>
+        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
+      </div>
+    );
   }
+
+  if (!card) return <p style={{ textAlign: 'center' }}>Карточка не найдена</p>;
 
   return (
     <div className="card-info-wrapper">
@@ -41,8 +90,15 @@ const DefaultCardInfo = () => {
             <div className="card-info-link">{card.urlCopy}</div>
 
             <div className="card-buttons">
-              <button>Скопировать ссылку</button>
-              <button onClick={() => generatePDF(card)}>Скачать PDF</button>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(card.urlCopy);
+                }}
+              >
+                Скопировать ссылку
+              </button>
+              {/* НЕ УДАЛЯТЬ, ПОЯВИТСЯ ПОЗЖЕ */}
+              {/* <button onClick={() => generatePDF(card)}>Скачать PDF</button> */}
             </div>
           </div>
         </div>
@@ -50,7 +106,7 @@ const DefaultCardInfo = () => {
       </div>
       <div className="table-wrapper">
         <h3 className="table-name">Последние транзакции по карте</h3>
-        <CustomTable columns={transactionHeaders} rows={mockTransactions} />
+        <CustomTable columns={transactionHeaders} rows={transactions} />
       </div>
     </div>
   );

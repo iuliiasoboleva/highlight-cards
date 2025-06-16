@@ -48,9 +48,10 @@ const QRPopup = ({ cardId, onClose }) => {
           <button onClick={copyToClipboard} className="action-button">
             {isCopied ? 'Скопировано!' : 'Скопировать ссылку'}
           </button>
-          <button onClick={() => generatePDF(currentCard)} className="action-button">
+          {/* НЕ УДАЛЯТЬ, ПОЯВИТСЯ ПОЗЖЕ */}
+          {/* <button onClick={() => generatePDF(currentCard)} className="action-button">
             Скачать PDF
-          </button>
+          </button> */}
           <button onClick={activateCard} className="action-button primary">
             {currentCard.isActive ? 'Деактивировать карту' : 'Активировать карту'}
           </button>
