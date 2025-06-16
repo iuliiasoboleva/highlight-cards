@@ -220,7 +220,7 @@ const App = () => {
   return (
     <Router>
       <ScrollToTop />
-      {/* <AuthRedirectGuard> */}
+      <AuthRedirectGuard>
       <Routes>
         <Route
           path="/auth"
@@ -280,7 +280,7 @@ const App = () => {
         </Route>
         <Route path="/customer/card/:cardNumber" element={<CustomerPage />} />
       </Routes>
-      {/* </AuthRedirectGuard> */}
+      </AuthRedirectGuard>
     </Router>
   );
 };
