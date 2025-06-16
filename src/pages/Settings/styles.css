@@ -19,6 +19,8 @@
   border-radius: 8px;
   padding: 16px;
   display: flex;
+  flex-direction: column;
+  gap: 16px;
   width: 100%;
 }
 
@@ -234,4 +236,132 @@
     flex-direction: column;
     gap: 16px;
   }
+
+  .plan-category-left {
+    width: auto;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+  }
+}
+
+/* ===== Единый тариф ===== */
+
+.plan-main-title {
+  font-size: 32px;
+  font-weight: 600;
+  text-align: center;
+  margin: 0 0 24px;
+}
+
+.plan-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  justify-content: center;
+}
+
+.plan-category {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  width: 300px;
+}
+
+.plan-category-left {
+  width: auto;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.plan-category-number {
+  font-weight: 600;
+  color: #bf4756;
+}
+
+.plan-category-title {
+  font-weight: 600;
+}
+
+.plan-feature-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.plan-feature-list li {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.plan-check {
+  color: #bf4756;
+}
+
+.plan-price {
+  margin-top: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.plan-price-value {
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.plan-free-text {
+  color: #666;
+  font-size: 12px;
+}
+
+.plan-status {
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+  .plan-category {
+    flex-direction: column;
+  }
+
+  .plan-category-left {
+    width: auto;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+  }
+}
+
+.plan-card {
+  max-width: 100%;
+  width: 100%;
+  margin: 0 auto;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 48px 24px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 32px;
+}
+
+.plan-category:nth-child(odd) {
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }

@@ -7,6 +7,7 @@ import AgreementModal from '../../components/AgreementModal';
 import CustomSelect from '../../components/CustomSelect';
 import CustomTable from '../../components/CustomTable';
 import { fetchPayments } from '../../store/paymentsSlice';
+import { fetchSubscription } from '../../store/subscriptionSlice';
 import { fetchTariffs } from '../../store/tariffsSlice';
 
 import './styles.css';
@@ -18,6 +19,7 @@ const Settings = () => {
     (state) => state.payments || {},
   );
   const { organization_id: orgId, id: userId } = useSelector((state) => state.user);
+  const { info: subscription, loading: subLoading } = useSelector((state) => state.subscription);
 
   useEffect(() => {
     if (!tariffPlans.length) {
@@ -31,6 +33,12 @@ const Settings = () => {
       dispatch(fetchPayments({ orgId: id, userId }));
     }
   }, [dispatch, payments.length, orgId, userId]);
+
+  useEffect(() => {
+    if (orgId) {
+      dispatch(fetchSubscription(orgId));
+    }
+  }, [dispatch, orgId]);
 
   const [period, setPeriod] = useState({});
 
@@ -47,25 +55,44 @@ const Settings = () => {
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState('plan');
 
-  if (loading) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: 'calc(100vh - 200px)',
-        }}
-      >
-        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
-      </div>
-    );
-  }
+  const isTrial = subscription?.status === 'trial';
+  const remainingDays = subscription?.days_left ?? 0;
 
-  if (!tariffPlans.length) return <p>Тарифы не найдены</p>;
-
-  // текущий тариф временно берём первый
-  const currentTariff = tariffPlans[0];
+  const planFeatures = [
+    { category: 'Безлимиты', items: [
+        'Безлимит по количеству карт',
+        'Безлимит по сотрудникам',
+        'Безлимит по программам лояльности',
+        'Безлимит по push-уведомлениям и триггерам',
+      ] },
+    { category: 'Инфраструктура', items: [
+        'Одна торговая точка',
+        'Конструктор карт',
+        'Брендинг анкет для клиентов',
+        'Онлайн-анкеты и брендинг для клиентов',
+        'Реферальная программа',
+      ] },
+    { category: 'Коммуникация/ взаимодействие с клиентами', items: [
+        'Подарочные сертификаты',
+        'Геолокационные метки',
+        'Отзывы на Яндекс картах',
+      ] },
+    { category: 'Аналитика и безопасность', items: [
+        'Аналитика и сегментация клиентов (RFM)',
+        'Отчёты по пуш-рассылкам',
+        'Антифрод',
+        'Импорт клиентской базы',
+      ] },
+    { category: 'Поддержка и внедрение', items: [
+        'Поддержка 24/7',
+        'Онлайн-обучение',
+        'Чек-листы и инструменты внедрения программы лояльности в бизнес',
+      ] },
+    { category: 'Интеграции и API', items: [
+        'Доступ к API',
+        'Интеграции c keeper, yclients',
+      ] },
+  ];
 
   // Подготовка данных для таблицы тарифов
   const tariffColumns = [
@@ -195,6 +222,26 @@ const Settings = () => {
     { key: 'invoice_number', title: 'Инвойс', className: 'text-left' },
   ];
 
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: 'calc(100vh - 200px)',
+        }}
+      >
+        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
+      </div>
+    );
+  }
+
+  if (!tariffPlans.length) return <p>Тарифы не найдены</p>;
+
+  // текущий тариф временно берём первый
+  const currentTariff = tariffPlans[0];
+
   return (
     <div className="settings-container">
       <div className="settings-header">
@@ -217,50 +264,39 @@ const Settings = () => {
 
       {activeTab === 'plan' ? (
         <>
-          <div className="tariff-boxes">
-            <div className="tariff-box">
-              <div className="tariff-box-column">
-                <p>Ваш тариф</p>
-                <hr />
-                <div className="tariff-box-content">
-                  <div className="tariff-name">{currentTariff.name}</div>
-                  <div className="tariff-sub">Годовая оплата</div>
+          <div className="plan-card">
+            <h3 className="plan-main-title">Единый тариф — безлимитный функционал</h3>
+            {!subLoading && subscription && (
+              <p className="plan-status">
+                {subscription.status === 'expired'
+                  ? 'Подписка истекла'
+                  : subscription.status === 'trial'
+                    ? `Демо, осталось ${remainingDays} дней`
+                    : `Подписка активна, осталось ${remainingDays} дней`}
+              </p>
+            )}
+            <div className="plan-features">
+              {planFeatures.map((group, idx) => (
+                <div className="plan-category" key={group.category}>
+                  <div className="plan-category-left">
+                    <span className="plan-category-number">{`${idx + 1}`.padStart(2, '0')}</span>
+                    <span className="plan-category-title">{group.category}</span>
+                  </div>
+                  <ul className="plan-feature-list">
+                    {group.items.map((item) => (
+                      <li key={item}>
+                        <span className="plan-check">✓</span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </div>
-              <div className="tariff-box-column">
-                <p>Стоимость</p>
-                <hr />
-                <div className="tariff-box-content">
-                  <div className="tariff-price">{currentTariff.prices.month} ₽</div>
-                  <div className="tariff-sub">В месяц</div>
-                </div>
-              </div>
+              ))}
             </div>
-
-            <div className="tariff-due">
-              <p className="tariff-due-title">Дата списания средств за тариф</p>
-              <hr />
-              <div className="tariff-due-grid">
-                <div className="tariff-box-content">
-                  <div className="tariff-due-date">10.04.2025</div>
-                  <p className="tariff-sub">Дата следующего списания</p>
-                </div>
-                <div className="tariff-box-content">
-                  <div className="tariff-due-time">00:33</div>
-                </div>
-                <div className="tariff-box-content">
-                  <div className="tariff-due-days">10</div>
-                  <p className="tariff-sub">Дней осталось</p>
-                </div>
-              </div>
-              <button className="custom-main-button" onClick={() => setShowModal(true)}>
-                Продлить
-              </button>
+            <div className="plan-price">
+              <span className="plan-price-value">6 900 ₽ / месяц</span>
             </div>
           </div>
-
-          <h3 className="settings-title">Полный функционал</h3>
-          <CustomTable columns={tariffColumns} rows={tariffRows} />
         </>
       ) : (
         <div className="payment-history">

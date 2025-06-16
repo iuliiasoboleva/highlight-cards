@@ -8,6 +8,7 @@ import paymentsReducer from './paymentsSlice';
 import salesPointsReducer from './salesPointsSlice';
 import tariffsReducer from './tariffsSlice';
 import userReducer from './userSlice';
+import subscriptionReducer from './subscriptionSlice';
 
 export const store = configureStore({
   reducer: {
@@ -19,5 +20,6 @@ export const store = configureStore({
     locations: salesPointsReducer,
     tariffs: tariffsReducer,
     payments: paymentsReducer,
+    subscription: subscriptionReducer,
   },
 });

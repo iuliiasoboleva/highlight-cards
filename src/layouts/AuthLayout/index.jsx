@@ -8,14 +8,13 @@ const AuthLayout = ({ children }) => {
       <div className="left">
         <div className="highlight-card">
           <img src="/logoColored.png" alt="Logo" className="logo" />
-          <p>Электронные карты для Apple Wallet и Google Pay</p>
         </div>
       </div>
 
       <div className="right">
         <div className="mobile-highlight-card">
           <img src="/logoColored.png" alt="Logo" className="logo" />
-          <p>Электронные карты для Apple Wallet и Google Pay</p>
+          <p>Цифровые карты лояльности для бизнеса Apple Wallet и Google Pay</p>
         </div>
         {children}
       </div>
