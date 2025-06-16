@@ -8,7 +8,7 @@ import './styles.css';
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1'];
 
 const ClientPortraitCard = ({ title, data }) => {
-  const hasData = data && data.length > 0;
+  const hasData = data && data.some((d) => d.value && d.value > 0);
 
   return (
     <div className="portrait-card">
