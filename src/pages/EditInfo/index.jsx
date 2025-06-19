@@ -121,7 +121,7 @@ const EditInfo = () => {
         required
       />
       <hr />
-      <LabeledTextarea
+      {/* <LabeledTextarea
         label="Мультинаграды"
         subtitle={
           'Укажите через запятую, при каких количествах полученных штампов будет начисляться данная награда. Если оставить поле пустым, то награда будет начисляться при достижении максимального количества штампов.'
@@ -129,7 +129,7 @@ const EditInfo = () => {
         value={infoFields.multiRewardsInput || ''}
         onChange={handleMultiRewardsChange}
         placeholder="Например: 3,5,7"
-      />
+      /> */}
       <BarcodeRadio
         options={[
           { value: 'true', label: 'Да' },

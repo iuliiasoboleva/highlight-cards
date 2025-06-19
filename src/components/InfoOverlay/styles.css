@@ -64,9 +64,6 @@
 }
 
 .info-overlay-link-value {
-  max-width: 220px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  display: block;
+  white-space: normal;
+  word-break: break-word;
 }

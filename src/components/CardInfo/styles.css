@@ -22,16 +22,24 @@
 .card-info-header,
 .card-info-footer {
   display: flex;
-  gap: 8px;
-  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 8px 12px;
   align-items: flex-start;
-  padding-left: 12px;
-  padding-right: 12px;
+  padding-left: 8px;
+  padding-right: 8px;
+  width: 100%;
+}
+
+.card-info-footer {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  column-gap: 4px;
+  row-gap: 4px;
   width: 100%;
 }
 
 .card-info-row {
-  width: 100%;
+  width: calc(50% - 12px);
 }
 /* 
 .card-info-row-label,
@@ -40,12 +48,16 @@
 } */
 
 .card-info-row-label {
-  font-size: 14px;
+  font-size: 8px;
   font-weight: 400;
+  white-space: nowrap;
+  line-height: 1.1;
 }
 
 .card-info-row span {
-  font-size: 18px;
+  font-size: 16px;
+  display: block;
+  white-space: nowrap;
 }
 
 .card-name {

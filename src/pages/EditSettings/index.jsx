@@ -191,6 +191,16 @@ const EditSettings = () => {
           title="Количество штампов при выпуске карты"
         />
       )}
+      {cardStatus === 'stamp' && (
+        <CardLimit
+          value={currentCard.stampDailyLimit}
+          onChange={(value) =>
+            dispatch(updateCurrentCardField({ path: 'stampDailyLimit', value }))
+          }
+          title="Ограничить количество начислений штампов в день"
+          subtitle="0 — без ограничений"
+        />
+      )}
 
       {(cardStatus === 'discount' || cardStatus === 'cashback') && (
         <>

@@ -133,7 +133,7 @@ const CardInfo = ({ card, setShowInfo }) => {
             return (
               <div key={type} className="card-info-row">
                 <p className="card-info-row-label" title={name}>
-                  {name}:
+                  {name}
                 </p>
                 <span>{renderFieldValue(value, { type })}</span>
               </div>

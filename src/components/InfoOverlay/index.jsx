@@ -11,7 +11,7 @@ const fieldLabels = {
   rewardDescription: 'Описание награды',
   stampMessage: 'Сообщение о штампе',
   claimRewardMessage: 'Сообщение о награде',
-  multiRewards: 'Мультинаграды',
+  // multiRewards: 'Мультинаграды',
   autoRedeem: 'Автосписание награды',
   referralProgramActive: 'Реферальная программа активна',
   referralMoment: 'Момент начисления',

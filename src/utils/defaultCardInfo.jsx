@@ -96,6 +96,7 @@ export const defaultCardTemplate = {
   requirePurchaseAmountOnAccrual: false,
   initialPointsOnIssue: '',
   initialStampsOnIssue: 1,
+  stampDailyLimit: 1,
   policySettings: {
     policyEnabled: true,
     consentEnabled: false,
