@@ -25,7 +25,6 @@ const Clients = () => {
     email: '',
     birthday: '',
   });
-  const [noBirthday, setNoBirthday] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
   const { list: clients, loading } = useSelector((state) => state.clients);
@@ -94,6 +93,7 @@ const Clients = () => {
   const handleAddClient = () => {
     const payload = {
       ...newClient,
+      phone: phoneDigits,
       organization_id: orgId,
     };
     dispatch(createClient(payload))
@@ -240,21 +240,9 @@ const Clients = () => {
               <input
                 className="clients-modal-input"
                 type="date"
-                disabled={noBirthday}
                 value={newClient.birthday}
                 onChange={(e) => setNewClient({ ...newClient, birthday: e.target.value })}
               />
-              <label style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6 }}>
-                <input
-                  type="checkbox"
-                  checked={noBirthday}
-                  onChange={(e) => {
-                    setNoBirthday(e.target.checked);
-                    if (e.target.checked) setNewClient({ ...newClient, birthday: '' });
-                  }}
-                />
-                Без даты рождения
-              </label>
             </div>
             <div className="clients-modal-actions">
               <button
@@ -265,7 +253,8 @@ const Clients = () => {
                     newClient.name &&
                     newClient.surname &&
                     phoneDigits.length === 11 &&
-                    isEmailValid
+                    isEmailValid &&
+                    newClient.birthday
                   )
                 }
               >

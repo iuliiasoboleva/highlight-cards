@@ -30,7 +30,9 @@ export default axiosInstance;
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response) {
+    if (!error.response) {
+      error.response = { data: { detail: 'Не удалось подключиться к серверу. Попробуйте позже.' } };
+    } else {
       const { data, status } = error.response;
 
       if (typeof data === 'string' && data.startsWith('<')) {

@@ -31,6 +31,8 @@ const AuthForm = () => {
     firstName: '',
     lastName: '',
     acceptTerms: false,
+    referral: '',
+    otherReferral: '',
   });
 
   const [companyError, setCompanyError] = useState('');
@@ -53,6 +55,8 @@ const AuthForm = () => {
       firstName: '',
       lastName: '',
       acceptTerms: false,
+      referral: '',
+      otherReferral: '',
     });
     setTouchedFields({ inn: false, email: false });
     setCompanyError('');
@@ -118,6 +122,16 @@ const AuthForm = () => {
 
       prevPhoneDigits.current = digits;
       setFormData((prev) => ({ ...prev, phone: format(digits) }));
+      return;
+    }
+
+    if (name === 'referral') {
+      setFormData((prev) => ({ ...prev, referral: value, otherReferral: '' }));
+      return;
+    }
+
+    if (name === 'otherReferral') {
+      setFormData((prev) => ({ ...prev, otherReferral: value }));
       return;
     }
 
@@ -217,6 +231,8 @@ const AuthForm = () => {
             firstName: formData.firstName,
             lastName: formData.lastName,
             phone: formData.phone.replace(/\D/g, ''),
+            referral: formData.referral,
+            otherReferral: formData.otherReferral,
             sendEmail: false,
           }),
         ).unwrap();
@@ -311,6 +327,9 @@ const AuthForm = () => {
   const isSurnameValid = formData.lastName.trim().length > 0;
   const isPhoneValid = formData.phone.replace(/\D/g, '').length === 11;
   const isTermsAccepted = formData.acceptTerms === true;
+  const isReferralValid =
+    formData.referral &&
+    (formData.referral !== 'Другое' || formData.otherReferral.trim().length > 0);
 
   const isFormValid =
     isEmailValid &&
@@ -319,7 +338,8 @@ const AuthForm = () => {
     isNameValid &&
     isSurnameValid &&
     isPhoneValid &&
-    isTermsAccepted;
+    isTermsAccepted &&
+    isReferralValid;
 
   const extractError = (err) => {
     if (!err) return 'Ошибка';
@@ -467,6 +487,36 @@ const AuthForm = () => {
                     />
                   )}
                 </>
+              )}
+
+              <select
+                name="referral"
+                value={formData.referral}
+                onChange={handleChange}
+                className="custom-select"
+                required
+              >
+                <option value="" disabled>
+                  Откуда вы о нас узнали?
+                </option>
+                <option>Социальные сети</option>
+                <option>Telegram</option>
+                <option>Рекомендация</option>
+                <option>От представителя Loyal Club</option>
+                <option>Поиск в Google или Яндекс</option>
+                <option>На конференции</option>
+                <option>Другое</option>
+              </select>
+
+              {formData.referral === 'Другое' && (
+                <input
+                  name="otherReferral"
+                  placeholder="Укажите источник"
+                  value={formData.otherReferral}
+                  onChange={handleChange}
+                  className="custom-input"
+                  required
+                />
               )}
 
               <label className="custom-checkbox">

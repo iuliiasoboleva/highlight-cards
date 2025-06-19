@@ -105,9 +105,9 @@ const EditLayout = ({ children }) => {
               <button className="activate-button" onClick={handleToggleActive}>
                 Активировать
               </button>
-              <p className="activate-text">
+              {/* <p className="activate-text">
                 Пока карта не активирована, вы можете выдать до 10 карт клиентам{' '}
-              </p>
+              </p> */}
             </div>
           </div>
         )}

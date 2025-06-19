@@ -10,10 +10,10 @@ const Footer = () => (
     </div>
 
     <div className="footer-center">
-      <a href="mailto:info@loyalclub.ru" className="footer-link">
+      {/* <a href="mailto:info@loyalclub.ru" className="footer-link">
         info@loyalclub.ru
-      </a>
-      <span className="separator">|</span>
+      </a> */}
+      {/* <span className="separator">|</span> */}
       <a href="mailto:support@loyalclub.ru" className="footer-link">
         support@loyalclub.ru
       </a>
