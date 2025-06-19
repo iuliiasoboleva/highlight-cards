@@ -71,7 +71,10 @@ const InfoOverlay = ({ infoFields, onClose, onFieldClick }) => {
               <div key={key} className="info-overlay-item">
                 <strong>{label}:</strong>{' '}
                 {String(formattedValue).includes('\n') ? (
-                  <div className="info-overlay-multiline">
+                  <div
+                    className="info-overlay-multiline"
+                    onClick={() => onFieldClick && onFieldClick(key)}
+                  >
                     {String(formattedValue)
                       .split('\n')
                       .map((line, i) => {
