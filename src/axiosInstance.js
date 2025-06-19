@@ -26,3 +26,23 @@ axiosInstance.interceptors.request.use(
 );
 
 export default axiosInstance;
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response) {
+      const { data, status } = error.response;
+
+      if (typeof data === 'string' && data.startsWith('<')) {
+        error.response.data = {
+          detail:
+            status === 504
+              ? 'Сервер не ответил вовремя. Попробуйте позже.'
+              : 'Произошла ошибка на сервере. Попробуйте позже.',
+        };
+      }
+    }
+
+    return Promise.reject(error);
+  },
+);
