@@ -12,6 +12,7 @@ const ClientContactFields = ({ name, email, phone, onChange }) => {
           onChange={(e) => onChange('issuerName', e.target.value)}
           className="custom-input"
           placeholder="Название компании"
+          data-info-key="issuerName"
         />
       </div>
       <div className="client-contact-wrapper">
@@ -21,6 +22,7 @@ const ClientContactFields = ({ name, email, phone, onChange }) => {
           onChange={(e) => onChange('issuerEmail', e.target.value)}
           className="custom-input"
           placeholder="Email"
+          data-info-key="issuerEmail"
         />
       </div>
       <div className="client-contact-wrapper">
@@ -29,7 +31,7 @@ const ClientContactFields = ({ name, email, phone, onChange }) => {
           value={phone || ''}
           onChange={(val) => onChange('issuerPhone', '+' + val)}
           inputStyle={{ width: '100%' }}
-          inputProps={{ required: true }}
+          inputProps={{ required: true, 'data-info-key': 'issuerPhone' }}
         />
       </div>
     </div>

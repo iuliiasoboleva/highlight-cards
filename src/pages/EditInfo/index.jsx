@@ -42,7 +42,12 @@ const EditInfo = () => {
     const el = formRef.current?.querySelector(`[data-info-key="${key}"]`);
     if (!el) return;
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    el.focus();
+    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+      el.focus();
+    } else {
+      const input = el.querySelector('input, textarea');
+      input && input.focus();
+    }
     el.classList.add('flash-border');
     setTimeout(() => el.classList.remove('flash-border'), 1000);
   };
@@ -160,6 +165,7 @@ const EditInfo = () => {
           );
         }}
         name="auto-redeem"
+        dataKey="autoRedeem"
         additionalContentByValue={{}}
       />
 

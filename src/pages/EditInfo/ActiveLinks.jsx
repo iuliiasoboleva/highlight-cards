@@ -55,7 +55,7 @@ const ActiveLinks = ({ formFields, onFieldChange, onAddField, onRemoveField }) =
   };
 
   return (
-    <div className="card-form-container">
+    <div className="card-form-container" data-info-key="activeLinks">
       <div className="card-info-form-header">
         <span>Тип</span>
         <span>Ссылка</span>

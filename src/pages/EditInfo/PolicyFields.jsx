@@ -24,7 +24,7 @@ const PolicyFields = ({ policyEnabled, fullPolicyText, linkToFullTerms }) => {
 
   return (
     <>
-      <div className="policy-section">
+      <div className="policy-section" data-info-key="policyEnabled">
         <div className="policy-header">
           <h3 className="barcode-radio-title">Условия использования</h3>
           <ToggleSwitch checked={policyEnabled} onChange={handleToggle} />
@@ -36,6 +36,7 @@ const PolicyFields = ({ policyEnabled, fullPolicyText, linkToFullTerms }) => {
             value={fullPolicyText || ''}
             onChange={(e) => handleChange('fullPolicyText', e.target.value)}
             disabled={!policyEnabled}
+            data-info-key="fullPolicyText"
           />
           <span className="required-asterisk">*</span>
         </div>
@@ -49,6 +50,7 @@ const PolicyFields = ({ policyEnabled, fullPolicyText, linkToFullTerms }) => {
         onChange={(e) => handleChange('linkToFullTerms', e.target.value)}
         placeholder="Введите URL ссылки на условия использования сервиса на вашем сайте"
         disabled={!policyEnabled}
+        data-info-key="linkToFullTerms"
       />
     </>
   );

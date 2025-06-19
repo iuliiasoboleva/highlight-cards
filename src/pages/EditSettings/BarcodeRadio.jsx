@@ -10,9 +10,10 @@ const BarcodeRadio = ({
   name,
   subtitle,
   additionalContentByValue = {},
+  dataKey,
 }) => {
   return (
-    <div className="barcode-radio-group">
+    <div className="barcode-radio-group" data-info-key={dataKey}>
       <h3 className="barcode-radio-title">{title}</h3>
       {subtitle && <p className="labeled-textarea-subtitle">{subtitle}</p>}
       <div className="barcode-radio-options">

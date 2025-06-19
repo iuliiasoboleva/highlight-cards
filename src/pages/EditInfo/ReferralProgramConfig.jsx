@@ -26,6 +26,7 @@ const ReferralProgramConfig = () => {
       selected={String(infoFields.referralProgramActive)}
       onChange={(value) => updateInfoField('referralProgramActive', value === 'true')}
       name="referral-program"
+      dataKey="referralProgramActive"
       additionalContentByValue={{
         true: (
           <>
@@ -42,11 +43,12 @@ const ReferralProgramConfig = () => {
                 selected={infoFields.referralMoment}
                 onChange={(value) => updateInfoField('referralMoment', value)}
                 name="referral-moment"
+                dataKey="referralMoment"
               />
             </div>
             <hr />
             <div className="barcode-radio-additional">
-              <div className="design-stamp-controls">
+              <div className="design-stamp-controls" data-info-key="referrerStampsQuantity">
                 <label className="stamp-section-label">
                   <h3 className="barcode-radio-title">
                     Количество штампов для реферера
@@ -71,7 +73,7 @@ const ReferralProgramConfig = () => {
                 </div>
               </div>
 
-              <div className="design-stamp-controls">
+              <div className="design-stamp-controls" data-info-key="referralStampsQuantity">
                 <label className="stamp-section-label">
                   <h3 className="barcode-radio-title">
                     Количество штампов для реферала

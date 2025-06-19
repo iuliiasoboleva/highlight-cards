@@ -52,7 +52,7 @@ const ReviewLinks = ({ formFields, onFieldChange, onAddField, onRemoveField }) =
   };
 
   return (
-    <div className="card-form-container">
+    <div className="card-form-container" data-info-key="reviewLinks">
       {formFields?.map((field, index) => (
         <div key={index} className="card-info-form-row">
           {/* Платформа */}
