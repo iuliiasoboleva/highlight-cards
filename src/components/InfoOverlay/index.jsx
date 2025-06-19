@@ -31,7 +31,7 @@ const valueFormatters = {
   autoRedeem: (v) => (v ? 'Да' : 'Нет'),
   referralProgramActive: (v) => (v ? 'Да' : 'Нет'),
   referralMoment: (v) => (v === 'visit' ? 'Первого визита' : v === 'issue' ? 'Выдачи карты' : v),
-  multiRewards: (v) => (Array.isArray(v) && v.length > 0 ? v.join(', ') : 'Не указаны'),
+  // multiRewards: (v) => (Array.isArray(v) && v.length > 0 ? v.join(', ') : 'Не указаны'),
   policyEnabled: (v) => (v ? 'Да' : 'Нет'),
   activeLinks: (v) =>
     Array.isArray(v) && v.length
@@ -45,7 +45,7 @@ const valueFormatters = {
       : 'Нет отзывов',
 };
 
-const InfoOverlay = ({ infoFields, onClose }) => {
+const InfoOverlay = ({ infoFields, onClose, onFieldClick }) => {
   if (!infoFields) return null;
 
   return (
@@ -57,43 +57,49 @@ const InfoOverlay = ({ infoFields, onClose }) => {
         </button>
       </div>
       <div className="info-overlay-content">
-        {Object.entries(infoFields).map(([key, value]) => {
-          const label = fieldLabels[key] || key;
-          const formattedValue = valueFormatters[key]
-            ? valueFormatters[key](value)
-            : Array.isArray(value)
-              ? value.join(', ')
-              : String(value);
+        {Object.entries(infoFields)
+          .filter(([key]) => key !== 'multiRewards')
+          .map(([key, value]) => {
+            const label = fieldLabels[key] || key;
+            const formattedValue = valueFormatters[key]
+              ? valueFormatters[key](value)
+              : Array.isArray(value)
+                ? value.join(', ')
+                : String(value);
 
-          return (
-            <div key={key} className="info-overlay-item">
-              <strong>{label}:</strong>{' '}
-              {String(formattedValue).includes('\n') ? (
-                <div className="info-overlay-multiline">
-                  {String(formattedValue)
-                    .split('\n')
-                    .map((line, i) => {
-                      const [labelPart, linkPart] = line.split(/ → |: /);
-                      return (
-                        <div key={i} className="info-overlay-link-line">
-                          <span className="info-overlay-link-label">{labelPart}</span>{' '}
-                          {linkPart && (
-                            <div className="info-overlay-link-value" title={linkPart}>
-                              {linkPart}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                </div>
-              ) : (
-                <span className="info-overlay-link-value" title={formattedValue}>
-                  {formattedValue || 'Нет данных'}
-                </span>
-              )}
-            </div>
-          );
-        })}
+            return (
+              <div key={key} className="info-overlay-item">
+                <strong>{label}:</strong>{' '}
+                {String(formattedValue).includes('\n') ? (
+                  <div className="info-overlay-multiline">
+                    {String(formattedValue)
+                      .split('\n')
+                      .map((line, i) => {
+                        const [labelPart, linkPart] = line.split(/ → |: /);
+                        return (
+                          <div key={i} className="info-overlay-link-line">
+                            <span className="info-overlay-link-label">{labelPart}</span>{' '}
+                            {linkPart && (
+                              <div className="info-overlay-link-value" title={linkPart}>
+                                {linkPart}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                  </div>
+                ) : (
+                  <span
+                    className="info-overlay-link-value"
+                    title={formattedValue}
+                    onClick={() => onFieldClick && onFieldClick(key)}
+                  >
+                    {formattedValue || 'Нет данных'}
+                  </span>
+                )}
+              </div>
+            );
+          })}
       </div>
     </div>
   );

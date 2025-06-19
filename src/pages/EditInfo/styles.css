@@ -81,3 +81,7 @@
     padding: 20px;
   }
 }
+
+.flash-border {
+  border: 1px solid #bf4756 !important;
+}

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
@@ -27,6 +27,7 @@ const EditInfo = () => {
   const dispatch = useDispatch();
   const currentCard = useSelector((state) => state.cards.currentCard);
   const [showQRPopup, setShowQRPopup] = useState(false);
+  const formRef = useRef(null);
 
   const infoFields = currentCard.infoFields || {
     description: '',
@@ -35,6 +36,15 @@ const EditInfo = () => {
     rewardDescription: '',
     stampMessage: '',
     claimRewardMessage: '',
+  };
+
+  const flashInput = (key) => {
+    const el = formRef.current?.querySelector(`[data-info-key="${key}"]`);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.focus();
+    el.classList.add('flash-border');
+    setTimeout(() => el.classList.remove('flash-border'), 1000);
   };
 
   const handleFieldChange = useCallback(
@@ -71,7 +81,7 @@ const EditInfo = () => {
   };
 
   const infoContent = (
-    <div className="settings-inputs-container">
+    <div className="settings-inputs-container" ref={formRef}>
       <h2>
         Информация <HelpCircle size={16} />
       </h2>
@@ -83,6 +93,7 @@ const EditInfo = () => {
         onChange={handleFieldChange('description')}
         placeholder="Введите описание карты"
         required
+        dataKey="description"
       />
       <LabeledTextarea
         label="Как клиенту получить штамп"
@@ -90,6 +101,7 @@ const EditInfo = () => {
         onChange={handleFieldChange('howToGetStamp')}
         placeholder=""
         required
+        dataKey="howToGetStamp"
       />
       <LabeledTextarea
         label="Название компании"
@@ -97,6 +109,7 @@ const EditInfo = () => {
         onChange={handleFieldChange('companyName')}
         placeholder="Название компании"
         required
+        dataKey="companyName"
       />
       <LabeledTextarea
         label="Описание награды"
@@ -104,6 +117,7 @@ const EditInfo = () => {
         onChange={handleFieldChange('rewardDescription')}
         placeholder=""
         required
+        dataKey="rewardDescription"
       />
       <LabeledTextarea
         label="Сообщение о начисленном штампе"
@@ -112,6 +126,7 @@ const EditInfo = () => {
         onChange={handleFieldChange('stampMessage')}
         placeholder=""
         required
+        dataKey="stampMessage"
       />
       <LabeledTextarea
         label="Сообщение о начисленной награде"
@@ -119,6 +134,7 @@ const EditInfo = () => {
         onChange={handleFieldChange('claimRewardMessage')}
         placeholder=""
         required
+        dataKey="claimRewardMessage"
       />
       <hr />
       {/* <LabeledTextarea
@@ -229,7 +245,7 @@ const EditInfo = () => {
 
   return (
     <>
-      <EditLayout>{infoContent}</EditLayout>
+      <EditLayout onFieldClick={flashInput}>{infoContent}</EditLayout>
       {showQRPopup && <QRPopup cardId={id} onClose={() => setShowQRPopup(false)} />}
     </>
   );

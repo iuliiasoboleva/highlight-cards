@@ -9,7 +9,7 @@ import InfoOverlay from '../InfoOverlay';
 
 import './styles.css';
 
-const EditLayout = ({ children }) => {
+const EditLayout = ({ children, onFieldClick }) => {
   const dispatch = useDispatch();
   const location = useLocation();
 
@@ -98,6 +98,7 @@ const EditLayout = ({ children }) => {
                     <InfoOverlay
                       infoFields={currentCard.infoFields}
                       onClose={() => setShowInfo(false)}
+                      onFieldClick={onFieldClick}
                     />
                   )}
                 </div>
