@@ -29,6 +29,25 @@ const EditInfo = () => {
   const [showQRPopup, setShowQRPopup] = useState(false);
   const formRef = useRef(null);
 
+  const user = useSelector((state) => state.user);
+
+  // Prefill issuer fields from organization/user data on first render
+  React.useEffect(() => {
+    if (!currentCard) return;
+    const updates = {};
+    if (!currentCard.infoFields?.issuerName && user.company) updates.issuerName = user.company;
+    if (!currentCard.infoFields?.issuerEmail && user.email) updates.issuerEmail = user.email;
+    if (!currentCard.infoFields?.issuerPhone && user.phone) updates.issuerPhone = user.phone;
+    if (Object.keys(updates).length) {
+      dispatch(
+        updateCurrentCardField({
+          path: 'infoFields',
+          value: { ...currentCard.infoFields, ...updates },
+        }),
+      );
+    }
+  }, [currentCard, user.company, user.email, user.phone, dispatch]);
+
   const infoFields = currentCard.infoFields || {
     description: '',
     howToGetStamp: '',
