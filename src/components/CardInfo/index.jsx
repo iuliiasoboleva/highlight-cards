@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { HelpCircle, Star } from 'lucide-react';
+import { statusConfig } from '../../utils/statusConfig';
 
 import { getStampIconComponent } from '../../utils/stampIcons';
 import StampGrid from './StampGrid';
@@ -44,6 +45,13 @@ const CardInfo = ({ card, setShowInfo }) => {
   const renderFieldValue = (value, { type }) => {
     if (value === undefined || value === null) return 'НЕТ ДАННЫХ';
     if (type === 'restStamps' && value <= 0) return 'НЕТ ДАННЫХ';
+
+    const cfg = (statusConfig[card.status] || []).find((c) => c.valueKey === type);
+    if (cfg) {
+      if (cfg.format) return cfg.format(value);
+      if (cfg.suffix) return `${value} ${cfg.suffix}`.trim();
+    }
+
     return value;
   };
 
