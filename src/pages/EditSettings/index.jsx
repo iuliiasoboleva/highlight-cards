@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Tooltip } from 'react-tooltip';
 
 import { HelpCircle } from 'lucide-react';
 
@@ -58,9 +59,16 @@ const EditSettings = () => {
 
   const settingsContent = (
     <div className="settings-inputs-container">
-      <h2>
-        Настройки <HelpCircle size={16} />
+      <h2 className="subtitle">
+        Настройки
+        <HelpCircle
+          size={16}
+          style={{ cursor: 'pointer' }}
+          data-tooltip-id="settings-help"
+          data-tooltip-html="Настройки карты и формы установки карты"
+        />
       </h2>
+      <Tooltip id="settings-help" className="custom-tooltip" />
       <hr />
 
       <RadioConfigs cardStatus={cardStatus} />
@@ -70,7 +78,16 @@ const EditSettings = () => {
       )}
 
       <hr />
-      <h3 className="barcode-radio-title">Локации</h3>
+      <h3 className="barcode-radio-title">
+        Локации
+        <HelpCircle
+          size={16}
+          style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+          data-tooltip-id="location-help"
+          data-tooltip-html="Локации, к которым привязана карта"
+        />
+      </h3>
+      <Tooltip id="location-help" className="custom-tooltip" />
       {settings?.locations?.length === 0 ? (
         <div className="no-location-wrapper">
           У вас еще не создано ни одной локации
@@ -98,7 +115,16 @@ const EditSettings = () => {
       )}
       <hr />
 
-      <h3 className="barcode-radio-title">Язык карты</h3>
+      <h3 className="barcode-radio-title">
+        Язык карты
+        <HelpCircle
+          size={16}
+          style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+          data-tooltip-id="language-help"
+          data-tooltip-html="Язык, на котором будет отображаться информация карты"
+        />
+      </h3>
+      <Tooltip id="language-help" className="custom-tooltip" />
       <CustomSelect
         value={settings.language?.value || 'ru'}
         onChange={(value) => updateSettingsField('language', { ...settings.language, value })}
@@ -106,7 +132,16 @@ const EditSettings = () => {
       />
       <hr />
 
-      <h3 className="barcode-radio-title">Форма выдачи карты</h3>
+      <h3 className="barcode-radio-title">
+        Форма выдачи карты
+        <HelpCircle
+          size={16}
+          style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+          data-tooltip-id="fields-help"
+          data-tooltip-html="Поля, которые будут заполнять клиенты при установке карты"
+        />
+      </h3>
+      <Tooltip id="fields-help" className="custom-tooltip" />
       <CardIssueForm
         formFields={currentCard.issueFormFields}
         onFieldChange={(index, key, value) =>
@@ -126,7 +161,16 @@ const EditSettings = () => {
       />
       <hr />
 
-      <h3 className="barcode-radio-title">UTM</h3>
+      <h3 className="barcode-radio-title">
+        UTM
+        <HelpCircle
+          size={16}
+          style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+          data-tooltip-id="utm-help"
+          data-tooltip-html="UTM метки для формы установки карты"
+        />
+      </h3>
+      <Tooltip id="utm-help" className="custom-tooltip" />
       <UTMLinks
         utmLinks={currentCard.utmLinks}
         onAddLink={(source) =>
@@ -144,7 +188,16 @@ const EditSettings = () => {
       />
       <hr />
 
-      <h3 className="barcode-radio-title">Маска для номера телефона</h3>
+      <h3 className="barcode-radio-title">
+        Маска для номера телефона
+        <HelpCircle
+          size={16}
+          style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+          data-tooltip-id="mask-help"
+          data-tooltip-html="Выберите маску телефона, в зависимости от страны использования карты. Для формы установки карты"
+        />
+      </h3>
+      <Tooltip id="mask-help" className="custom-tooltip" />
       <CustomSelect
         value={settings.phoneMask?.value || 'Russia'}
         onChange={(value) => updateSettingsField('phoneMask', { ...settings.phoneMask, value })}
@@ -189,14 +242,13 @@ const EditSettings = () => {
             dispatch(updateCurrentCardField({ path: 'initialStampsOnIssue', value }))
           }
           title="Количество штампов при выпуске карты"
+          tooltip="Столько штампов начислится клиенту при выпуске карты"
         />
       )}
       {cardStatus === 'stamp' && (
         <CardLimit
           value={currentCard.stampDailyLimit}
-          onChange={(value) =>
-            dispatch(updateCurrentCardField({ path: 'stampDailyLimit', value }))
-          }
+          onChange={(value) => dispatch(updateCurrentCardField({ path: 'stampDailyLimit', value }))}
           title="Ограничить количество начислений штампов в день"
           subtitle="0 — без ограничений"
         />

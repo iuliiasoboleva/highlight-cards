@@ -1,4 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { Tooltip } from 'react-tooltip';
+
+import { HelpCircle } from 'lucide-react';
 
 import { retentionMockData } from '../../mocks/retentionMockData';
 import ClientsActivityChart from '../ClientActivityChart';
@@ -42,7 +45,20 @@ const RetentionChart = ({ title = 'Возвращаемость', externalData =
       <div className="title-block">
         <div className="title-filter-wrapper">
           <div>
-            <h2 className="subtitle">{title}</h2>
+            <h2 className="subtitle">
+              {title}
+              <HelpCircle
+                size={16}
+                style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+                data-tooltip-id="retention-help"
+                data-tooltip-html={`Отображает количество вернувшихся клиентов за выбранный период<br/>
+Retention Rate = (C(repeat) / C(current))*100%<br/>
+где:<br/>
+C(repeat) — количество клиентов, которые были в обоих периодах (текущем и предыдущем).<br/>
+C(current) — общее количество клиентов в текущем периоде.`}
+              />
+            </h2>
+            <Tooltip id="retention-help" className="custom-tooltip" />
           </div>
           <div className="filters">
             {Object.entries(periods).map(([key, label]) => (

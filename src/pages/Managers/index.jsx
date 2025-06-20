@@ -215,7 +215,7 @@ const ManagersPage = () => {
           Сотрудники и точки продаж
           <HelpCircle
             size={16}
-            style={{ marginLeft: 6, cursor: 'pointer' }}
+            style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
             data-tooltip-id="managers-help"
             data-tooltip-content="Здесь вы управляете своими сотрудниками и точками продаж: добавляйте новых сотрудников,
           контролируйте выдачу карт и начисление баллов клиентам. Используйте приложение-сканер,

@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { HelpCircle, Users } from 'lucide-react';
 
+import axiosInstance from '../../axiosInstance';
 import CustomSelect from '../../components/CustomSelect';
 import PushPreview from '../../components/PushPreview';
 import { getMinDateTime } from '../../helpers/date';
@@ -10,7 +11,6 @@ import { pluralVerb, pluralize } from '../../helpers/pluralize';
 import { setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
 import PushHistory from './PushHistory';
 import PushTargetTabs from './PushTargetTabs';
-import axiosInstance from '../../axiosInstance';
 
 import './styles.css';
 
@@ -198,14 +198,17 @@ const MailingsPush = () => {
             Отправить
           </button>
         </div>
-        <PushHistory history={history} onDelete={async (id) => {
-          try {
-            await axiosInstance.delete(`/mailings/${id}`);
-            setHistory((prev) => prev.filter((m) => m.id !== id));
-          } catch (e) {
-            console.error(e);
-          }
-        }} />
+        <PushHistory
+          history={history}
+          onDelete={async (id) => {
+            try {
+              await axiosInstance.delete(`/mailings/${id}`);
+              setHistory((prev) => prev.filter((m) => m.id !== id));
+            } catch (e) {
+              console.error(e);
+            }
+          }}
+        />
       </div>
     </div>
   ) : (

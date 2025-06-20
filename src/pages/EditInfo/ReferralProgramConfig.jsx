@@ -1,8 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { HelpCircle } from 'lucide-react';
-
 import { updateCurrentCardField } from '../../store/cardsSlice';
 import BarcodeRadio from '../EditSettings/BarcodeRadio';
 
@@ -50,10 +48,7 @@ const ReferralProgramConfig = () => {
             <div className="barcode-radio-additional">
               <div className="design-stamp-controls" data-info-key="referrerStampsQuantity">
                 <label className="stamp-section-label">
-                  <h3 className="barcode-radio-title">
-                    Количество штампов для реферера
-                    <HelpCircle size={16} style={{ marginLeft: 6 }} />
-                  </h3>
+                  <h3 className="barcode-radio-title">Количество штампов для реферера</h3>
                   <p className="labeled-textarea-subtitle">
                     Выберите, сколько штампов начислить тому, кто пригласил.
                   </p>
@@ -75,10 +70,7 @@ const ReferralProgramConfig = () => {
 
               <div className="design-stamp-controls" data-info-key="referralStampsQuantity">
                 <label className="stamp-section-label">
-                  <h3 className="barcode-radio-title">
-                    Количество штампов для реферала
-                    <HelpCircle size={16} style={{ marginLeft: 6 }} />
-                  </h3>
+                  <h3 className="barcode-radio-title">Количество штампов для реферала</h3>
                   <p className="labeled-textarea-subtitle">
                     Выберите, сколько штампов начислить тому, кто установил карту.
                   </p>

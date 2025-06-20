@@ -1,4 +1,7 @@
 import React from 'react';
+import { Tooltip } from 'react-tooltip';
+
+import { HelpCircle } from 'lucide-react';
 
 import ToggleSwitch from '../../components/ToggleSwitch';
 
@@ -11,7 +14,16 @@ const PersonalDataPolicy = ({ settings, onToggle, onTextChange }) => {
     <>
       <div className="policy-section">
         <div className="policy-header">
-          <h3 className="barcode-radio-title">Политика использования персональных данных</h3>
+          <h3 className="barcode-radio-title">
+            Политика использования персональных данных
+            <HelpCircle
+              size={16}
+              style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+              data-tooltip-id="policy-help"
+              data-tooltip-html="Можно указать текст политики конфиденциальности, а также включить/выключить отображение текста"
+            />
+          </h3>
+          <Tooltip id="policy-help" className="custom-tooltip" />
           <ToggleSwitch
             checked={settings?.policyEnabled}
             onChange={() => onToggle('policyEnabled')}
@@ -30,7 +42,16 @@ const PersonalDataPolicy = ({ settings, onToggle, onTextChange }) => {
 
       <div className="policy-section policy-bordered">
         <div className="policy-bordered-header">
-          <h3 className="barcode-radio-subtitle">Согласие на обработку персональных данных</h3>
+          <h3 className="barcode-radio-title">
+            Согласие на обработку персональных данных
+            <HelpCircle
+              size={16}
+              style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+              data-tooltip-id="agreement-help"
+              data-tooltip-html="Влияет на отображение чекбокса Согласие на обработку персональных данных"
+            />
+          </h3>
+          <Tooltip id="agreement-help" className="custom-tooltip" />
           <ToggleSwitch
             checked={settings?.consentEnabled}
             onChange={() => onToggle('consentEnabled')}

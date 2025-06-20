@@ -2,7 +2,12 @@ import React from 'react';
 
 import './styles.css';
 
-const CustomTable = ({ columns, rows, onRowClick, emptyText = 'Здесь будут ваши транзакции по карте' }) => {
+const CustomTable = ({
+  columns,
+  rows,
+  onRowClick,
+  emptyText = 'Здесь будут ваши транзакции по карте',
+}) => {
   return (
     <div className="table-container">
       <table className="custom-table">

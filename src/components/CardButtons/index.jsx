@@ -7,12 +7,11 @@ import { Copy, Download, Power, X } from 'lucide-react';
 import {
   copyCard,
   copyCardAsync,
+  deleteCardAsync,
   downloadCard,
   setCurrentCard,
   updateCard,
-  deleteCardAsync,
 } from '../../store/cardsSlice';
-
 import DeleteCardModal from '../DeleteCardModal';
 
 import './styles.css';

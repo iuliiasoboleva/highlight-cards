@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+
 import { Loader2 } from 'lucide-react';
 
 import axiosInstance from '../../axiosInstance';
-import DashboardStats from '../../components/DashboardStats';
 import Chart from '../../components/Chart';
-import ClientsChart from '../../components/ClientsChart';
-import RetentionChart from '../../components/RetentionChart';
 import ClientPortraitCard from '../../components/ClientPortraitCard';
+import ClientsChart from '../../components/ClientsChart';
+import DashboardStats from '../../components/DashboardStats';
+import RetentionChart from '../../components/RetentionChart';
 
 import './styles.css';
 
@@ -92,4 +93,4 @@ const CardStats = () => {
   );
 };
 
-export default CardStats; 
+export default CardStats;

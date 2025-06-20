@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import { Loader2 } from 'lucide-react';
+
+import axiosInstance from '../../axiosInstance';
 import Chart from '../../components/Chart';
 import ClientPortraitCard from '../../components/ClientPortraitCard';
 import ClientsChart from '../../components/ClientsChart';
 import RetentionChart from '../../components/RetentionChart';
-import { Loader2 } from 'lucide-react';
-import axiosInstance from '../../axiosInstance';
 
 import './styles.css';
 

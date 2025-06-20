@@ -363,5 +363,5 @@
 
 .plan-category:nth-child(odd) {
   background: #ffffff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }

@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Tooltip } from 'react-tooltip';
+
 // import { useNavigate } from 'react-router-dom';
 
-import { Loader2 } from 'lucide-react';
+import { HelpCircle, Loader2 } from 'lucide-react';
+
+import axiosInstance from '../../axiosInstance';
 import CustomTable from '../../components/CustomTable';
 import { mailingsHeaders } from '../../mocks/mockMailings';
-import axiosInstance from '../../axiosInstance';
 import MailingDetailsModal from './MailingDetailsModal';
 
 import './styles.css';
@@ -85,7 +88,12 @@ const MailingsInfo = () => {
   if (loading) {
     return (
       <div
-        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100vh - 200px)' }}
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: 'calc(100vh - 200px)',
+        }}
       >
         <Loader2 className="spinner" size={48} strokeWidth={1.4} />
       </div>
@@ -94,11 +102,17 @@ const MailingsInfo = () => {
 
   return (
     <div className="mailings-container">
-      <h2>Рассылки</h2>
-      <p className="page-subtitle">
-        Здесь вы управляете своими рассылками: создавайте, планируйте, отправляйте Push клиентам для
-        повышения лояльности.
-      </p>
+      <h2>
+        Рассылки
+        <HelpCircle
+          size={16}
+          style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+          data-tooltip-id="mailings-help"
+          data-tooltip-html=" Здесь вы управляете своими рассылками: создавайте, планируйте, отправляйте Push клиентам для
+        повышения лояльности."
+        />
+      </h2>
+      <Tooltip id="mailings-help" className="custom-tooltip" />
       <div className="stats-cards">
         {cards.map((card, index) => (
           <div className="mailing-card" key={index}>

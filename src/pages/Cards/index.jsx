@@ -1,8 +1,9 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import { Tooltip } from 'react-tooltip';
 
-import { Loader2 } from 'lucide-react';
+import { HelpCircle, Loader2 } from 'lucide-react';
 
 import CardButtons from '../../components/CardButtons';
 import CardInfo from '../../components/CardInfo';
@@ -56,11 +57,17 @@ const Cards = () => {
 
   return (
     <div className="mailings-container">
-      <h2>Создайте свою карту лояльности</h2>
-      <p className="page-subtitle">
-        Выберите тип карты, который лучше всего подходит вашему бизнесу и настройте её за несколько
-        минут. После выбора вы сможете настроить логотип, цвета и правила начисления баллов.
-      </p>
+      <h2 className="subtitle">
+        Создайте свою карту лояльности
+        <HelpCircle
+          size={16}
+          style={{ cursor: 'pointer' }}
+          data-tooltip-id="managers-help"
+          data-tooltip-html=" Выберите тип карты, который лучше всего подходит вашему бизнесу и настройте её за несколько
+        минут. После выбора вы сможете настроить логотип, цвета и правила начисления баллов."
+        />
+      </h2>
+      <Tooltip id="managers-help" className="custom-tooltip" />
       <div className="cards">
         {cards.map((card) => (
           <div key={card.id} className={`card ${card.isActive ? 'active' : 'inactive'}`}>

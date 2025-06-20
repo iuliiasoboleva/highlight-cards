@@ -19,9 +19,8 @@ const Workplace = () => {
     }
   };
 
-  const userLocation = locations.find((loc) =>
-    loc.employees.includes(`${user.name} ${user.surname}`),
-  );
+  const userLocation =
+    locations && locations?.find((loc) => loc.employees.includes(`${user.name} ${user.surname}`));
 
   if (!userLocation) {
     return <p>Точка продаж не найдена</p>;

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
+
 import { Loader2 } from 'lucide-react';
+
 import axiosInstance from '../../axiosInstance';
 
 const MailingDetailsModal = ({ isOpen, mailingId, onClose }) => {
@@ -27,7 +29,9 @@ const MailingDetailsModal = ({ isOpen, mailingId, onClose }) => {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         {loading ? (
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 200 }}>
+          <div
+            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 200 }}
+          >
             <Loader2 className="spinner" size={48} strokeWidth={1.4} />
           </div>
         ) : !data ? (
@@ -65,4 +69,4 @@ const MailingDetailsModal = ({ isOpen, mailingId, onClose }) => {
   );
 };
 
-export default MailingDetailsModal; 
+export default MailingDetailsModal;

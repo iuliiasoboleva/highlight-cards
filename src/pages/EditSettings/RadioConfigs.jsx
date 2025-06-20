@@ -1,5 +1,8 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Tooltip } from 'react-tooltip';
+
+import { HelpCircle } from 'lucide-react';
 
 import CustomSelect from '../../components/CustomSelect';
 import { formatDateToDDMMYYYY, getMinDate } from '../../helpers/date';
@@ -38,10 +41,20 @@ const RadioConfigs = ({ cardStatus }) => {
     onChange: (value) => updateSettingsField('cardLimit', value),
     title: 'Срок действия карты',
     name: 'card-limit',
+    tooltip: `Выберите срок действия карты`,
     additionalContentByValue: {
       cardFixed: (
         <>
-          <h3 className="barcode-radio-subtitle">Срок</h3>
+          <h3 className="barcode-radio-subtitle">
+            Срок
+            <HelpCircle
+              size={16}
+              style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+              data-tooltip-id="duration-help"
+              data-tooltip-html="Условия срока действия карты"
+            />
+          </h3>
+          <Tooltip id="duration-help" className="custom-tooltip" />
           <input
             className="push-date"
             type="date"
@@ -60,7 +73,16 @@ const RadioConfigs = ({ cardStatus }) => {
       ),
       cardFixedLater: (
         <>
-          <h3 className="barcode-radio-subtitle">Срок</h3>
+          <h3 className="barcode-radio-subtitle">
+            Срок
+            <HelpCircle
+              size={16}
+              style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+              data-tooltip-id="duration-help"
+              data-tooltip-html="Условия срока действия штампа"
+            />
+          </h3>
+          <Tooltip id="duration-help" className="custom-tooltip" />
           <div className="stamp-duration-selector">
             <CustomSelect
               value={settings.cardDuration?.value || 1}
@@ -178,10 +200,20 @@ const RadioConfigs = ({ cardStatus }) => {
       onChange: (value) => updateSettingsField('stampLimit', value),
       title: 'Срок жизни штампа',
       name: 'stamp-limit',
+      tooltip: `Срок действия штампа`,
       additionalContentByValue: {
         stampFixedLater: (
           <>
-            <h3 className="barcode-radio-subtitle">Срок</h3>
+            <h3 className="barcode-radio-subtitle">
+              Срок
+              <HelpCircle
+                size={16}
+                style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+                data-tooltip-id="duration-help"
+                data-tooltip-html="Условия срока действия штампа"
+              />
+            </h3>
+            <Tooltip id="duration-help" className="custom-tooltip" />
             <div className="stamp-duration-selector">
               <CustomSelect
                 value={settings.stampDuration?.value || 1}
@@ -222,7 +254,16 @@ const RadioConfigs = ({ cardStatus }) => {
       additionalContentByValue: {
         pointsFixedLater: (
           <>
-            <h3 className="barcode-radio-subtitle">Срок</h3>
+            <h3 className="barcode-radio-subtitle">
+              Срок
+              <HelpCircle
+                size={16}
+                style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+                data-tooltip-id="duration-help"
+                data-tooltip-html="Условия срока действия балла"
+              />
+            </h3>
+            <Tooltip id="duration-help" className="custom-tooltip" />
             <div className="stamp-duration-selector">
               <CustomSelect
                 value={settings.pointsDuration?.value || 1}

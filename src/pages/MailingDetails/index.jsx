@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+
 import { Loader2 } from 'lucide-react';
+
 import axiosInstance from '../../axiosInstance';
 
 import './styles.css';
@@ -58,4 +60,4 @@ const MailingDetails = () => {
   );
 };
 
-export default MailingDetails; 
+export default MailingDetails;

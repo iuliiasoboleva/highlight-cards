@@ -93,14 +93,17 @@ export const createCard = createAsyncThunk(
   },
 );
 
-export const deleteCardAsync = createAsyncThunk('cards/deleteCard', async (id, { rejectWithValue }) => {
-  try {
-    await axiosInstance.delete(`/cards/${id}`);
-    return id;
-  } catch (err) {
-    return rejectWithValue(err.response?.data || err.message);
-  }
-});
+export const deleteCardAsync = createAsyncThunk(
+  'cards/deleteCard',
+  async (id, { rejectWithValue }) => {
+    try {
+      await axiosInstance.delete(`/cards/${id}`);
+      return id;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
 
 export const copyCardAsync = createAsyncThunk('cards/copyCard', async (id, { rejectWithValue }) => {
   try {

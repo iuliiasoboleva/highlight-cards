@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
+import { Tooltip } from 'react-tooltip';
 
 import { HelpCircle } from 'lucide-react';
 
 import CustomSelect from '../../components/CustomSelect';
 
-const StampIconSelector = ({ label, value, options, onChange }) => {
+const StampIconSelector = ({ label, value, options, onChange, tooltip }) => {
   const formattedOptions = options.map((opt) => ({
     value: opt.value, // строка, например: 'Star'
     label: (
@@ -28,8 +29,15 @@ const StampIconSelector = ({ label, value, options, onChange }) => {
   return (
     <div className="stamp-icon-selector">
       <h3 className="barcode-radio-title">
-        {label} <HelpCircle size={16} style={{ marginLeft: 6 }} />
+        {label}
+        <HelpCircle
+          size={16}
+          style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+          data-tooltip-id="stamp-design-help"
+          data-tooltip-html={tooltip}
+        />
       </h3>
+      <Tooltip id="stamp-design-help" className="custom-tooltip" />
 
       <CustomSelect
         value={selectedOption.value}

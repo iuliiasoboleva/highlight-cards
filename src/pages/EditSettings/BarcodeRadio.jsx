@@ -1,4 +1,7 @@
 import React from 'react';
+import { Tooltip } from 'react-tooltip';
+
+import { HelpCircle } from 'lucide-react';
 
 import './styles.css';
 
@@ -9,12 +12,26 @@ const BarcodeRadio = ({
   onChange,
   name,
   subtitle,
+  tooltip,
   additionalContentByValue = {},
   dataKey,
 }) => {
+  const tooltipId = `tooltip-${name}`;
+
   return (
     <div className="barcode-radio-group" data-info-key={dataKey}>
-      <h3 className="barcode-radio-title">{title}</h3>
+      <h3 className="barcode-radio-title">
+        {title}
+        {tooltip && (
+          <HelpCircle
+            size={16}
+            style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+            data-tooltip-id={tooltipId}
+            data-tooltip-html={tooltip.replace(/\n/g, '<br/>')}
+          />
+        )}
+      </h3>
+      {tooltip && <Tooltip id={tooltipId} className="custom-tooltip" />}
       {subtitle && <p className="labeled-textarea-subtitle">{subtitle}</p>}
       <div className="barcode-radio-options">
         {options?.map((option) => (

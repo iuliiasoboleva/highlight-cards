@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { Tooltip } from 'react-tooltip';
 
 import { BadgePercent, DollarSign, Gift, HelpCircle, Stamp, Ticket } from 'lucide-react';
 
@@ -45,16 +46,25 @@ const EditType = () => {
 
   const handleCreateCard = () => {
     if (!selectedType) return;
-    dispatch(createCard()).unwrap().then((created)=>{
-      navigate(`/cards/${created.id}/edit/settings`);
-    });
+    dispatch(createCard())
+      .unwrap()
+      .then((created) => {
+        navigate(`/cards/1/edit/settings`);
+      });
   };
 
   const typeContent = (
     <div>
-      <h2>
-        Тип карты <HelpCircle size={16} />
+      <h2 className="subtitle">
+        Тип карты
+        <HelpCircle
+          size={16}
+          style={{ cursor: 'pointer' }}
+          data-tooltip-id="managers-help"
+          data-tooltip-html=" Выберите тип карты для дальнейшей настройки"
+        />
       </h2>
+      <Tooltip id="managers-help" className="custom-tooltip" />
       <hr />
 
       <div className="card-types-grid">

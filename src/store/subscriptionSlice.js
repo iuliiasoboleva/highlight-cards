@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
 import axiosInstance from '../axiosInstance';
 
 export const fetchSubscription = createAsyncThunk(
@@ -40,4 +41,4 @@ const subscriptionSlice = createSlice({
   },
 });
 
-export default subscriptionSlice.reducer; 
+export default subscriptionSlice.reducer;

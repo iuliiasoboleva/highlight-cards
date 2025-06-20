@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
+import { Loader2 } from 'lucide-react';
+
+import axiosInstance from '../../axiosInstance';
 import CardInfo from '../../components/CardInfo';
 import CustomTable from '../../components/CustomTable';
 import DashboardStats from '../../components/DashboardStats';
 import { transactionHeaders } from '../../mocks/mockTransactions';
 import { generatePDF } from '../../utils/pdfGenerator';
-import { Loader2 } from 'lucide-react';
-import axiosInstance from '../../axiosInstance';
 
 import './styles.css';
 
@@ -61,7 +62,14 @@ const DefaultCardInfo = () => {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100vh - 200px)' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: 'calc(100vh - 200px)',
+        }}
+      >
         <Loader2 className="spinner" size={48} strokeWidth={1.4} />
       </div>
     );

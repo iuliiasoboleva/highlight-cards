@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Tooltip } from 'react-tooltip';
 
 import { HelpCircle } from 'lucide-react';
 
@@ -44,8 +45,15 @@ const EditDesign = () => {
       <div className="design-stamp-controls">
         <label className="stamp-section-label">
           <h3 className="barcode-radio-title">
-            Количество штампов <HelpCircle size={16} style={{ marginLeft: 6 }} />
+            Количество штампов
+            <HelpCircle
+              size={16}
+              style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+              data-tooltip-id="stamps-help"
+              data-tooltip-html="Количество штампов отображаемых на карте"
+            />
           </h3>
+          <Tooltip id="stamps-help" className="custom-tooltip" />
         </label>
         <div className="stamp-quantity-grid">
           {Array.from({ length: 30 }, (_, i) => i + 1).map((num) => (
@@ -67,6 +75,7 @@ const EditDesign = () => {
         <div className="stamp-settings-block">
           <StampIconSelector
             label="Активный штамп"
+            tooltip={'Дизайн активного штампа'}
             value={typeof design.activeStamp === 'string' ? design.activeStamp : 'Star'}
             options={stampIcons}
             onChange={(val) => {
@@ -85,6 +94,7 @@ const EditDesign = () => {
         <div className="stamp-settings-block">
           <StampIconSelector
             label="Неактивный штамп"
+            tooltip={'Дизайн неактивного штампа'}
             value={typeof design.inactiveStamp === 'string' ? design.inactiveStamp : 'Star'}
             options={stampIcons}
             onChange={(val) => {
@@ -109,8 +119,15 @@ const EditDesign = () => {
   const designContent = (
     <div className="settings-inputs-container">
       <h2>
-        Дизайн <HelpCircle size={16} />
+        Дизайн
+        <HelpCircle
+          size={16}
+          style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+          data-tooltip-id="design-help"
+          data-tooltip-html="Настройки внешнего вида карты"
+        />
       </h2>
+      <Tooltip id="design-help" className="custom-tooltip" />
       <hr />
 
       {isStampCard && renderStampControls()}
@@ -118,8 +135,15 @@ const EditDesign = () => {
       <div className="stamp-settings">
         <div className="stamp-settings-block">
           <h3 className="barcode-radio-title">
-            Логотип <HelpCircle size={16} style={{ marginLeft: 6 }} />
+            Логотип
+            <HelpCircle
+              size={16}
+              style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+              data-tooltip-id="logo-help"
+              data-tooltip-html="Логотип будет отображаться на карте, а так же в форме выпуска карты (если настройка включена)"
+            />
           </h3>
+          <Tooltip id="logo-help" className="custom-tooltip" />
           <ImageUploader
             inputId="logo-upload"
             infoText="Рекомендованный размер: 480х150 пикселей. Минимальная высота 150 пикселей. Только PNG формат. 3 мегабайта"
@@ -129,8 +153,15 @@ const EditDesign = () => {
 
         <div className="stamp-settings-block">
           <h3 className="barcode-radio-title">
-            Иконка <HelpCircle size={16} style={{ marginLeft: 6 }} />
+            Иконка
+            <HelpCircle
+              size={16}
+              style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+              data-tooltip-id="icon-help"
+              data-tooltip-html="Иконка будет отображаться в push-сообщениях, а так же при установке карты на Домашний экран"
+            />
           </h3>
+          <Tooltip id="icon-help" className="custom-tooltip" />
           <ImageUploader
             inputId="icon-upload"
             infoText="Рекомендованный размер иконки: 512х512 пикселей. Изображение должно быть квадратное. Только PNG формат. 3 мегабайта"
@@ -141,8 +172,15 @@ const EditDesign = () => {
       <div className="stamp-settings">
         <div className="stamp-settings-block">
           <h3 className="barcode-radio-title">
-            Фон центральной части <HelpCircle size={16} style={{ marginLeft: 6 }} />
+            Фон центральной части
+            <HelpCircle
+              size={16}
+              style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+              data-tooltip-id="center-help"
+              data-tooltip-html="Дизайн фоновой части под штампами"
+            />
           </h3>
+          <Tooltip id="center-help" className="custom-tooltip" />
           <ImageUploader
             inputId="stamp-background-upload"
             infoText="Минимальный размер файла 1125 х 432 пикселя. Только PNG формат. 3 мегабайта"
@@ -154,8 +192,15 @@ const EditDesign = () => {
       <hr />
 
       <h3 className="barcode-radio-title">
-        Цвета <HelpCircle size={16} style={{ marginLeft: 6 }} />
+        Цвета
+        <HelpCircle
+          size={16}
+          style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+          data-tooltip-id="color-help"
+          data-tooltip-html="Настройка цветов карты"
+        />
       </h3>
+      <Tooltip id="color-help" className="custom-tooltip" />
       <ColorSettings
         colors={design.colors}
         handleColorChange={(key, value) =>
@@ -166,8 +211,15 @@ const EditDesign = () => {
 
       <hr />
       <h3 className="barcode-radio-title">
-        Названия полей <HelpCircle size={16} style={{ marginLeft: 6 }} />
+        Названия полей
+        <HelpCircle
+          size={16}
+          style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+          data-tooltip-id="color-fields-help"
+          data-tooltip-html="Настройка полей для отображения на лицевой стороне карты (только для iPhone)"
+        />
       </h3>
+      <Tooltip id="color-fields-help" className="custom-tooltip" />
       <StatusFieldConfig statusType={statusType} fields={fieldsName} />
       <button onClick={handleSave} className="create-button">
         Продолжить

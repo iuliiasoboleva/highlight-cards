@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { Tooltip } from 'react-tooltip';
 
 import { saveAs } from 'file-saver';
-import { Download, Loader2, PlusCircle, Send } from 'lucide-react';
+import { Download, HelpCircle, Loader2, PlusCircle, Send } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
 import FilterableTable from '../../components/FilterableTable';
@@ -141,12 +142,17 @@ const Clients = () => {
 
   return (
     <div className="clients-container">
-      <h2>Клиентская база</h2>
-      <p className="page-subtitle">
-        Здесь вы управляете своей клиентской базой: добавляете новых клиентов, импортируете
-        существующих и отправляете push-уведомления
-      </p>
-
+      <h2>
+        Клиентская база
+        <HelpCircle
+          size={16}
+          style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
+          data-tooltip-id="clients-help"
+          data-tooltip-html=" Здесь вы управляете своей клиентской базой: добавляете новых клиентов, импортируете
+        существующих и отправляете push-уведомления"
+        />
+      </h2>
+      <Tooltip id="clients-help" className="custom-tooltip" />
       <div className="clients-stats-grid">
         <div className="clients-stat-card">
           <span className="stat-clients-value">{totalClients}</span>

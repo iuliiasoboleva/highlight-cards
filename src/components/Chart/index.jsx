@@ -196,7 +196,7 @@ const Chart = ({
               {title}
               <HelpCircle
                 size={16}
-                style={{ marginLeft: 6, cursor: 'pointer' }}
+                style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
                 data-tooltip-id="managers-help"
                 data-tooltip-content={subtitle}
               />

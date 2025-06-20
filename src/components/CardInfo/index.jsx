@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { HelpCircle, Star } from 'lucide-react';
-import { statusConfig } from '../../utils/statusConfig';
 
 import { getStampIconComponent } from '../../utils/stampIcons';
+import { statusConfig } from '../../utils/statusConfig';
 import StampGrid from './StampGrid';
 
 import './styles.css';
