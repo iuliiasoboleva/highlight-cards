@@ -167,6 +167,14 @@ const Locations = () => {
           push-уведомления. Geo-push работает, когда клиент оказывается в радиусе 100 метров от
           вашей точки.
         </p>
+        {noLocations && showAddForm && (
+          <button
+            className="card-form-add-btn location-toggle-btn"
+            onClick={() => setShowAddForm(false)}
+          >
+            Скрыть добавление локации
+          </button>
+        )}
         <CustomSelect
           value={currentCard?.id || allCards[0]?.id || null}
           onChange={handleCardSelect}
@@ -292,18 +300,23 @@ const Locations = () => {
 
   // пустой экран при отсутствии локаций
   const renderEmptyState = () => (
-    <div className="locations-empty-state">
-      <h2>
-        Локации <span className="geo-badge">Geo-push в радиусе 100 метров</span>
-      </h2>
-      <p className="locations-subtext">
-        На&nbsp;вашем тарифе доступно {MAX_LOCATIONS} локаций. В&nbsp;радиусе 100&nbsp;метров от
-        локаций у&nbsp;пользователей с&nbsp;картами будет появляться push-сообщение.
-      </p>
-      <hr style={{ margin: '24px 0' }} />
-      <button className="card-form-add-btn" onClick={() => setShowAddForm(true)}>
-        Добавить локацию
-      </button>
+    <div className="edit-type-left">
+      <div className="edit-type-page">
+        <h2>
+          Локации <span className="geo-badge">Geo-push в радиусе 100 метров</span>
+        </h2>
+        <p className="locations-subtext">
+          Добавьте адреса, рядом с которыми вашим клиентам будут автоматически приходить
+          push-уведомления. Geo-push работает, когда клиент оказывается в радиусе 100 метров от
+          вашей точки.
+        </p>
+        <button
+          className="card-form-add-btn location-toggle-btn"
+          onClick={() => setShowAddForm(true)}
+        >
+          Добавить локацию
+        </button>
+      </div>
     </div>
   );
 

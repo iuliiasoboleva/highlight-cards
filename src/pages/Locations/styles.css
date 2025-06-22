@@ -164,3 +164,7 @@ input:checked + .slider:before {
     padding-top: 0 !important;
   }
 }
+
+.location-toggle-btn {
+  margin: 24px 0;
+}
