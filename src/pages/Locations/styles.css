@@ -144,3 +144,23 @@ input:checked + .slider:before {
   background-color: #057cfd;
   clip-path: polygon(0 0, 100% 0, 0 100%);
 }
+
+/* layout for desktop */
+@media (min-width: 1000px) {
+  .locations-layout {
+    padding-left: 20px; /* отступ от бокового меню */
+    padding-top: 20px;
+  }
+
+  .locations-layout .edit-type-left,
+  .locations-layout .edit-type-right {
+    flex: 0 0 calc(50% - 10px) !important; /* учёт gap:20px */
+    max-width: calc(50% - 10px) !important;
+  }
+
+  /* убираем лишний внутренний отступ, чтобы не сужать колонку */
+  .locations-layout .edit-type-left {
+    padding-left: 0 !important;
+    padding-top: 0 !important;
+  }
+}

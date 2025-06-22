@@ -309,6 +309,9 @@ const Locations = () => {
 
   const noLocations = locations.length === 0;
 
+  // будем отображать левый блок в зависимости от состояния
+  const leftBlock = noLocations && !showAddForm ? renderEmptyState() : renderMapSection();
+
   if (locationsLoading) {
     return (
       <div
@@ -324,13 +327,8 @@ const Locations = () => {
     );
   }
 
-  // если нет локаций и форма не открыта — показываем пустой экран
-  if (noLocations && !showAddForm) {
-    return renderEmptyState();
-  }
-
   return (
-    <div className="edit-type-layout">
+    <div className="edit-type-layout locations-layout">
       {isMobile && (
         <div className="edit-type-tabs">
           <button
@@ -350,26 +348,20 @@ const Locations = () => {
 
       {isMobile ? (
         activeTab === 'map' ? (
-          renderMapSection()
+          leftBlock
         ) : (
           renderPreviewSection()
         )
       ) : (
         <>
-          {renderMapSection()}
+          {leftBlock}
           {renderPreviewSection()}
         </>
       )}
 
       {/* если локаций ещё нет, даём кнопку скрыть форму */}
       {noLocations && isMobile === false && (
-        <button
-          className="btn-light"
-          style={{ marginTop: 24 }}
-          onClick={() => setShowAddForm(false)}
-        >
-          Скрыть добавление локации
-        </button>
+        <></>
       )}
     </div>
   );
