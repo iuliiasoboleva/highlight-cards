@@ -399,6 +399,4 @@ export const {
   reorderCards,
 } = cardsSlice.actions;
 
-export { togglePinAsync };
-
 export default cardsSlice.reducer;
