@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Tooltip } from 'react-tooltip';
 
 import { Copy, Download, Power, X } from 'lucide-react';
 
@@ -104,16 +105,16 @@ const CardButtons = ({ isFixed, cardId }) => {
     <div className="card-buttons-block">
       <button onClick={() => navigate(`/cards/${cardId}/info`)}>Перейти</button>
       <div className="icon-buttons">
-        <button onClick={handleToggleActive} title="Включить/выключить">
+        <button onClick={handleToggleActive} data-tooltip-id="card-action-tooltip" data-tooltip-html={card.isActive ? 'Деактивировать' : 'Активировать'}>
           <Power size={20} />
         </button>
-        <button onClick={handleDownload} title="Скачать">
+        <button onClick={handleDownload} data-tooltip-id="card-action-tooltip" data-tooltip-html="Скачать">
           <Download size={20} />
         </button>
-        <button onClick={handleCopy} title="Копировать" disabled={copyLoading}>
+        <button onClick={handleCopy} data-tooltip-id="card-action-tooltip" data-tooltip-html="Скопировать карту" disabled={copyLoading}>
           <Copy size={20} />
         </button>
-        <button onClick={handleDelete} title="Удалить">
+        <button onClick={handleDelete} data-tooltip-id="card-action-tooltip" data-tooltip-html="Удалить карту">
           <X size={20} />
         </button>
       </div>
@@ -124,6 +125,19 @@ const CardButtons = ({ isFixed, cardId }) => {
           onCancel={() => setShowDel(false)}
         />
       )}
+      <Tooltip
+        id="card-action-tooltip"
+        className="custom-tooltip"
+        style={{
+          backgroundColor: '#000',
+          color: '#fff',
+          fontSize: '12px',
+          padding: '4px 8px',
+          borderRadius: '4px',
+          lineHeight: '1',
+          whiteSpace: 'nowrap',
+        }}
+      />
     </div>
   );
 };
