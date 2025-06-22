@@ -47,6 +47,11 @@ const Cards = () => {
   const { cards, loading } = cardsState;
   const isTemplatePage = location.pathname === '/cards/template';
 
+  const cardsRef = React.useRef(cards);
+  React.useEffect(() => {
+    cardsRef.current = cards;
+  }, [cards]);
+
   React.useEffect(() => {
     const savedOrder = JSON.parse(localStorage.getItem('cards_order') || '[]');
     if (savedOrder.length) {
@@ -95,17 +100,26 @@ const Cards = () => {
             key={card.id}
             className={`card ${card.isActive ? 'active' : 'inactive'}`}
             draggable={card.id !== 'fixed'}
-            onDragStart={() => setDragIndex(idx)}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={() => {
+            onDragStart={(e) => {
+              setDragIndex(idx);
+              e.dataTransfer.effectAllowed = 'move';
+            }}
+            onDragEnter={(e) => e.preventDefault()}
+            onDragOver={(e) => {
+              e.preventDefault();
               if (dragIndex === null || dragIndex === idx) return;
-              const updated = [...cards];
-              const moved = updated.splice(dragIndex, 1)[0];
-              updated.splice(idx, 0, moved);
+              const updated = [...cardsRef.current];
+              const item = updated[dragIndex];
+              updated.splice(dragIndex, 1);
+              updated.splice(idx, 0, item);
               dispatch(reorderCards(updated));
-              const ids = updated.slice(1).map((c) => c.id);
+              setDragIndex(idx);
+            }}
+            onDrop={() => {
+              const ids = cardsRef.current.slice(1).map((c) => c.id);
               localStorage.setItem('cards_order', JSON.stringify(ids));
               dispatch(saveOrder(ids));
+              setDragIndex(null);
             }}
           >
             {!isTemplatePage && (
