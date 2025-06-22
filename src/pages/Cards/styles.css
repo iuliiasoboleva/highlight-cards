@@ -175,10 +175,15 @@
 
 .card:hover .card-drag-handle {
   opacity: 1;
+  color: #000;
+  transform: translate(-50%, -50%) scale(1.3);
 }
 
-.card:hover .card-image {
-  filter: brightness(0.8);
+/* плавное мягкое затемнение контента при наведении */
+.card:hover .card-image,
+.card:hover .card-info {
+  filter: brightness(0.7) contrast(0.9);
+  transition: filter 0.2s ease-in-out;
 }
 
 /* во время перетаскивания скрываем оригинальный элемент */
