@@ -267,6 +267,23 @@ export const cardsSlice = createSlice({
     reorderCards: (state, action) => {
       state.cards = action.payload;
     },
+
+    togglePin: (state, action) => {
+      const card = state.cards.find((c) => c.id === action.payload);
+      if (!card || card.id === 'fixed') return;
+      card.isPinned = !card.isPinned;
+      const fixed = state.cards[0];
+      const others = state.cards.slice(1);
+      const pinned = others.filter((c) => c.isPinned);
+      const rest = others.filter((c) => !c.isPinned);
+      state.cards = [fixed, ...pinned, ...rest];
+
+      // persist pinned ids
+      const pinnedIds = pinned.map((c) => c.id);
+      try {
+        localStorage.setItem('cards_pinned', JSON.stringify(pinnedIds));
+      } catch (e) {}
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -276,13 +293,24 @@ export const cardsSlice = createSlice({
         state.cards = [fixedCard];
       })
       .addCase(fetchCards.fulfilled, (state, action) => {
-        state.cards = [fixedCard, ...action.payload].map((card) => ({
+        const rawCards = [fixedCard, ...action.payload].map((card) => ({
           ...card,
           fieldsName: (statusConfig[card.status] || []).map((item) => ({
             type: item.valueKey,
             name: item.label,
           })),
         }));
+
+        let pinnedIds = [];
+        try {
+          pinnedIds = JSON.parse(localStorage.getItem('cards_pinned') || '[]');
+        } catch (e) {}
+
+        const fixed = rawCards[0];
+        const others = rawCards.slice(1).map((c) => ({ ...c, isPinned: pinnedIds.includes(c.id) }));
+        const pinned = others.filter((c) => c.isPinned);
+        const rest = others.filter((c) => !c.isPinned);
+        state.cards = [fixed, ...pinned, ...rest];
         state.loading = false;
       })
       .addCase(fetchCards.rejected, (state, action) => {
@@ -343,6 +371,7 @@ export const {
   copyCard,
   downloadCard,
   initializeCards,
+  togglePin,
   reorderCards,
 } = cardsSlice.actions;
 

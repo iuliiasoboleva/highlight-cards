@@ -4,13 +4,13 @@ import { useLocation } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 import { GripVertical } from 'lucide-react';
 
-import { HelpCircle, Loader2, Check } from 'lucide-react';
+import { HelpCircle, Loader2, Check, Pin, PinOff } from 'lucide-react';
 
 import CardButtons from '../../components/CardButtons';
 import CardInfo from '../../components/CardInfo';
 
 import './styles.css';
-import { renameCardAsync, reorderCards, saveOrder } from '../../store/cardsSlice';
+import { renameCardAsync, reorderCards, saveOrder, togglePin } from '../../store/cardsSlice';
 
 const cardDescriptions = {
   discount: {
@@ -98,7 +98,7 @@ const Cards = () => {
         {cards.map((card, idx) => (
           <div
             key={card.id}
-            className={`card ${card.isActive ? 'active' : 'inactive'}`}
+            className={`card ${card.isActive ? 'active' : 'inactive'} ${card.isPinned ? 'pinned' : ''}`}
             draggable={card.id !== 'fixed'}
             onDragStart={(e) => {
               setDragIndex(idx);
@@ -129,6 +129,24 @@ const Cards = () => {
               </div>
             )}
             <div className="card-image-block">
+              {card.id !== 'fixed' && (
+                <div
+                  className="card-pin-btn"
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    dispatch(togglePin(card.id));
+                    setTimeout(() => {
+                      const current = cardsRef.current;
+                      const ids = current.slice(1).map((c) => c.id);
+                      dispatch(saveOrder(ids));
+                      const pinnedIds = current.filter((c)=>c.isPinned).map((c)=>c.id);
+                      try { localStorage.setItem('cards_pinned', JSON.stringify(pinnedIds)); } catch(e){}
+                    }, 0);
+                  }}
+                >
+                  {card.isPinned ? <PinOff size={18} /> : <Pin size={18} />}
+                </div>
+              )}
               {card.id !== 'fixed' && <GripVertical className="card-drag-handle" />}
               <img className="card-image" src={card.frameUrl} alt={card.name} />
               {card.id !== 'fixed' && <CardInfo card={card} />}
