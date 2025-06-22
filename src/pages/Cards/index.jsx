@@ -10,7 +10,7 @@ import CardButtons from '../../components/CardButtons';
 import CardInfo from '../../components/CardInfo';
 
 import './styles.css';
-import { renameCardAsync, reorderCards, saveOrder, togglePin } from '../../store/cardsSlice';
+import { renameCardAsync, reorderCards, saveOrder, togglePinAsync } from '../../store/cardsSlice';
 
 const cardDescriptions = {
   discount: {
@@ -134,14 +134,7 @@ const Cards = () => {
                   className="card-pin-btn"
                   onClick={(ev) => {
                     ev.stopPropagation();
-                    dispatch(togglePin(card.id));
-                    setTimeout(() => {
-                      const current = cardsRef.current;
-                      const ids = current.slice(1).map((c) => c.id);
-                      dispatch(saveOrder(ids));
-                      const pinnedIds = current.filter((c)=>c.isPinned).map((c)=>c.id);
-                      try { localStorage.setItem('cards_pinned', JSON.stringify(pinnedIds)); } catch(e){}
-                    }, 0);
+                    dispatch(togglePinAsync(card.id));
                   }}
                 >
                   {card.isPinned ? <PinOff size={18} /> : <Pin size={18} />}

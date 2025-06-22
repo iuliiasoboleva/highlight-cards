@@ -126,6 +126,30 @@ export const renameCardAsync = createAsyncThunk(
   },
 );
 
+export const togglePinAsync = createAsyncThunk(
+  'cards/togglePin',
+  async (id, { getState, dispatch, rejectWithValue }) => {
+    try {
+      // toggle current status based on state
+      const card = getState().cards.cards.find((c) => c.id === id);
+      const newPinned = !(card?.isPinned);
+      await axiosInstance.put(`/cards/${id}`, { is_pinned: newPinned });
+
+      // after toggling calculate new order and persist
+      const orderedIds = getState().cards.cards
+        .filter((c) => c.id !== 'fixed' && c.id !== id)
+        .map((c) => c.id);
+      // we'll reinsert id at beginning if pinned else keep order
+      const newOrder = newPinned ? [id, ...orderedIds] : orderedIds.filter((cid)=>cid!==id);
+      dispatch(saveOrder(newOrder));
+
+      return id;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
+
 export const saveOrder = createAsyncThunk('cards/saveOrder', async (order, { rejectWithValue }) => {
   try {
     await axiosInstance.post('/cards/reorder', order);
@@ -277,12 +301,6 @@ export const cardsSlice = createSlice({
       const pinned = others.filter((c) => c.isPinned);
       const rest = others.filter((c) => !c.isPinned);
       state.cards = [fixed, ...pinned, ...rest];
-
-      // persist pinned ids
-      const pinnedIds = pinned.map((c) => c.id);
-      try {
-        localStorage.setItem('cards_pinned', JSON.stringify(pinnedIds));
-      } catch (e) {}
     },
   },
   extraReducers: (builder) => {
@@ -301,13 +319,8 @@ export const cardsSlice = createSlice({
           })),
         }));
 
-        let pinnedIds = [];
-        try {
-          pinnedIds = JSON.parse(localStorage.getItem('cards_pinned') || '[]');
-        } catch (e) {}
-
         const fixed = rawCards[0];
-        const others = rawCards.slice(1).map((c) => ({ ...c, isPinned: pinnedIds.includes(c.id) }));
+        const others = rawCards.slice(1);
         const pinned = others.filter((c) => c.isPinned);
         const rest = others.filter((c) => !c.isPinned);
         state.cards = [fixed, ...pinned, ...rest];
@@ -356,6 +369,17 @@ export const cardsSlice = createSlice({
         if (idx !== -1) {
           state.cards[idx].name = name;
         }
+      })
+      .addCase(togglePinAsync.fulfilled, (state, action) => {
+        const id = action.payload;
+        const fixed = state.cards[0];
+        const others = state.cards.slice(1);
+        const target = others.find((c) => c.id === id);
+        if (!target) return;
+        target.isPinned = !target.isPinned;
+        const pinned = others.filter((c) => c.isPinned);
+        const rest = others.filter((c) => !c.isPinned);
+        state.cards = [fixed, ...pinned, ...rest];
       });
   },
 });
@@ -374,5 +398,7 @@ export const {
   togglePin,
   reorderCards,
 } = cardsSlice.actions;
+
+export { togglePinAsync };
 
 export default cardsSlice.reducer;
