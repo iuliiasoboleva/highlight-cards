@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
+import { GripVertical } from 'lucide-react';
 
 import { HelpCircle, Loader2, Check } from 'lucide-react';
 
@@ -9,7 +10,7 @@ import CardButtons from '../../components/CardButtons';
 import CardInfo from '../../components/CardInfo';
 
 import './styles.css';
-import { renameCardAsync } from '../../store/cardsSlice';
+import { renameCardAsync, reorderCards, saveOrder } from '../../store/cardsSlice';
 
 const cardDescriptions = {
   discount: {
@@ -40,10 +41,25 @@ const Cards = () => {
 
   const [editingId, setEditingId] = React.useState(null);
   const [newName, setNewName] = React.useState('');
+  const [dragIndex, setDragIndex] = React.useState(null);
 
   const cardsState = useSelector((state) => state.cards);
   const { cards, loading } = cardsState;
   const isTemplatePage = location.pathname === '/cards/template';
+
+  React.useEffect(() => {
+    const savedOrder = JSON.parse(localStorage.getItem('cards_order') || '[]');
+    if (savedOrder.length) {
+      const ordered = [cards[0], ...savedOrder
+        .map((id) => cards.find((c) => c.id === id))
+        .filter(Boolean)
+        .filter((c) => c.id !== 'fixed')];
+      if (ordered.length === cards.length - 1) {
+        dispatch(reorderCards([cards[0], ...ordered]));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
 
   if (loading) {
     return (
@@ -74,8 +90,24 @@ const Cards = () => {
       </h2>
       <Tooltip id="managers-help" className="custom-tooltip" />
       <div className="cards">
-        {cards.map((card) => (
-          <div key={card.id} className={`card ${card.isActive ? 'active' : 'inactive'}`}>
+        {cards.map((card, idx) => (
+          <div
+            key={card.id}
+            className={`card ${card.isActive ? 'active' : 'inactive'}`}
+            draggable={card.id !== 'fixed'}
+            onDragStart={() => setDragIndex(idx)}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={() => {
+              if (dragIndex === null || dragIndex === idx) return;
+              const updated = [...cards];
+              const moved = updated.splice(dragIndex, 1)[0];
+              updated.splice(idx, 0, moved);
+              dispatch(reorderCards(updated));
+              const ids = updated.slice(1).map((c) => c.id);
+              localStorage.setItem('cards_order', JSON.stringify(ids));
+              dispatch(saveOrder(ids));
+            }}
+          >
             {!isTemplatePage && (
               <div className="card-state">
                 <span className={`status-indicator ${card.isActive ? 'active' : 'inactive'}`} />
@@ -83,6 +115,7 @@ const Cards = () => {
               </div>
             )}
             <div className="card-image-block">
+              {card.id !== 'fixed' && <GripVertical className="card-drag-handle" />}
               <img className="card-image" src={card.frameUrl} alt={card.name} />
               {card.id !== 'fixed' && <CardInfo card={card} />}
             </div>

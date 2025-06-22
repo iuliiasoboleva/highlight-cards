@@ -126,6 +126,15 @@ export const renameCardAsync = createAsyncThunk(
   },
 );
 
+export const saveOrder = createAsyncThunk('cards/saveOrder', async (order, { rejectWithValue }) => {
+  try {
+    await axiosInstance.post('/cards/reorder', order);
+    return order;
+  } catch (err) {
+    return rejectWithValue(err.response?.data || err.message);
+  }
+});
+
 export const cardsSlice = createSlice({
   name: 'cards',
   initialState,
@@ -254,6 +263,10 @@ export const cardsSlice = createSlice({
         state.loading = false;
       }
     },
+
+    reorderCards: (state, action) => {
+      state.cards = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -330,6 +343,7 @@ export const {
   copyCard,
   downloadCard,
   initializeCards,
+  reorderCards,
 } = cardsSlice.actions;
 
 export default cardsSlice.reducer;
