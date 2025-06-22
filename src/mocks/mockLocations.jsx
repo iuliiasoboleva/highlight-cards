@@ -28,4 +28,5 @@ export const locationsHeaders = [
   { label: 'Клиенты привязаны', key: 'clientsCount' },
   { label: 'Карт выдано', key: 'cardsIssued' },
   { label: 'Баллов начислено', key: 'pointsAccumulated' },
+  { label: 'Сеть', key: 'network' },
 ];

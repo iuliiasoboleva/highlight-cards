@@ -9,6 +9,7 @@ import salesPointsReducer from './salesPointsSlice';
 import subscriptionReducer from './subscriptionSlice';
 import tariffsReducer from './tariffsSlice';
 import userReducer from './userSlice';
+import networksReducer from './networksSlice';
 
 export const store = configureStore({
   reducer: {
@@ -21,5 +22,6 @@ export const store = configureStore({
     tariffs: tariffsReducer,
     payments: paymentsReducer,
     subscription: subscriptionReducer,
+    networks: networksReducer,
   },
 });

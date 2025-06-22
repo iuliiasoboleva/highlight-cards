@@ -19,6 +19,7 @@ const SalesPointsModalWithMap = ({
 }) => {
   const dispatch = useDispatch();
   const allManagers = useSelector((state) => state.managers.list);
+  const networks = useSelector((state) => state.networks.list);
 
   const mapRef = useRef(null);
 
@@ -31,6 +32,7 @@ const SalesPointsModalWithMap = ({
       : null,
   );
   const [isSearching, setIsSearching] = useState(false);
+  const [selectedNetwork, setSelectedNetwork] = useState(initialData.network_id || null);
 
   const [debouncedSearchQuery] = useDebounce(searchQuery, 1500);
 
@@ -75,6 +77,7 @@ const SalesPointsModalWithMap = ({
     if (isOpen) {
       setName(initialData.name || '');
       setSearchQuery(initialData.address || '');
+      setSelectedNetwork(initialData.network_id || null);
     }
   }, [initialData, isOpen]);
 
@@ -88,6 +91,7 @@ const SalesPointsModalWithMap = ({
     setSearchQuery('');
     setSelectedLocation(null);
     setIsSearching(false);
+    setSelectedNetwork(null);
   };
 
   const handleSave = () => {
@@ -103,6 +107,7 @@ const SalesPointsModalWithMap = ({
       address: selectedLocation.address,
       coords: selectedLocation.coords,
       employees: selectedManager ? [selectedManager] : initialData.employees || [],
+      network_id: selectedNetwork,
     };
 
     onSave(newSalesPoint);
@@ -166,6 +171,15 @@ const SalesPointsModalWithMap = ({
               value: manager.id,
               label: `${manager.name} ${manager.surname}`,
             }))}
+          />
+        </div>
+
+        <div className="modal-section">
+          <h4>Сеть точек:</h4>
+          <CustomSelect
+            value={selectedNetwork}
+            onChange={setSelectedNetwork}
+            options={networks.map((n) => ({ value: n.id, label: n.name }))}
           />
         </div>
 

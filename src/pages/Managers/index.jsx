@@ -9,6 +9,7 @@ import CustomTable from '../../components/CustomTable';
 import ManagerModal from '../../components/ManagerModal';
 import RoleSwitcher from '../../components/RoleSwitcher';
 import SalesPointsModal from '../../components/SalesPointsModal';
+import NetworkModal from '../../components/NetworkModal';
 import { managersHeaders } from '../../mocks/managersInfo';
 import { locationsHeaders } from '../../mocks/mockLocations';
 import {
@@ -24,6 +25,7 @@ import {
   editBranch,
   fetchBranches,
 } from '../../store/salesPointsSlice';
+import { fetchNetworks, createNetwork, editNetwork, deleteNetwork } from '../../store/networksSlice';
 
 import './styles.css';
 
@@ -35,12 +37,15 @@ const ManagersPage = () => {
   const [cardNumber, setCardNumber] = useState('');
   const [editModalData, setEditModalData] = useState(null);
   const [showLocationModal, setShowLocationModal] = useState(false);
+  const [showNetworkModal, setShowNetworkModal] = useState(false);
+  const [editNetworkData, setEditNetworkData] = useState(null);
 
   const { list: managers, loading: mLoading } = useSelector((state) => state.managers);
   const { list: locations, loading: lLoading } = useSelector((state) => state.locations);
   const orgId = useSelector((state) => state.user.organization_id);
 
   const clients = useSelector((state) => state.clients);
+  const networks = useSelector((state) => state.networks.list);
 
   const managersColumns = [
     ...managersHeaders.map((header) => {
@@ -81,6 +86,18 @@ const ManagersPage = () => {
   ];
 
   const locationColumns = locationsHeaders.map((header) => {
+    if (header.key === 'network') {
+      return {
+        key: 'network',
+        title: 'Сеть',
+        className: 'text-center',
+        cellClassName: 'text-center',
+        render: (row) => {
+          const net = networks.find((n) => n.id === row.network_id);
+          return net ? net.name : '-';
+        },
+      };
+    }
     if (['clientsCount', 'cardsIssued', 'pointsAccumulated'].includes(header.key)) {
       return {
         key: header.key,
@@ -187,10 +204,26 @@ const ManagersPage = () => {
     }
   };
 
+  const handleSaveNetwork = (network) => {
+    if (network.id) {
+      dispatch(editNetwork(network));
+    } else {
+      dispatch(createNetwork({ ...network, organization_id: orgId }));
+    }
+    setShowNetworkModal(false);
+    setEditNetworkData(null);
+  };
+
+  const handleDeleteNetwork = (id) => {
+    dispatch(deleteNetwork(id));
+    setEditNetworkData(null);
+  };
+
   useEffect(() => {
     if (orgId) {
       dispatch(fetchManagers(orgId));
       dispatch(fetchBranches(orgId));
+      dispatch(fetchNetworks(orgId));
     }
   }, [dispatch, orgId]);
 
@@ -286,6 +319,16 @@ const ManagersPage = () => {
             Открыть
           </button>
         </div>
+        <div className="manager-card create-card" onClick={() => setShowNetworkModal(true)}>
+          <h3>Добавить сеть</h3>
+          <p>Объедините несколько точек в одну сеть для общего учёта клиентов.</p>
+          <span className="scanner-icon">
+            <PlusCircle size={18} />
+          </span>
+          <button className="custom-main-button" onClick={() => setShowNetworkModal(true)}>
+            Создать сеть
+          </button>
+        </div>
       </div>
       <div className="table-wrapper">
         <h3 className="table-name">Информация о сотрудниках</h3>
@@ -301,6 +344,35 @@ const ManagersPage = () => {
           <CustomTable columns={locationColumns} rows={locations} />
         ) : (
           <p>Здесь будет информация о точках продаж.</p>
+        )}
+      </div>
+      <div className="table-wrapper">
+        <h3 className="table-name">Сети точек</h3>
+        {networks.length ? (
+          <CustomTable
+            columns={[
+              { key: 'name', title: 'Название', className: 'text-center', cellClassName: 'text-center' },
+              { key: 'description', title: 'Описание', className: 'text-center', cellClassName: 'text-center' },
+              {
+                key: 'actions',
+                title: 'Действия',
+                className: 'text-center',
+                cellClassName: 'text-center',
+                render: (row) => (
+                  <div
+                    className="manager-edit-button"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => setEditNetworkData(row)}
+                  >
+                    ✏️
+                  </div>
+                ),
+              },
+            ]}
+            rows={networks}
+          />
+        ) : (
+          <p>Сетей пока нет.</p>
         )}
       </div>
       <ManagerModal
@@ -333,6 +405,7 @@ const ManagersPage = () => {
               const m = managers.find((man) => man.id === id);
               return m ? `${m.surname} ${m.name}`.trim() : id.toString();
             }),
+            network_id: data.network_id,
           };
           const idNum = data.id ? parseInt(data.id, 10) : undefined;
           const action = idNum ? editBranch({ id: idNum, ...payload }) : createBranch(payload);
@@ -354,6 +427,17 @@ const ManagersPage = () => {
           setShowLocationModal(false);
           setInitialLocationData(null);
         }}
+      />
+      <NetworkModal
+        isOpen={showNetworkModal || !!editNetworkData}
+        onClose={() => {
+          setShowNetworkModal(false);
+          setEditNetworkData(null);
+        }}
+        onSave={handleSaveNetwork}
+        onDelete={handleDeleteNetwork}
+        initialData={editNetworkData || {}}
+        isEdit={!!editNetworkData}
       />
       <RoleSwitcher />
     </div>
