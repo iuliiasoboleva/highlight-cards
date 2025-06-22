@@ -114,6 +114,18 @@ export const copyCardAsync = createAsyncThunk('cards/copyCard', async (id, { rej
   }
 });
 
+export const renameCardAsync = createAsyncThunk(
+  'cards/renameCard',
+  async ({ id, name }, { rejectWithValue }) => {
+    try {
+      await axiosInstance.put(`/cards/${id}`, { name });
+      return { id, name };
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
+
 export const cardsSlice = createSlice({
   name: 'cards',
   initialState,
@@ -296,6 +308,13 @@ export const cardsSlice = createSlice({
       .addCase(copyCardAsync.fulfilled, (state, action) => {
         const newCard = { ...action.payload, frameUrl: action.payload.frameUrl || 'phone.svg' };
         state.cards.push(newCard);
+      })
+      .addCase(renameCardAsync.fulfilled, (state, action) => {
+        const { id, name } = action.payload;
+        const idx = state.cards.findIndex((c) => c.id === id);
+        if (idx !== -1) {
+          state.cards[idx].name = name;
+        }
       });
   },
 });

@@ -13,7 +13,11 @@ const CardInfo = ({ card, setShowInfo }) => {
   const currentFields = useSelector((state) => state.cards.currentCard?.fieldsName) || [];
   const currentDesign = useSelector((state) => state.cards.currentCard?.design) || {};
 
-  const toggleInfo = () => setShowInfo((prev) => !prev);
+  const toggleInfo = () => {
+    if (typeof setShowInfo === 'function') {
+      setShowInfo((prev) => !prev);
+    }
+  };
 
   const design = card.design || currentDesign || {};
   const fields = card.fieldsName || currentFields || [];

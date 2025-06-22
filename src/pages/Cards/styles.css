@@ -119,3 +119,43 @@
     grid-template-columns: 1fr;
   }
 }
+
+.card-name-edit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+}
+
+.card-name-input {
+  font-size: 18px;
+  padding: 6px 10px;
+  border: 2px solid #000;
+  border-radius: 6px;
+  text-align: center;
+  width: 220px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.card-name-input:focus {
+  border-color: #000;
+}
+
+.card-name-save-btn {
+  background: #000;
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.card-name-save-btn:hover {
+  background: #333;
+}

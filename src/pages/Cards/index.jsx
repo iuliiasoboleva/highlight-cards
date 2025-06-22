@@ -1,14 +1,15 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 
-import { HelpCircle, Loader2 } from 'lucide-react';
+import { HelpCircle, Loader2, Check } from 'lucide-react';
 
 import CardButtons from '../../components/CardButtons';
 import CardInfo from '../../components/CardInfo';
 
 import './styles.css';
+import { renameCardAsync } from '../../store/cardsSlice';
 
 const cardDescriptions = {
   discount: {
@@ -35,6 +36,10 @@ const cardDescriptions = {
 
 const Cards = () => {
   const location = useLocation();
+  const dispatch = useDispatch();
+
+  const [editingId, setEditingId] = React.useState(null);
+  const [newName, setNewName] = React.useState('');
 
   const cardsState = useSelector((state) => state.cards);
   const { cards, loading } = cardsState;
@@ -83,8 +88,48 @@ const Cards = () => {
             </div>
             <div className="card-bottom">
               <div className="card-bottom-text">
-                <h3>{card.name}</h3>
-                {/* <p>Вы можете отредактировать настройки карты или обновить дизайн</p> */}
+                {editingId === card.id ? (
+                  <div className="card-name-edit">
+                    <input
+                      value={newName}
+                      onChange={(e) => setNewName(e.target.value)}
+                      onBlur={() => {
+                        if (newName.trim() && newName !== card.name) {
+                          dispatch(renameCardAsync({ id: card.id, name: newName.trim() }));
+                        }
+                        setEditingId(null);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          if (newName.trim() && newName !== card.name) {
+                            dispatch(renameCardAsync({ id: card.id, name: newName.trim() }));
+                          }
+                          setEditingId(null);
+                        }
+                      }}
+                      autoFocus
+                      className="card-name-input"
+                    />
+                    <button
+                      className="card-name-save-btn"
+                      onClick={() => {
+                        if (newName.trim() && newName !== card.name) {
+                          dispatch(renameCardAsync({ id: card.id, name: newName.trim() }));
+                        }
+                        setEditingId(null);
+                      }}
+                    >
+                      <Check size={18} />
+                    </button>
+                  </div>
+                ) : (
+                  <h3 onClick={() => {
+                    setEditingId(card.id);
+                    setNewName(card.name);
+                  }} style={{ cursor: 'pointer' }}>
+                    {card.name}
+                  </h3>
+                )}
               </div>
               <CardButtons isFixed={card.id === 'fixed'} cardId={card.id} />
             </div>
