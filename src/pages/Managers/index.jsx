@@ -214,18 +214,35 @@ const ManagersPage = () => {
     dispatch(action)
       .unwrap()
       .then((savedNet) => {
-        // назначаем выбранные точки данной сети
-        const updatePromises = branches.map((brId) => {
+        const currentIds = branches;
+        const prevIds = locations.filter((b) => b.network_id === savedNet.id).map((b) => b.id);
+
+        const toAdd = currentIds;
+        const toRemove = prevIds.filter((id) => !currentIds.includes(id));
+
+        const updatePromises = [];
+
+        toAdd.forEach((brId) => {
           const br = locations.find((b) => b.id === brId);
-          if (!br) return Promise.resolve();
-          const payload = {
-            id: br.id,
-            name: br.name,
-            organization_id: orgId,
-            network_id: savedNet.id,
-          };
-          return dispatch(editBranch(payload));
+          if (br)
+            updatePromises.push(
+              dispatch(
+                editBranch({ id: br.id, name: br.name, organization_id: orgId, network_id: savedNet.id }),
+              ),
+            );
         });
+
+        toRemove.forEach((brId) => {
+          const br = locations.find((b) => b.id === brId);
+          if (br)
+            updatePromises.push(
+              dispatch(
+                editBranch({ id: br.id, name: br.name, organization_id: orgId, network_id: null }),
+              ),
+            );
+        });
+
+        const promisesAll = Promise.all(updatePromises);
         return Promise.all(updatePromises);
       })
       .then(() => {
