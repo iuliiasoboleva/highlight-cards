@@ -221,14 +221,6 @@ const ManagersPage = () => {
           const payload = {
             id: br.id,
             name: br.name,
-            address: br.address,
-            coords_lat: br.coords?.lat,
-            coords_lon: br.coords?.lon,
-            employees: br.employees,
-            clients_count: br.clientsCount,
-            cards_issued: br.cardsIssued,
-            points_accumulated: br.pointsAccumulated,
-            geo_active: br.active,
             organization_id: orgId,
             network_id: savedNet.id,
           };

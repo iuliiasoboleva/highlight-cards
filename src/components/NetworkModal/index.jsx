@@ -10,24 +10,28 @@ const NetworkModal = ({ isOpen, onClose, onSave, onDelete = () => {}, initialDat
 
   const branches = useSelector((state) => state.locations.list);
   // точки, которые можно выбрать: без сети или уже принадлежащие редактируемой сети
-  const availableBranches = branches.filter(
-    (b) => !b.network_id || b.network_id === initialData.id,
-  );
+  const availableBranches = branches.filter((b) => {
+    if (isEdit) return !b.network_id || b.network_id === initialData.id;
+    return !b.network_id; // при создании — только свободные
+  });
 
   const needScroll = availableBranches.length > 7;
 
   useEffect(() => {
-    if (isOpen) {
-      setName(initialData.name || '');
-      setDescription(initialData.description || '');
-      if (isEdit && branches.length) {
-        const preselected = branches.filter((b) => b.network_id === initialData.id).map((b) => b.id);
-        setSelectedBranches(preselected);
-      } else {
-        setSelectedBranches([]);
-      }
+    if (!isOpen) return;
+
+    setName(initialData.name || '');
+    setDescription(initialData.description || '');
+
+    if (isEdit) {
+      const preselected = branches
+        .filter((b) => b.network_id === initialData.id)
+        .map((b) => b.id);
+      setSelectedBranches(preselected);
+    } else {
+      setSelectedBranches([]);
     }
-  }, [initialData, isOpen]);
+  }, [initialData, isOpen, branches, isEdit]);
 
   if (!isOpen) return null;
 
