@@ -7,11 +7,15 @@ const ConfirmModal = ({
   cancelText = 'Отмена',
   onConfirm,
   onCancel,
+  small = false,
 }) => {
   if (!isOpen) return null;
+
+  const modalStyle = small ? { width: '28%', maxWidth: 500 } : {};
+
   return (
     <div className="modal-overlay" onClick={onCancel}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+      <div className="modal" style={modalStyle} onClick={(e) => e.stopPropagation()}>
         <p style={{ marginBottom: 20, fontSize: 16 }}>{message}</p>
         <div className="modal-buttons">
           <button className="btn btn-dark" onClick={onConfirm}>

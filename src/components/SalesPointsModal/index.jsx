@@ -213,6 +213,7 @@ const SalesPointsModalWithMap = ({
         </div>
 
         <ConfirmModal
+          small
           isOpen={showDeleteConfirm}
           message="Удалить точку продаж без возможности восстановления? Все данные будут потеряны."
           confirmText="Удалить"

@@ -205,11 +205,42 @@ const ManagersPage = () => {
   };
 
   const handleSaveNetwork = (network) => {
-    if (network.id) {
-      dispatch(editNetwork(network));
-    } else {
-      dispatch(createNetwork({ ...network, organization_id: orgId }));
-    }
+    const { branches = [], ...netData } = network;
+
+    const action = netData.id
+      ? editNetwork(netData)
+      : createNetwork({ ...netData, organization_id: orgId });
+
+    dispatch(action)
+      .unwrap()
+      .then((savedNet) => {
+        // назначаем выбранные точки данной сети
+        const updatePromises = branches.map((brId) => {
+          const br = locations.find((b) => b.id === brId);
+          if (!br) return Promise.resolve();
+          const payload = {
+            id: br.id,
+            name: br.name,
+            address: br.address,
+            coords_lat: br.coords?.lat,
+            coords_lon: br.coords?.lon,
+            employees: br.employees,
+            clients_count: br.clientsCount,
+            cards_issued: br.cardsIssued,
+            points_accumulated: br.pointsAccumulated,
+            geo_active: br.active,
+            organization_id: orgId,
+            network_id: savedNet.id,
+          };
+          return dispatch(editBranch(payload));
+        });
+        return Promise.all(updatePromises);
+      })
+      .then(() => {
+        dispatch(fetchBranches(orgId));
+        dispatch(fetchNetworks(orgId));
+      });
+
     setShowNetworkModal(false);
     setEditNetworkData(null);
   };
