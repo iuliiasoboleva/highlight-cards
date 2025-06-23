@@ -10,6 +10,7 @@ import * as XLSX from 'xlsx';
 import FilterableTable from '../../components/FilterableTable';
 import { mockClientsHeaders } from '../../mocks/clientsInfo';
 import { addClientLocal, createClient, fetchClients } from '../../store/clientsSlice';
+import CustomSelect from '../../components/CustomSelect';
 
 import './styles.css';
 
@@ -26,10 +27,15 @@ const Clients = () => {
     email: '',
     birthday: '',
   });
+  const [selectedBranches, setSelectedBranches] = useState([]);
+  const [selectedNetwork, setSelectedNetwork] = useState(null);
+  const [mode, setMode] = useState('branches'); // 'branches' | 'network'
   const [isCopied, setIsCopied] = useState(false);
 
   const { list: clients, loading } = useSelector((state) => state.clients);
   const orgId = useSelector((state) => state.user.organization_id);
+  const branches = useSelector((state) => state.locations.list);
+  const networks = useSelector((state) => state.networks.list);
 
   const formatPhone = (value) => {
     const digits = value.replace(/\D/g, '').slice(0, 11);
@@ -96,6 +102,8 @@ const Clients = () => {
       ...newClient,
       phone: phoneDigits,
       organization_id: orgId,
+      branch_ids: mode === 'branches' ? selectedBranches : undefined,
+      network_id: mode === 'network' ? selectedNetwork : undefined,
     };
     dispatch(createClient(payload))
       .unwrap()
@@ -105,6 +113,8 @@ const Clients = () => {
       });
     setShowModal(false);
     setNewClient({ surname: '', name: '', phone: '', email: '', birthday: '' });
+    setSelectedBranches([]);
+    setSelectedNetwork(null);
   };
 
   const handleExportToExcel = () => {
@@ -250,6 +260,71 @@ const Clients = () => {
                 onChange={(e) => setNewClient({ ...newClient, birthday: e.target.value })}
               />
             </div>
+            <div className="clients-modal-form-group" style={{ display: 'flex', gap: 20 }}>
+              <label>
+                <input
+                  type="radio"
+                  name="mode"
+                  checked={mode === 'branches'}
+                  onChange={() => {
+                    setMode('branches');
+                    setSelectedNetwork(null);
+                  }}
+                />{' '}
+                По точкам
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="mode"
+                  checked={mode === 'network'}
+                  onChange={() => {
+                    setMode('network');
+                    setSelectedBranches([]);
+                  }}
+                />{' '}
+                По сети
+              </label>
+            </div>
+            {mode === 'branches' && (
+              <div className="clients-modal-form-group">
+                <label style={{ fontSize: 12, marginBottom: 4, display: 'block' }}>
+                  Точки продаж
+                </label>
+                <div style={{ maxHeight: 180, overflowY: 'auto', border: '1px solid #ccc', borderRadius: 4, padding: 6 }}>
+                  {branches.map((br) => (
+                    <label key={br.id} style={{ display: 'block', marginBottom: 4 }}>
+                      <input
+                        type="checkbox"
+                        checked={selectedBranches.includes(br.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedBranches([...selectedBranches, br.id]);
+                          } else {
+                            setSelectedBranches(selectedBranches.filter((id) => id !== br.id));
+                          }
+                        }}
+                      />{' '}
+                      {br.name}
+                    </label>
+                  ))}
+                  {branches.length === 0 && <p style={{ fontSize: 14 }}>Нет доступных точек.</p>}
+                </div>
+              </div>
+            )}
+            {mode === 'network' && (
+              <div className="clients-modal-form-group">
+                <label style={{ fontSize: 12, marginBottom: 4, display: 'block' }}>Сеть</label>
+                <CustomSelect
+                  value={selectedNetwork}
+                  onChange={(val) => {
+                    setSelectedNetwork(val);
+                  }}
+                  options={networks.map((n) => ({ value: n.id, label: n.name }))}
+                  placeholder="Выберите сеть"
+                />
+              </div>
+            )}
             <div className="clients-modal-actions">
               <button
                 className="clients-modal-button clients-modal-button-primary"
@@ -260,7 +335,11 @@ const Clients = () => {
                     newClient.surname &&
                     phoneDigits.length === 11 &&
                     isEmailValid &&
-                    newClient.birthday
+                    newClient.birthday &&
+                    !(
+                      (mode === 'branches' && selectedBranches.length === 0) ||
+                      (mode === 'network' && selectedNetwork === null)
+                    )
                   )
                 }
               >
