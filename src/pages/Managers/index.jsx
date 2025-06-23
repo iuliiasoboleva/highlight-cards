@@ -286,6 +286,16 @@ const ManagersPage = () => {
             <span>+ </span>Добавить точку
           </button>
         </div>
+        <div className="manager-card create-card" onClick={() => setShowNetworkModal(true)}>
+          <h3>Добавить сеть</h3>
+          <p>Объедините несколько точек в одну сеть для общего учёта клиентов.</p>
+          <span className="scanner-icon">
+            <PlusCircle size={18} />
+          </span>
+          <button className="custom-main-button" onClick={() => setShowNetworkModal(true)}>
+            Создать сеть
+          </button>
+        </div>
         <div className="manager-card search-card">
           <h3>Поиск по карте</h3>
           <p>
@@ -317,16 +327,6 @@ const ManagersPage = () => {
           </span>
           <button className="custom-main-button" onClick={() => navigate('/scan')}>
             Открыть
-          </button>
-        </div>
-        <div className="manager-card create-card" onClick={() => setShowNetworkModal(true)}>
-          <h3>Добавить сеть</h3>
-          <p>Объедините несколько точек в одну сеть для общего учёта клиентов.</p>
-          <span className="scanner-icon">
-            <PlusCircle size={18} />
-          </span>
-          <button className="custom-main-button" onClick={() => setShowNetworkModal(true)}>
-            Создать сеть
           </button>
         </div>
       </div>

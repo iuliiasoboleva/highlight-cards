@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import CustomSelect from '../CustomSelect';
+import ConfirmModal from '../ConfirmModal';
 
 const NetworkModal = ({ isOpen, onClose, onSave, onDelete = () => {}, initialData = {}, isEdit }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -30,6 +31,7 @@ const NetworkModal = ({ isOpen, onClose, onSave, onDelete = () => {}, initialDat
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="modal-input"
+          style={{ padding: '10px' }}
         />
         <div className="modal-buttons">
           <button
@@ -44,9 +46,7 @@ const NetworkModal = ({ isOpen, onClose, onSave, onDelete = () => {}, initialDat
           {isEdit && (
             <button
               className="btn btn-danger"
-              onClick={() => {
-                onDelete(initialData.id);
-              }}
+              onClick={() => setShowDeleteConfirm(true)}
             >
               Удалить
             </button>
@@ -55,6 +55,18 @@ const NetworkModal = ({ isOpen, onClose, onSave, onDelete = () => {}, initialDat
             Отмена
           </button>
         </div>
+        <ConfirmModal
+          isOpen={showDeleteConfirm}
+          message="Удалить сеть без возможности восстановления? Все связанные точки останутся без сети."
+          confirmText="Удалить"
+          cancelText="Отмена"
+          onConfirm={() => {
+            onDelete(initialData.id);
+            setShowDeleteConfirm(false);
+            onClose();
+          }}
+          onCancel={() => setShowDeleteConfirm(false)}
+        />
       </div>
     </div>
   );
