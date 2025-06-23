@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { nanoid } from '@reduxjs/toolkit';
+// import { nanoid } from '@reduxjs/toolkit';
 import { useDebounce } from 'use-debounce';
 
 import { assignManagerToSalesPoint } from '../../store/managersSlice';
@@ -100,15 +100,17 @@ const SalesPointsModalWithMap = ({
       return;
     }
 
-    const generatedId = initialData.id || nanoid();
     const newSalesPoint = {
-      id: generatedId,
       name,
       address: selectedLocation.address,
       coords: selectedLocation.coords,
       employees: selectedManager ? [selectedManager] : initialData.employees || [],
       network_id: selectedNetwork,
     };
+
+    if (isEdit && initialData.id) {
+      newSalesPoint.id = initialData.id;
+    }
 
     onSave(newSalesPoint);
 

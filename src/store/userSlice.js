@@ -153,10 +153,17 @@ export const userSlice = createSlice({
         contact = state.contact;
       }
       const newState = { ...state, ...data, firstName, lastName, avatar: avatarUrl, contact };
-      if (data.organization_id) {
-        newState.organization_id = data.organization_id;
-        localStorage.setItem('orgId', data.organization_id);
+
+      if ('organization_id' in data) {
+        newState.organization_id = data.organization_id ?? undefined;
+
+        if (data.organization_id) {
+          localStorage.setItem('orgId', data.organization_id);
+        } else {
+          localStorage.removeItem('orgId');
+        }
       }
+
       return newState;
     },
     toggleRole: (state) => {
