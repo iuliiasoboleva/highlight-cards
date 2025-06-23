@@ -238,6 +238,7 @@ const App = () => {
             <Route index element={<Home />} />
             <Route path="/cards" element={<Cards />} />
             <Route path="/scan" element={<ScanPage />} />
+            <Route path="/workplace" element={<Workplace />} />
 
             <Route path="/cards/create" element={<EditType />} />
             <Route path="/cards/template" element={<Cards />} />

@@ -1,15 +1,17 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 
-import { CreditCard, Home, MapPin, MessageSquare, Settings, User, Users } from 'lucide-react';
+import { CreditCard, Home, MapPin, MessageSquare, Settings, User, Users, Camera } from 'lucide-react';
 
 import './styles.css';
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const role = useSelector((state) => state.user.role);
 
   const handleNavigate = (path) => () => navigate(path);
 
@@ -23,7 +25,7 @@ const Sidebar = () => {
     return location.pathname.startsWith(path);
   };
 
-  const items = [
+  const adminItems = [
     { icon: <Home size={20} />, label: 'Главная', path: '/' },
     { icon: <CreditCard size={20} />, label: 'Карты', path: '/cards' },
     { icon: <Users size={20} />, label: 'Клиенты', path: '/clients' },
@@ -32,6 +34,13 @@ const Sidebar = () => {
     { icon: <User size={20} />, label: 'Менеджеры', path: '/managers' },
     { icon: <Settings size={20} />, label: 'Настройки', path: '/settings' },
   ];
+
+  const employeeItems = [
+    { icon: <Home size={20} />, label: 'Рабочее место', path: '/workplace' },
+    { icon: <Camera size={20} />, label: 'Сканер', path: '/scan' },
+  ];
+
+  const items = role === 'employee' ? employeeItems : adminItems;
 
   return (
     <>

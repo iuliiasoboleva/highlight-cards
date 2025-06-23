@@ -8,7 +8,7 @@ import RoleSwitcher from '../../components/RoleSwitcher';
 
 const Workplace = () => {
   const user = useSelector((state) => state.user);
-  const locations = useSelector((state) => state.locations);
+  const locations = useSelector((state) => state.locations.list);
   const navigate = useNavigate();
 
   const [cardNumber, setCardNumber] = useState('');
@@ -19,8 +19,9 @@ const Workplace = () => {
     }
   };
 
-  const userLocation =
-    locations && locations?.find((loc) => loc.employees.includes(`${user.name} ${user.surname}`));
+  const userLocation = Array.isArray(locations)
+    ? locations.find((loc) => Array.isArray(loc.employees) && loc.employees.includes(`${user.name} ${user.surname}`))
+    : null;
 
   if (!userLocation) {
     return <p>Точка продаж не найдена</p>;
