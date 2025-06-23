@@ -33,6 +33,7 @@ const AuthForm = () => {
     acceptTerms: false,
     referral: '',
     otherReferral: '',
+    promoCode: '',
   });
 
   const [companyError, setCompanyError] = useState('');
@@ -57,6 +58,7 @@ const AuthForm = () => {
       acceptTerms: false,
       referral: '',
       otherReferral: '',
+      promoCode: '',
     });
     setTouchedFields({ inn: false, email: false });
     setCompanyError('');
@@ -132,6 +134,11 @@ const AuthForm = () => {
 
     if (name === 'otherReferral') {
       setFormData((prev) => ({ ...prev, otherReferral: value }));
+      return;
+    }
+
+    if (name === 'promoCode') {
+      setFormData((prev) => ({ ...prev, promoCode: value }));
       return;
     }
 
@@ -233,6 +240,7 @@ const AuthForm = () => {
             phone: formData.phone.replace(/\D/g, ''),
             referral: formData.referral,
             otherReferral: formData.otherReferral,
+            promo_code: formData.promoCode,
             sendEmail: false,
           }),
         ).unwrap();
@@ -518,6 +526,14 @@ const AuthForm = () => {
                   required
                 />
               )}
+
+              <input
+                name="promoCode"
+                placeholder="Промокод (необязательно)"
+                value={formData.promoCode}
+                onChange={handleChange}
+                className="custom-input"
+              />
 
               <label className="custom-checkbox">
                 <input

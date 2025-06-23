@@ -8,7 +8,18 @@ const TOKEN_COOKIE = 'userToken';
 export const requestMagicLink = createAsyncThunk(
   'auth/requestMagicLink',
   async (
-    { email, inn, role, firstName, lastName, phone, referral, otherReferral, sendEmail = true },
+    {
+      email,
+      inn,
+      role,
+      firstName,
+      lastName,
+      phone,
+      referral,
+      otherReferral,
+      promo_code,
+      sendEmail = true,
+    },
     { rejectWithValue },
   ) => {
     const payload = { email };
@@ -20,6 +31,7 @@ export const requestMagicLink = createAsyncThunk(
     if (phone) payload.phone = phone;
     if (referral) payload.referral = referral;
     if (otherReferral) payload.otherReferral = otherReferral;
+    if (promo_code) payload.promo_code = promo_code;
 
     payload.sendEmail = sendEmail;
 
