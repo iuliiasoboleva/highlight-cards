@@ -20,7 +20,10 @@ const Workplace = () => {
   };
 
   const userLocation = Array.isArray(locations)
-    ? locations.find((loc) => Array.isArray(loc.employees) && loc.employees.includes(`${user.name} ${user.surname}`))
+    ? locations.find(
+        (loc) =>
+          Array.isArray(loc.employees) && loc.employees.includes(`${user.name} ${user.surname}`),
+      )
     : null;
 
   if (!userLocation) {

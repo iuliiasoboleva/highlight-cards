@@ -373,9 +373,7 @@ const Locations = () => {
       )}
 
       {/* если локаций ещё нет, даём кнопку скрыть форму */}
-      {noLocations && isMobile === false && (
-        <></>
-      )}
+      {noLocations && isMobile === false && <></>}
     </div>
   );
 };

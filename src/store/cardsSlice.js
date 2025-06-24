@@ -132,15 +132,15 @@ export const togglePinAsync = createAsyncThunk(
     try {
       // toggle current status based on state
       const card = getState().cards.cards.find((c) => c.id === id);
-      const newPinned = !(card?.isPinned);
+      const newPinned = !card?.isPinned;
       await axiosInstance.put(`/cards/${id}`, { is_pinned: newPinned });
 
       // after toggling calculate new order and persist
-      const orderedIds = getState().cards.cards
-        .filter((c) => c.id !== 'fixed' && c.id !== id)
+      const orderedIds = getState()
+        .cards.cards.filter((c) => c.id !== 'fixed' && c.id !== id)
         .map((c) => c.id);
       // we'll reinsert id at beginning if pinned else keep order
-      const newOrder = newPinned ? [id, ...orderedIds] : orderedIds.filter((cid)=>cid!==id);
+      const newOrder = newPinned ? [id, ...orderedIds] : orderedIds.filter((cid) => cid !== id);
       dispatch(saveOrder(newOrder));
 
       return id;

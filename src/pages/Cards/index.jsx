@@ -1,16 +1,16 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
-import { GripVertical } from 'lucide-react';
 
-import { HelpCircle, Loader2, Check, Pin, PinOff } from 'lucide-react';
+import { GripVertical } from 'lucide-react';
+import { Check, HelpCircle, Loader2, Pin, PinOff } from 'lucide-react';
 
 import CardButtons from '../../components/CardButtons';
 import CardInfo from '../../components/CardInfo';
+import { renameCardAsync, reorderCards, saveOrder, togglePinAsync } from '../../store/cardsSlice';
 
 import './styles.css';
-import { renameCardAsync, reorderCards, saveOrder, togglePinAsync } from '../../store/cardsSlice';
 
 const cardDescriptions = {
   discount: {
@@ -55,10 +55,13 @@ const Cards = () => {
   React.useEffect(() => {
     const savedOrder = JSON.parse(localStorage.getItem('cards_order') || '[]');
     if (savedOrder.length) {
-      const ordered = [cards[0], ...savedOrder
-        .map((id) => cards.find((c) => c.id === id))
-        .filter(Boolean)
-        .filter((c) => c.id !== 'fixed')];
+      const ordered = [
+        cards[0],
+        ...savedOrder
+          .map((id) => cards.find((c) => c.id === id))
+          .filter(Boolean)
+          .filter((c) => c.id !== 'fixed'),
+      ];
       if (ordered.length === cards.length - 1) {
         dispatch(reorderCards([cards[0], ...ordered]));
       }
@@ -181,10 +184,13 @@ const Cards = () => {
                     </button>
                   </div>
                 ) : (
-                  <h3 onClick={() => {
-                    setEditingId(card.id);
-                    setNewName(card.name);
-                  }} style={{ cursor: 'pointer' }}>
+                  <h3
+                    onClick={() => {
+                      setEditingId(card.id);
+                      setNewName(card.name);
+                    }}
+                    style={{ cursor: 'pointer' }}
+                  >
                     {card.name}
                   </h3>
                 )}

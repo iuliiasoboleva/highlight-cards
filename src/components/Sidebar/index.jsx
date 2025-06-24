@@ -1,10 +1,19 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 
-import { CreditCard, Home, MapPin, MessageSquare, Settings, User, Users, Camera } from 'lucide-react';
+import {
+  Camera,
+  CreditCard,
+  Home,
+  MapPin,
+  MessageSquare,
+  Settings,
+  User,
+  Users,
+} from 'lucide-react';
 
 import './styles.css';
 

@@ -105,16 +105,33 @@ const CardButtons = ({ isFixed, cardId }) => {
     <div className="card-buttons-block">
       <button onClick={() => navigate(`/cards/${cardId}/info`)}>Перейти</button>
       <div className="icon-buttons">
-        <button onClick={handleToggleActive} data-tooltip-id="card-action-tooltip" data-tooltip-html={card.isActive ? 'Деактивировать' : 'Активировать'}>
+        <button
+          onClick={handleToggleActive}
+          data-tooltip-id="card-action-tooltip"
+          data-tooltip-html={card.isActive ? 'Деактивировать' : 'Активировать'}
+        >
           <Power size={20} />
         </button>
-        <button onClick={handleDownload} data-tooltip-id="card-action-tooltip" data-tooltip-html="Скачать">
+        <button
+          onClick={handleDownload}
+          data-tooltip-id="card-action-tooltip"
+          data-tooltip-html="Скачать"
+        >
           <Download size={20} />
         </button>
-        <button onClick={handleCopy} data-tooltip-id="card-action-tooltip" data-tooltip-html="Скопировать карту" disabled={copyLoading}>
+        <button
+          onClick={handleCopy}
+          data-tooltip-id="card-action-tooltip"
+          data-tooltip-html="Скопировать карту"
+          disabled={copyLoading}
+        >
           <Copy size={20} />
         </button>
-        <button onClick={handleDelete} data-tooltip-id="card-action-tooltip" data-tooltip-html="Удалить карту">
+        <button
+          onClick={handleDelete}
+          data-tooltip-id="card-action-tooltip"
+          data-tooltip-html="Удалить карту"
+        >
           <X size={20} />
         </button>
       </div>

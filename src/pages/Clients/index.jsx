@@ -7,10 +7,10 @@ import { saveAs } from 'file-saver';
 import { Download, HelpCircle, Loader2, PlusCircle, Send } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
+import CustomSelect from '../../components/CustomSelect';
 import FilterableTable from '../../components/FilterableTable';
 import { mockClientsHeaders } from '../../mocks/clientsInfo';
 import { addClientLocal, createClient, fetchClients } from '../../store/clientsSlice';
-import CustomSelect from '../../components/CustomSelect';
 
 import './styles.css';
 
@@ -291,7 +291,15 @@ const Clients = () => {
                 <label style={{ fontSize: 12, marginBottom: 4, display: 'block' }}>
                   Точки продаж
                 </label>
-                <div style={{ maxHeight: 180, overflowY: 'auto', border: '1px solid #ccc', borderRadius: 4, padding: 6 }}>
+                <div
+                  style={{
+                    maxHeight: 180,
+                    overflowY: 'auto',
+                    border: '1px solid #ccc',
+                    borderRadius: 4,
+                    padding: 6,
+                  }}
+                >
                   {branches.map((br) => (
                     <label key={br.id} style={{ display: 'block', marginBottom: 4 }}>
                       <input

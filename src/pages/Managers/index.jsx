@@ -7,9 +7,9 @@ import { Camera, HelpCircle, Loader2, PlusCircle, Search } from 'lucide-react';
 
 import CustomTable from '../../components/CustomTable';
 import ManagerModal from '../../components/ManagerModal';
+import NetworkModal from '../../components/NetworkModal';
 import RoleSwitcher from '../../components/RoleSwitcher';
 import SalesPointsModal from '../../components/SalesPointsModal';
-import NetworkModal from '../../components/NetworkModal';
 import { managersHeaders } from '../../mocks/managersInfo';
 import { locationsHeaders } from '../../mocks/mockLocations';
 import {
@@ -19,13 +19,18 @@ import {
   fetchManagers,
 } from '../../store/managersSlice';
 import {
+  createNetwork,
+  deleteNetwork,
+  editNetwork,
+  fetchNetworks,
+} from '../../store/networksSlice';
+import {
   addLocation,
   createBranch,
   deleteBranch,
   editBranch,
   fetchBranches,
 } from '../../store/salesPointsSlice';
-import { fetchNetworks, createNetwork, editNetwork, deleteNetwork } from '../../store/networksSlice';
 
 import './styles.css';
 
@@ -227,7 +232,12 @@ const ManagersPage = () => {
           if (br)
             updatePromises.push(
               dispatch(
-                editBranch({ id: br.id, name: br.name, organization_id: orgId, network_id: savedNet.id }),
+                editBranch({
+                  id: br.id,
+                  name: br.name,
+                  organization_id: orgId,
+                  network_id: savedNet.id,
+                }),
               ),
             );
         });
@@ -391,8 +401,18 @@ const ManagersPage = () => {
         {networks.length ? (
           <CustomTable
             columns={[
-              { key: 'name', title: 'Название', className: 'text-center', cellClassName: 'text-center' },
-              { key: 'description', title: 'Описание', className: 'text-center', cellClassName: 'text-center' },
+              {
+                key: 'name',
+                title: 'Название',
+                className: 'text-center',
+                cellClassName: 'text-center',
+              },
+              {
+                key: 'description',
+                title: 'Описание',
+                className: 'text-center',
+                cellClassName: 'text-center',
+              },
               {
                 key: 'actions',
                 title: 'Действия',

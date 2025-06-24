@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
 import axiosInstance from '../axiosInstance';
 
 export const fetchNetworks = createAsyncThunk(
@@ -85,4 +86,4 @@ const networksSlice = createSlice({
   },
 });
 
-export default networksSlice.reducer; 
+export default networksSlice.reducer;

@@ -1,8 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import ConfirmModal from '../ConfirmModal';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-const NetworkModal = ({ isOpen, onClose, onSave, onDelete = () => {}, initialData = {}, isEdit }) => {
+import ConfirmModal from '../ConfirmModal';
+
+const NetworkModal = ({
+  isOpen,
+  onClose,
+  onSave,
+  onDelete = () => {},
+  initialData = {},
+  isEdit,
+}) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [selectedBranches, setSelectedBranches] = useState([]);
@@ -24,9 +32,7 @@ const NetworkModal = ({ isOpen, onClose, onSave, onDelete = () => {}, initialDat
     setDescription(initialData.description || '');
 
     if (isEdit) {
-      const preselected = branches
-        .filter((b) => b.network_id === initialData.id)
-        .map((b) => b.id);
+      const preselected = branches.filter((b) => b.network_id === initialData.id).map((b) => b.id);
       setSelectedBranches(preselected);
     } else {
       setSelectedBranches([]);
@@ -88,16 +94,18 @@ const NetworkModal = ({ isOpen, onClose, onSave, onDelete = () => {}, initialDat
             className="btn btn-dark"
             onClick={() => {
               if (!name.trim()) return;
-              onSave({ id: initialData.id, name: name.trim(), description, branches: selectedBranches });
+              onSave({
+                id: initialData.id,
+                name: name.trim(),
+                description,
+                branches: selectedBranches,
+              });
             }}
           >
             Сохранить
           </button>
           {isEdit && (
-            <button
-              className="btn btn-danger"
-              onClick={() => setShowDeleteConfirm(true)}
-            >
+            <button className="btn btn-danger" onClick={() => setShowDeleteConfirm(true)}>
               Удалить
             </button>
           )}
@@ -123,4 +131,4 @@ const NetworkModal = ({ isOpen, onClose, onSave, onDelete = () => {}, initialDat
   );
 };
 
-export default NetworkModal; 
+export default NetworkModal;
