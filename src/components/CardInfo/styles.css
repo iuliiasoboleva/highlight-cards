@@ -17,6 +17,7 @@
   gap: 12px;
   font-size: 10px;
   font-weight: bold;
+  padding: 12px;
 }
 
 .card-info-header,
@@ -25,8 +26,6 @@
   flex-wrap: wrap;
   gap: 8px 12px;
   align-items: flex-start;
-  padding-left: 8px;
-  padding-right: 8px;
   width: 100%;
 }
 
@@ -48,21 +47,29 @@
 } */
 
 .card-info-row-label {
-  font-size: 8px;
   font-weight: 400;
+  font-size: 8px;
+  line-height: 16px;
+  letter-spacing: 0px;
+  text-transform: uppercase;
   white-space: nowrap;
-  line-height: 1.1;
 }
 
 .card-info-row span {
   font-size: 16px;
   display: block;
+  font-weight: 400;
+  line-height: 28px;
+  letter-spacing: 0px;
   white-space: nowrap;
 }
 
 .card-name {
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 25px;
+  letter-spacing: 0px;
   text-align: left;
-  font-size: 16px;
 }
 
 .card-info-main-img-wrapper {
@@ -76,18 +83,24 @@
   height: auto;
   display: block;
   width: 100%;
+  border-radius: 4px;
 }
 
 .card-info-qr-img {
   max-width: 140px;
   width: 100%;
-  margin-top: auto;
+  margin-top: 20px;
   align-self: center;
 }
 
 .card-inline-value {
   height: 15px;
   display: flex;
+  font-weight: 400;
+  font-size: 8px;
+  line-height: 16px;
+  letter-spacing: 0px;
+  text-transform: uppercase;
   gap: 4px;
 }
 
@@ -111,6 +124,7 @@
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  border-radius: 4px;
 }
 
 .stamp-container {
@@ -133,11 +147,11 @@
 
 .stamp-item {
   background-color: white;
-  border: 1px solid gray;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 4px;
 }
 
 .stamp-item.no-border {

@@ -73,7 +73,7 @@ export const defaultCardTemplate = {
       cardBackground: '#FFFFFF',
       stampBackgroundColor: '#F6F6F6',
       textColor: '#1F1E1F',
-      stampColor: '#ffffff',
+      activeStampBgColor: '#ffffff',
       activeStampColor: '#1F1E1F',
       borderColor: '#1F1E1F',
       inactiveStampColor: '#1F1E1F',

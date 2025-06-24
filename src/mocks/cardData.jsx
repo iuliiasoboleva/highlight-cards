@@ -8,7 +8,7 @@ export const mockCards = [
   {
     id: 32,
     status: 'subscription',
-    cardImg: '/strip.png',
+    cardImg: '/templates/spa.png',
     urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
     qrImg: '/qr-code.svg',
     title: 'Абонемент',
@@ -55,7 +55,7 @@ export const mockCards = [
   {
     id: 82,
     status: 'cashback',
-    cardImg: '/strip.png',
+    cardImg: '/templates/spa.png',
     urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
     qrImg: '/qr-code.svg',
     title: 'Кэшбэк',
@@ -78,7 +78,7 @@ export const mockCards = [
   {
     id: 93,
     status: 'discount',
-    cardImg: '/strip.png',
+    cardImg: '/templates/spa.png',
     urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
     qrImg: '/qr-code.svg',
     title: 'Скидочная карта',

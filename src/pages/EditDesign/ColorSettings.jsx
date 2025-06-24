@@ -54,7 +54,7 @@ const ColorSettings = ({ colors, handleColorChange, isStampCard }) => {
     { key: 'cardBackground', label: 'Фон карты' },
     { key: 'stampBackgroundColor', label: 'Цвет фона центральной части' },
     { key: 'activeStampColor', label: 'Активный штамп' },
-    { key: 'stampColor', label: 'Фон штампа' },
+    { key: 'activeStampBgColor', label: 'Фон активного штампа' },
     { key: 'textColor', label: 'Цвет текста' },
     { key: 'borderColor', label: 'Цвет обводки' },
     { key: 'inactiveStampColor', label: 'Неактивный штамп' },

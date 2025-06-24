@@ -7,7 +7,8 @@ const StampGrid = ({
   InactiveIcon,
   activeImage,
   inactiveImage,
-  stampColor,
+  activeStampBgColor,
+  inactiveStampBgColor,
   activeColor = '#000',
   inactiveColor = 'gray',
   borderColor = '#000',
@@ -55,7 +56,7 @@ const StampGrid = ({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: stampColor,
+                  backgroundColor: isActive ? activeStampBgColor : inactiveStampBgColor,
                 }}
               >
                 {isActive ? (

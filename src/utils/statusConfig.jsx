@@ -22,13 +22,13 @@ export const statusConfig = {
   ],
   stamp: [
     {
-      label: 'До получения награды',
+      label: 'Осталось до награды',
       valueKey: 'restStamps',
       format: (value) => `${value} ${pluralize(value, ['штамп', 'штампа', 'штампов'])}`,
     },
     {
-      label: 'Доступно наград',
-      valueKey: 'stamps',
+      label: 'Доступные награды',
+      valueKey: 'rewards',
       format: (value) => `${value} ${pluralize(value, ['награда', 'награды', 'наград'])}`,
     },
     { label: 'Срок действия', valueKey: 'expirationDate' },

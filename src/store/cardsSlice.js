@@ -22,7 +22,11 @@ const getAllCards = (useTemplates = false) => {
   let sortedCards = [...source];
   sortedCards.sort((a, b) =>
     useTemplates
-      ? a.name.localeCompare(b.name, 'ru', { sensitivity: 'base' })
+      ? /^[A-Za-z]/.test(a.name) && !/^[A-Za-z]/.test(b.name)
+        ? -1
+        : !/^[A-Za-z]/.test(a.name) && /^[A-Za-z]/.test(b.name)
+          ? 1
+          : a.name.localeCompare(b.name, 'ru', { sensitivity: 'base' })
       : Number(b.isActive) - Number(a.isActive),
   );
 

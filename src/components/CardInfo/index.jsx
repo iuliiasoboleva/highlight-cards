@@ -128,7 +128,8 @@ const CardInfo = ({ card, setShowInfo }) => {
               activeColor={mergedCard.activeStampColor}
               inactiveColor={mergedCard.inactiveStampColor}
               borderColor={mergedCard.borderColor}
-              stampColor={mergedCard.stampColor}
+              activeStampBgColor={mergedCard.activeStampBgColor}
+              inactiveStampBgColor={mergedCard.inactiveStampBgColor}
             />
           </div>
         )}
