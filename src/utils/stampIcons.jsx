@@ -4,6 +4,7 @@ import { ReactComponent as AsianIcon } from '../assets/icons/asian.svg';
 import { ReactComponent as BarIcon } from '../assets/icons/bar.svg';
 import { ReactComponent as BarberIcon } from '../assets/icons/barber.svg';
 import { ReactComponent as BreakfastIcon } from '../assets/icons/breakfast.svg';
+import { ReactComponent as BrowIcon } from '../assets/icons/brow.svg';
 import { ReactComponent as BurgerIcon } from '../assets/icons/burger.svg';
 import { ReactComponent as CafeIcon } from '../assets/icons/cafe.svg';
 import { ReactComponent as CarWashIcon } from '../assets/icons/carwash.svg';
@@ -11,15 +12,31 @@ import { ReactComponent as CinemaIcon } from '../assets/icons/cinema.svg';
 import { ReactComponent as CleaningIcon } from '../assets/icons/cleaning.svg';
 import { ReactComponent as CoffeeIcon } from '../assets/icons/coffee.svg';
 import { ReactComponent as CoworkingIcon } from '../assets/icons/coworking.svg';
+import { ReactComponent as DentalIcon } from '../assets/icons/dental.svg';
 import { ReactComponent as DepilationIcon } from '../assets/icons/depilation.svg';
+import { ReactComponent as EyelashIcon } from '../assets/icons/eyelash.svg';
+import { ReactComponent as FishIcon } from '../assets/icons/fish.svg';
+import { ReactComponent as FitnessIcon } from '../assets/icons/fitness.svg';
+import { ReactComponent as FloralIcon } from '../assets/icons/floral.svg';
+import { ReactComponent as GymIcon } from '../assets/icons/gym.svg';
+import { ReactComponent as HaircutIcon } from '../assets/icons/haircut.svg';
 import { ReactComponent as HookahIcon } from '../assets/icons/hookah.svg';
+import { ReactComponent as HotelIcon } from '../assets/icons/hotel.svg';
+import { ReactComponent as KebabIcon } from '../assets/icons/kebab.svg';
+import { ReactComponent as LaundryIcon } from '../assets/icons/laundry.svg';
 import { ReactComponent as LunchIcon } from '../assets/icons/lunch.svg';
 import { ReactComponent as MakeupIcon } from '../assets/icons/makeup.svg';
+import { ReactComponent as ManicureIcon } from '../assets/icons/manicure.svg';
+import { ReactComponent as MassageIcon } from '../assets/icons/massage.svg';
 import { ReactComponent as PastryIcon } from '../assets/icons/pastry.svg';
+import { ReactComponent as PizzaIcon } from '../assets/icons/pizza.svg';
 import { ReactComponent as PoolIcon } from '../assets/icons/pool.svg';
 import { ReactComponent as QuestIcon } from '../assets/icons/quest.svg';
 import { ReactComponent as RentCarIcon } from '../assets/icons/rentcar.svg';
+import { ReactComponent as RestaurantIcon } from '../assets/icons/restaurant.svg';
 import { ReactComponent as SPAIcon } from '../assets/icons/spa.svg';
+import { ReactComponent as SunroomIcon } from '../assets/icons/sunroom.svg';
+import { ReactComponent as SushiIcon } from '../assets/icons/sushi.svg';
 
 export const stampIcons = [
   { id: 1, name: 'Звезда', value: 'Star', component: Star },
@@ -48,6 +65,23 @@ export const stampIcons = [
   { id: 24, name: 'Коворкинг', value: 'Coworking', component: CoworkingIcon },
   { id: 25, name: 'Кондитерская', value: 'Pastry', component: PastryIcon },
   { id: 26, name: 'Макияж', value: 'Makeup', component: MakeupIcon },
+  { id: 27, name: 'Маникюр', value: 'Manicure', component: ManicureIcon },
+  { id: 28, name: 'Массаж', value: 'Massage', component: MassageIcon },
+  { id: 29, name: 'Отель', value: 'Hotel', component: HotelIcon },
+  { id: 30, name: 'Пиццерия', value: 'Pizza', component: PizzaIcon },
+  { id: 31, name: 'Ресторан', value: 'Restaurant', component: RestaurantIcon },
+  { id: 32, name: 'Рыбный ресторан', value: 'Fish', component: FishIcon },
+  { id: 33, name: 'Солярий', value: 'Sunroom', component: SunroomIcon },
+  { id: 34, name: 'Спортзал', value: 'Gym', component: GymIcon },
+  { id: 35, name: 'Стоматология', value: 'Dental', component: DentalIcon },
+  { id: 36, name: 'Стрижка', value: 'Haircut', component: HaircutIcon },
+  { id: 37, name: 'Суши', value: 'Sushi', component: SushiIcon },
+  { id: 38, name: 'Брови', value: 'Brow', component: BrowIcon },
+  { id: 39, name: 'Ресницы', value: 'Eyelash', component: EyelashIcon },
+  { id: 40, name: 'Фитнес', value: 'Fitness', component: FitnessIcon },
+  { id: 41, name: 'Химчистка', value: 'Laundry', component: LaundryIcon },
+  { id: 42, name: 'Цветочный', value: 'Floral', component: FloralIcon },
+  { id: 43, name: 'Шаурма', value: 'Kebab', component: KebabIcon },
 ];
 
 export const getStampIconComponent = (iconName) => {

@@ -29,6 +29,9 @@ const StampGrid = ({
   const itemSize = Math.min(maxItemWidth, maxItemHeight);
   const iconSize = Math.floor(itemSize * 0.6);
 
+  const paddingRatio = 0.2;
+  const itemPadding = Math.floor(itemSize * paddingRatio);
+
   return (
     <div
       className="stamp-container"
@@ -56,6 +59,7 @@ const StampGrid = ({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  padding: `${itemPadding}px`,
                   backgroundColor: isActive ? activeStampBgColor : inactiveStampBgColor,
                 }}
               >
