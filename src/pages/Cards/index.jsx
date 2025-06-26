@@ -8,7 +8,13 @@ import { Check, HelpCircle, Loader2, Pin, PinOff } from 'lucide-react';
 
 import CardButtons from '../../components/CardButtons';
 import CardInfo from '../../components/CardInfo';
-import { renameCardAsync, reorderCards, saveOrder, togglePinAsync } from '../../store/cardsSlice';
+import {
+  renameCardAsync,
+  reorderCards,
+  saveOrder,
+  togglePinAsync,
+  fetchCards,
+} from '../../store/cardsSlice';
 
 import './styles.css';
 
@@ -67,6 +73,10 @@ const Cards = () => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
+
+  React.useEffect(() => {
+    dispatch(fetchCards());
   }, [dispatch]);
 
   if (loading) {

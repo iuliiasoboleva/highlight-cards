@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { createCard } from '../../store/cardsSlice';
+import { createCard, saveCard, setCurrentCard } from '../../store/cardsSlice';
 
 import { HelpCircle, QrCode } from 'lucide-react';
 
@@ -70,6 +70,17 @@ const SubMenu = ({
           })}
         </div>
 
+        {!showRightActions && id && (
+          <div className="submenu-right">
+            <Link to={`/cards/${id}/edit/type`} className="submenu-tab" onClick={() => {
+              const cardData = cards.find((c) => c.id === Number(id));
+              if (cardData) dispatch(setCurrentCard(cardData));
+            }}>
+              Редактировать
+            </Link>
+          </div>
+        )}
+
         {showRightActions && (
           <div className="submenu-right">
             <button className="submenu-icon-button" title="Помощь">
@@ -79,17 +90,16 @@ const SubMenu = ({
               className="submenu-tab submenu-save-button"
               onClick={async () => {
                 const exists = cards.some((c) => c.id === currentCard.id && c.id !== 'fixed');
-                if (!exists) {
-                  try {
+                try {
+                  if (!exists) {
                     await dispatch(createCard()).unwrap();
-                    window.location.href = '/cards';
-                    return;
-                  } catch {}
-                } else {
+                  } else {
+                    await dispatch(saveCard()).unwrap();
+                  }
                   window.location.href = '/cards';
+                } catch {
+                  setShowQRPopup(true);
                 }
-                // fallback
-                setShowQRPopup(true);
               }}
             >
               Сохранить и посмотреть

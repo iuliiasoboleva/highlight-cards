@@ -89,16 +89,6 @@ const DefaultCardInfo = () => {
           {card.isActive ? 'Активна' : 'Не активна'}
         </div>
         <div className="card-state">{card.title}</div>
-        <button
-          className="edit-card-btn"
-          onClick={() => {
-            dispatch(setCurrentCard(card));
-            navigate(`/cards/${id}/edit/type`);
-          }}
-          style={{ marginLeft: 'auto' }}
-        >
-          Редактировать
-        </button>
       </div>
       <div className="card-image-wrapper">
         <div className="card-info-block">
