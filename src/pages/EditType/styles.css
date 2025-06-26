@@ -84,3 +84,8 @@ hr {
   background-color: #aaa;
   cursor: not-allowed;
 }
+
+.edit-type-desc {
+  font-size: 14px;
+  color: #6b7280;
+}

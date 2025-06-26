@@ -11,11 +11,41 @@ import { createCard, setCurrentCard, updateCurrentCardField } from '../../store/
 import './styles.css';
 
 const cardTypes = [
-  { id: 'stamp', name: 'Штамп', icon: Stamp, tag: 'high' },
-  { id: 'discount', name: 'Скидка', icon: BadgePercent, tag: 'high' },
-  { id: 'cashback', name: 'Кешбэк', icon: DollarSign, tag: 'high' },
-  { id: 'subscription', name: 'Абонемент', icon: Ticket, tag: 'shop' },
-  { id: 'certificate', name: 'Подарочный сертификат', icon: Gift, tag: 'shop' },
+  {
+    id: 'stamp',
+    name: 'Штамп',
+    icon: Stamp,
+    tag: 'high',
+    desc: 'Собирайте визиты — и дарите бонус',
+  },
+  {
+    id: 'discount',
+    name: 'Скидка',
+    icon: BadgePercent,
+    tag: 'high',
+    desc: 'Автоматическая скидка по карте',
+  },
+  {
+    id: 'cashback',
+    name: 'Кэшбэк',
+    icon: DollarSign,
+    tag: 'high',
+    desc: 'Накопление % от суммы чека',
+  },
+  {
+    id: 'subscription',
+    name: 'Абонемент',
+    icon: Ticket,
+    tag: 'shop',
+    desc: 'Фиксированное число посещений',
+  },
+  {
+    id: 'certificate',
+    name: 'Подарочный сертификат',
+    icon: Gift,
+    tag: 'shop',
+    desc: 'Карта с фиксированной суммой',
+  },
 ];
 
 const EditType = () => {
@@ -79,6 +109,7 @@ const EditType = () => {
             >
               <Icon className="icon" size={24} />
               <div className="edit-type-name">{type.name}</div>
+              <div className="edit-type-desc">{type.desc}</div>
               <div
                 className={`edit-type-tag ${
                   type.tag === 'high' ? 'edit-type-green' : 'edit-type-purple'
