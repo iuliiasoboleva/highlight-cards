@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { createCard } from '../../store/cardsSlice';
 
 import { HelpCircle, QrCode } from 'lucide-react';
 
@@ -17,6 +19,9 @@ const SubMenu = ({
 }) => {
   const { id } = useParams();
   const location = useLocation();
+  const dispatch = useDispatch();
+  const cards = useSelector((state) => state.cards.cards);
+  const currentCard = useSelector((state) => state.cards.currentCard);
   const [name, setName] = useState(initialName || '');
   const [showQRPopup, setShowQRPopup] = useState(false);
 
@@ -72,7 +77,15 @@ const SubMenu = ({
             </button>
             <button
               className="submenu-tab submenu-save-button"
-              onClick={() => setShowQRPopup(true)}
+              onClick={async () => {
+                const exists = cards.some((c) => c.id === currentCard.id && c.id !== 'fixed');
+                if (!exists) {
+                  try {
+                    await dispatch(createCard()).unwrap();
+                  } catch {}
+                }
+                setShowQRPopup(true);
+              }}
             >
               Сохранить и посмотреть
             </button>

@@ -76,11 +76,7 @@ const EditType = () => {
 
   const handleCreateCard = () => {
     if (!selectedType) return;
-    dispatch(createCard())
-      .unwrap()
-      .then((created) => {
-        navigate(`/cards/1/edit/settings`);
-      });
+    navigate(`/cards/${currentCard.id}/edit/settings`);
   };
 
   const typeContent = (
