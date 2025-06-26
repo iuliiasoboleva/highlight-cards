@@ -19,6 +19,8 @@ const EditLayout = ({ children, onFieldClick }) => {
 
   const currentCard = useSelector((state) => state.cards.currentCard);
 
+  const isDesignStep = location.pathname.includes('/edit/design');
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 1024);
     window.addEventListener('resize', handleResize);
@@ -51,7 +53,7 @@ const EditLayout = ({ children, onFieldClick }) => {
   };
 
   useEffect(() => {
-    if (location.pathname.includes('/edit/info')) {
+    if (location.pathname.includes('/edit/info') || location.pathname.includes('/edit/design')) {
       setShowInfo(true);
     }
   }, [location.pathname]);
@@ -96,7 +98,18 @@ const EditLayout = ({ children, onFieldClick }) => {
                   <CardInfo card={currentCard} showInfo={showInfo} setShowInfo={setShowInfo} />
                   {showInfo && (
                     <InfoOverlay
-                      infoFields={currentCard.infoFields}
+                      infoFields={
+                        isDesignStep
+                          ? {
+                              stampsQuantity: currentCard.design?.stampsQuantity,
+                              activeStamp: currentCard.design?.activeStamp,
+                              inactiveStamp: currentCard.design?.inactiveStamp,
+                              logo: currentCard.design?.logo,
+                              icon: currentCard.design?.icon,
+                              stampBackground: currentCard.design?.stampBackground,
+                            }
+                          : currentCard.infoFields
+                      }
                       onClose={() => setShowInfo(false)}
                       onFieldClick={onFieldClick}
                     />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
@@ -28,6 +28,8 @@ const EditDesign = () => {
 
   const isStampCard = ['stamp', 'subscription'].includes(currentCard.status);
 
+  const formRef = useRef(null);
+
   const handleStampIconChange = (path, iconName) => {
     dispatch(updateCurrentCardField({ path, value: iconName }));
   };
@@ -42,7 +44,7 @@ const EditDesign = () => {
 
   const renderStampControls = () => (
     <>
-      <div className="design-stamp-controls">
+      <div className="design-stamp-controls" data-design-key="stampsQuantity">
         <label className="stamp-section-label">
           <h3 className="barcode-radio-title">
             Количество штампов
@@ -72,7 +74,7 @@ const EditDesign = () => {
       <hr />
 
       <div className="stamp-settings">
-        <div className="stamp-settings-block">
+        <div className="stamp-settings-block" data-design-key="activeStamp">
           <StampIconSelector
             label="Активный штамп"
             tooltip={'Дизайн активного штампа'}
@@ -91,7 +93,7 @@ const EditDesign = () => {
           />
         </div>
 
-        <div className="stamp-settings-block">
+        <div className="stamp-settings-block" data-design-key="inactiveStamp">
           <StampIconSelector
             label="Неактивный штамп"
             tooltip={'Дизайн неактивного штампа'}
@@ -117,7 +119,7 @@ const EditDesign = () => {
   );
 
   const designContent = (
-    <div className="settings-inputs-container">
+    <div className="settings-inputs-container" ref={formRef}>
       <h2>
         Дизайн
         <HelpCircle
@@ -133,7 +135,7 @@ const EditDesign = () => {
       {isStampCard && renderStampControls()}
 
       <div className="stamp-settings">
-        <div className="stamp-settings-block">
+        <div className="stamp-settings-block" data-design-key="logo">
           <h3 className="barcode-radio-title">
             Логотип
             <HelpCircle
@@ -151,7 +153,7 @@ const EditDesign = () => {
           />
         </div>
 
-        <div className="stamp-settings-block">
+        <div className="stamp-settings-block" data-design-key="icon">
           <h3 className="barcode-radio-title">
             Иконка
             <HelpCircle
@@ -170,7 +172,7 @@ const EditDesign = () => {
         </div>
       </div>
       <div className="stamp-settings">
-        <div className="stamp-settings-block">
+        <div className="stamp-settings-block" data-design-key="stampBackground">
           <h3 className="barcode-radio-title">
             Фон центральной части
             <HelpCircle
@@ -227,7 +229,16 @@ const EditDesign = () => {
     </div>
   );
 
-  return <EditLayout>{designContent}</EditLayout>;
+  // функция подсветки
+  const flashInput = useCallback((key) => {
+    const el = formRef.current?.querySelector(`[data-design-key="${key}"]`);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.add('flash-border');
+    setTimeout(() => el.classList.remove('flash-border'), 1000);
+  }, []);
+
+  return <EditLayout onFieldClick={flashInput}>{designContent}</EditLayout>;
 };
 
 export default EditDesign;
