@@ -351,7 +351,17 @@ export const cardsSlice = createSlice({
       })
       .addCase(createCard.fulfilled, (state, action) => {
         state.loading = false;
-        const newCard = action.payload;
+        const rawCard = action.payload;
+        const newCard = {
+          ...rawCard,
+          frameUrl: rawCard.frame_url || rawCard.frameUrl || '/frame-empty.svg',
+          qrImg: rawCard.qr_img || rawCard.qrImg,
+          urlCopy: rawCard.url_copy || rawCard.urlCopy,
+          fieldsName: (statusConfig[rawCard.status] || []).map((item) => ({
+            type: item.valueKey,
+            name: item.label,
+          })),
+        };
         const rest = state.cards.slice(1).filter((c) => c.id !== newCard.id);
         state.cards = [state.cards[0], ...rest, newCard];
         state.currentCard = mergeCardWithDefault(newCard);

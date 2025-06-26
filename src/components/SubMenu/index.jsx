@@ -82,8 +82,13 @@ const SubMenu = ({
                 if (!exists) {
                   try {
                     await dispatch(createCard()).unwrap();
+                    window.location.href = '/cards';
+                    return;
                   } catch {}
+                } else {
+                  window.location.href = '/cards';
                 }
+                // fallback
                 setShowQRPopup(true);
               }}
             >

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
+import { setCurrentCard } from '../../store/cardsSlice';
 
 import { Loader2 } from 'lucide-react';
 
@@ -16,6 +17,8 @@ import './styles.css';
 const DefaultCardInfo = () => {
   const { id } = useParams();
   const { cards } = useSelector((state) => state.cards);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [card, setCard] = useState(cards.find((c) => c.id === +id) || null);
   const [transactions, setTransactions] = useState([]);
@@ -79,13 +82,23 @@ const DefaultCardInfo = () => {
 
   return (
     <div className="card-info-wrapper">
-      <div className="card-info-title">
+      <div className="card-info-title" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
         <h1>{card.name}</h1>
         <div className="card-state">
           <span className={`status-indicator ${card.isActive ? 'active' : 'inactive'}`} />
           {card.isActive ? 'Активна' : 'Не активна'}
         </div>
         <div className="card-state">{card.title}</div>
+        <button
+          className="edit-card-btn"
+          onClick={() => {
+            dispatch(setCurrentCard(card));
+            navigate(`/cards/${id}/edit/type`);
+          }}
+          style={{ marginLeft: 'auto' }}
+        >
+          Редактировать
+        </button>
       </div>
       <div className="card-image-wrapper">
         <div className="card-info-block">
