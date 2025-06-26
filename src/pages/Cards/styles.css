@@ -212,3 +212,14 @@
 .card.pinned .card-pin-btn {
   opacity: 1;
 }
+
+/* disable hover effects for template page */
+.card.no-hover:hover .card-drag-handle,
+.card.no-hover:hover .card-pin-btn {
+  opacity: 0;
+}
+
+.card.no-hover:hover .card-image,
+.card.no-hover:hover .card-info {
+  filter: none;
+}

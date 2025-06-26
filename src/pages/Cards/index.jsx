@@ -101,8 +101,8 @@ const Cards = () => {
         {cards.map((card, idx) => (
           <div
             key={card.id}
-            className={`card ${card.isActive ? 'active' : 'inactive'} ${card.isPinned ? 'pinned' : ''}`}
-            draggable={card.id !== 'fixed'}
+            className={`card ${card.isActive ? 'active' : 'inactive'} ${card.isPinned ? 'pinned' : ''} ${isTemplatePage ? 'no-hover' : ''}`}
+            draggable={!isTemplatePage && card.id !== 'fixed'}
             onDragStart={(e) => {
               setDragIndex(idx);
               e.dataTransfer.effectAllowed = 'move';
@@ -132,7 +132,7 @@ const Cards = () => {
               </div>
             )}
             <div className="card-image-block">
-              {card.id !== 'fixed' && (
+              {!isTemplatePage && card.id !== 'fixed' && (
                 <div
                   className="card-pin-btn"
                   onClick={(ev) => {
@@ -143,7 +143,7 @@ const Cards = () => {
                   {card.isPinned ? <PinOff size={18} /> : <Pin size={18} />}
                 </div>
               )}
-              {card.id !== 'fixed' && <GripVertical className="card-drag-handle" />}
+              {!isTemplatePage && card.id !== 'fixed' && <GripVertical className="card-drag-handle" />}
               <img className="card-image" src={card.frameUrl} alt={card.name} />
               {card.id !== 'fixed' && <CardInfo card={card} />}
             </div>
