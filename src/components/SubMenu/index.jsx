@@ -71,7 +71,7 @@ const SubMenu = ({
         </div>
 
         {!showRightActions && id && (
-          <div className="submenu-right">
+          <div className="submenu-right" style={{ marginLeft: 'auto' }}>
             <Link to={`/cards/${id}/edit/type`} className="submenu-tab" onClick={() => {
               const cardData = cards.find((c) => c.id === Number(id));
               if (cardData) dispatch(setCurrentCard(cardData));
