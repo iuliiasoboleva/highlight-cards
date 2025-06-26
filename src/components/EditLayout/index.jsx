@@ -95,7 +95,12 @@ const EditLayout = ({ children, onFieldClick }) => {
               <div className="phone-frame">
                 <img className="phone-image" src={currentCard.frameUrl} alt={currentCard.name} />
                 <div className="phone-screen">
-                  <CardInfo card={currentCard} showInfo={showInfo} setShowInfo={setShowInfo} />
+                  <CardInfo
+                    card={currentCard}
+                    showInfo={showInfo}
+                    setShowInfo={setShowInfo}
+                    onFieldClick={onFieldClick}
+                  />
                   {showInfo && (
                     <InfoOverlay
                       infoFields={

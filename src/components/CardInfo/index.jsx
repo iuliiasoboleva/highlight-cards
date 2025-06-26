@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 import { HelpCircle, Star } from 'lucide-react';
 
@@ -9,13 +10,44 @@ import StampGrid from './StampGrid';
 
 import './styles.css';
 
-const CardInfo = ({ card, setShowInfo }) => {
+const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { id: urlId } = useParams();
+  const cardId = card.id || urlId;
   const currentFields = useSelector((state) => state.cards.currentCard?.fieldsName) || [];
   const currentDesign = useSelector((state) => state.cards.currentCard?.design) || {};
 
   const toggleInfo = () => {
     if (typeof setShowInfo === 'function') {
       setShowInfo((prev) => !prev);
+    }
+  };
+
+  const handleFieldClick = (type) => {
+    // карта маршрутов
+    const navMap = {
+      expirationDate: { step: 'settings', flashKey: 'cardFixedDate' },
+      restStamps: { step: 'design', flashKey: 'stampsQuantity' },
+    };
+
+    const target = navMap[type];
+
+    if (target && cardId) {
+      const stepPath = `/cards/${cardId}/edit/${target.step}`;
+      // если уже на нужном шаге и есть onFieldClick -> подсветка
+      if (location.pathname.startsWith(stepPath) && onFieldClick) {
+        onFieldClick(target.flashKey);
+      } else {
+        navigate(stepPath, { state: { flashKey: target.flashKey } });
+      }
+      return;
+    }
+
+    // если явной навигации нет, но есть локальный onFieldClick
+    if (onFieldClick) {
+      const fallbackKey = { restStamps: 'stampsQuantity' }[type] || type;
+      onFieldClick(fallbackKey);
     }
   };
 
@@ -95,7 +127,13 @@ const CardInfo = ({ card, setShowInfo }) => {
             .map(({ name, type }) => {
               const value = mergedCard[type];
               return (
-                <span key={type} className="card-inline-value" title={name}>
+                <span
+                  key={type}
+                  className="card-inline-value"
+                  title={name}
+                  style={{ cursor: onFieldClick ? 'pointer' : 'default' }}
+                  onClick={() => handleFieldClick(type)}
+                >
                   <span className="inline-label">{name}:</span> {renderFieldValue(value, { type })}
                 </span>
               );
@@ -150,7 +188,12 @@ const CardInfo = ({ card, setShowInfo }) => {
           .map(({ type, name }) => {
             const value = mergedCard[type];
             return (
-              <div key={type} className="card-info-row">
+              <div
+                key={type}
+                className="card-info-row"
+                style={{ cursor: onFieldClick ? 'pointer' : 'default' }}
+                onClick={() => handleFieldClick(type)}
+              >
                 <p className="card-info-row-label" title={name}>
                   {name}
                 </p>

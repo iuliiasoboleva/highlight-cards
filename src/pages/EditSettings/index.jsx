@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 
 import { HelpCircle } from 'lucide-react';
@@ -26,6 +26,7 @@ import './styles.css';
 const EditSettings = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
 
   const currentCard = useSelector((state) => state.cards.currentCard);
@@ -34,6 +35,8 @@ const EditSettings = () => {
   const cardStatus = currentCard.status;
 
   const [showLocationModal, setShowLocationModal] = useState(false);
+
+  const formRef = useRef(null);
 
   const handleSave = () => {
     if (policySettings?.policyEnabled) {
@@ -58,7 +61,7 @@ const EditSettings = () => {
   };
 
   const settingsContent = (
-    <div className="settings-inputs-container">
+    <div className="settings-inputs-container" ref={formRef}>
       <h2 className="subtitle">
         Настройки
         <HelpCircle
@@ -229,9 +232,7 @@ const EditSettings = () => {
       {(cardStatus === 'cashback' || cardStatus === 'certificate') && (
         <CardLimit
           value={currentCard.initialPointsOnIssue}
-          onChange={(value) =>
-            dispatch(updateCurrentCardField({ path: 'initialPointsOnIssue', value }))
-          }
+          onChange={(value) => dispatch(updateCurrentCardField({ path: 'initialPointsOnIssue', value }))}
           title="Количество баллов при выпуске карты"
         />
       )}
@@ -311,7 +312,21 @@ const EditSettings = () => {
     </div>
   );
 
-  return <EditLayout>{settingsContent}</EditLayout>;
+  const flashInput = useCallback((key) => {
+    const el = formRef.current?.querySelector(`[data-settings-key="${key}"]`);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.add('flash-border');
+    setTimeout(() => el.classList.remove('flash-border'), 1000);
+  }, []);
+
+  useEffect(() => {
+    if (location.state?.flashKey) {
+      flashInput(location.state.flashKey);
+    }
+  }, [location.state, flashInput]);
+
+  return <EditLayout onFieldClick={flashInput}>{settingsContent}</EditLayout>;
 };
 
 export default EditSettings;

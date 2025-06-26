@@ -60,6 +60,7 @@ const RadioConfigs = ({ cardStatus }) => {
             type="date"
             value={settings.cardFixedDate || ''}
             min={getMinDate()}
+            data-settings-key="cardFixedDate"
             onChange={(e) => {
               const newDate = e.target.value;
               const formattedExpiration = formatDateToDDMMYYYY(newDate);
