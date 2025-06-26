@@ -111,3 +111,10 @@ form {
     min-height: 100%;
   }
 }
+
+/* Переопределение ширины тултипа */
+.custom-tooltip {
+  max-width: 280px !important;
+  white-space: normal !important;
+  text-align: left;
+}
