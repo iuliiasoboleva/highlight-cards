@@ -9,11 +9,11 @@ import { Check, HelpCircle, Loader2, Pin, PinOff } from 'lucide-react';
 import CardButtons from '../../components/CardButtons';
 import CardInfo from '../../components/CardInfo';
 import {
+  fetchCards,
   renameCardAsync,
   reorderCards,
   saveOrder,
   togglePinAsync,
-  fetchCards,
 } from '../../store/cardsSlice';
 
 import './styles.css';
@@ -153,7 +153,9 @@ const Cards = () => {
                   {card.isPinned ? <PinOff size={18} /> : <Pin size={18} />}
                 </div>
               )}
-              {!isTemplatePage && card.id !== 'fixed' && <GripVertical className="card-drag-handle" />}
+              {!isTemplatePage && card.id !== 'fixed' && (
+                <GripVertical className="card-drag-handle" />
+              )}
               <img className="card-image" src={card.frameUrl} alt={card.name} />
               {card.id !== 'fixed' && <CardInfo card={card} />}
             </div>

@@ -1,0 +1,26 @@
+.card-info-title-row.android {
+  border-bottom: 1px solid #d5d5dd;
+  padding-bottom: 10px;
+}
+
+.info-text-button {
+  font-size: 12px;
+  color: #6f42c1;
+  background-color: transparent;
+  border: 1px solid #e0e0e0;
+  border-radius: 999px;
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.info-text-button:hover {
+  background-color: rgba(111, 66, 193, 0.05);
+}
+
+.card-type-description {
+  font-size: 14px;
+  line-height: 1.25;
+  color: #333;
+  font-weight: 400;
+}

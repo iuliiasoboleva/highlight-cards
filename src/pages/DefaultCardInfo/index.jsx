@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { setCurrentCard } from '../../store/cardsSlice';
 
 import { Loader2 } from 'lucide-react';
 
@@ -10,6 +9,7 @@ import CardInfo from '../../components/CardInfo';
 import CustomTable from '../../components/CustomTable';
 import DashboardStats from '../../components/DashboardStats';
 import { transactionHeaders } from '../../mocks/mockTransactions';
+import { setCurrentCard } from '../../store/cardsSlice';
 import { generatePDF } from '../../utils/pdfGenerator';
 
 import './styles.css';

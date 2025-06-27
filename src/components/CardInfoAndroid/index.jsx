@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { HelpCircle, Star } from 'lucide-react';
+import { Star } from 'lucide-react';
 
 import { getStampIconComponent } from '../../utils/stampIcons';
-import { statusConfig } from '../../utils/statusConfig';
-import StampGrid from './StampGrid';
+import { cardTypeDescriptions, statusConfig } from '../../utils/statusConfig';
+import StampGrid from '../CardInfo/StampGrid';
 
 import './styles.css';
 
-const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
+const CardInfoAndroid = ({ card, setShowInfo, onFieldClick }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id: urlId } = useParams();
@@ -106,40 +106,42 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
       }}
     >
       <div className="card-info-header">
-        <div className="card-info-title-row">
+        <div className="card-info-title-row android">
           {design.logo ? (
             <img src={design.logo} alt="Лого" className="card-info-logo" />
           ) : (
             <p className="card-name">{mergedCard.name}</p>
           )}
-          <HelpCircle
-            size={20}
-            onClick={toggleInfo}
-            className="info-button"
-            style={{ cursor: 'pointer' }}
-          />
         </div>
-        <span className="card-inline-value">
-          {fields
-            .filter(({ type }) =>
-              ['balanceMoney', 'credits', 'balance', 'expirationDate'].includes(type),
-            )
-            .map(({ name, type }) => {
-              const value = mergedCard[type];
-              return (
-                <span
-                  key={type}
-                  className="card-inline-value"
-                  title={name}
-                  style={{ cursor: onFieldClick ? 'pointer' : 'default' }}
-                  onClick={() => handleFieldClick(type)}
-                >
-                  <span className="inline-label">{name}:</span> {renderFieldValue(value, { type })}
-                </span>
-              );
-            })}
-        </span>
+        {cardTypeDescriptions[card.status] && (
+          <p className="card-type-description">{cardTypeDescriptions[card.status]}</p>
+        )}
       </div>
+      <div className="card-info-footer">
+        {fields
+          .filter(
+            ({ type }) =>
+              type && !['balanceMoney', 'credits', 'balance', 'expirationDate'].includes(type),
+          )
+          .map(({ type, name }) => {
+            const value = mergedCard[type];
+            return (
+              <div
+                key={type}
+                className="card-info-row"
+                style={{ cursor: onFieldClick ? 'pointer' : 'default' }}
+                onClick={() => handleFieldClick(type)}
+              >
+                <p className="card-info-row-label" title={name}>
+                  {name}
+                </p>
+                <span>{renderFieldValue(value, { type })}</span>
+              </div>
+            );
+          })}
+      </div>
+
+      {card.qrImg && <img className="card-info-qr-img" src={card.qrImg} alt="QR код" />}
 
       <div className="card-info-main-img-wrapper">
         {design.stampBackground || mergedCard.cardImg ? (
@@ -178,34 +180,11 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
           </div>
         )}
       </div>
-
-      <div className="card-info-footer">
-        {fields
-          .filter(
-            ({ type }) =>
-              type && !['balanceMoney', 'credits', 'balance', 'expirationDate'].includes(type),
-          )
-          .map(({ type, name }) => {
-            const value = mergedCard[type];
-            return (
-              <div
-                key={type}
-                className="card-info-row"
-                style={{ cursor: onFieldClick ? 'pointer' : 'default' }}
-                onClick={() => handleFieldClick(type)}
-              >
-                <p className="card-info-row-label" title={name}>
-                  {name}
-                </p>
-                <span>{renderFieldValue(value, { type })}</span>
-              </div>
-            );
-          })}
-      </div>
-
-      {card.qrImg && <img className="card-info-qr-img" src={card.qrImg} alt="QR код" />}
+      <button className="info-text-button" onClick={toggleInfo}>
+        Сведения
+      </button>
     </div>
   );
 };
 
-export default CardInfo;
+export default CardInfoAndroid;

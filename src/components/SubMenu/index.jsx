@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { createCard, saveCard, setCurrentCard } from '../../store/cardsSlice';
+import { Link, useLocation, useParams } from 'react-router-dom';
 
 import { HelpCircle, QrCode } from 'lucide-react';
 
+import { createCard, saveCard, setCurrentCard } from '../../store/cardsSlice';
 import QRPopup from '../QRPopup';
 
 import './styles.css';
@@ -72,10 +72,14 @@ const SubMenu = ({
 
         {!showRightActions && id && (
           <div className="submenu-right" style={{ marginLeft: 'auto' }}>
-            <Link to={`/cards/${id}/edit/type`} className="submenu-tab" onClick={() => {
-              const cardData = cards.find((c) => c.id === Number(id));
-              if (cardData) dispatch(setCurrentCard(cardData));
-            }}>
+            <Link
+              to={`/cards/${id}/edit/type`}
+              className="submenu-tab"
+              onClick={() => {
+                const cardData = cards.find((c) => c.id === Number(id));
+                if (cardData) dispatch(setCurrentCard(cardData));
+              }}
+            >
               Редактировать
             </Link>
           </div>

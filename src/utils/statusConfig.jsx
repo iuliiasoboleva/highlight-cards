@@ -46,3 +46,11 @@ export const statusConfig = {
     },
   ],
 };
+
+export const cardTypeDescriptions = {
+  stamp: 'Собирайте штампы для получения наград',
+  discount: 'Делайте покупки, увеличивайте скидку',
+  cashback: 'Получайте бонусные баллы за каждую покупку',
+  subscription: 'Проходите услуги и получайте бонусные баллы',
+  certificate: 'Название акции',
+};

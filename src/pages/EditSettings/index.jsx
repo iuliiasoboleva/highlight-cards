@@ -1,6 +1,6 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 
 import { HelpCircle } from 'lucide-react';
@@ -232,7 +232,9 @@ const EditSettings = () => {
       {(cardStatus === 'cashback' || cardStatus === 'certificate') && (
         <CardLimit
           value={currentCard.initialPointsOnIssue}
-          onChange={(value) => dispatch(updateCurrentCardField({ path: 'initialPointsOnIssue', value }))}
+          onChange={(value) =>
+            dispatch(updateCurrentCardField({ path: 'initialPointsOnIssue', value }))
+          }
           title="Количество баллов при выпуске карты"
         />
       )}
