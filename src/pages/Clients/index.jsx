@@ -31,6 +31,7 @@ const Clients = () => {
   const [selectedNetwork, setSelectedNetwork] = useState(null);
   const [mode, setMode] = useState('branches'); // 'branches' | 'network'
   const [isCopied, setIsCopied] = useState(false);
+  const [showNoBranchModal, setShowNoBranchModal] = useState(false);
 
   const { list: clients, loading } = useSelector((state) => state.clients);
   const orgId = useSelector((state) => state.user.organization_id);
@@ -186,7 +187,16 @@ const Clients = () => {
       </div>
 
       <div className="clients-actions-bar">
-        <button className="custom-main-button" onClick={() => setShowModal(true)}>
+        <button
+          className="custom-main-button"
+          onClick={() => {
+            if (branches.length === 0) {
+              setShowNoBranchModal(true);
+            } else {
+              setShowModal(true);
+            }
+          }}
+        >
           <span>+</span>Добавить клиента
         </button>
       </div>
@@ -384,6 +394,31 @@ const Clients = () => {
                 onClick={() => setShowLinkModal(false)}
               >
                 Готово
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showNoBranchModal && (
+        <div className="clients-modal-overlay" onClick={() => setShowNoBranchModal(false)}>
+          <div className="clients-modal" onClick={(e) => e.stopPropagation()}>
+            <h3 className="clients-modal-title">Нет точек продаж</h3>
+            <p className="clients-modal-description">
+              Сначала необходимо добавить точку продаж.
+            </p>
+            <div className="clients-modal-actions">
+              <button
+                className="clients-modal-button clients-modal-button-primary"
+                onClick={() => navigate('/managers')}
+              >
+                Перейти
+              </button>
+              <button
+                className="clients-modal-button clients-modal-button-secondary"
+                onClick={() => setShowNoBranchModal(false)}
+              >
+                Отменить
               </button>
             </div>
           </div>
