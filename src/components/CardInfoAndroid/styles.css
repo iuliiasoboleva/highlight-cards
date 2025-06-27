@@ -24,3 +24,10 @@
   color: #333;
   font-weight: 400;
 }
+
+.card-number {
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 4px;
+}

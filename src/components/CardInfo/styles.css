@@ -176,3 +176,10 @@
   width: 100%;
   gap: 4px;
 }
+
+.card-number {
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 2px;
+}

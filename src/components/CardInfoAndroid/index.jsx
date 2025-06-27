@@ -141,7 +141,12 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick }) => {
           })}
       </div>
 
-      {card.qrImg && <img className="card-info-qr-img" src={card.qrImg} alt="QR код" />}
+      {card.qrImg && (
+        <>
+          <img className="card-info-qr-img" src={card.qrImg} alt="QR код" />
+          <p className="card-number">{card.serialNumber || '000001'}</p>
+        </>
+      )}
 
       <div className="card-info-main-img-wrapper">
         {design.stampBackground || mergedCard.cardImg ? (
