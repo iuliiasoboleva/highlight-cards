@@ -11,6 +11,7 @@ import { fetchSubscription } from '../../store/subscriptionSlice';
 import { fetchTariffs } from '../../store/tariffsSlice';
 
 import './styles.css';
+import { pluralize } from '../../helpers/pluralize';
 
 const Settings = () => {
   const dispatch = useDispatch();
@@ -279,8 +280,8 @@ const Settings = () => {
                 {subscription.status === 'expired'
                   ? 'Подписка истекла'
                   : subscription.status === 'trial'
-                    ? `Демо, осталось ${remainingDays} дней`
-                    : `Подписка активна, осталось ${remainingDays} дней`}
+                    ? `Демо, осталось ${remainingDays} ${pluralize(remainingDays, ['день', 'дня', 'дней'])}`
+                    : `Подписка активна, осталось ${remainingDays} ${pluralize(remainingDays, ['день', 'дня', 'дней'])}`}
               </p>
             )}
             <div className="plan-features">
