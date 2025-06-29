@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
@@ -29,6 +29,13 @@ const EditDesign = () => {
   const isStampCard = ['stamp', 'subscription'].includes(currentCard.status);
 
   const formRef = useRef(null);
+
+  useEffect(() => {
+    if (isStampCard && (!design.stampsQuantity || design.stampsQuantity === 0)) {
+      dispatch(updateCurrentCardField({ path: 'design.stampsQuantity', value: 10 }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isStampCard]);
 
   const handleStampIconChange = (path, iconName) => {
     dispatch(updateCurrentCardField({ path, value: iconName }));

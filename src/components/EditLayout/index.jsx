@@ -56,8 +56,10 @@ const EditLayout = ({ children, onFieldClick }) => {
   };
 
   useEffect(() => {
-    if (location.pathname.includes('/edit/info') || location.pathname.includes('/edit/design')) {
+    if (location.pathname.includes('/edit/info')) {
       setShowInfo(true);
+    } else {
+      setShowInfo(false);
     }
   }, [location.pathname]);
 
