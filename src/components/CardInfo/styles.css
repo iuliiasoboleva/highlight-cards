@@ -129,7 +129,6 @@
 
 .stamp-container {
   width: 100%;
-  max-width: 200px;
   height: 88px;
   display: flex;
   flex-direction: column;
@@ -141,8 +140,9 @@
 
 .stamp-row {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   gap: 4px;
+  width: 100%;
 }
 
 .stamp-item {

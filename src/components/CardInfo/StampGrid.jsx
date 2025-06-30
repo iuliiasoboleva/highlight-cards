@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const StampGrid = ({
   totalStamps = 10,
@@ -12,9 +12,22 @@ const StampGrid = ({
   activeColor = '#000',
   inactiveColor = 'gray',
   borderColor = '#000',
-  containerWidth = 200,
   containerHeight = 88,
 }) => {
+  const ref = useRef(null);
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (ref.current) setWidth(ref.current.offsetWidth);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const containerWidth = width || 0;
+
   const itemsPerRow = totalStamps <= 15 ? 5 : 10;
   const totalRows = Math.ceil(totalStamps / itemsPerRow);
 
@@ -22,20 +35,19 @@ const StampGrid = ({
   const gap = 4;
 
   const availableHeight = containerHeight - paddingVertical * 2 - gap * (totalRows - 1);
-  const availableWidth = containerWidth - gap * (itemsPerRow - 1);
-
+  const availableWidth = containerWidth ? containerWidth - gap * (itemsPerRow - 1) : 0;
   const maxItemHeight = Math.floor(availableHeight / totalRows);
-  const maxItemWidth = Math.floor(availableWidth / itemsPerRow);
+  const maxItemWidth = availableWidth > 0 ? Math.floor(availableWidth / itemsPerRow) : maxItemHeight;
   const itemSize = Math.min(maxItemWidth, maxItemHeight);
   const iconSize = Math.floor(itemSize * 0.6);
 
-  const paddingRatio = 0.2;
-  const itemPadding = Math.floor(itemSize * paddingRatio);
+  const itemPadding = 0;
 
   return (
     <div
+      ref={ref}
       className="stamp-container"
-      style={{ width: `${containerWidth}px`, height: `${containerHeight}px` }}
+      style={{ width: '100%', height: `${containerHeight}px` }}
     >
       {Array.from({ length: totalRows }).map((_, rowIndex) => (
         <div className="stamp-row" key={`row-${rowIndex}`}>
