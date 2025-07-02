@@ -9,7 +9,7 @@ const SmsLogin = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { phone } = location.state || {};
+  const { phone, forceSetPin } = location.state || {};
 
   const [code, setCode] = useState('');
   const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
@@ -49,7 +49,7 @@ const SmsLogin = () => {
       try {
         const data = await dispatch(verifySmsCode({ phone: phone.replace(/\D/g, ''), code })).unwrap();
         dispatch(setUser(data));
-        if (!data.has_pin) {
+        if (forceSetPin || !data.has_pin) {
           navigate('/set-pin');
         } else {
           navigate('/');

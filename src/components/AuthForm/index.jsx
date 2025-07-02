@@ -317,12 +317,15 @@ const AuthForm = () => {
   };
 
   const handleSendLinkAgain = async () => {
-    setStep('sent'); // сразу показываем сообщение
     try {
-      await dispatch(resetPinRequest({ email: formData.email })).unwrap();
+      // получаем телефон текущего пользователя
+      const me = await axiosInstance.get('/auth/users/me');
+      const digits = (me.data.phone || '').replace(/\D/g, '');
+      if (digits.length !== 11) throw new Error('Телефон не найден');
+      await dispatch(requestSmsCode({ phone: digits })).unwrap();
+      navigate('/sms-code', { state: { phone: '+' + digits, forceSetPin: true } });
     } catch (err) {
       setApiError(extractError(err));
-      setStep('pinLogin');
     }
   };
 
