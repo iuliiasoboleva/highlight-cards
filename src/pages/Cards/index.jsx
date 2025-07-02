@@ -76,8 +76,10 @@ const Cards = () => {
   }, [dispatch]);
 
   React.useEffect(() => {
-    dispatch(fetchCards());
-  }, [dispatch]);
+    if (!isTemplatePage) {
+      dispatch(fetchCards());
+    }
+  }, [dispatch, isTemplatePage]);
 
   if (loading) {
     return (
