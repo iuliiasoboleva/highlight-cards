@@ -6,9 +6,7 @@ const AuthLayout = ({ children }) => {
   return (
     <div className="container">
       <div className="left">
-        <div className="highlight-card">
-          <img src="/logoColored.png" alt="Logo" className="logo" />
-        </div>
+        <div className="highlight-card" />
       </div>
 
       <div className="right">
