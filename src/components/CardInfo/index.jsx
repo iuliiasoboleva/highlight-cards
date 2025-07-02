@@ -29,6 +29,7 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
     const navMap = {
       expirationDate: { step: 'settings', flashKey: 'cardFixedDate' },
       restStamps: { step: 'design', flashKey: 'stampsQuantity' },
+      stampIcons: { step: 'design', flashKey: 'activeStamp' },
     };
 
     const target = navMap[type];
@@ -175,6 +176,7 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
               borderColor={mergedCard.borderColor}
               activeStampBgColor={mergedCard.activeStampBgColor}
               inactiveStampBgColor={mergedCard.inactiveStampBgColor}
+              onStampClick={(isActive) => handleFieldClick(isActive ? 'activeStamp' : 'inactiveStamp')}
             />
           </div>
         )}

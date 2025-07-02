@@ -16,6 +16,7 @@ const StampGrid = ({
   borderColor = '#000',
   containerWidth = 200,
   containerHeight = 88,
+  onStampClick,
 }) => {
   const layout = getStampLayout(totalStamps);
   const maxItemsPerRow = Math.max(...layout);
@@ -72,7 +73,9 @@ const StampGrid = ({
                   justifyContent: 'center',
                   backgroundColor: isActive ? activeStampBgColor : inactiveStampBgColor,
                   padding: `${itemPadding}px`,
+                  cursor: onStampClick ? 'pointer' : 'default',
                 }}
+                onClick={() => onStampClick && onStampClick(isActive)}
               >
                 {isActive ? (
                   activeImage ? (

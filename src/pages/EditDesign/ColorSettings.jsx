@@ -71,8 +71,9 @@ const ColorSettings = ({ colors, handleColorChange, isStampCard }) => {
   return (
     <div className="color-settings-grid">
       {colorFields.map(({ key, label }) => {
-        const value = localInputs[key] || '';
-        const isValid = isValidHex(value);
+        const rawValue = localInputs[key] || '';
+        const displayValue = rawValue === 'none' ? '' : rawValue;
+        const isValid = isValidHex(displayValue);
 
         return (
           <div className="color-settings-item" key={key}>
@@ -85,9 +86,9 @@ const ColorSettings = ({ colors, handleColorChange, isStampCard }) => {
               />
               <input
                 type="text"
-                value={value}
+                value={displayValue}
                 onChange={(e) => handleInputChange(key, e.target.value)}
-                placeholder="#RRGGBB"
+                placeholder="Не задано"
                 style={{
                   borderColor: isValid ? '#ccc' : 'red',
                   outline: 'none',

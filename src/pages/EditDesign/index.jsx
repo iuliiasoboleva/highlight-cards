@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 
 import { HelpCircle } from 'lucide-react';
@@ -18,6 +18,7 @@ import './styles.css';
 const EditDesign = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
 
   const currentCard = useSelector((state) => state.cards.currentCard);
@@ -29,13 +30,36 @@ const EditDesign = () => {
   const isStampCard = ['stamp', 'subscription'].includes(currentCard.status);
 
   const formRef = useRef(null);
+  const stampSectionRef = useRef(null);
+
+  // функция подсветки
+  const flashInput = useCallback((key) => {
+    const el = formRef.current?.querySelector(`[data-design-key="${key}"]`);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.add('flash-border');
+    setTimeout(() => el.classList.remove('flash-border'), 1000);
+  }, []);
+
+  const handleFieldClick = useCallback(
+    (key) => {
+      if (['stampsQuantity', 'stampIcons', 'activeStamp', 'inactiveStamp'].includes(key)) {
+        stampSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      flashInput(key);
+    },
+    [flashInput],
+  );
 
   useEffect(() => {
     if (isStampCard && (!design.stampsQuantity || design.stampsQuantity === 0)) {
       dispatch(updateCurrentCardField({ path: 'design.stampsQuantity', value: 10 }));
     }
+    if (location.state?.flashKey) {
+      handleFieldClick(location.state.flashKey);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isStampCard]);
+  }, [isStampCard, location.state, handleFieldClick]);
 
   const handleStampIconChange = (path, iconName) => {
     dispatch(updateCurrentCardField({ path, value: iconName }));
@@ -51,7 +75,7 @@ const EditDesign = () => {
 
   const renderStampControls = () => (
     <>
-      <div className="design-stamp-controls" data-design-key="stampsQuantity">
+      <div ref={stampSectionRef} className="design-stamp-controls" data-design-key="stampsQuantity">
         <label className="stamp-section-label">
           <h3 className="barcode-radio-title">
             Количество штампов
@@ -230,22 +254,19 @@ const EditDesign = () => {
       </h3>
       <Tooltip id="color-fields-help" className="custom-tooltip" />
       <StatusFieldConfig statusType={statusType} fields={fieldsName} />
-      <button onClick={handleSave} className="create-button">
-        Продолжить
-      </button>
     </div>
   );
 
-  // функция подсветки
-  const flashInput = useCallback((key) => {
-    const el = formRef.current?.querySelector(`[data-design-key="${key}"]`);
-    if (!el) return;
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    el.classList.add('flash-border');
-    setTimeout(() => el.classList.remove('flash-border'), 1000);
-  }, []);
-
-  return <EditLayout onFieldClick={flashInput}>{designContent}</EditLayout>;
+  return (
+    <EditLayout onFieldClick={handleFieldClick}>
+      {designContent}
+      <div className="design-save-container">
+        <button className="design-save-btn" onClick={handleSave}>
+          Далее
+        </button>
+      </div>
+    </EditLayout>
+  );
 };
 
 export default EditDesign;
