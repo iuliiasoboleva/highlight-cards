@@ -13,7 +13,8 @@ const AuthRedirectGuard = ({ children }) => {
   const token = getCookie('userToken');
 
   const isPublic =
-    ['/auth', '/login'].includes(location.pathname) || location.pathname.startsWith('/reset-pin');
+    ['/auth', '/login', '/sms-code', '/set-pin'].includes(location.pathname) ||
+    location.pathname.startsWith('/reset-pin');
 
   useEffect(() => {
     if (token && !user.email) {

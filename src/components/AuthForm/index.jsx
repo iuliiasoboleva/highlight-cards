@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import axiosInstance from '../../axiosInstance';
-import { requestMagicLink, resetPinRequest, setPinThunk, verifyPin } from '../../store/authSlice';
+import { requestMagicLink, resetPinRequest, setPinThunk, verifyPin, requestSmsCode } from '../../store/authSlice';
 import { fetchOrganization, setUser } from '../../store/userSlice';
 
 import './styles.css';
@@ -175,55 +175,51 @@ const AuthForm = () => {
         }
       }
 
-      try {
-        const resCheck = await axiosInstance.get('/auth/check-email', {
-          params: { email: formData.email },
-        });
+      // быстрый вход
+      const quick = localStorage.getItem('quickJwt');
+      if (quick) {
+        try {
+          const prevAuth = axiosInstance.defaults.headers['Authorization'];
+          axiosInstance.defaults.headers['Authorization'] = `Bearer ${quick}`;
+          const meRes = await axiosInstance.get('/auth/users/me');
+          const { email: userEmail, has_pin } = meRes.data;
 
-        if (!resCheck.data.exists) {
-          setApiError('Пользователь не найден. Зарегистрируйтесь');
-          return;
-        }
-
-        if (resCheck.data.has_pin) {
-          const quick = localStorage.getItem('quickJwt');
-          let authHeader;
-          if (quick) {
-            authHeader = axiosInstance.defaults.headers['Authorization'];
-            axiosInstance.defaults.headers['Authorization'] = `Bearer ${quick}`;
-          }
-          try {
+          if (has_pin) {
+            // запрашиваем magic-token для ввода пина
             const resTok = await dispatch(
-              requestMagicLink({ email: formData.email, sendEmail: false }),
+              requestMagicLink({ email: userEmail, sendEmail: false }),
             ).unwrap();
             if (resTok.token) setMagicToken(resTok.token);
             setStep('pinLogin');
-          } catch (err) {
-            // 403 или другая ошибка → шлём письмо
-            try {
-              await dispatch(requestMagicLink({ email: formData.email })).unwrap();
-              setStep('sent');
-            } catch (e) {
-              setApiError(extractError(e));
-            }
-          } finally {
-            if (quick) {
-              axiosInstance.defaults.headers['Authorization'] = authHeader;
-            }
-            setSubmitting(false);
-            return;
+          } else {
+            // пин ещё не создан — сразу переходим на страницу создания
+            navigate('/set-pin');
           }
+          axiosInstance.defaults.headers['Authorization'] = prevAuth;
+        } catch (err) {
+          setApiError(extractError(err));
+        } finally {
+          setSubmitting(false);
         }
+        return;
+      }
 
-        // нет пина — шлём magic link
-        await dispatch(requestMagicLink({ email: formData.email })).unwrap();
-        setStep('sent');
+      // Нет quickjwt → работаем по SMS
+      try {
+        const digits = formData.phone.replace(/\D/g, '');
+        if (digits.length !== 11) {
+          setApiError('Введите корректный номер');
+          setSubmitting(false);
+          return;
+        }
+        await dispatch(requestSmsCode({ phone: digits })).unwrap();
+        navigate('/sms-code', { state: { phone: '+' + digits } });
       } catch (err) {
         setApiError(extractError(err));
       } finally {
         setSubmitting(false);
-        return;
       }
+      return;
     }
 
     // mode === 'register'
@@ -244,15 +240,18 @@ const AuthForm = () => {
             sendEmail: false,
           }),
         ).unwrap();
-        if (res.token) setMagicToken(res.token);
-        setStep('pin');
+
+        // после успешного создания пользователя отправляем SMS код
+        const digits = formData.phone.replace(/\D/g, '');
+        await dispatch(requestSmsCode({ phone: digits })).unwrap();
+        navigate('/sms-code', { state: { phone: '+' + digits } });
         setApiError('');
       } catch (err) {
         setApiError(extractError(err));
       } finally {
         setSubmitting(false);
-        return;
       }
+      return;
     } else {
       if (mode === 'register') {
         try {
@@ -399,9 +398,9 @@ const AuthForm = () => {
           {mode === 'login' && step === 'request' && (
             <>
               <input
-                name="email"
-                placeholder="Email"
-                value={formData.email}
+                name="phone"
+                placeholder="Телефон"
+                value={formData.phone}
                 onChange={handleChange}
                 className="custom-input"
                 required
@@ -409,9 +408,9 @@ const AuthForm = () => {
               <button
                 type="submit"
                 className={`custom-button ${status === 'loading' ? 'loading' : ''}`}
-                disabled={submitting || status === 'loading' || !isEmailValid}
+                disabled={submitting || status === 'loading' || !isPhoneValid}
               >
-                {status === 'loading' ? '' : 'Войти'}
+                {status === 'loading' ? '' : 'Получить код'}
               </button>
             </>
           )}

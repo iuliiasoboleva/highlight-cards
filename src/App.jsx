@@ -54,6 +54,8 @@ import SettingsPersonal from './pages/SettingsPersonal';
 import SettingsRFMSegment from './pages/SettingsRFMSegment';
 import Workplace from './pages/Workplace';
 import { fetchCards, initializeCards, updateCurrentCardField } from './store/cardsSlice';
+import SmsLogin from './pages/SmsLogin';
+import SetPin from './pages/SetPin';
 
 const MainLayout = () => {
   const location = useLocation();
@@ -234,6 +236,8 @@ const App = () => {
           />
           <Route path="/login" element={<LoginVerify />} />
           <Route path="/reset-pin" element={<ResetPin />} />
+          <Route path="/sms-code" element={<SmsLogin />} />
+          <Route path="/set-pin" element={<SetPin />} />
           <Route element={<MainLayout />}>
             <Route index element={<Home />} />
             <Route path="/cards" element={<Cards />} />

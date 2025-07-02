@@ -101,6 +101,36 @@ export const resetPinConfirm = createAsyncThunk(
   },
 );
 
+export const requestSmsCode = createAsyncThunk(
+  'auth/requestSmsCode',
+  async ({ phone }, { rejectWithValue }) => {
+    try {
+      await axiosInstance.post('auth/sms-code-request', { phone: phone.replace(/\D/g, '') });
+      return phone;
+    } catch (err) {
+      const msg = err?.response?.data?.detail || err?.response?.data || err.message;
+      return rejectWithValue(msg);
+    }
+  },
+);
+
+export const verifySmsCode = createAsyncThunk(
+  'auth/verifySmsCode',
+  async ({ phone, code }, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.post('auth/sms-code-verify', { phone: phone.replace(/\D/g, ''), code });
+      if (res.data?.token) {
+        setCookie(TOKEN_COOKIE, res.data.token, 14);
+        localStorage.setItem('quickJwt', res.data.token);
+      }
+      return res.data;
+    } catch (err) {
+      const msg = err?.response?.data?.detail || err?.response?.data || err.message;
+      return rejectWithValue(msg);
+    }
+  },
+);
+
 export const authSlice = createSlice({
   name: 'auth',
   initialState: {
@@ -137,6 +167,18 @@ export const authSlice = createSlice({
       })
       .addCase(resetPinConfirm.fulfilled, (state) => {
         state.status = 'success';
+      })
+      .addCase(verifySmsCode.fulfilled, (state) => {
+        state.status = 'success';
+      })
+      .addCase(requestSmsCode.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(requestSmsCode.fulfilled, (state) => {
+        state.status = 'success';
+      })
+      .addCase(requestSmsCode.rejected, (state) => {
+        state.status = 'failed';
       });
   },
 });
