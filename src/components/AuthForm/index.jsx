@@ -66,6 +66,7 @@ const AuthForm = () => {
   };
 
   const handleChange = (e) => {
+    if (apiError) setApiError('');
     const { name, value, type, checked } = e.target;
 
     if (name === 'inn') {
@@ -177,31 +178,32 @@ const AuthForm = () => {
 
       // быстрый вход
       const quick = localStorage.getItem('quickJwt');
+      const enteredDigits = formData.phone.replace(/\D/g, '');
       if (quick) {
         try {
           const prevAuth = axiosInstance.defaults.headers['Authorization'];
           axiosInstance.defaults.headers['Authorization'] = `Bearer ${quick}`;
           const meRes = await axiosInstance.get('/auth/users/me');
-          const { email: userEmail, has_pin } = meRes.data;
+          const { email: userEmail, has_pin, phone: savedPhone } = meRes.data;
+          const savedDigits = (savedPhone || '').replace(/\D/g, '');
 
-          if (has_pin) {
-            // запрашиваем magic-token для ввода пина
+          if (enteredDigits && enteredDigits === savedDigits && has_pin) {
+            // быстрая авторизация по PIN
             const resTok = await dispatch(
               requestMagicLink({ email: userEmail, sendEmail: false }),
             ).unwrap();
             if (resTok.token) setMagicToken(resTok.token);
             setStep('pinLogin');
-          } else {
-            // пин ещё не создан — сразу переходим на страницу создания
-            navigate('/set-pin');
+            axiosInstance.defaults.headers['Authorization'] = prevAuth;
+            setSubmitting(false);
+            return;
           }
+          // если телефон не совпадает или пин не задан — игнорируем quick и идём по SMS
           axiosInstance.defaults.headers['Authorization'] = prevAuth;
         } catch (err) {
-          setApiError(extractError(err));
-        } finally {
-          setSubmitting(false);
+          // ошибка чтения quickJwt, продолжаем по SMS
+          setApiError('');
         }
-        return;
       }
 
       // Нет quickjwt → работаем по SMS
@@ -213,6 +215,7 @@ const AuthForm = () => {
           return;
         }
         await dispatch(requestSmsCode({ phone: digits })).unwrap();
+        setApiError('');
         navigate('/sms-code', { state: { phone: '+' + digits } });
       } catch (err) {
         setApiError(extractError(err));
@@ -244,8 +247,8 @@ const AuthForm = () => {
         // после успешного создания пользователя отправляем SMS код
         const digits = formData.phone.replace(/\D/g, '');
         await dispatch(requestSmsCode({ phone: digits })).unwrap();
-        navigate('/sms-code', { state: { phone: '+' + digits } });
         setApiError('');
+        navigate('/sms-code', { state: { phone: '+' + digits } });
       } catch (err) {
         setApiError(extractError(err));
       } finally {
@@ -317,15 +320,21 @@ const AuthForm = () => {
   };
 
   const handleSendLinkAgain = async () => {
+    if (submitting) return;
+    setSubmitting(true);
     try {
-      // получаем телефон текущего пользователя
-      const me = await axiosInstance.get('/auth/users/me');
-      const digits = (me.data.phone || '').replace(/\D/g, '');
-      if (digits.length !== 11) throw new Error('Телефон не найден');
+      const digits = formData.phone.replace(/\D/g, '');
+      if (digits.length !== 11) {
+        setStep('request');
+        setSubmitting(false);
+        return;
+      }
       await dispatch(requestSmsCode({ phone: digits })).unwrap();
       navigate('/sms-code', { state: { phone: '+' + digits, forceSetPin: true } });
     } catch (err) {
       setApiError(extractError(err));
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -608,10 +617,14 @@ const AuthForm = () => {
               {step === 'pinLogin' && (
                 <p style={{ marginTop: '16px', textAlign: 'center' }}>
                   <span
-                    onClick={handleSendLinkAgain}
-                    style={{ color: '#0b5cff', cursor: 'pointer' }}
+                    onClick={submitting ? undefined : handleSendLinkAgain}
+                    style={{
+                      color: submitting ? '#888' : '#0b5cff',
+                      cursor: submitting ? 'default' : 'pointer',
+                      pointerEvents: submitting ? 'none' : 'auto',
+                    }}
                   >
-                    Не помню PIN — отправить ссылку
+                    {submitting ? 'Отправляем...' : 'Не помню PIN — войти по SMS'}
                   </span>
                 </p>
               )}
