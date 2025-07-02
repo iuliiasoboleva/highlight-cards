@@ -297,9 +297,14 @@ export default App;
 
 const CardEditGuard = () => {
   const params = useParams();
+  const currentId = useSelector((state) => state.cards.currentCard?.id);
 
   if (!params.id) {
-    return <Navigate to="/cards/create" replace />;
+    return <Navigate to="/cards" replace />;
+  }
+
+  if (!currentId || String(currentId) !== params.id) {
+    return <Navigate to="/cards" replace />;
   }
 
   return <Outlet />;
