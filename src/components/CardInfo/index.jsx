@@ -108,7 +108,7 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
       <div className="card-info-header">
         <div className="card-info-title-row">
           {design.logo ? (
-            <img src={design.logo} alt="Лого" className="card-info-logo" />
+            <img src={design.logo} alt="Лого" className="card-info-logo" draggable="false" />
           ) : (
             <p className="card-name">{mergedCard.name}</p>
           )}
@@ -147,6 +147,7 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
             className="card-info-main-img"
             src={design.stampBackground || mergedCard.cardImg}
             alt="Card background"
+            draggable="false"
           />
         ) : (
           <div
@@ -205,7 +206,7 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
 
       {card.qrImg && (
         <>
-          <img className="card-info-qr-img" src={card.qrImg} alt="QR код" />
+          <img className="card-info-qr-img" src={card.qrImg} alt="QR код" draggable="false" />
           <p className="card-number">{card.serialNumber || '000001'}</p>
         </>
       )}

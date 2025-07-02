@@ -112,28 +112,6 @@ const Cards = () => {
           <div
             key={card.id}
             className={`card ${card.isActive ? 'active' : 'inactive'} ${card.isPinned ? 'pinned' : ''} ${isTemplatePage ? 'no-hover' : ''}`}
-            draggable={!isTemplatePage && card.id !== 'fixed'}
-            onDragStart={(e) => {
-              setDragIndex(idx);
-              e.dataTransfer.effectAllowed = 'move';
-            }}
-            onDragEnter={(e) => e.preventDefault()}
-            onDragOver={(e) => {
-              e.preventDefault();
-              if (dragIndex === null || dragIndex === idx) return;
-              const updated = [...cardsRef.current];
-              const item = updated[dragIndex];
-              updated.splice(dragIndex, 1);
-              updated.splice(idx, 0, item);
-              dispatch(reorderCards(updated));
-              setDragIndex(idx);
-            }}
-            onDrop={() => {
-              const ids = cardsRef.current.slice(1).map((c) => c.id);
-              localStorage.setItem('cards_order', JSON.stringify(ids));
-              dispatch(saveOrder(ids));
-              setDragIndex(null);
-            }}
           >
             {!isTemplatePage && (
               <div className="card-state">
@@ -156,8 +134,35 @@ const Cards = () => {
               {!isTemplatePage && card.id !== 'fixed' && (
                 <GripVertical className="card-drag-handle" />
               )}
-              <img className="card-image" src={card.frameUrl} alt={card.name} />
-              {card.id !== 'fixed' && <CardInfo card={card} />}
+              <img className="card-image" src={card.frameUrl} alt={card.name} draggable="false" />
+              {card.id !== 'fixed' && (
+                <div
+                  className="card-info-draggable"
+                  draggable={!isTemplatePage}
+                  onDragStart={(e) => {
+                    setDragIndex(idx);
+                    e.dataTransfer.effectAllowed = 'move';
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    if (dragIndex === null || dragIndex === idx) return;
+                    const updated = [...cardsRef.current];
+                    const item = updated[dragIndex];
+                    updated.splice(dragIndex, 1);
+                    updated.splice(idx, 0, item);
+                    dispatch(reorderCards(updated));
+                    setDragIndex(idx);
+                  }}
+                  onDrop={() => {
+                    const ids = cardsRef.current.slice(1).map((c) => c.id);
+                    localStorage.setItem('cards_order', JSON.stringify(ids));
+                    dispatch(saveOrder(ids));
+                    setDragIndex(null);
+                  }}
+                >
+                  <CardInfo card={card} />
+                </div>
+              )}
             </div>
             <div className="card-bottom">
               <div className="card-bottom-text">

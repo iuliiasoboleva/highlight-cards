@@ -12,6 +12,8 @@
   padding: 6px 16px;
   cursor: pointer;
   transition: background-color 0.2s;
+  margin-left: 12px;
+  margin-right: 12px;
 }
 
 .info-text-button:hover {
@@ -30,11 +32,4 @@
   font-weight: 700;
   text-align: center;
   margin-top: 0;
-}
-
-.stamp-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 4px;
-  width: 100%;
 }

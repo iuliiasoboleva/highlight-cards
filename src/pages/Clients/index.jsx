@@ -404,9 +404,7 @@ const Clients = () => {
         <div className="clients-modal-overlay" onClick={() => setShowNoBranchModal(false)}>
           <div className="clients-modal" onClick={(e) => e.stopPropagation()}>
             <h3 className="clients-modal-title">Нет точек продаж</h3>
-            <p className="clients-modal-description">
-              Сначала необходимо добавить точку продаж.
-            </p>
+            <p className="clients-modal-description">Сначала необходимо добавить точку продаж.</p>
             <div className="clients-modal-actions">
               <button
                 className="clients-modal-button clients-modal-button-primary"

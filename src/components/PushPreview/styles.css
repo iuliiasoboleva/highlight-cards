@@ -1,35 +1,68 @@
-.push-preview-header {
+.push-preview-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.push-preview {
+  background-color: #25252599;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 12px;
+  max-width: 240px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  width: 100%;
+}
+
+.push-header {
+  display: flex;
+  font-size: 9px;
+  line-height: 1.222;
+  margin-bottom: 8px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.push-header-title {
   display: flex;
   align-items: center;
-  gap: 4px;
-  margin-bottom: 10px;
-  color: #666;
-  font-size: 12px;
-  padding-left: 20px;
+  flex: 1;
+  min-width: 0;
 }
 
-.push-app-icon {
+.push-logo {
+  width: 20px;
+  height: 20px;
   margin-right: 8px;
-  color: #6200ee;
-}
-
-.push-preview-content {
-  padding: 20px;
-  max-width: 200px;
+  flex-shrink: 0;
+  border-radius: 4px;
 }
 
 .push-title {
-  font-weight: bold;
-  margin-bottom: 5px;
-  font-size: 16px;
-  color: #333;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.84;
+  text-transform: uppercase;
+}
+
+.push-time {
+  margin-left: 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  opacity: 0.84;
+  text-transform: uppercase;
 }
 
 .push-message {
-  color: #333;
-  font-size: 10px;
-  word-wrap: break-word;
-  white-space: pre-wrap;
-  overflow-wrap: break-word;
-  max-width: 100%;
+  font-size: 12px;
+  color: #fff;
+  line-height: 1.2727272727;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
 }

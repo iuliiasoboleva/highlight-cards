@@ -25,7 +25,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'SPA',
       stampBackground: '/templates/spa.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -64,7 +64,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'CarWash',
       stampBackground: '/templates/carwash.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -103,7 +103,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'RentCar',
       stampBackground: '/templates/rentcar.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -142,7 +142,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Bar',
       stampBackground: '/templates/bar.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -181,7 +181,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Barbershop',
       stampBackground: '/templates/barber.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -220,7 +220,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Pool',
       stampBackground: '/templates/pool.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -259,7 +259,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Lunch',
       stampBackground: '/templates/lunch.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -298,7 +298,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Burger',
       stampBackground: '/templates/burger.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -337,7 +337,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Coffee',
       stampBackground: '/templates/coffee.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -376,7 +376,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Asian',
       stampBackground: '/templates/asian.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -415,7 +415,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Depilation',
       stampBackground: '/templates/depilation.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -454,7 +454,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Breakfast',
       stampBackground: '/templates/breakfast.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -493,7 +493,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Hookah',
       stampBackground: '/templates/hookah.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -532,7 +532,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Quest',
       stampBackground: '/templates/quest.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -571,7 +571,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Cafe',
       stampBackground: '/templates/cafe.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -610,7 +610,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Cinema',
       stampBackground: '/templates/cinema.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -649,7 +649,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Cleaning',
       stampBackground: '/templates/cleaning.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -688,7 +688,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Coworking',
       stampBackground: '/templates/coworking.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -727,7 +727,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Pastry',
       stampBackground: '/templates/pastry.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -766,7 +766,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Makeup',
       stampBackground: '/templates/makeup.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -805,7 +805,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Manicure',
       stampBackground: '/templates/manicure.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -844,7 +844,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Massage',
       stampBackground: '/templates/massage.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -883,7 +883,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Hotel',
       stampBackground: '/templates/hotel.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -922,7 +922,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Pizza',
       stampBackground: '/templates/pizza.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -961,7 +961,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Restaurant',
       stampBackground: '/templates/restaurant.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -1000,7 +1000,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Fish',
       stampBackground: '/templates/fish.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -1039,7 +1039,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Sunroom',
       stampBackground: '/templates/sunroom.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -1078,7 +1078,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Gym',
       stampBackground: '/templates/gym.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -1117,7 +1117,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Dental',
       stampBackground: '/templates/dental.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -1156,7 +1156,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Haircut',
       stampBackground: '/templates/haircut.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -1195,7 +1195,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Sushi',
       stampBackground: '/templates/sushi.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -1234,7 +1234,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Brow',
       stampBackground: '/templates/brow.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -1273,7 +1273,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Eyelash',
       stampBackground: '/templates/eyelash.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -1312,7 +1312,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Fitness',
       stampBackground: '/templates/fitness.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -1351,7 +1351,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Laundry',
       stampBackground: '/templates/laundry.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -1390,7 +1390,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Floral',
       stampBackground: '/templates/floral.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',
@@ -1429,7 +1429,7 @@ export const mockTemplateCards = [
       inactiveStamp: 'Kebab',
       stampBackground: '/templates/kebab.png',
       colors: {
-        cardBackground: '#EEEEEE',
+        cardBackground: '#ffffff',
         stampBackgroundColor: '#F6F6F6',
         textColor: '#000000',
         stampIconBackground: 'rgb(193, 155, 176)',

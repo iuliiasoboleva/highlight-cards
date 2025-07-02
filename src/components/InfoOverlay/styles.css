@@ -8,7 +8,8 @@
   font-size: 14px;
   line-height: 1.4;
   z-index: 5;
-  width: 85%;
+  width: 100%;
+  max-width: 230px;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }

@@ -14,6 +14,11 @@
   cursor: grab;
 }
 
+.card.no-hover,
+.card-info-draggable[draggable='false'] {
+  cursor: default;
+}
+
 .card-bottom {
   margin-top: auto;
   width: 100%;

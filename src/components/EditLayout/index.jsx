@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 
@@ -17,11 +17,10 @@ const EditLayout = ({ children, onFieldClick }) => {
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
   const [activeTab, setActiveTab] = useState('description');
-  const [showInfo, setShowInfo] = useState(false);
-  const [platform, setPlatform] = useState('ios'); // 'ios' | 'android' | 'chat'
+  const [platform, setPlatform] = useState('ios');
+  const previousPlatform = useRef('ios');
 
   const currentCard = useSelector((state) => state.cards.currentCard);
-
   const isDesignStep = location.pathname.includes('/edit/design');
 
   useEffect(() => {
@@ -57,11 +56,21 @@ const EditLayout = ({ children, onFieldClick }) => {
 
   useEffect(() => {
     if (location.pathname.includes('/edit/info')) {
-      setShowInfo(true);
-    } else {
-      setShowInfo(false);
+      previousPlatform.current = platform;
+      setPlatform('info');
+    } else if (platform === 'info') {
+      setPlatform(previousPlatform.current);
     }
   }, [location.pathname]);
+
+  const handleSetShowInfo = (value) => {
+    if (value) {
+      previousPlatform.current = platform;
+      setPlatform('info');
+    } else {
+      setPlatform(previousPlatform.current);
+    }
+  };
 
   return (
     <>
@@ -88,6 +97,7 @@ const EditLayout = ({ children, onFieldClick }) => {
             <div className="edit-type-page">{children}</div>
           </div>
         )}
+
         {(!isMobile || activeTab === 'card') && (
           <div className="edit-type-right">
             <div className="phone-container">
@@ -109,16 +119,14 @@ const EditLayout = ({ children, onFieldClick }) => {
                       {platform === 'ios' && (
                         <CardInfo
                           card={currentCard}
-                          showInfo={showInfo}
-                          setShowInfo={setShowInfo}
+                          setShowInfo={handleSetShowInfo}
                           onFieldClick={onFieldClick}
                         />
                       )}
                       {platform === 'android' && (
                         <CardInfoAndroid
                           card={currentCard}
-                          showInfo={showInfo}
-                          setShowInfo={setShowInfo}
+                          setShowInfo={handleSetShowInfo}
                           onFieldClick={onFieldClick}
                         />
                       )}
@@ -131,7 +139,7 @@ const EditLayout = ({ children, onFieldClick }) => {
                           }
                         />
                       )}
-                      {showInfo && (
+                      {platform === 'info' && (
                         <InfoOverlay
                           infoFields={
                             isDesignStep
@@ -145,7 +153,7 @@ const EditLayout = ({ children, onFieldClick }) => {
                                 }
                               : currentCard.infoFields
                           }
-                          onClose={() => setShowInfo(false)}
+                          onClose={() => setPlatform(previousPlatform.current)}
                           onFieldClick={onFieldClick}
                         />
                       )}
@@ -160,6 +168,7 @@ const EditLayout = ({ children, onFieldClick }) => {
                 Пока карта не активирована, вы можете выдать до 10 карт клиентам{' '}
               </p> */}
               </div>
+
               <div className="platform-icons">
                 <button
                   className={`platform-button ios ${platform === 'ios' ? 'active' : ''}`}

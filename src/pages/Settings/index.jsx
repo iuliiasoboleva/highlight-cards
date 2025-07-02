@@ -6,12 +6,12 @@ import { Loader2 } from 'lucide-react';
 import AgreementModal from '../../components/AgreementModal';
 import CustomSelect from '../../components/CustomSelect';
 import CustomTable from '../../components/CustomTable';
+import { pluralize } from '../../helpers/pluralize';
 import { fetchPayments } from '../../store/paymentsSlice';
 import { fetchSubscription } from '../../store/subscriptionSlice';
 import { fetchTariffs } from '../../store/tariffsSlice';
 
 import './styles.css';
-import { pluralize } from '../../helpers/pluralize';
 
 const Settings = () => {
   const dispatch = useDispatch();

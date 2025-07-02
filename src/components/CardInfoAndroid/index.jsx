@@ -154,6 +154,7 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick }) => {
             className="card-info-main-img"
             src={design.stampBackground || mergedCard.cardImg}
             alt="Card background"
+            draggable="false"
           />
         ) : (
           <div
