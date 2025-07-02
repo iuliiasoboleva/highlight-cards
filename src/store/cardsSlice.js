@@ -87,6 +87,7 @@ export const createCard = createAsyncThunk(
         ...rest,
         frame_url: frameUrl || 'phone.svg',
         organization_id: orgId,
+        is_active: false,
       };
 
       const res = await axiosInstance.post('/cards', payload);
