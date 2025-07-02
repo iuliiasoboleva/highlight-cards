@@ -595,6 +595,7 @@ const AuthForm = () => {
                     value={formData.pin[i] || ''}
                     onChange={(e) => handlePinChange(i, e.target.value)}
                     onKeyDown={(e) => handlePinKeyDown(i, e)}
+                    disabled={submitting}
                     style={{
                       width: '60px',
                       height: '60px',
@@ -614,6 +615,7 @@ const AuthForm = () => {
               >
                 {step === 'pinLogin' ? 'Войти' : 'Сохранить PIN'}
               </button>
+              {submitting && <p style={{ color: '#888' }}>Проверяем...</p>}
               {step === 'pinLogin' && (
                 <p style={{ marginTop: '16px', textAlign: 'center' }}>
                   <span

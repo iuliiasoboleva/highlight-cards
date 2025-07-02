@@ -9,6 +9,7 @@ const SetPin = () => {
   const navigate = useNavigate();
   const [pin, setPin] = useState('');
   const refs = [useRef(null), useRef(null), useRef(null), useRef(null)];
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (i, value) => {
     if (!/\d?/.test(value)) return;
@@ -37,6 +38,8 @@ const SetPin = () => {
 
   useEffect(() => {
     const submit = async () => {
+      if (submitting) return;
+      setSubmitting(true);
       try {
         await dispatch(changePin(pin)).unwrap();
         navigate('/');
@@ -44,6 +47,8 @@ const SetPin = () => {
         // если ошибка, просто сбросим и дадим повторить
         setPin('');
         refs[0].current?.focus();
+      } finally {
+        setSubmitting(false);
       }
     };
     if (pin.length === 4) submit();
@@ -77,6 +82,7 @@ const SetPin = () => {
             value={pin[i] || ''}
             onChange={(e) => handleChange(i, e.target.value)}
             onKeyDown={(e) => handleKeyDown(i, e)}
+            disabled={submitting}
             style={{
               width: 60,
               height: 60,
@@ -89,7 +95,7 @@ const SetPin = () => {
           />
         ))}
       </div>
-      <p style={{ color: '#888' }}>Введите 4-значный PIN</p>
+      {submitting && <p style={{ color: '#888' }}>Сохраняем...</p>}
     </div>
   );
 };

@@ -14,6 +14,7 @@ const SmsLogin = () => {
   const [code, setCode] = useState('');
   const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!phone) navigate('/auth');
@@ -46,6 +47,8 @@ const SmsLogin = () => {
 
   useEffect(() => {
     const submit = async () => {
+      if (submitting) return;
+      setSubmitting(true);
       try {
         const data = await dispatch(verifySmsCode({ phone: phone.replace(/\D/g, ''), code })).unwrap();
         dispatch(setUser(data));
@@ -58,6 +61,8 @@ const SmsLogin = () => {
         setError(typeof err === 'string' ? err : err?.message || 'Ошибка');
         setCode('');
         inputRefs[0].current?.focus();
+      } finally {
+        setSubmitting(false);
       }
     };
     if (code.length === 4) submit();
@@ -92,6 +97,7 @@ const SmsLogin = () => {
             value={code[i] || ''}
             onChange={(e) => handleChange(i, e.target.value)}
             onKeyDown={(e) => handleKeyDown(i, e)}
+            disabled={submitting}
             style={{
               width: 60,
               height: 60,
@@ -104,6 +110,7 @@ const SmsLogin = () => {
           />
         ))}
       </div>
+      {submitting && <p style={{ color: '#888' }}>Проверяем...</p>}
       {error && <p style={{ color: '#d00' }}>{error}</p>}
     </div>
   );
