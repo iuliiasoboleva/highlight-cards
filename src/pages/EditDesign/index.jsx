@@ -261,7 +261,7 @@ const EditDesign = () => {
     <EditLayout onFieldClick={handleFieldClick}>
       {designContent}
       <div className="design-save-container">
-        <button className="design-save-btn" onClick={handleSave}>
+        <button className="create-button" onClick={handleSave}>
           Далее
         </button>
       </div>

@@ -12,6 +12,8 @@ import {
   addCurrentCardArrayItem,
   removeCurrentCardArrayItem,
   updateCurrentCardField,
+  createCard,
+  saveCard,
 } from '../../store/cardsSlice';
 import BarcodeRadio from '../EditSettings/BarcodeRadio';
 import ActiveLinks from './ActiveLinks';
@@ -31,6 +33,8 @@ const EditInfo = () => {
   const formRef = useRef(null);
 
   const user = useSelector((state) => state.user);
+  const cards = useSelector((state) => state.cards.cards);
+  const exists = cards.some((c) => c.id === currentCard.id && c.id !== 'fixed');
 
   // Prefill issuer fields from organization/user data on first render
   React.useEffect(() => {
@@ -103,6 +107,19 @@ const EditInfo = () => {
         },
       }),
     );
+  };
+
+  const handleFinish = async () => {
+    try {
+      if (!exists) {
+        await dispatch(createCard()).unwrap();
+      } else {
+        await dispatch(saveCard()).unwrap();
+      }
+    } catch (e) {
+      console.error('Ошибка при создании/сохранении карты', e);
+    }
+    setShowQRPopup(true);
   };
 
   const infoContent = (
@@ -303,7 +320,7 @@ const EditInfo = () => {
           dispatch(updateCurrentCardField({ path: `infoFields.${field}`, value }))
         }
       />
-      <button onClick={() => setShowQRPopup(true)} className="create-button">
+      <button onClick={handleFinish} className="create-button">
         Завершить
       </button>
     </div>
@@ -312,7 +329,7 @@ const EditInfo = () => {
   return (
     <>
       <EditLayout onFieldClick={flashInput}>{infoContent}</EditLayout>
-      {showQRPopup && <QRPopup cardId={id} onClose={() => setShowQRPopup(false)} />}
+      {showQRPopup && <QRPopup cardId={id} onClose={() => { setShowQRPopup(false); window.location.href = '/cards'; }} />}
     </>
   );
 };

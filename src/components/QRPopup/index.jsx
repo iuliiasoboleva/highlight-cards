@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import QRCodeComponent from 'react-qr-code';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -10,7 +10,10 @@ import './styles.css';
 const QRPopup = ({ cardId, onClose }) => {
   const dispatch = useDispatch();
   const currentCard = useSelector((state) => state.cards.currentCard);
+  const cards = useSelector((state) => state.cards.cards);
   const [isCopied, setIsCopied] = useState(false);
+
+  const exists = cards.some((c) => c.id === currentCard.id && c.id !== 'fixed');
 
   const link = currentCard?.urlCopy || 'https://example.com';
 
@@ -20,13 +23,17 @@ const QRPopup = ({ cardId, onClose }) => {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  const activateCard = () => {
-    dispatch(
-      updateCurrentCardField({
-        path: 'isActive',
-        value: !currentCard.isActive,
-      }),
-    );
+  const activateCard = async () => {
+    try {
+      await dispatch(
+        updateCurrentCardField({
+          path: 'isActive',
+          value: !currentCard.isActive,
+        })
+      );
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
