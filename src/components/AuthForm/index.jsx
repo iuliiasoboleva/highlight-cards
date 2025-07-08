@@ -46,6 +46,7 @@ const AuthForm = () => {
   const pinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
 
   const [submitting, setSubmitting] = useState(false);
+  const [phoneFocused, setPhoneFocused] = useState(false);
 
   const resetForm = () => {
     setFormData({
@@ -438,10 +439,12 @@ const AuthForm = () => {
                 placeholder="Телефон"
                 value={formData.phone}
                 onChange={handleChange}
+                onFocus={() => setPhoneFocused(true)}
+                onBlur={() => setPhoneFocused(false)}
                 className="custom-input"
                 required
               />
-              {formData.phone && (
+              {phoneFocused && formData.phone && (
                 <p className="loading-message" style={{ marginTop: '-10px' }}>
                   Проверьте номер — SMS-код придёт на него
                 </p>
@@ -495,10 +498,12 @@ const AuthForm = () => {
                 placeholder="Телефон"
                 value={formData.phone}
                 onChange={handleChange}
+                onFocus={() => setPhoneFocused(true)}
+                onBlur={() => setPhoneFocused(false)}
                 className="custom-input"
                 required
               />
-              {formData.phone && (
+              {phoneFocused && formData.phone && (
                 <p className="loading-message" style={{ marginTop: '-10px' }}>
                   Проверьте номер — SMS-код для регистрации придёт на него
                 </p>
