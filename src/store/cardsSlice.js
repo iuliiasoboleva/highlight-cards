@@ -12,7 +12,7 @@ export const fixedCard = {
   status: 'fixed',
   isActive: true,
   isFixed: true,
-  frameUrl: '/frame-empty.svg',
+  frameUrl: '/phone.svg',
   name: 'Создать карту',
 };
 
