@@ -403,7 +403,30 @@ const AuthForm = () => {
         </div>
       ) : null} */}
       <div className="tabs">
-        <span className="active">{mode === 'register' ? 'Регистрация' : 'Вход'}</span>
+        <span
+          className={mode === 'register' ? 'active' : ''}
+          onClick={() => {
+            if (mode !== 'register') {
+              setMode('register');
+              resetForm();
+            }
+          }}
+          style={{ cursor: 'pointer' }}
+        >
+          Регистрация
+        </span>
+        <span
+          className={mode === 'login' ? 'active' : ''}
+          onClick={() => {
+            if (mode !== 'login') {
+              setMode('login');
+              resetForm();
+            }
+          }}
+          style={{ cursor: 'pointer' }}
+        >
+          Вход
+        </span>
       </div>
       <div className="auth-form-wrapper">
         <form onSubmit={handleSubmit} className="auth-form">
@@ -661,10 +684,13 @@ const AuthForm = () => {
             {mode === 'register' ? (
               <>
                 Уже есть аккаунт?{' '}
-                <span style={{ color: '#d2047e' }}>Войти</span>
+                <span style={{ color: '#bf4756' }}>Войти</span>
               </>
             ) : (
-              'Нет аккаунта? Зарегистрируйтесь'
+              <>
+                Нет аккаунта?{' '}
+                <span style={{ color: '#bf4756' }}>Зарегистрируйтесь</span>
+              </>
             )}
           </p>
         )}
