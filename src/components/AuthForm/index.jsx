@@ -440,6 +440,11 @@ const AuthForm = () => {
                 className="custom-input"
                 required
               />
+              {formData.phone && (
+                <p className="loading-message" style={{ marginTop: '-10px' }}>
+                  Проверьте номер — SMS-код придёт на него
+                </p>
+              )}
               <button
                 type="submit"
                 className={`custom-button ${status === 'loading' ? 'loading' : ''}`}
@@ -492,6 +497,11 @@ const AuthForm = () => {
                 className="custom-input"
                 required
               />
+              {formData.phone && (
+                <p className="loading-message" style={{ marginTop: '-10px' }}>
+                  Проверьте номер — SMS-код для регистрации придёт на него
+                </p>
+              )}
               {userType === 'company' && (
                 <>
                   <input
