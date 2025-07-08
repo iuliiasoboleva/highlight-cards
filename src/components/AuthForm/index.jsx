@@ -573,7 +573,7 @@ const AuthForm = () => {
                 style={{ textAlign: 'center', color: '#888', marginBottom: '20px' }}
               >
                 {step === 'pinLogin'
-                  ? 'Введите код для быстрого входа'
+                  ? 'Введите PIN-код'
                   : 'Для быстрого входа придумайте PIN'}
               </p>
               <div
@@ -615,6 +615,17 @@ const AuthForm = () => {
               >
                 {step === 'pinLogin' ? 'Войти' : 'Сохранить PIN'}
               </button>
+              {step === 'pin' && (
+                <p
+                  style={{
+                    color: '#888',
+                    textAlign: 'center',
+                    marginTop: '16px',
+                  }}
+                >
+                  Запомните PIN — он позволит входить без SMS-кода
+                </p>
+              )}
               {submitting && <p style={{ color: '#888' }}>Проверяем...</p>}
               {step === 'pinLogin' && (
                 <p style={{ marginTop: '16px', textAlign: 'center' }}>
@@ -647,7 +658,14 @@ const AuthForm = () => {
             }}
             style={{ cursor: 'pointer', marginTop: '20px', textAlign: 'center' }}
           >
-            {mode === 'register' ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрируйтесь'}
+            {mode === 'register' ? (
+              <>
+                Уже есть аккаунт?{' '}
+                <span style={{ color: '#d2047e' }}>Войти</span>
+              </>
+            ) : (
+              'Нет аккаунта? Зарегистрируйтесь'
+            )}
           </p>
         )}
       </div>

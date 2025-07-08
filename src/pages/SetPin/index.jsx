@@ -95,6 +95,7 @@ const SetPin = () => {
           />
         ))}
       </div>
+      <p style={{ color: '#888' }}>Запомните PIN — он позволит входить без SMS-кода</p>
       {submitting && <p style={{ color: '#888' }}>Сохраняем...</p>}
     </div>
   );

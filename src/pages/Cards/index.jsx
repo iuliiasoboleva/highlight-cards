@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 
-import { GripVertical } from 'lucide-react';
+import { GripVertical, Move } from 'lucide-react';
 import { Check, HelpCircle, Loader2, Pin, PinOff } from 'lucide-react';
 
 import CardButtons from '../../components/CardButtons';
@@ -134,7 +134,7 @@ const Cards = () => {
                 </div>
               )}
               {!isTemplatePage && card.id !== 'fixed' && (
-                <GripVertical className="card-drag-handle" />
+                <Move className="card-drag-handle" />
               )}
               <img className="card-image" src={card.frameUrl} alt={card.name} draggable="false" />
               {card.id !== 'fixed' && (
