@@ -668,7 +668,9 @@ const AuthForm = () => {
                   Запомните PIN — он позволит входить без SMS-кода
                 </p>
               )}
-              {submitting && <p style={{ color: '#888' }}>Проверяем...</p>}
+              {submitting && step === 'pin' && (
+                <p style={{ color: '#888' }}>Проверяем...</p>
+              )}
               {step === 'pinLogin' && (
                 <p style={{ marginTop: '16px', textAlign: 'center' }}>
                   <span
@@ -679,7 +681,7 @@ const AuthForm = () => {
                       pointerEvents: submitting ? 'none' : 'auto',
                     }}
                   >
-                    {submitting ? 'Отправляем...' : 'Не помню PIN — войти по SMS'}
+                    {submitting ? 'Проверяем...' : 'Не помню PIN — войти по SMS'}
                   </span>
                 </p>
               )}
