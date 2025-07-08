@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import axiosInstance from '../../axiosInstance';
+import InnSuggestInput from '../InnSuggestInput';
 import { requestMagicLink, resetPinRequest, setPinThunk, verifyPin, requestSmsCode } from '../../store/authSlice';
 import { fetchOrganization, setUser } from '../../store/userSlice';
 
@@ -504,17 +505,20 @@ const AuthForm = () => {
               )}
               {userType === 'company' && (
                 <>
-                  <input
-                    name="inn"
-                    placeholder="ИНН"
+                  <InnSuggestInput
                     value={formData.inn}
-                    onChange={handleChange}
+                    onChange={(text) => {
+                      setFormData((prev) => ({ ...prev, inn: text }));
+                    }}
                     onBlur={() => handleBlur('inn')}
-                    inputMode="numeric"
-                    className={`custom-input ${touchedFields.inn && !isInnValid ? 'input-error' : ''}`}
-                    pattern="\d*"
-                    maxLength={12}
-                    required
+                    onSelect={(item) => {
+                      const inn = item.data.inn || '';
+                      const companyName = item.value || '';
+                      setFormData((prev) => ({ ...prev, inn, companyName }));
+                      setCompanyError('');
+                    }}
+                    placeholder="ИНН или название компании"
+                    inputClass={`custom-input ${touchedFields.inn && !isInnValid ? 'input-error' : ''}`}
                   />
 
                   {touchedFields.inn && !isInnValid && (
