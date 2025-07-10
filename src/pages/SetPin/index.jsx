@@ -101,4 +101,4 @@ const SetPin = () => {
   );
 };
 
-export default SetPin; 
+export default SetPin;

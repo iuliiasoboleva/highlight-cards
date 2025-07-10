@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import QRCodeComponent from 'react-qr-code';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -29,7 +29,7 @@ const QRPopup = ({ cardId, onClose }) => {
         updateCurrentCardField({
           path: 'isActive',
           value: !currentCard.isActive,
-        })
+        }),
       );
     } catch (e) {
       console.error(e);

@@ -3,9 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import axiosInstance from '../../axiosInstance';
-import InnSuggestInput from '../InnSuggestInput';
-import { requestMagicLink, resetPinRequest, setPinThunk, verifyPin, requestSmsCode } from '../../store/authSlice';
+import {
+  requestMagicLink,
+  requestSmsCode,
+  resetPinRequest,
+  setPinThunk,
+  verifyPin,
+} from '../../store/authSlice';
 import { fetchOrganization, setUser } from '../../store/userSlice';
+import InnSuggestInput from '../InnSuggestInput';
 
 import './styles.css';
 
@@ -595,7 +601,16 @@ const AuthForm = () => {
                   checked={formData.acceptTerms}
                   onChange={handleChange}
                 />
-                Я принимаю условия соглашения
+                <span className="checkbox-label-text">
+                  Я принимаю{' '}
+                  <a href="https://loyalclub.ru/oferta" target="_blank" rel="noopener noreferrer">
+                    условия соглашения
+                  </a>{' '}
+                  и{' '}
+                  <a href="https://loyalclub.ru/policy" target="_blank" rel="noopener noreferrer">
+                    политику обработки персональных данных
+                  </a>
+                </span>
               </label>
 
               <button
@@ -614,9 +629,7 @@ const AuthForm = () => {
                 className="pin-title"
                 style={{ textAlign: 'center', color: '#888', marginBottom: '20px' }}
               >
-                {step === 'pinLogin'
-                  ? 'Введите PIN-код'
-                  : 'Для быстрого входа придумайте PIN'}
+                {step === 'pinLogin' ? 'Введите PIN-код' : 'Для быстрого входа придумайте PIN'}
               </p>
               <div
                 className="pin-input-wrapper"
@@ -668,9 +681,7 @@ const AuthForm = () => {
                   Запомните PIN — он позволит входить без SMS-кода
                 </p>
               )}
-              {submitting && step === 'pin' && (
-                <p style={{ color: '#888' }}>Проверяем...</p>
-              )}
+              {submitting && step === 'pin' && <p style={{ color: '#888' }}>Проверяем...</p>}
               {step === 'pinLogin' && (
                 <p style={{ marginTop: '16px', textAlign: 'center' }}>
                   <span
@@ -704,13 +715,11 @@ const AuthForm = () => {
           >
             {mode === 'register' ? (
               <>
-                Уже есть аккаунт?{' '}
-                <span style={{ color: '#bf4756' }}>Войти</span>
+                Уже есть аккаунт? <span style={{ color: '#bf4756' }}>Войти</span>
               </>
             ) : (
               <>
-                Нет аккаунта?{' '}
-                <span style={{ color: '#bf4756' }}>Зарегистрируйтесь</span>
+                Нет аккаунта? <span style={{ color: '#bf4756' }}>Зарегистрируйтесь</span>
               </>
             )}
           </p>

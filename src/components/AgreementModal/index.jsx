@@ -26,7 +26,16 @@ const AgreementModal = ({ onClose, onConfirm }) => {
             checked={agreed}
             onChange={() => setAgreed(!agreed)}
           />
-          <span>Я принимаю условия соглашения</span>
+          <span className="checkbox-label-text">
+            Я принимаю{' '}
+            <a href="https://loyalclub.ru/oferta" target="_blank" rel="noopener noreferrer">
+              условия соглашения
+            </a>{' '}
+            и{' '}
+            <a href="https://loyalclub.ru/policy" target="_blank" rel="noopener noreferrer">
+              политику обработки персональных данных
+            </a>
+          </span>
         </label>
 
         <div className="modal-actions">

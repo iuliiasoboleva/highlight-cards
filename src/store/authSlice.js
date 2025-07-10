@@ -118,7 +118,10 @@ export const verifySmsCode = createAsyncThunk(
   'auth/verifySmsCode',
   async ({ phone, code }, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.post('auth/sms-code-verify', { phone: phone.replace(/\D/g, ''), code });
+      const res = await axiosInstance.post('auth/sms-code-verify', {
+        phone: phone.replace(/\D/g, ''),
+        code,
+      });
       if (res.data?.token) {
         setCookie(TOKEN_COOKIE, res.data.token, 14);
         localStorage.setItem('quickJwt', res.data.token);

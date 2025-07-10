@@ -59,10 +59,21 @@
 
 .custom-checkbox {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
-  cursor: pointer;
   font-size: 14px;
+  line-height: 1.4;
+}
+
+.checkbox-label-text {
+  display: inline;
+  width: fit-content;
+}
+
+.custom-checkbox a {
+  text-decoration: underline;
+  color: inherit;
+  white-space: nowrap;
 }
 
 .custom-checkbox input[type='checkbox'] {
@@ -70,7 +81,7 @@
   width: 20px;
   height: 20px;
   background-color: #f5f5f5;
-  border: 2px solid #bf4756;
+  border: 2px solid #dcdcdc;
   border-radius: 4px;
   display: flex;
   justify-content: center;
@@ -89,7 +100,7 @@
   content: '';
   width: 6px;
   height: 10px;
-  border: solid #fff;
+  border: solid #dcdcdc;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
   opacity: 1;

@@ -176,7 +176,9 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
               borderColor={mergedCard.borderColor}
               activeStampBgColor={mergedCard.activeStampBgColor}
               inactiveStampBgColor={mergedCard.inactiveStampBgColor}
-              onStampClick={(isActive) => handleFieldClick(isActive ? 'activeStamp' : 'inactiveStamp')}
+              onStampClick={(isActive) =>
+                handleFieldClick(isActive ? 'activeStamp' : 'inactiveStamp')
+              }
             />
           </div>
         )}

@@ -1,73 +1,86 @@
 import { jsPDF } from 'jspdf';
 import QRCode from 'qrcode';
 
-import { montserratFont } from '../fonts/montserrat-normal';
-
-jsPDF.API.events.push([
-  'addFonts',
-  function () {
-    this.addFileToVFS('Montserrat-Regular.ttf', montserratFont);
-    this.addFont('Montserrat-Regular.ttf', 'Montserrat', 'normal');
-  },
-]);
+// Асинхронная загрузка шрифта как base64
+const loadFontAsBase64 = async (path) => {
+  const res = await fetch(path);
+  const buffer = await res.arrayBuffer();
+  const binary = Array.from(new Uint8Array(buffer))
+    .map((b) => String.fromCharCode(b))
+    .join('');
+  return btoa(binary);
+};
 
 export const generatePDF = async (card) => {
   const link = card?.urlCopy || 'https://example.com';
-  const logoPath = '/logoColored.png';
 
-  const logoDataUrl = await new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = logoPath;
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext('2d');
-      ctx?.drawImage(img, 0, 0);
-      resolve(canvas.toDataURL('image/png'));
-    };
-    img.onerror = reject;
-  });
-
-  const qrDataUrl = await QRCode.toDataURL(link);
+  // Загрузка всех шрифтов
+  const [montserratRegular, montserratBold, IBMPlexSerifItalic, ManropeRegular] = await Promise.all(
+    [
+      loadFontAsBase64('/fonts/Montserrat-Regular.ttf'),
+      loadFontAsBase64('/fonts/Montserrat-Bold.ttf'),
+      loadFontAsBase64('/fonts/IBMPlexSerif-MediumItalic.ttf'),
+      loadFontAsBase64('/fonts/Manrope-Regular.ttf'),
+    ],
+  );
 
   const pdf = new jsPDF();
   const pageWidth = pdf.internal.pageSize.getWidth();
-  const pageHeight = pdf.internal.pageSize.getHeight();
 
-  pdf.setFillColor(245, 243, 248);
-  pdf.rect(0, 0, pageWidth, pageHeight, 'F');
+  pdf.addFileToVFS('Montserrat-Regular.ttf', montserratRegular);
+  pdf.addFont('Montserrat-Regular.ttf', 'MontserratRegular', 'normal');
 
-  pdf.setFont('Montserrat');
-  pdf.setTextColor(30, 30, 30);
+  pdf.addFileToVFS('Manrope-Regular.ttf', ManropeRegular);
+  pdf.addFont('Manrope-Regular.ttf', 'ManropeRegular', 'normal');
 
-  pdf.setFontSize(14);
-  pdf.text(card.name || 'Накопительная карта', pageWidth / 2, 20, { align: 'center' });
+  pdf.addFileToVFS('Montserrat-Bold.ttf', montserratBold);
+  pdf.addFont('Montserrat-Bold.ttf', 'MontserratBold', 'normal');
 
-  pdf.setFontSize(18);
-  pdf.text('Собирайте штампы для получения наград', pageWidth / 2, 35, { align: 'center' });
+  pdf.addFileToVFS('IBMPlexSerif-MediumItalic.ttf', IBMPlexSerifItalic);
+  pdf.addFont('IBMPlexSerif-MediumItalic.ttf', 'IBMPlexSerif', 'normal');
 
-  pdf.addImage(qrDataUrl, 'PNG', 35, 60, 60, 60);
-
-  pdf.setFontSize(11);
-  pdf.setTextColor(100, 0, 0);
-  pdf.textWithLink(link, 20, 130, { url: link });
-
+  pdf.setFont('MontserratBold');
   pdf.setFontSize(12);
-  pdf.setTextColor(30, 30, 30);
-  pdf.text('Просканируйте код камерой телефона', 110, 65);
-  pdf.text('и установите карту в Apple Wallet', 110, 75);
-  pdf.text('или Google Pay', 110, 85);
+  pdf.setTextColor(0, 0, 0);
+  pdf.text('Присоединяйтесь к нашей', pageWidth / 2, 20, { align: 'center' });
+  pdf.text('программе лояльности', pageWidth / 2, 26, { align: 'center' });
 
-  pdf.setFontSize(16);
-  pdf.text('Программа лояльности', pageWidth / 2, 145, { align: 'center' });
+  pdf.setFont('IBMPlexSerif');
+  pdf.setFontSize(22);
+  pdf.setTextColor(195, 30, 60);
+  pdf.text('Бонусы за покупки -', pageWidth / 2, 45, { align: 'center' });
 
-  const logoWidth = 50;
-  const logoHeight = 25;
-  const logoX = (pageWidth - logoWidth) / 2;
-  const logoY = 150;
-  pdf.addImage(logoDataUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
+  pdf.setFont('ManropeRegular');
+  pdf.setFontSize(22);
+  pdf.setTextColor(0, 0, 0);
+  pdf.text('прямо в вашем телефоне!', pageWidth / 2, 55, { align: 'center' });
 
-  pdf.save(`card-${card.id}.pdf`);
+  const qrDataUrl = await QRCode.toDataURL(link);
+  pdf.addImage(qrDataUrl, 'PNG', (pageWidth - 60) / 2, 75, 60, 60);
+
+  pdf.setFont('MontserratRegular');
+  pdf.setFontSize(12);
+  pdf.setTextColor(100, 100, 100);
+  pdf.text('Сканируйте QR-код,', pageWidth / 2, 160, { align: 'center' });
+  pdf.text('чтобы установить электронную карту', pageWidth / 2, 167, { align: 'center' });
+  pdf.text('в Apple Wallet или Google Pay', pageWidth / 2, 174, { align: 'center' });
+
+  const buttonWidth = 60;
+  const buttonHeight = 10;
+  const buttonX = (pageWidth - buttonWidth) / 2;
+  const buttonY = 190;
+  const borderRadius = buttonHeight / 2;
+
+  pdf.setDrawColor(183, 183, 183);
+  pdf.setLineWidth(0.3);
+  pdf.roundedRect(buttonX, buttonY, buttonWidth, buttonHeight, borderRadius, borderRadius);
+
+  pdf.setTextColor(0, 0, 0);
+  pdf.setFontSize(12);
+  pdf.textWithLink('www.loyalclub.ru', pageWidth / 2, buttonY + 7, {
+    url: 'https://www.loyalclub.ru',
+    align: 'center',
+  });
+
+  pdf.save(`card-${card.id || 'demo'}.pdf`);
 };

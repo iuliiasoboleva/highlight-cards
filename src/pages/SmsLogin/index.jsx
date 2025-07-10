@@ -50,7 +50,9 @@ const SmsLogin = () => {
       if (submitting) return;
       setSubmitting(true);
       try {
-        const data = await dispatch(verifySmsCode({ phone: phone.replace(/\D/g, ''), code })).unwrap();
+        const data = await dispatch(
+          verifySmsCode({ phone: phone.replace(/\D/g, ''), code }),
+        ).unwrap();
         dispatch(setUser(data));
         if (forceSetPin || !data.has_pin) {
           navigate('/set-pin');
@@ -116,4 +118,4 @@ const SmsLogin = () => {
   );
 };
 
-export default SmsLogin; 
+export default SmsLogin;

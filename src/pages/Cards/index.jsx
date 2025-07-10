@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 
-import { GripVertical, Move } from 'lucide-react';
 import { Check, HelpCircle, Loader2, Pin, PinOff } from 'lucide-react';
 
+import moveIcon from '../../assets/move-arrows.png';
 import CardButtons from '../../components/CardButtons';
 import CardInfo from '../../components/CardInfo';
 import {
@@ -134,7 +134,7 @@ const Cards = () => {
                 </div>
               )}
               {!isTemplatePage && card.id !== 'fixed' && (
-                <Move className="card-drag-handle" />
+                <img src={moveIcon} alt="Переместить" className="card-drag-handle" />
               )}
               <img className="card-image" src={card.frameUrl} alt={card.name} draggable="false" />
               {card.id !== 'fixed' && (

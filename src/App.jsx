@@ -48,14 +48,14 @@ import Managers from './pages/Managers';
 import PersonalClientInfo from './pages/PersonalClientInfo';
 import ResetPin from './pages/ResetPin';
 import ScanPage from './pages/ScanPage';
+import SetPin from './pages/SetPin';
 import Settings from './pages/Settings';
 import SettingsLayout from './pages/SettingsLayout';
 import SettingsPersonal from './pages/SettingsPersonal';
 import SettingsRFMSegment from './pages/SettingsRFMSegment';
+import SmsLogin from './pages/SmsLogin';
 import Workplace from './pages/Workplace';
 import { fetchCards, initializeCards, updateCurrentCardField } from './store/cardsSlice';
-import SmsLogin from './pages/SmsLogin';
-import SetPin from './pages/SetPin';
 
 const MainLayout = () => {
   const location = useLocation();

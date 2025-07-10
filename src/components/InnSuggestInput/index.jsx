@@ -1,9 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
+
 import axiosInstance from '../../axiosInstance';
 
 const DADATA_TOKEN = process.env.REACT_APP_DADATA_TOKEN || '';
 
-const InnSuggestInput = ({ value, onChange, onSelect, onBlur, placeholder = 'ИНН или название компании', inputClass = 'custom-input' }) => {
+const InnSuggestInput = ({
+  value,
+  onChange,
+  onSelect,
+  onBlur,
+  placeholder = 'ИНН или название компании',
+  inputClass = 'custom-input',
+}) => {
   const [query, setQuery] = useState(value);
   const [suggestions, setSuggestions] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -126,4 +134,4 @@ const InnSuggestInput = ({ value, onChange, onSelect, onBlur, placeholder = 'И�
   );
 };
 
-export default InnSuggestInput; 
+export default InnSuggestInput;

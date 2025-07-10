@@ -10,10 +10,10 @@ import EditLayout from '../../components/EditLayout';
 import QRPopup from '../../components/QRPopup';
 import {
   addCurrentCardArrayItem,
-  removeCurrentCardArrayItem,
-  updateCurrentCardField,
   createCard,
+  removeCurrentCardArrayItem,
   saveCard,
+  updateCurrentCardField,
 } from '../../store/cardsSlice';
 import BarcodeRadio from '../EditSettings/BarcodeRadio';
 import ActiveLinks from './ActiveLinks';
@@ -329,7 +329,15 @@ const EditInfo = () => {
   return (
     <>
       <EditLayout onFieldClick={flashInput}>{infoContent}</EditLayout>
-      {showQRPopup && <QRPopup cardId={id} onClose={() => { setShowQRPopup(false); window.location.href = '/cards'; }} />}
+      {showQRPopup && (
+        <QRPopup
+          cardId={id}
+          onClose={() => {
+            setShowQRPopup(false);
+            window.location.href = '/cards';
+          }}
+        />
+      )}
     </>
   );
 };
