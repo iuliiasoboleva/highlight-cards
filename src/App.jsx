@@ -34,6 +34,7 @@ import EditInfo from './pages/EditInfo';
 import EditSettings from './pages/EditSettings';
 import EditType from './pages/EditType';
 import Footer from './pages/Footer';
+import GetPassPage from './pages/GetPassPage';
 import Home from './pages/Home';
 import Locations from './pages/Locations';
 import LoginVerify from './pages/LoginVerify';
@@ -196,17 +197,17 @@ const MainLayout = () => {
         matchClientsRoot ||
         matchClientDetails ||
         matchClientsReviews) && (
-        <SubMenu
-          menuItems={getMenuItems()}
-          icon={getSubMenuIcon()}
-          showRightActions={matchEdit || matchCreate}
-          showNameInput={!!matchEdit || !!matchCreate}
-          initialName={currentCard?.name || ''}
-          onNameChange={(newName) => {
-            dispatch(updateCurrentCardField({ path: 'name', value: newName }));
-          }}
-        />
-      )}
+          <SubMenu
+            menuItems={getMenuItems()}
+            icon={getSubMenuIcon()}
+            showRightActions={matchEdit || matchCreate}
+            showNameInput={!!matchEdit || !!matchCreate}
+            initialName={currentCard?.name || ''}
+            onNameChange={(newName) => {
+              dispatch(updateCurrentCardField({ path: 'name', value: newName }));
+            }}
+          />
+        )}
       <div className="main">
         <Sidebar />
         <div className="page-content">
@@ -287,6 +288,7 @@ const App = () => {
             <Route path="*" element={<NotFound />} />
           </Route>
           <Route path="/customer/card/:cardNumber" element={<CustomerPage />} />
+          <Route path="/getpass/:cardId" element={<GetPassPage />} />
         </Routes>
       </AuthRedirectGuard>
     </Router>
