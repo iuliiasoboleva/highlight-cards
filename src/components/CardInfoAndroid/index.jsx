@@ -107,11 +107,33 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick }) => {
     >
       <div className="card-info-header">
         <div className="card-info-title-row android">
-          {design.logo ? (
-            <img src={design.logo} alt="Лого" className="card-info-logo" />
-          ) : (
-            <p className="card-name">{mergedCard.name}</p>
-          )}
+          <div>
+            {design.logo ? (
+              <img src={design.logo} alt="Лого" className="card-info-logo" draggable="false" />
+            ) : (
+              <p className="card-name">{mergedCard.name}</p>
+            )}
+          </div>
+          <div className='top-fields-block'>
+            {fields
+              .filter(({ type }) =>
+                ['balanceMoney', 'credits', 'balance', 'discountPercent', 'discountStatus', 'restStamps', 'score'].includes(type),
+              )
+              .map(({ name, type }) => {
+                const value = mergedCard[type];
+                return (
+                  <span
+                    key={type}
+                    className="card-inline-value top"
+                    title={name}
+                    style={{ cursor: onFieldClick ? 'pointer' : 'default' }}
+                    onClick={() => handleFieldClick(type)}
+                  >
+                    <span className="inline-label">{name}:</span> {renderFieldValue(value, { type })}
+                  </span>
+                );
+              })}
+          </div>
         </div>
         {cardTypeDescriptions[card.status] && (
           <p className="card-type-description">{cardTypeDescriptions[card.status]}</p>
@@ -121,7 +143,7 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick }) => {
         {fields
           .filter(
             ({ type }) =>
-              type && !['balanceMoney', 'credits', 'balance', 'expirationDate'].includes(type),
+              type && !['balanceMoney', 'credits', 'balance', 'expirationDate', 'restStamps', 'discountStatus', 'discountPercent', 'score'].includes(type),
           )
           .map(({ type, name }) => {
             const value = mergedCard[type];

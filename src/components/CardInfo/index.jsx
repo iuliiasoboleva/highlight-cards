@@ -108,38 +108,34 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
     >
       <div className="card-info-header">
         <div className="card-info-title-row">
-          {design.logo ? (
-            <img src={design.logo} alt="Лого" className="card-info-logo" draggable="false" />
-          ) : (
-            <p className="card-name">{mergedCard.name}</p>
-          )}
-          <HelpCircle
-            size={20}
-            onClick={toggleInfo}
-            className="info-button"
-            style={{ cursor: 'pointer' }}
-          />
+          <div>
+            {design.logo ? (
+              <img src={design.logo} alt="Лого" className="card-info-logo" draggable="false" />
+            ) : (
+              <p className="card-name">{mergedCard.name}</p>
+            )}
+          </div>
+          <div className='top-fields-block'>
+            {fields
+              .filter(({ type }) =>
+                ['balanceMoney', 'credits', 'balance', 'discountPercent', 'discountStatus', 'restStamps', 'score'].includes(type),
+              )
+              .map(({ name, type }) => {
+                const value = mergedCard[type];
+                return (
+                  <span
+                    key={type}
+                    className="card-inline-value top"
+                    title={name}
+                    style={{ cursor: onFieldClick ? 'pointer' : 'default' }}
+                    onClick={() => handleFieldClick(type)}
+                  >
+                    <span className="inline-label">{name}:</span> {renderFieldValue(value, { type })}
+                  </span>
+                );
+              })}
+          </div>
         </div>
-        <span className="card-inline-value">
-          {fields
-            .filter(({ type }) =>
-              ['balanceMoney', 'credits', 'balance', 'expirationDate'].includes(type),
-            )
-            .map(({ name, type }) => {
-              const value = mergedCard[type];
-              return (
-                <span
-                  key={type}
-                  className="card-inline-value"
-                  title={name}
-                  style={{ cursor: onFieldClick ? 'pointer' : 'default' }}
-                  onClick={() => handleFieldClick(type)}
-                >
-                  <span className="inline-label">{name}:</span> {renderFieldValue(value, { type })}
-                </span>
-              );
-            })}
-        </span>
       </div>
 
       <div className="card-info-main-img-wrapper">
@@ -188,7 +184,7 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
         {fields
           .filter(
             ({ type }) =>
-              type && !['balanceMoney', 'credits', 'balance', 'expirationDate'].includes(type),
+              type && !['balanceMoney', 'credits', 'balance', 'discountPercent', 'discountStatus', 'restStamps', 'score'].includes(type),
           )
           .map(({ type, name }) => {
             const value = mergedCard[type];
@@ -214,6 +210,11 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
           <p className="card-number">{card.serialNumber || '000001'}</p>
         </>
       )}
+      <HelpCircle
+        size={20}
+        onClick={toggleInfo}
+        className="info-button"
+      />
     </div>
   );
 };

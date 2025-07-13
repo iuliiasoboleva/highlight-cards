@@ -69,7 +69,6 @@
 .card-name {
   font-weight: 700;
   font-size: 10px;
-  line-height: 7px;
   letter-spacing: 0px;
   text-align: left;
 }
@@ -95,14 +94,17 @@
 }
 
 .card-inline-value {
-  height: 15px;
+  min-height: 15px;
   display: flex;
   font-weight: 400;
   font-size: 8px;
-  line-height: 16px;
   letter-spacing: 0px;
   text-transform: uppercase;
   gap: 4px;
+}
+
+.card-inline-value.top {
+flex-direction: column;
 }
 
 .card-info-logo {
@@ -170,9 +172,13 @@
   width: 100%;
 }
 
+.top-fields-block {
+  display: flex;
+  gap: 12px;
+}
+
 .card-info-title-row {
   display: flex;
-  align-items: center;
   justify-content: space-between;
   width: 100%;
   gap: 4px;
@@ -183,4 +189,11 @@
   font-weight: 700;
   text-align: center;
   margin-top: 0;
+}
+
+.info-button {
+  margin-top: auto;
+  cursor: pointer;
+  margin-right: 12px;
+  align-self: flex-end;
 }

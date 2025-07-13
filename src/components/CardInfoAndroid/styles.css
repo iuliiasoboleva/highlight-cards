@@ -14,6 +14,7 @@
   transition: background-color 0.2s;
   margin-left: 12px;
   margin-right: 12px;
+  margin-top: auto;
 }
 
 .info-text-button:hover {

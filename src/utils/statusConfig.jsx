@@ -22,7 +22,7 @@ export const statusConfig = {
   ],
   stamp: [
     {
-      label: 'Осталось до награды',
+      label: 'До награды',
       valueKey: 'restStamps',
       format: (value) => `${value} ${pluralize(value, ['штамп', 'штампа', 'штампов'])}`,
     },
@@ -35,12 +35,12 @@ export const statusConfig = {
   ],
   discount: [
     {
-      label: 'Текущий процент скидки',
+      label: 'Скидка',
       valueKey: 'discountPercent',
       suffix: '%',
     },
     {
-      label: 'Текущий статус скидки',
+      label: 'Статус',
       valueKey: 'discountStatus',
       suffix: '',
     },
