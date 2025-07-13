@@ -197,17 +197,17 @@ const MainLayout = () => {
         matchClientsRoot ||
         matchClientDetails ||
         matchClientsReviews) && (
-          <SubMenu
-            menuItems={getMenuItems()}
-            icon={getSubMenuIcon()}
-            showRightActions={matchEdit || matchCreate}
-            showNameInput={!!matchEdit || !!matchCreate}
-            initialName={currentCard?.name || ''}
-            onNameChange={(newName) => {
-              dispatch(updateCurrentCardField({ path: 'name', value: newName }));
-            }}
-          />
-        )}
+        <SubMenu
+          menuItems={getMenuItems()}
+          icon={getSubMenuIcon()}
+          showRightActions={matchEdit || matchCreate}
+          showNameInput={!!matchEdit || !!matchCreate}
+          initialName={currentCard?.name || ''}
+          onNameChange={(newName) => {
+            dispatch(updateCurrentCardField({ path: 'name', value: newName }));
+          }}
+        />
+      )}
       <div className="main">
         <Sidebar />
         <div className="page-content">

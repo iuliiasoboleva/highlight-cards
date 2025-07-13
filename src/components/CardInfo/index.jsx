@@ -115,10 +115,18 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
               <p className="card-name">{mergedCard.name}</p>
             )}
           </div>
-          <div className='top-fields-block'>
+          <div className="top-fields-block">
             {fields
               .filter(({ type }) =>
-                ['balanceMoney', 'credits', 'balance', 'discountPercent', 'discountStatus', 'restStamps', 'score'].includes(type),
+                [
+                  'balanceMoney',
+                  'credits',
+                  'balance',
+                  'discountPercent',
+                  'discountStatus',
+                  'restStamps',
+                  'score',
+                ].includes(type),
               )
               .map(({ name, type }) => {
                 const value = mergedCard[type];
@@ -130,7 +138,8 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
                     style={{ cursor: onFieldClick ? 'pointer' : 'default' }}
                     onClick={() => handleFieldClick(type)}
                   >
-                    <span className="inline-label">{name}:</span> {renderFieldValue(value, { type })}
+                    <span className="inline-label">{name}:</span>{' '}
+                    {renderFieldValue(value, { type })}
                   </span>
                 );
               })}
@@ -184,7 +193,16 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
         {fields
           .filter(
             ({ type }) =>
-              type && !['balanceMoney', 'credits', 'balance', 'discountPercent', 'discountStatus', 'restStamps', 'score'].includes(type),
+              type &&
+              ![
+                'balanceMoney',
+                'credits',
+                'balance',
+                'discountPercent',
+                'discountStatus',
+                'restStamps',
+                'score',
+              ].includes(type),
           )
           .map(({ type, name }) => {
             const value = mergedCard[type];
@@ -210,11 +228,7 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
           <p className="card-number">{card.serialNumber || '000001'}</p>
         </>
       )}
-      <HelpCircle
-        size={20}
-        onClick={toggleInfo}
-        className="info-button"
-      />
+      <HelpCircle size={20} onClick={toggleInfo} className="info-button" />
     </div>
   );
 };

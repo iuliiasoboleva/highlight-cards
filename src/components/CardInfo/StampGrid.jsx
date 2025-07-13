@@ -79,20 +79,12 @@ const StampGrid = ({
               >
                 {isActive ? (
                   activeImage ? (
-                    <img
-                      src={activeImage}
-                      alt="active-stamp"
-                      style={{ width: '100%', height: '100%', borderRadius: '50%' }}
-                    />
+                    <img src={activeImage} alt="active-stamp" className="stamp-image" />
                   ) : (
                     <ActiveIcon width={iconSize} height={iconSize} color={activeColor} />
                   )
                 ) : inactiveImage ? (
-                  <img
-                    src={inactiveImage}
-                    alt="inactive-stamp"
-                    style={{ width: '100%', height: '100%', borderRadius: '50%' }}
-                  />
+                  <img src={inactiveImage} alt="inactive-stamp" className="stamp-image" />
                 ) : (
                   <InactiveIcon width={iconSize} height={iconSize} color={inactiveColor} />
                 )}

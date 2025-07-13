@@ -104,7 +104,7 @@
 }
 
 .card-inline-value.top {
-flex-direction: column;
+  flex-direction: column;
 }
 
 .card-info-logo {
@@ -155,6 +155,13 @@ flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 4px;
+}
+
+.stamp-image {
+  max-height: 100%;
+  max-width: 100%;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .stamp-item.no-border {

@@ -2,24 +2,30 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { Trash2 } from 'lucide-react';
 
+import ImageEditorModal from '../../components/ImageEditorModal';
+
 import './styles.css';
 
 const ImageUploader = ({ inputId, onSave, infoText, externalImage }) => {
   const [preview, setPreview] = useState(null);
   const [fileName, setFileName] = useState('');
   const [isDragOver, setIsDragOver] = useState(false);
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [rawImage, setRawImage] = useState(null);
 
-  const handleFile = useCallback(
-    (file) => {
-      if (file && file.type.startsWith('image/')) {
-        const imageUrl = URL.createObjectURL(file);
-        setPreview(imageUrl);
-        setFileName(file.name);
-        onSave(imageUrl);
-      }
-    },
-    [onSave],
-  );
+  const handleFile = useCallback((file) => {
+    if (file && file.type.startsWith('image/')) {
+      const imageUrl = URL.createObjectURL(file);
+      setRawImage(imageUrl);
+      setEditorOpen(true);
+    }
+  }, []);
+
+  const handleEditorSave = (croppedImageUrl) => {
+    setPreview(croppedImageUrl);
+    setFileName('edited-image.jpg');
+    onSave(croppedImageUrl);
+  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -59,31 +65,39 @@ const ImageUploader = ({ inputId, onSave, infoText, externalImage }) => {
   }, [externalImage]);
 
   return (
-    <div className="simple-image-uploader">
-      <div
-        className={`drag-drop-box ${isDragOver ? 'drag-over' : ''}`}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-      >
-        <div className="drag-icon">
-          <img src={'/drag-and-drop.png'} alt={'Drag&Drop'} />
+    <>
+      <div className="simple-image-uploader">
+        <div
+          className={`drag-drop-box ${isDragOver ? 'drag-over' : ''}`}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+        >
+          <div className="drag-icon">
+            <img src={'/drag-and-drop.png'} alt={'Drag&Drop'} />
+          </div>
+          <input type="file" id={inputId} hidden accept="image/*" onChange={handleFileChange} />
+          <div className="file-name-block">
+            <label htmlFor={inputId} className="file-button">
+              {fileName ? fileName : 'Выбрать файл'}
+            </label>
+            {preview && (
+              <button className="clear-button" onClick={handleClear}>
+                <Trash2 size={20} />
+              </button>
+            )}
+          </div>
         </div>
-        <input type="file" id={inputId} hidden accept="image/*" onChange={handleFileChange} />
-        <div className="file-name-block">
-          <label htmlFor={inputId} className="file-button">
-            {fileName ? fileName : 'Выбрать файл'}
-          </label>
-          {preview && (
-            <button className="clear-button" onClick={handleClear}>
-              <Trash2 size={20} />
-            </button>
-          )}
-        </div>
-      </div>
 
-      <div className="file-info">{infoText}</div>
-    </div>
+        <div className="file-info">{infoText}</div>
+      </div>
+      <ImageEditorModal
+        open={editorOpen}
+        image={rawImage}
+        onClose={() => setEditorOpen(false)}
+        onSave={handleEditorSave}
+      />
+    </>
   );
 };
 
