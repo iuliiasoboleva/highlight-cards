@@ -81,11 +81,7 @@ const SmsLogin = () => {
         marginTop: 120,
       }}
     >
-      <img
-        src="https://optim.tildacdn.com/tild6639-6664-4537-b134-353639383763/-/resize/86x/-/format/webp/svg.png.webp"
-        alt="Loyal Club"
-        style={{ width: 120, marginBottom: 24 }}
-      />
+      <img src="/logoColored.png" alt="Loyal Club" style={{ width: 140, marginBottom: 24 }} />
       <h2>Введите код из SMS</h2>
       <p style={{ color: '#888', marginTop: -12 }}>Отправили на {phone}</p>
       <div style={{ display: 'flex', gap: 12 }}>
