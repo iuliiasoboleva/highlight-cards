@@ -66,8 +66,11 @@ const SetPin = () => {
       }}
     >
       <img src="/logoColored.png" alt="Loyal Club" style={{ width: 140, marginBottom: 24 }} />
-      <h2>Придумайте PIN-код</h2>
-      <div style={{ display: 'flex', gap: 12 }}>
+      <h2 style={{ marginBottom: 8 }}>Придумайте код</h2>
+      <p style={{ color: '#888', marginTop: 0, marginBottom: 24, textAlign: 'center' }}>
+        Для быстрого входа в личный кабинет. <p>Работает только в том браузере, где был установлен</p>
+      </p>
+      <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
         {[0, 1, 2, 3].map((i) => (
           <input
             key={i}
@@ -91,10 +94,7 @@ const SetPin = () => {
           />
         ))}
       </div>
-      <p style={{ color: '#888', textAlign: 'center' }}>
-        Для быстрого входа в личный кабинет. Работает только в том браузере, где был установлен
-      </p>
-      <p style={{ color: '#888' }}>Используйте только личные устройства</p>
+      <p style={{ color: '#888', textAlign: 'center' }}>Используйте только личные устройства</p>
       {submitting && <p style={{ color: '#888' }}>Сохраняем...</p>}
     </div>
   );
