@@ -64,9 +64,15 @@ const ClientsActivityChart = ({
             <div className="chart-container">
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={chartData}>
-                  <CartesianGrid stroke="#e6e6e6" strokeDasharray="2 4" strokeWidth={1} />
+                  <CartesianGrid
+                    vertical={true}
+                    horizontal={false}
+                    stroke="#f0f0f0"
+                    strokeDasharray="0"
+                  />
                   <XAxis
                     dataKey="date"
+                    interval={0}
                     tick={axisStyle}
                     axisLine={false}
                     tickLine={false}
@@ -83,15 +89,47 @@ const ClientsActivityChart = ({
                     tick={axisStyle}
                     axisLine={false}
                     tickLine={false}
-                    domain={['auto', 'auto']}
-                    padding={{ top: 10, bottom: 10 }}
+                    width={28}
+                    padding={{ top: 6, bottom: 4 }}
                   />
 
-                  <Tooltip />
+                  <Tooltip
+                    cursor={{ fill: 'rgba(0,0,0,0.05)' }}
+                    content={({ active, payload, label }) => {
+                      if (!active || !payload) return null;
+
+                      const date = new Date(label).toLocaleDateString('ru-RU', {
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric',
+                      });
+
+                      return (
+                        <div
+                          style={{
+                            backgroundColor: '#fff',
+                            border: '1px solid #eee',
+                            borderRadius: 8,
+                            padding: 8,
+                            fontSize: 12,
+                            color: '#333',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                          }}
+                        >
+                          <div style={{ marginBottom: 4, fontWeight: 600 }}>{date}</div>
+                          {payload.map((item) => (
+                            <div key={item.name} style={{ color: item.color }}>
+                              {item.name}: {item.value}
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    }}
+                  />
 
                   <Line
                     type="monotone"
-                    dataKey={dataKey} // ✅ теперь работает правильно
+                    dataKey={dataKey}
                     stroke="#ffc658"
                     name={lineLabels?.[dataKey] ?? label}
                     strokeWidth={2}

@@ -12,12 +12,50 @@
   background: white;
   padding: 24px;
   border-radius: 12px;
-  max-width: 90vw;
-  max-height: 90vh;
+  max-width: 95vw;
+  max-height: 95vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px;
+  margin-left: 12px;
+}
+
+.editor-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.editor-controls button {
+  background-color: #000;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 
 .cropper-container {
@@ -25,6 +63,7 @@
   width: 500px;
   height: 400px;
   background: #f0f0f0;
+  align-self: center;
 }
 
 .crop-transform {
@@ -32,10 +71,31 @@
   height: 100%;
 }
 
-.controls button,
-.footer button {
-  margin: 4px;
-  padding: 6px 12px;
-  font-size: 14px;
+.editor-footer {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.editor-footer button {
+  margin-top: 8px;
+  padding: 8px 20px;
+  font-size: 16px;
   cursor: pointer;
+  background-color: #000;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+
+.crop-transform.flipped-x {
+  transform: scaleX(-1);
+}
+
+.crop-transform.flipped-y {
+  transform: scaleY(-1);
+}
+
+.crop-transform.flipped-x.flipped-y {
+  transform: scaleX(-1) scaleY(-1);
 }

@@ -2,8 +2,8 @@ import React from 'react';
 
 import {
   CartesianGrid,
-  Line,
   LineChart,
+  Line as RechartsLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -80,9 +80,15 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
             <div className="chart-container">
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={chartData}>
-                  <CartesianGrid stroke="#e6e6e6" strokeDasharray="2 4" strokeWidth={1} />
+                  <CartesianGrid
+                    vertical={true}
+                    horizontal={false}
+                    stroke="#f0f0f0"
+                    strokeDasharray="0"
+                  />
                   <XAxis
                     dataKey="date"
+                    interval={0}
                     tick={axisStyle}
                     axisLine={false}
                     tickLine={false}
@@ -99,31 +105,63 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
                     tick={axisStyle}
                     axisLine={false}
                     tickLine={false}
-                    domain={['auto', 'auto']}
-                    padding={{ top: 10, bottom: 10 }}
+                    width={28}
+                    padding={{ top: 6, bottom: 4 }}
                   />
 
-                  <Tooltip />
+                  <Tooltip
+                    cursor={{ stroke: 'rgba(0,0,0,0.05)', strokeWidth: 40 }}
+                    content={({ active, payload, label }) => {
+                      if (!active || !payload) return null;
 
-                  <Line
-                    type="monotone"
-                    dataKey="visits"
-                    stroke="#8884d8"
-                    name={lineLabels.visits}
-                    strokeWidth={2}
+                      const date = new Date(label).toLocaleDateString('ru-RU', {
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric',
+                      });
+
+                      return (
+                        <div
+                          style={{
+                            backgroundColor: '#fff',
+                            border: '1px solid #eee',
+                            borderRadius: 8,
+                            padding: 8,
+                            fontSize: 12,
+                            color: '#333',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                          }}
+                        >
+                          <div style={{ marginBottom: 4, fontWeight: 600 }}>{date}</div>
+                          {payload.map((item) => (
+                            <div key={item.name} style={{ color: item.color }}>
+                              {item.name}: {item.value}
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    }}
                   />
-                  <Line
+
+                  <RechartsLine
                     type="monotone"
                     dataKey="repeatClients"
-                    stroke="#82ca9d"
+                    stroke="#6C2BD9"
                     name={lineLabels.repeatClients}
                     strokeWidth={2}
                   />
-                  <Line
+                  <RechartsLine
                     type="monotone"
                     dataKey="newClients"
-                    stroke="#ffc658"
+                    stroke="#C7A4FF"
                     name={lineLabels.newClients}
+                    strokeWidth={2}
+                  />
+                  <RechartsLine
+                    type="monotone"
+                    dataKey="visits"
+                    stroke="#34C759"
+                    name={lineLabels.visits}
                     strokeWidth={2}
                   />
                 </LineChart>

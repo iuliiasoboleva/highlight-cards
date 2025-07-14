@@ -12,19 +12,38 @@ const ImageUploader = ({ inputId, onSave, infoText, externalImage }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
   const [rawImage, setRawImage] = useState(null);
+  const [lastCropSettings, setLastCropSettings] = useState(null);
+  const [inputKey, setInputKey] = useState(Date.now());
 
-  const handleFile = useCallback((file) => {
-    if (file && file.type.startsWith('image/')) {
-      const imageUrl = URL.createObjectURL(file);
-      setRawImage(imageUrl);
-      setEditorOpen(true);
-    }
-  }, []);
+  const handleFile = useCallback(
+    (file) => {
+      if (file && file.type.startsWith('image/')) {
+        if (rawImage) {
+          URL.revokeObjectURL(rawImage);
+        }
+        const imageUrl = URL.createObjectURL(file);
+        setRawImage(imageUrl);
+        setEditorOpen(true);
+        setInputKey(Date.now());
+      }
+    },
+    [rawImage],
+  );
 
   const handleEditorSave = (croppedImageUrl) => {
     setPreview(croppedImageUrl);
     setFileName('edited-image.jpg');
     onSave(croppedImageUrl);
+  };
+
+  const handleOpenEditorAgain = () => {
+    if (rawImage) {
+      setEditorOpen(true);
+    }
+  };
+
+  const handleEditorStateChange = (settings) => {
+    setLastCropSettings(settings);
   };
 
   const handleFileChange = (e) => {
@@ -49,8 +68,13 @@ const ImageUploader = ({ inputId, onSave, infoText, externalImage }) => {
   };
 
   const handleClear = () => {
+    if (rawImage) {
+      URL.revokeObjectURL(rawImage);
+    }
     setPreview(null);
     setFileName('');
+    setRawImage(null);
+    setLastCropSettings(null);
     onSave(null);
     const input = document.getElementById(inputId);
     if (input) input.value = '';
@@ -76,11 +100,24 @@ const ImageUploader = ({ inputId, onSave, infoText, externalImage }) => {
           <div className="drag-icon">
             <img src={'/drag-and-drop.png'} alt={'Drag&Drop'} />
           </div>
-          <input type="file" id={inputId} hidden accept="image/*" onChange={handleFileChange} />
+          <input
+            key={inputKey}
+            type="file"
+            id={inputId}
+            hidden
+            accept="image/*"
+            onChange={handleFileChange}
+          />
           <div className="file-name-block">
-            <label htmlFor={inputId} className="file-button">
-              {fileName ? fileName : 'Выбрать файл'}
-            </label>
+            {!preview ? (
+              <label htmlFor={inputId} className="file-button">
+                Выбрать файл
+              </label>
+            ) : (
+              <button className="file-button" onClick={handleOpenEditorAgain}>
+                {fileName}
+              </button>
+            )}
             {preview && (
               <button className="clear-button" onClick={handleClear}>
                 <Trash2 size={20} />
@@ -96,6 +133,8 @@ const ImageUploader = ({ inputId, onSave, infoText, externalImage }) => {
         image={rawImage}
         onClose={() => setEditorOpen(false)}
         onSave={handleEditorSave}
+        initialState={lastCropSettings || {}}
+        onStateChange={handleEditorStateChange}
       />
     </>
   );

@@ -1,7 +1,3 @@
-export function getRadianAngle(degreeValue) {
-  return (degreeValue * Math.PI) / 180;
-}
-
 export function createImage(url) {
   return new Promise((resolve, reject) => {
     const image = new Image();
