@@ -70,7 +70,7 @@ const SetPin = () => {
         alt="Loyal Club"
         style={{ width: 120, marginBottom: 24 }}
       />
-      <h2>Придумайте PIN</h2>
+      <h2>Придумайте PIN-код</h2>
       <div style={{ display: 'flex', gap: 12 }}>
         {[0, 1, 2, 3].map((i) => (
           <input
@@ -95,7 +95,10 @@ const SetPin = () => {
           />
         ))}
       </div>
-      <p style={{ color: '#888' }}>Запомните PIN — он позволит входить без SMS-кода</p>
+      <p style={{ color: '#888', textAlign: 'center' }}>
+        Для быстрого входа в личный кабинет. Работает только в том браузере, где был установлен
+      </p>
+      <p style={{ color: '#888' }}>Используйте только личные устройства</p>
       {submitting && <p style={{ color: '#888' }}>Сохраняем...</p>}
     </div>
   );
