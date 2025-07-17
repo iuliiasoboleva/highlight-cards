@@ -87,6 +87,16 @@ const ClientDetails = () => {
           client.cards.map((card, index) => (
             <div className="client-card-tag" key={card.id || index}>
               {card.name}
+              {card.id && (
+                <a
+                  href={`${axiosInstance.defaults.baseURL || ''}/passes/${card.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ marginLeft: 8, fontSize: 12 }}
+                >
+                  Apple&nbsp;Wallet
+                </a>
+              )}
             </div>
           ))
         ) : (
