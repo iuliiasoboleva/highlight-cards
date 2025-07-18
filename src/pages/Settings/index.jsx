@@ -10,6 +10,7 @@ import { pluralize } from '../../helpers/pluralize';
 import { fetchPayments } from '../../store/paymentsSlice';
 import { fetchSubscription } from '../../store/subscriptionSlice';
 import { fetchTariffs } from '../../store/tariffsSlice';
+import { fetchBalance, topUpBalance } from '../../store/balanceSlice';
 
 import './styles.css';
 
@@ -20,6 +21,7 @@ const Settings = () => {
     (state) => state.payments || {},
   );
   const { organization_id: orgId, id: userId } = useSelector((state) => state.user);
+  const { amount: balance = 0, loading: balanceLoading } = useSelector((state) => state.balance || {});
   const { info: subscription, loading: subLoading } = useSelector((state) => state.subscription);
 
   useEffect(() => {
@@ -38,6 +40,7 @@ const Settings = () => {
   useEffect(() => {
     if (orgId) {
       dispatch(fetchSubscription(orgId));
+      dispatch(fetchBalance(orgId));
     }
   }, [dispatch, orgId]);
 
@@ -55,6 +58,14 @@ const Settings = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState('plan');
+
+  const handleTopUp = () => {
+    const input = prompt('Введите сумму пополнения', '');
+    if (!input) return;
+    const amount = parseInt(input, 10);
+    if (isNaN(amount) || amount <= 0) return;
+    dispatch(topUpBalance({ orgId, amount }));
+  };
 
   const isTrial = subscription?.status === 'trial';
   const remainingDays = subscription?.days_left ?? 0;
@@ -267,6 +278,12 @@ const Settings = () => {
             onClick={() => setActiveTab('history')}
           >
             История платежей
+          </button>
+        </div>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <span><strong>Баланс:</strong> {balanceLoading ? '...' : `${balance} ₽`}</span>
+          <button className="custom-main-button" onClick={handleTopUp} disabled={balanceLoading}>
+            Пополнить
           </button>
         </div>
       </div>

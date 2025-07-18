@@ -38,6 +38,11 @@ export const defaultCardTemplate = {
     language: { value: 'ru', label: 'Русский (ru)' },
     phoneMask: { value: 'Russia', label: 'РФ (+7)' },
     redemptionRule: 'multiple', // multiple | single
+    walletLabels: {
+      toReward: 'До награды',
+      rewards: 'Доступные награды',
+      expire: 'Срок действия',
+    },
   },
   score: 10,
   subscribersCount: 0,
