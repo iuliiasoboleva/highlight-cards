@@ -3,16 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 
-import { Copy, Download, Power, X } from 'lucide-react';
+import { Copy, Power, X, Wallet } from 'lucide-react';
 
 import {
-  copyCard,
   copyCardAsync,
   deleteCardAsync,
-  downloadCard,
   setCurrentCard,
   updateCard,
 } from '../../store/cardsSlice';
+import { downloadPkPass } from '../../utils/downloadPkPass';
 import DeleteCardModal from '../DeleteCardModal';
 
 import './styles.css';
@@ -83,10 +82,6 @@ const CardButtons = ({ isFixed, cardId }) => {
     );
   };
 
-  const handleDownload = () => {
-    dispatch(downloadCard(cardId));
-  };
-
   const handleCopy = () => {
     setCopyLoading(true);
     dispatch(copyCardAsync(cardId))
@@ -95,6 +90,12 @@ const CardButtons = ({ isFixed, cardId }) => {
   };
 
   const handleDelete = () => setShowDel(true);
+
+  const handleDownloadPkPass = async () => {
+    try {
+      await downloadPkPass(cardId);
+    } catch (e) {}
+  };
 
   const confirmDelete = () => {
     dispatch(deleteCardAsync(cardId));
@@ -113,11 +114,11 @@ const CardButtons = ({ isFixed, cardId }) => {
           <Power size={20} />
         </button>
         <button
-          onClick={handleDownload}
+          onClick={handleDownloadPkPass}
           data-tooltip-id="card-action-tooltip"
-          data-tooltip-html="Скачать"
+          data-tooltip-html="Apple Wallet"
         >
-          <Download size={20} />
+          <Wallet size={20} />
         </button>
         <button
           onClick={handleCopy}
