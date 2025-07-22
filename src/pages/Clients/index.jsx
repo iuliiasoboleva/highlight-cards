@@ -80,14 +80,18 @@ const Clients = () => {
       });
   };
 
-  const columns = [
-    ...mockClientsHeaders.map((header) => ({
+  const columns = mockClientsHeaders.map((header) => {
+    const base = {
       key: header.key,
       title: header.label,
       className: 'text-center',
       cellClassName: 'text-center',
-    })),
-  ];
+    };
+    if (header.key === 'cards') {
+      base.render = (row) => (Array.isArray(row.cards) ? row.cards.length : 0);
+    }
+    return base;
+  });
 
   const generateClientLink = (clientId) => {
     const link = '/example';
