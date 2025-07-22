@@ -64,9 +64,7 @@ export const getCroppedImg = async (
   croppedCtx.restore();
 
   return new Promise((resolve) => {
-    croppedCanvas.toBlob((blob) => {
-      const fileUrl = URL.createObjectURL(blob);
-      resolve(fileUrl);
-    }, 'image/jpeg');
+    const dataUrl = croppedCanvas.toDataURL('image/png');
+    resolve(dataUrl);
   });
 };
