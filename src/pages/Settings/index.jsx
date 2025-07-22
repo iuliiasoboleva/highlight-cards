@@ -11,6 +11,7 @@ import { fetchPayments } from '../../store/paymentsSlice';
 import { fetchSubscription } from '../../store/subscriptionSlice';
 import { fetchTariffs } from '../../store/tariffsSlice';
 import { fetchBalance, topUpBalance } from '../../store/balanceSlice';
+import TopUpModal from '../../components/TopUpModal';
 
 import './styles.css';
 
@@ -58,12 +59,10 @@ const Settings = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState('plan');
+  const [topUpOpen, setTopUpOpen] = useState(false);
 
-  const handleTopUp = () => {
-    const input = prompt('Введите сумму пополнения', '');
-    if (!input) return;
-    const amount = parseInt(input, 10);
-    if (isNaN(amount) || amount <= 0) return;
+  const handleTopUpConfirm = (amount) => {
+    setTopUpOpen(false);
     dispatch(topUpBalance({ orgId, amount }));
   };
 
@@ -280,12 +279,7 @@ const Settings = () => {
             История платежей
           </button>
         </div>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <span><strong>Баланс:</strong> {balanceLoading ? '...' : `${balance} ₽`}</span>
-          <button className="custom-main-button" onClick={handleTopUp} disabled={balanceLoading}>
-            Пополнить
-          </button>
-        </div>
+        {/* Баланс перенесён на страницу «Рассылки» */}
       </div>
 
       {activeTab === 'plan' ? (
@@ -321,6 +315,11 @@ const Settings = () => {
             </div>
             <div className="plan-price">
               <span className="plan-price-value">6 900 ₽ / месяц</span>
+              {subscription?.status !== 'active' ? (
+                <button className="custom-main-button" style={{ maxWidth: 200, marginTop: 8 }} onClick={() => alert('Перейти к оплате')}>Активировать</button>
+              ) : (
+                <button className="custom-main-button" style={{ maxWidth: 200, marginTop: 8 }} disabled>Тариф активен</button>
+              )}
             </div>
           </div>
         </>
@@ -355,6 +354,7 @@ const Settings = () => {
           }}
         />
       )}
+      <TopUpModal isOpen={topUpOpen} onClose={() => setTopUpOpen(false)} onConfirm={handleTopUpConfirm} />
     </div>
   );
 };

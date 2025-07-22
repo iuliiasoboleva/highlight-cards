@@ -18,7 +18,7 @@ const Footer = () => (
         support@loyalclub.ru
       </a>
       <span className="separator">|</span>
-      <span className="phone">8 (800) 770-71-58</span>
+      <span className="phone">8 (800) 770-71-21</span>
     </div>
 
     <div className="footer-right">

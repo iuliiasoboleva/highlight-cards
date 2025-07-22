@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Tooltip } from 'react-tooltip';
 
 // import { useNavigate } from 'react-router-dom';
@@ -10,15 +10,10 @@ import axiosInstance from '../../axiosInstance';
 import CustomTable from '../../components/CustomTable';
 import { mailingsHeaders } from '../../mocks/mockMailings';
 import MailingDetailsModal from './MailingDetailsModal';
+import { fetchBalance, topUpBalance } from '../../store/balanceSlice';
+import TopUpModal from '../../components/TopUpModal';
 
 import './styles.css';
-
-const cards = [
-  { value: '0', label: 'Клиентов в базе' },
-  { value: 'Бесплатно!', label: 'Push и Web-push', className: 'highlight' },
-  { value: 'Скоро', label: 'Баланс SMS', className: 'gray small' },
-  { value: 'Скоро', label: 'Баланс Email', className: 'gray small' },
-];
 
 const MailingsInfo = () => {
   const [rows, setRows] = useState([]);
@@ -26,10 +21,17 @@ const MailingsInfo = () => {
   const [selectedId, setSelectedId] = useState(null);
 
   const orgId = useSelector((state) => state.user.organization_id);
+  const dispatch = useDispatch();
+
+  const { amount: smsBalance = 0, loading: smsLoading } = useSelector((state) => state.balance || {});
+  const [topUpOpen, setTopUpOpen] = useState(false);
+  const [hoverSms, setHoverSms] = useState(false);
   // const navigate = useNavigate();
 
   useEffect(() => {
     if (!orgId) return;
+
+    dispatch(fetchBalance(orgId));
 
     (async () => {
       try {
@@ -41,7 +43,12 @@ const MailingsInfo = () => {
         setLoading(false);
       }
     })();
-  }, [orgId]);
+  }, [orgId, dispatch]);
+
+  const handleTopUpConfirm = (amount) => {
+    setTopUpOpen(false);
+    dispatch(topUpBalance({ orgId, amount }));
+  };
 
   const columns = mailingsHeaders.map((header) => ({
     key: header.key,
@@ -114,15 +121,35 @@ const MailingsInfo = () => {
       </h2>
       <Tooltip id="mailings-help" className="custom-tooltip" />
       <div className="stats-cards">
-        {cards.map((card, index) => (
-          <div className="mailing-card" key={index}>
-            <div className={`value ${card.className || ''}`}>{card.value}</div>
-            <div className={`label ${card.className?.includes('small') ? 'small' : ''}`}>
-              {card.label}
+        {[
+          { value: '0', label: 'Клиентов в базе' },
+          { value: 'Бесплатно!', label: 'Push и Web-push', className: 'highlight' },
+          { value: smsLoading ? '...' : smsBalance, label: 'Баланс SMS', clickable: true },
+        ].map((card, index) => {
+          const isSms = card.label === 'Баланс SMS';
+          return (
+            <div
+              className="mailing-card"
+              key={index}
+              onMouseEnter={() => isSms && setHoverSms(true)}
+              onMouseLeave={() => isSms && setHoverSms(false)}
+              onClick={() => isSms && setTopUpOpen(true)}
+              style={{ cursor: isSms ? 'pointer' : 'default' }}
+            >
+              <div className={`value ${card.className || ''}`}>
+                {isSms && hoverSms ? 'Пополнить' : card.value}
+              </div>
+              {!isSms || !hoverSms ? (
+                <div className={`label ${card.className?.includes('small') ? 'small' : ''}`}>
+                  {card.label}
+                </div>
+              ) : null}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
+
+      {/* кнопка «Пополнить» больше не нужна — действие на карточке */}
 
       <div className="table-wrapper">
         <CustomTable
@@ -137,6 +164,12 @@ const MailingsInfo = () => {
         isOpen={!!selectedId}
         mailingId={selectedId}
         onClose={() => setSelectedId(null)}
+      />
+
+      <TopUpModal
+        isOpen={topUpOpen}
+        onClose={() => setTopUpOpen(false)}
+        onConfirm={handleTopUpConfirm}
       />
     </div>
   );

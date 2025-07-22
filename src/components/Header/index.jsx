@@ -8,6 +8,7 @@ import { BarChart, Contact, GraduationCap, LogOut, ScanLine, Settings, User } fr
 
 import { logout as authLogout } from '../../store/authSlice';
 import { logout as userLogout } from '../../store/userSlice';
+import { fetchSubscription } from '../../store/subscriptionSlice';
 
 import './styles.css';
 
@@ -15,6 +16,15 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
+  const subscription = useSelector((state) => state.subscription.info);
+  const subLoading = useSelector((state) => state.subscription.loading);
+
+  // Запрашиваем подписку, если ещё нет
+  useEffect(() => {
+    if (user.organization_id && !subscription && !subLoading) {
+      dispatch(fetchSubscription(user.organization_id));
+    }
+  }, [dispatch, user.organization_id, subscription, subLoading]);
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -73,6 +83,11 @@ const Header = () => {
         {(user.firstName || user.name) && (
           <div className="user-section">
             Привет, <span>{user.firstName || user.name}</span>
+            {subscription?.status === 'trial' && (
+              <span className="demo-badge" onClick={() => navigate('/settings')}>
+                Демо: {subscription.days_left} д.
+              </span>
+            )}
           </div>
         )}
 
