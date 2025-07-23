@@ -85,8 +85,27 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick }) => {
   };
 
   const renderFieldValue = (value, { type }) => {
-    if (value === undefined || value === null) return 'НЕТ ДАННЫХ';
-    if (type === 'restStamps' && value <= 0) return 'НЕТ ДАННЫХ';
+    if (value === undefined || value === null) {
+      // Используем walletLabels из настроек карты
+      const walletLabels = card.settings?.walletLabels || {};
+      return walletLabels.noData || 'НЕТ ДАННЫХ';
+    }
+    if (type === 'restStamps' && value <= 0) {
+      const walletLabels = card.settings?.walletLabels || {};
+      return walletLabels.noData || 'НЕТ ДАННЫХ';
+    }
+
+    // Используем walletLabels для форматирования
+    const walletLabels = card.settings?.walletLabels || {};
+    
+    if (type === 'restStamps') {
+      const stampsWord = walletLabels.stampsWord || 'штампов';
+      return `${value} ${stampsWord}`;
+    }
+    
+    if (type === 'rewards') {
+      return `${value} наград`;
+    }
 
     const cfg = (statusConfig[card.status] || []).find((c) => c.valueKey === type);
     if (cfg) {
@@ -95,6 +114,19 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick }) => {
     }
 
     return value;
+  };
+
+  const getFieldLabel = (type, defaultName) => {
+    const walletLabels = card.settings?.walletLabels || {};
+    
+    // Маппинг типов полей на walletLabels
+    const labelMap = {
+      'restStamps': walletLabels.toReward || 'До награды',
+      'rewards': walletLabels.rewards || 'Доступные награды',
+      'expirationDate': walletLabels.expire || 'Срок действия'
+    };
+    
+    return labelMap[type] || defaultName;
   };
 
   return (
@@ -129,15 +161,16 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick }) => {
               )
               .map(({ name, type }) => {
                 const value = mergedCard[type];
+                const fieldLabel = getFieldLabel(type, name);
                 return (
                   <span
                     key={type}
                     className="card-inline-value top"
-                    title={name}
+                    title={fieldLabel}
                     style={{ cursor: onFieldClick ? 'pointer' : 'default' }}
                     onClick={() => handleFieldClick(type)}
                   >
-                    <span className="inline-label">{name}:</span>{' '}
+                    <span className="inline-label">{fieldLabel}:</span>{' '}
                     {renderFieldValue(value, { type })}
                   </span>
                 );
@@ -166,6 +199,7 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick }) => {
           )
           .map(({ type, name }) => {
             const value = mergedCard[type];
+            const fieldLabel = getFieldLabel(type, name);
             return (
               <div
                 key={type}
@@ -173,8 +207,8 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick }) => {
                 style={{ cursor: onFieldClick ? 'pointer' : 'default' }}
                 onClick={() => handleFieldClick(type)}
               >
-                <p className="card-info-row-label" title={name}>
-                  {name}
+                <p className="card-info-row-label" title={fieldLabel}>
+                  {fieldLabel}
                 </p>
                 <span>{renderFieldValue(value, { type })}</span>
               </div>
@@ -185,7 +219,6 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick }) => {
       {card.qrImg && (
         <>
           <img className="card-info-qr-img" src={card.qrImg} alt="QR код" />
-          <p className="card-number">{card.serialNumber || '000001'}</p>
         </>
       )}
 

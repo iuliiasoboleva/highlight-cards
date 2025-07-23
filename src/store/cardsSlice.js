@@ -316,13 +316,7 @@ export const cardsSlice = createSlice({
         state.cards = [fixedCard];
       })
       .addCase(fetchCards.fulfilled, (state, action) => {
-        const rawCards = [fixedCard, ...action.payload].map((card) => ({
-          ...card,
-          fieldsName: (statusConfig[card.status] || []).map((item) => ({
-            type: item.valueKey,
-            name: item.label,
-          })),
-        }));
+        const rawCards = [fixedCard, ...action.payload];
 
         const fixed = rawCards[0];
         const others = rawCards.slice(1);
@@ -358,10 +352,6 @@ export const cardsSlice = createSlice({
           frameUrl: rawCard.frame_url || rawCard.frameUrl || '/frame-empty.svg',
           qrImg: rawCard.qr_img || rawCard.qrImg,
           urlCopy: rawCard.url_copy || rawCard.urlCopy,
-          fieldsName: (statusConfig[rawCard.status] || []).map((item) => ({
-            type: item.valueKey,
-            name: item.label,
-          })),
         };
         const rest = state.cards.slice(1).filter((c) => c.id !== newCard.id);
         state.cards = [state.cards[0], ...rest, newCard];
