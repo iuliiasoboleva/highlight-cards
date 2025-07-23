@@ -222,6 +222,13 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick }) => {
         </>
       )}
 
+      {/* Номер карты (макет) */}
+      {(() => {
+        const rawNumber = card.serialNumber || '000001';
+        const formatted = String(rawNumber).replace(/(\d{3})(\d{3})/, '$1 $2');
+        return <p className="card-number">{formatted}</p>;
+      })()}
+
       <div className="card-info-main-img-wrapper">
         {design.stampBackground || mergedCard.cardImg ? (
           <img

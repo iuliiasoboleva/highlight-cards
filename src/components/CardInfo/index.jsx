@@ -261,6 +261,13 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
           <img className="card-info-qr-img" src={card.qrImg} alt="QR код" draggable="false" />
         </>
       )}
+
+      {/* Номер карты (макет) */}
+      {(() => {
+        const rawNumber = card.serialNumber || '000001';
+        const formatted = String(rawNumber).replace(/(\d{3})(\d{3})/, '$1 $2');
+        return <p className="card-number">{formatted}</p>;
+      })()}
       <HelpCircle size={20} onClick={toggleInfo} className="info-button" />
     </div>
   );
