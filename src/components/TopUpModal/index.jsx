@@ -53,4 +53,4 @@ const TopUpModal = ({ isOpen, onClose, onConfirm }) => {
   );
 };
 
-export default TopUpModal; 
+export default TopUpModal;

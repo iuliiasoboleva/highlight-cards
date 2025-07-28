@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Tooltip } from 'react-tooltip';
 
 // import { useNavigate } from 'react-router-dom';
@@ -8,10 +8,10 @@ import { HelpCircle, Loader2 } from 'lucide-react';
 
 import axiosInstance from '../../axiosInstance';
 import CustomTable from '../../components/CustomTable';
-import { mailingsHeaders } from '../../mocks/mockMailings';
-import MailingDetailsModal from './MailingDetailsModal';
-import { fetchBalance, topUpBalance } from '../../store/balanceSlice';
 import TopUpModal from '../../components/TopUpModal';
+import { mailingsHeaders } from '../../mocks/mockMailings';
+import { fetchBalance, topUpBalance } from '../../store/balanceSlice';
+import MailingDetailsModal from './MailingDetailsModal';
 
 import './styles.css';
 
@@ -23,7 +23,9 @@ const MailingsInfo = () => {
   const orgId = useSelector((state) => state.user.organization_id);
   const dispatch = useDispatch();
 
-  const { amount: smsBalance = 0, loading: smsLoading } = useSelector((state) => state.balance || {});
+  const { amount: smsBalance = 0, loading: smsLoading } = useSelector(
+    (state) => state.balance || {},
+  );
   const [topUpOpen, setTopUpOpen] = useState(false);
   const [hoverSms, setHoverSms] = useState(false);
   // const navigate = useNavigate();

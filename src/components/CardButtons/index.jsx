@@ -3,14 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 
-import { Copy, Power, X, Wallet } from 'lucide-react';
+import { Copy, Power, Wallet, X } from 'lucide-react';
 
-import {
-  copyCardAsync,
-  deleteCardAsync,
-  setCurrentCard,
-  updateCard,
-} from '../../store/cardsSlice';
+import { copyCardAsync, deleteCardAsync, setCurrentCard, updateCard } from '../../store/cardsSlice';
 import { downloadPkPass } from '../../utils/downloadPkPass';
 import DeleteCardModal from '../DeleteCardModal';
 

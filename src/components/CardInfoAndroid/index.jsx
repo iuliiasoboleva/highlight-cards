@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
+import html2canvas from 'html2canvas';
 import { Star } from 'lucide-react';
 
 import { getStampIconComponent } from '../../utils/stampIcons';
@@ -17,6 +18,22 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick }) => {
   const cardId = card.id || urlId;
   const currentFields = useSelector((state) => state.cards.currentCard?.fieldsName) || [];
   const currentDesign = useSelector((state) => state.cards.currentCard?.design) || {};
+
+  const handleGenerateWalletImage = async () => {
+    const cardElement = document.querySelector('.card-info-main-img-wrapper');
+    if (!cardElement) return;
+
+    const canvas = await html2canvas(cardElement, {
+      scale: 2,
+    });
+
+    const dataUrl = canvas.toDataURL('image/png');
+
+    const link = document.createElement('a');
+    link.href = dataUrl;
+    link.download = 'wallet-card-preview.png';
+    link.click();
+  };
 
   const toggleInfo = () => {
     if (typeof setShowInfo === 'function') {
@@ -97,12 +114,12 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick }) => {
 
     // Используем walletLabels для форматирования
     const walletLabels = card.settings?.walletLabels || {};
-    
+
     if (type === 'restStamps') {
       const stampsWord = walletLabels.stampsWord || 'штампов';
       return `${value} ${stampsWord}`;
     }
-    
+
     if (type === 'rewards') {
       return `${value} наград`;
     }
@@ -118,14 +135,14 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick }) => {
 
   const getFieldLabel = (type, defaultName) => {
     const walletLabels = card.settings?.walletLabels || {};
-    
+
     // Маппинг типов полей на walletLabels
     const labelMap = {
-      'restStamps': walletLabels.toReward || 'До награды',
-      'rewards': walletLabels.rewards || 'Доступные награды',
-      'expirationDate': walletLabels.expire || 'Срок действия'
+      restStamps: walletLabels.toReward || 'До награды',
+      rewards: walletLabels.rewards || 'Доступные награды',
+      expirationDate: walletLabels.expire || 'Срок действия',
     };
-    
+
     return labelMap[type] || defaultName;
   };
 

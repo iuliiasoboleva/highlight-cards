@@ -66,4 +66,4 @@ const balanceSlice = createSlice({
   },
 });
 
-export default balanceSlice.reducer; 
+export default balanceSlice.reducer;

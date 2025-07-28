@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
+import html2canvas from 'html2canvas';
 import { HelpCircle, Star } from 'lucide-react';
 
 import { getStampIconComponent } from '../../utils/stampIcons';
@@ -17,6 +18,22 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
   const cardId = card.id || urlId;
   const currentFields = useSelector((state) => state.cards.currentCard?.fieldsName) || [];
   const currentDesign = useSelector((state) => state.cards.currentCard?.design) || {};
+
+  const handleGenerateWalletImage = async () => {
+    const cardElement = document.querySelector('.card-info-main-img-wrapper');
+    if (!cardElement) return;
+
+    const canvas = await html2canvas(cardElement, {
+      scale: 2, // выше = чётче
+    });
+
+    const dataUrl = canvas.toDataURL('image/png');
+
+    const link = document.createElement('a');
+    link.href = dataUrl;
+    link.download = 'wallet-card-preview.png';
+    link.click();
+  };
 
   const toggleInfo = () => {
     if (typeof setShowInfo === 'function') {
@@ -54,7 +71,7 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
 
   const design = card.design || currentDesign || {};
   const fields = card.fieldsName || currentFields || [];
-  
+
   const stampsQuantity = typeof design?.stampsQuantity === 'number' ? design.stampsQuantity : 10;
 
   const activeStampImage = design?.activeStampImage || null;
@@ -98,12 +115,12 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
 
     // Используем walletLabels для форматирования
     const walletLabels = card.settings?.walletLabels || {};
-    
+
     if (type === 'restStamps') {
       const stampsWord = walletLabels.stampsWord || 'штампов';
       return `${value} ${stampsWord}`;
     }
-    
+
     if (type === 'rewards') {
       return `${value} наград`;
     }
@@ -119,14 +136,14 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
 
   const getFieldLabel = (type, defaultName) => {
     const walletLabels = card.settings?.walletLabels || {};
-    
+
     // Маппинг типов полей на walletLabels
     const labelMap = {
-      'restStamps': walletLabels.toReward || 'До награды',
-      'rewards': walletLabels.rewards || 'Доступные награды',
-      'expirationDate': walletLabels.expire || 'Срок действия'
+      restStamps: walletLabels.toReward || 'До награды',
+      rewards: walletLabels.rewards || 'Доступные награды',
+      expirationDate: walletLabels.expire || 'Срок действия',
     };
-    
+
     return labelMap[type] || defaultName;
   };
 
@@ -255,6 +272,10 @@ const CardInfo = ({ card, setShowInfo, onFieldClick }) => {
             );
           })}
       </div>
+      {/* для тестирования, можно удалить */}
+      {/* <button onClick={handleGenerateWalletImage}>
+        Скачать превью для Wallet
+      </button> */}
 
       {card.qrImg && (
         <>

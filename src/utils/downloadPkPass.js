@@ -10,4 +10,4 @@ export const downloadPkPass = async (cardId) => {
   a.click();
   document.body.removeChild(a);
   window.URL.revokeObjectURL(url);
-}; 
+};

@@ -68,7 +68,8 @@ const SetPin = () => {
       <img src="/logoColored.png" alt="Loyal Club" style={{ width: 140, marginBottom: 24 }} />
       <h2 style={{ marginBottom: 8 }}>Придумайте код</h2>
       <p style={{ color: '#888', marginTop: 0, marginBottom: 24, textAlign: 'center' }}>
-        Для быстрого входа в личный кабинет. <p>Работает только в том браузере, где был установлен</p>
+        Для быстрого входа в личный кабинет.{' '}
+        <p>Работает только в том браузере, где был установлен</p>
       </p>
       <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
         {[0, 1, 2, 3].map((i) => (

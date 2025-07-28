@@ -6,12 +6,12 @@ import { Loader2 } from 'lucide-react';
 import AgreementModal from '../../components/AgreementModal';
 import CustomSelect from '../../components/CustomSelect';
 import CustomTable from '../../components/CustomTable';
+import TopUpModal from '../../components/TopUpModal';
 import { pluralize } from '../../helpers/pluralize';
+import { fetchBalance, topUpBalance } from '../../store/balanceSlice';
 import { fetchPayments } from '../../store/paymentsSlice';
 import { fetchSubscription } from '../../store/subscriptionSlice';
 import { fetchTariffs } from '../../store/tariffsSlice';
-import { fetchBalance, topUpBalance } from '../../store/balanceSlice';
-import TopUpModal from '../../components/TopUpModal';
 
 import './styles.css';
 
@@ -22,7 +22,9 @@ const Settings = () => {
     (state) => state.payments || {},
   );
   const { organization_id: orgId, id: userId } = useSelector((state) => state.user);
-  const { amount: balance = 0, loading: balanceLoading } = useSelector((state) => state.balance || {});
+  const { amount: balance = 0, loading: balanceLoading } = useSelector(
+    (state) => state.balance || {},
+  );
   const { info: subscription, loading: subLoading } = useSelector((state) => state.subscription);
 
   useEffect(() => {
@@ -316,9 +318,21 @@ const Settings = () => {
             <div className="plan-price">
               <span className="plan-price-value">6 900 ₽ / месяц</span>
               {subscription?.status !== 'active' ? (
-                <button className="custom-main-button" style={{ maxWidth: 200, marginTop: 8 }} onClick={() => alert('Перейти к оплате')}>Активировать</button>
+                <button
+                  className="custom-main-button"
+                  style={{ maxWidth: 200, marginTop: 8 }}
+                  onClick={() => alert('Перейти к оплате')}
+                >
+                  Активировать
+                </button>
               ) : (
-                <button className="custom-main-button" style={{ maxWidth: 200, marginTop: 8 }} disabled>Тариф активен</button>
+                <button
+                  className="custom-main-button"
+                  style={{ maxWidth: 200, marginTop: 8 }}
+                  disabled
+                >
+                  Тариф активен
+                </button>
               )}
             </div>
           </div>
@@ -354,7 +368,11 @@ const Settings = () => {
           }}
         />
       )}
-      <TopUpModal isOpen={topUpOpen} onClose={() => setTopUpOpen(false)} onConfirm={handleTopUpConfirm} />
+      <TopUpModal
+        isOpen={topUpOpen}
+        onClose={() => setTopUpOpen(false)}
+        onConfirm={handleTopUpConfirm}
+      />
     </div>
   );
 };
