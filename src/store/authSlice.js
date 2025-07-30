@@ -178,10 +178,10 @@ export const authSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(requestSmsCode.fulfilled, (state) => {
-        state.status = 'success';
+        state.status = 'idle';
       })
       .addCase(requestSmsCode.rejected, (state) => {
-        state.status = 'failed';
+        state.status = 'idle';
       });
   },
 });

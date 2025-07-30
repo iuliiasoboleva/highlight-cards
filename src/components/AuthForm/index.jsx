@@ -457,10 +457,10 @@ const AuthForm = () => {
               )}
               <button
                 type="submit"
-                className={`custom-button ${status === 'loading' ? 'loading' : ''}`}
-                disabled={submitting || status === 'loading' || !isPhoneValid}
+                className={`custom-button ${submitting ? 'loading' : ''}`}
+                disabled={submitting || !isPhoneValid}
               >
-                {status === 'loading' ? '' : 'Получить код'}
+                {submitting ? '' : 'Получить код'}
               </button>
             </>
           )}
@@ -615,10 +615,10 @@ const AuthForm = () => {
 
               <button
                 type="submit"
-                className={`custom-button ${status === 'loading' ? 'loading' : ''}`}
-                disabled={submitting || status === 'loading' || !isFormValid}
+                className={`custom-button ${submitting ? 'loading' : ''}`}
+                disabled={submitting || !isFormValid}
               >
-                {status === 'loading' ? '' : 'Зарегистрироваться'}
+                {submitting ? '' : 'Зарегистрироваться'}
               </button>
             </>
           )}
@@ -665,7 +665,7 @@ const AuthForm = () => {
               </div>
               <button
                 type="submit"
-                disabled={submitting || status === 'loading' || formData.pin.length !== 4}
+                disabled={submitting || formData.pin.length !== 4}
                 className="custom-button"
               >
                 {step === 'pinLogin' ? 'Войти' : 'Сохранить PIN'}
