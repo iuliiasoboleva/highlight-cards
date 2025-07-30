@@ -4,6 +4,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 
 import { HelpCircle } from 'lucide-react';
+import html2canvas from 'html2canvas';
 
 import EditLayout from '../../components/EditLayout';
 import { updateCurrentCardField } from '../../store/cardsSlice';
@@ -69,7 +70,19 @@ const EditDesign = () => {
     dispatch(updateCurrentCardField({ path: `design.${field}`, value: croppedImage }));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    if (isStampCard) {
+      const targetEl = document.querySelector('.card-info-main-img-wrapper');
+      if (targetEl) {
+        try {
+          const canvas = await html2canvas(targetEl, { scale: 3, backgroundColor: null });
+          const dataUrl = canvas.toDataURL('image/png');
+          dispatch(updateCurrentCardField({ path: 'design.stampBackground', value: dataUrl }));
+        } catch (e) {
+          // ignore errors silently
+        }
+      }
+    }
     navigate(`/cards/${id}/edit/info`);
   };
 
