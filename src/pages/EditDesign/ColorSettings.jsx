@@ -58,6 +58,7 @@ const ColorSettings = ({ colors, handleColorChange, isStampCard }) => {
     { key: 'textColor', label: 'Цвет текста' },
     { key: 'borderColor', label: 'Цвет обводки' },
     { key: 'inactiveStampColor', label: 'Неактивный штамп' },
+    { key: 'inactiveStampBgColor', label: 'Фон неактивного штампа' },
   ];
 
   const limitedColorFields = [

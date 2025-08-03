@@ -65,6 +65,12 @@
   white-space: nowrap;
 }
 
+.select-option-item svg,
+.select-current-value svg {
+  width: 20px;
+  height: 20px;
+}
+
 .select-option-item:hover {
   background-color: rgba(191, 71, 86, 0.1);
 }

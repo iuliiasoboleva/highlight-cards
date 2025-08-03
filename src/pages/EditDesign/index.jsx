@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 
-import { HelpCircle } from 'lucide-react';
 import html2canvas from 'html2canvas';
+import { HelpCircle } from 'lucide-react';
 
 import EditLayout from '../../components/EditLayout';
 import { updateCurrentCardField } from '../../store/cardsSlice';

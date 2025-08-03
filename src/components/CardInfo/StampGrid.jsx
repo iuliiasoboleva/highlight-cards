@@ -32,7 +32,7 @@ const StampGrid = ({
   const itemSize = Math.min(maxItemWidth, maxItemHeight);
   const paddingRatio = 0.2;
   const itemPadding = Math.floor(itemSize * paddingRatio);
-  const iconSize = Math.floor((itemSize - itemPadding * 2) * 0.8);
+  const iconSize = Math.floor((itemSize - itemPadding * 2) * 0.95);
 
   let currentStamp = 0;
 

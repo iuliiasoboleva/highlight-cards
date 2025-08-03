@@ -84,7 +84,7 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick }) => {
   const ActiveIcon = normalizeIcon(design?.activeStamp || 'Star');
   const InactiveIcon = normalizeIcon(design?.inactiveStamp || 'Star');
 
-  const defaultInactiveColor = '#C4C4C4';
+  const defaultInactiveColor = '#CDCDCD';
   const effectiveInactiveColor =
     !design?.inactiveStampColor || /^#?fff?f?f?$/i.test(design?.inactiveStampColor)
       ? defaultInactiveColor
