@@ -1,13 +1,13 @@
 import React from 'react';
 
-import './styles.css';
+import { HiddenCheckbox, Slider, SwitchLabel } from './styles';
 
 const ToggleSwitch = ({ checked, onChange }) => {
   return (
-    <label className="toggle-switch">
-      <input type="checkbox" checked={checked} onChange={onChange} />
-      <span className="toggle-slider" />
-    </label>
+    <SwitchLabel>
+      <HiddenCheckbox checked={checked} onChange={onChange} />
+      <Slider checked={checked} />
+    </SwitchLabel>
   );
 };
 

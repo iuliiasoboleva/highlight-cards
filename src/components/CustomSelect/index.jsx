@@ -1,6 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import './styles.css';
+import {
+  ArrowIcon,
+  CurrentValue,
+  HeaderBox,
+  OptionItem,
+  OptionsList,
+  SelectWrapper,
+} from './styles';
 
 const CustomSelect = ({ value, onChange, options, placeholder = '', className = '' }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,36 +33,34 @@ const CustomSelect = ({ value, onChange, options, placeholder = '', className = 
   const displayValue = selectedOption ? selectedOption.label : placeholder;
 
   return (
-    <div className={`tariff-period-select ${className}`} ref={selectRef}>
-      <div
-        className={`select-header-box ${isOpen ? 'select-header-opened' : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <span className="select-current-value">{displayValue}</span>
-        <svg
-          className={`select-arrow-icon ${isOpen ? 'select-arrow-up' : ''}`}
+    <SelectWrapper className={className} ref={selectRef}>
+      <HeaderBox $opened={isOpen} onClick={() => setIsOpen((prev) => !prev)}>
+        <CurrentValue>{displayValue}</CurrentValue>
+        <ArrowIcon
+          $up={isOpen}
           width="12"
           height="8"
           viewBox="0 0 12 8"
+          xmlns="http://www.w3.org/2000/svg"
         >
           <path d="M1 1L6 6L11 1" stroke="currentColor" strokeWidth="2" fill="none" />
-        </svg>
-      </div>
+        </ArrowIcon>
+      </HeaderBox>
 
       {isOpen && (
-        <div className="select-options-list">
+        <OptionsList>
           {options.map((option, index) => (
-            <div
+            <OptionItem
               key={index}
-              className={`select-option-item ${option.value === value ? 'select-option-selected' : ''}`}
+              $selected={option.value === value}
               onClick={() => handleSelect(option.value)}
             >
               {option.label}
-            </div>
+            </OptionItem>
           ))}
-        </div>
+        </OptionsList>
       )}
-    </div>
+    </SelectWrapper>
   );
 };
 

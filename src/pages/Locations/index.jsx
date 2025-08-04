@@ -5,6 +5,7 @@ import { Loader2, Trash2 } from 'lucide-react';
 import { useDebounce } from 'use-debounce';
 
 import CustomSelect from '../../components/CustomSelect';
+import GeoBadge from '../../components/GeoBadge';
 import PushPreview from '../../components/PushPreview';
 import ToggleSwitch from '../../components/ToggleSwitch';
 import YandexMapPicker from '../../components/YandexMapPicker';
@@ -159,9 +160,7 @@ const Locations = () => {
   const renderMapSection = () => (
     <div className="edit-type-left">
       <div className="edit-type-page">
-        <h2>
-          Локации <span className="geo-badge">Geo-push в радиусе 100 метров</span>
-        </h2>
+        <GeoBadge title="Локации" badgeText="Geo-push в радиусе 100 метров" />
         <p className="locations-subtext">
           Добавьте адреса, рядом с которыми вашим клиентам будут автоматически приходить
           push-уведомления. Geo-push работает, когда клиент оказывается в радиусе 100 метров от
@@ -182,7 +181,6 @@ const Locations = () => {
             value: card.id,
             label: card.name || card.title,
           }))}
-          className="tariff-period-select"
         />
         {limitReached && (
           <div className="limit-alert">Вы достигли лимита в {MAX_LOCATIONS} локаций</div>
@@ -302,9 +300,7 @@ const Locations = () => {
   const renderEmptyState = () => (
     <div className="edit-type-left">
       <div className="edit-type-page">
-        <h2>
-          Локации <span className="geo-badge">Geo-push в радиусе 100 метров</span>
-        </h2>
+        <GeoBadge title="Локации" badgeText="Geo-push в радиусе 100 метров" />
         <p className="locations-subtext">
           Добавьте адреса, рядом с которыми вашим клиентам будут автоматически приходить
           push-уведомления. Geo-push работает, когда клиент оказывается в радиусе 100 метров от

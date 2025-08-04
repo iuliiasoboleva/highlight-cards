@@ -212,7 +212,6 @@ const Settings = () => {
                 { value: 'Год', label: 'Год' },
                 { value: 'Месяц', label: 'Месяц' },
               ]}
-              className="tariff-period-select"
             />
             <button className="custom-main-button">Выбрать тариф</button>
           </div>,

@@ -1,20 +1,70 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import CustomSelect from '../../components/CustomSelect';
+import GeoBadge from '../../components/GeoBadge';
 import PushPreview from '../../components/PushPreview';
 import { mockUserPushes } from '../../mocks/mockUserPushes';
-
-import './styles.css';
+import { setCurrentCard } from '../../store/cardsSlice';
+import {
+  Actions,
+  BlackButton,
+  Button,
+  CardState,
+  FormDescription,
+  FormTitle,
+  FormWrapper,
+  Input,
+  Layout,
+  Left,
+  Line,
+  PhoneFrame,
+  PhoneImage,
+  PhoneScreen,
+  PhoneSticky,
+  Right,
+  Subtitle,
+  Tab,
+  Tabs,
+  Tag,
+  TagWrapper,
+  WhiteButton,
+} from './styles';
 
 const MailingsUserPush = () => {
+  const dispatch = useDispatch();
+
   const [tariff, setTariff] = useState('Start');
   const [pushMessage, setPushMessage] = useState('');
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
   const [activeTab, setActiveTab] = useState('settings');
-
-  const hasAccess = tariff !== 'Start';
+  const [selectedTriggerKey, setSelectedTriggerKey] = useState(null);
 
   const currentCard = useSelector((state) => state.cards.currentCard);
+  const allCards = useSelector((state) => state.cards.cards);
+
+  const handleCardSelect = (cardId) => {
+    const selected = allCards.find((c) => c.id === cardId);
+    if (selected) {
+      dispatch(
+        setCurrentCard({
+          ...selected,
+          pushNotification: selected.pushNotification || {
+            message: `Новое уведомление по вашей карте "${selected.title}"`,
+            scheduledDate: '',
+          },
+        }),
+      );
+    }
+  };
+
+  const handleTriggerSelect = (key) => {
+    setSelectedTriggerKey(key);
+  };
+
+  const handleCancel = () => {
+    setSelectedTriggerKey(null);
+  };
 
   useEffect(() => {
     if (currentCard) {
@@ -31,72 +81,102 @@ const MailingsUserPush = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const hasAccess = tariff !== 'Start';
+
   const scenariosContent = (
-    <div className="edit-type-left">
-      <div className="edit-type-page">
-        <h2>Пользовательские push</h2>
-        <p className="page-subtitle">
+    <Left>
+      <div>
+        <GeoBadge title="Пользовательские авто-push" badgeText="Бесплатно!" />
+        <Subtitle>
           Задайте свои правила отправки PUSH-уведомлений клиенту. Выберите после какого события и
           через сколько времени будет отправлено уведомление
-        </p>
+        </Subtitle>
+
+        <Line />
+
         {hasAccess ? (
-          <div className="automation-table">
-            <h3>Сценарии пользовательских пушей</h3>
-            <ul className="automation-list">
-              {mockUserPushes.map((item) => (
-                <li key={item.id} className="automation-item">
-                  <div className="automation-item-title">{item.title}</div>
-                  <div className="automation-item-description">{item.description}</div>
-                  <div className="automation-item-status">
-                    {item.enabled ? 'Включено' : 'Выключено'}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <>
+            {selectedTriggerKey === null ? (
+              <CustomSelect
+                value={selectedTriggerKey}
+                onChange={handleTriggerSelect}
+                placeholder="Выберите триггер для запуска авто-push"
+                options={mockUserPushes.map((item) => ({
+                  value: item.key,
+                  label: item.title,
+                }))}
+              />
+            ) : (
+              <FormWrapper>
+                <FormTitle>Добавить авто-push</FormTitle>
+                <FormDescription>
+                  Настройте сценарий отправки автоматического push-уведомления
+                </FormDescription>
+
+                <CustomSelect
+                  value={selectedTriggerKey}
+                  onChange={handleTriggerSelect}
+                  placeholder="Для условия"
+                  options={mockUserPushes.map((item) => ({
+                    value: item.key,
+                    label: item.title,
+                  }))}
+                />
+
+                <Input placeholder="Введите текст" />
+                <Input placeholder="Сообщение будет выслано по истечении" />
+                <Input placeholder="Время" />
+
+                <TagWrapper>
+                  <Tag>SPA салон ✕</Tag>
+                </TagWrapper>
+
+                <Actions>
+                  <BlackButton>Сохранить</BlackButton>
+                  <WhiteButton onClick={handleCancel}>Отменить</WhiteButton>
+                </Actions>
+              </FormWrapper>
+            )}
+          </>
         ) : (
           <>
-            <p className="page-subtitle">
+            <Subtitle>
               Данный функционал не доступен на вашем тарифе <strong>«Start»</strong>
-            </p>
-            <button className="card-form-add-btn">Выбрать тариф</button>
+            </Subtitle>
+            <Button>Выбрать тариф</Button>
           </>
         )}
       </div>
-    </div>
+    </Left>
   );
 
   const previewContent = (
-    <div className="edit-type-right">
-      <div className="phone-sticky">
-        <div className="card-state">
+    <Right>
+      <PhoneSticky>
+        <CardState>
           <span className={`status-indicator ${currentCard.isActive ? 'active' : 'inactive'}`} />
           {currentCard.isActive ? 'Активна' : 'Не активна'}
-        </div>
-        <div className="phone-frame">
-          <img className="phone-image" src={currentCard.frameUrl} alt={currentCard.name} />
-          <div className="phone-screen">
+        </CardState>
+        <PhoneFrame>
+          <PhoneImage src={currentCard.frameUrl} alt={currentCard.name} />
+          <PhoneScreen>
             <PushPreview card={currentCard} message={pushMessage} />
-          </div>
-        </div>
-      </div>
-    </div>
+          </PhoneScreen>
+        </PhoneFrame>
+      </PhoneSticky>
+    </Right>
   );
 
   return (
-    <div className="edit-type-layout">
+    <Layout>
       {isMobile && (
-        <div className="edit-type-tabs">
+        <Tabs>
           {['settings', 'card'].map((tab) => (
-            <button
-              key={tab}
-              className={`edit-type-tab ${activeTab === tab ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab)}
-            >
+            <Tab key={tab} active={activeTab === tab} onClick={() => setActiveTab(tab)}>
               {tab === 'settings' ? 'Сценарии' : 'Превью'}
-            </button>
+            </Tab>
           ))}
-        </div>
+        </Tabs>
       )}
 
       {isMobile ? (
@@ -111,7 +191,7 @@ const MailingsUserPush = () => {
           {previewContent}
         </>
       )}
-    </div>
+    </Layout>
   );
 };
 

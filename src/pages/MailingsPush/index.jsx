@@ -154,7 +154,6 @@ const MailingsPush = () => {
               value: card.id,
               label: card.title,
             }))}
-            className="tariff-period-select"
             disabled={!hasActiveCards}
           />
 

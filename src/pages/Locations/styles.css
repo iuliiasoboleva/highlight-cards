@@ -149,7 +149,6 @@ input:checked + .slider:before {
 @media (min-width: 1000px) {
   .locations-layout {
     padding-left: 20px; /* отступ от бокового меню */
-    padding-top: 20px;
   }
 
   .locations-layout .edit-type-left,
@@ -161,7 +160,7 @@ input:checked + .slider:before {
   /* убираем лишний внутренний отступ, чтобы не сужать колонку */
   .locations-layout .edit-type-left {
     padding-left: 0 !important;
-    padding-top: 0 !important;
+    padding-top: 20px;
   }
 }
 
