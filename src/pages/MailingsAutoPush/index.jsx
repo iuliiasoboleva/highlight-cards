@@ -6,7 +6,7 @@ import CustomSelect from '../../components/CustomSelect';
 import GeoBadge from '../../components/GeoBadge';
 import PushPreview from '../../components/PushPreview';
 import { mockAutoPushes } from '../../mocks/mockUserPushes';
-import { setCurrentCard } from '../../store/cardsSlice';
+import { setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
 import {
   Button,
   CardState,
@@ -32,35 +32,14 @@ const MailingsAutoPush = () => {
   const [pushMessage, setPushMessage] = useState('');
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
   const [activeTab, setActiveTab] = useState('settings');
-
-  const [settings, setSettings] = useState(
-    mockAutoPushes.reduce((acc, seg) => {
-      acc[seg.key] = {
-        message: seg.defaultMessage,
-        delay: 2,
-        enabled: false,
-      };
-      return acc;
-    }, {}),
-  );
-
-  const updateSegment = (key, field, value) => {
-    setSettings((prev) => ({
-      ...prev,
-      [key]: { ...prev[key], [field]: value },
-    }));
-  };
-
-  const handleSave = (key) => {
-    const { message, delay, enabled } = settings[key];
-    console.log('Сохраняем:', { key, message, delay, enabled });
-  };
+  const [selectedCardId, setSelectedCardId] = useState(null);
 
   const hasAccess = tariff !== 'Start';
   const currentCard = useSelector((state) => state.cards.currentCard);
   const allCards = useSelector((state) => state.cards.cards);
 
   const handleCardSelect = (cardId) => {
+    setSelectedCardId(cardId);
     const selected = allCards.find((c) => c.id === cardId);
     if (selected) {
       dispatch(
@@ -91,16 +70,28 @@ const MailingsAutoPush = () => {
   }, []);
 
   const onSaveAllOff = () => {
-    setSettings((prev) => {
-      const updated = {};
-      for (const key in prev) {
-        updated[key] = { ...prev[key], enabled: false };
-      }
-      return updated;
+    mockAutoPushes.forEach((seg) => {
+      dispatch(
+        updateCurrentCardField({
+          path: `pushNotification.auto.${seg.key}.enabled`,
+          value: false,
+        }),
+      );
     });
   };
 
-  const hasAnyEnabled = Object.values(settings).some((seg) => seg.enabled);
+  const handleSegmentChange = (key, field, value) => {
+    dispatch(
+      updateCurrentCardField({
+        path: `pushNotification.auto.${key}.${field}`,
+        value,
+      }),
+    );
+  };
+
+  const hasAnyEnabled = Object.values(currentCard?.pushNotification?.auto || {}).some(
+    (seg) => seg?.enabled,
+  );
 
   const scenariosContent = (
     <Left>
@@ -112,36 +103,47 @@ const MailingsAutoPush = () => {
         </Subtitle>
 
         <Line />
-        <MainButton onClick={onSaveAllOff} disabled={!hasAnyEnabled}>
-          Выключить все авто-пуши
-        </MainButton>
 
         {hasAccess ? (
           <>
+            <MainButton onClick={onSaveAllOff} disabled={!hasAnyEnabled}>
+              Выключить все авто-пуши
+            </MainButton>
+
             <CustomSelect
-              value={currentCard?.id || allCards[0]?.id || null}
+              value={selectedCardId}
               onChange={handleCardSelect}
-              placeholder={'Карта'}
+              placeholder="Карта"
               options={allCards.map((card) => ({
                 value: card.id,
                 label: card.name || card.title,
               }))}
             />
-            <Cards>
-              {mockAutoPushes.map((seg) => (
-                <AutoPushCard
-                  key={seg.key}
-                  title={seg.title}
-                  message={settings[seg.key].message}
-                  delay={settings[seg.key].delay}
-                  enabled={settings[seg.key].enabled}
-                  onChangeMessage={(val) => updateSegment(seg.key, 'message', val)}
-                  onChangeDelay={(val) => updateSegment(seg.key, 'delay', val)}
-                  onToggle={() => updateSegment(seg.key, 'enabled', !settings[seg.key].enabled)}
-                  onSave={() => handleSave(seg.key)}
-                />
-              ))}
-            </Cards>
+            {selectedCardId && (
+              <Cards>
+                {mockAutoPushes.map((seg) => (
+                  <AutoPushCard
+                    key={seg.key}
+                    title={seg.title}
+                    message={
+                      currentCard?.pushNotification?.auto?.[seg.key]?.message || seg.defaultMessage
+                    }
+                    delay={currentCard?.pushNotification?.auto?.[seg.key]?.delay || 2}
+                    enabled={currentCard?.pushNotification?.auto?.[seg.key]?.enabled || false}
+                    onChangeMessage={(val) => handleSegmentChange(seg.key, 'message', val)}
+                    onChangeDelay={(val) => handleSegmentChange(seg.key, 'delay', Number(val))}
+                    onToggle={() =>
+                      handleSegmentChange(
+                        seg.key,
+                        'enabled',
+                        !currentCard?.pushNotification?.auto?.[seg.key]?.enabled,
+                      )
+                    }
+                    onSave={() => console.log('Save logic (optional, can be removed)')}
+                  />
+                ))}
+              </Cards>
+            )}
           </>
         ) : (
           <>

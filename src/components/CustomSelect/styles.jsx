@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 export const SelectWrapper = styled.div`
   position: relative;
   width: 100%;
+  font-size: 14px;
 `;
 
 export const HeaderBox = styled.div`
@@ -73,7 +74,7 @@ export const OptionsList = styled.div`
 `;
 
 export const OptionItem = styled.div`
-  padding: 8px 12px;
+  padding: 10px 12px;
   cursor: pointer;
   transition: background 0.3s;
   overflow: hidden;

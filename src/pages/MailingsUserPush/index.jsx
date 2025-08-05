@@ -1,20 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import CustomSelect from '../../components/CustomSelect';
 import GeoBadge from '../../components/GeoBadge';
 import PushPreview from '../../components/PushPreview';
-import { mockUserPushes } from '../../mocks/mockUserPushes';
+import UserPushBlock from '../../components/UserPushBlock';
 import { setCurrentCard } from '../../store/cardsSlice';
 import {
-  Actions,
-  BlackButton,
   Button,
   CardState,
-  FormDescription,
-  FormTitle,
-  FormWrapper,
-  Input,
   Layout,
   Left,
   Line,
@@ -26,9 +19,6 @@ import {
   Subtitle,
   Tab,
   Tabs,
-  Tag,
-  TagWrapper,
-  WhiteButton,
 } from './styles';
 
 const MailingsUserPush = () => {
@@ -38,33 +28,8 @@ const MailingsUserPush = () => {
   const [pushMessage, setPushMessage] = useState('');
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
   const [activeTab, setActiveTab] = useState('settings');
-  const [selectedTriggerKey, setSelectedTriggerKey] = useState(null);
 
   const currentCard = useSelector((state) => state.cards.currentCard);
-  const allCards = useSelector((state) => state.cards.cards);
-
-  const handleCardSelect = (cardId) => {
-    const selected = allCards.find((c) => c.id === cardId);
-    if (selected) {
-      dispatch(
-        setCurrentCard({
-          ...selected,
-          pushNotification: selected.pushNotification || {
-            message: `Новое уведомление по вашей карте "${selected.title}"`,
-            scheduledDate: '',
-          },
-        }),
-      );
-    }
-  };
-
-  const handleTriggerSelect = (key) => {
-    setSelectedTriggerKey(key);
-  };
-
-  const handleCancel = () => {
-    setSelectedTriggerKey(null);
-  };
 
   useEffect(() => {
     if (currentCard) {
@@ -95,49 +60,7 @@ const MailingsUserPush = () => {
         <Line />
 
         {hasAccess ? (
-          <>
-            {selectedTriggerKey === null ? (
-              <CustomSelect
-                value={selectedTriggerKey}
-                onChange={handleTriggerSelect}
-                placeholder="Выберите триггер для запуска авто-push"
-                options={mockUserPushes.map((item) => ({
-                  value: item.key,
-                  label: item.title,
-                }))}
-              />
-            ) : (
-              <FormWrapper>
-                <FormTitle>Добавить авто-push</FormTitle>
-                <FormDescription>
-                  Настройте сценарий отправки автоматического push-уведомления
-                </FormDescription>
-
-                <CustomSelect
-                  value={selectedTriggerKey}
-                  onChange={handleTriggerSelect}
-                  placeholder="Для условия"
-                  options={mockUserPushes.map((item) => ({
-                    value: item.key,
-                    label: item.title,
-                  }))}
-                />
-
-                <Input placeholder="Введите текст" />
-                <Input placeholder="Сообщение будет выслано по истечении" />
-                <Input placeholder="Время" />
-
-                <TagWrapper>
-                  <Tag>SPA салон ✕</Tag>
-                </TagWrapper>
-
-                <Actions>
-                  <BlackButton>Сохранить</BlackButton>
-                  <WhiteButton onClick={handleCancel}>Отменить</WhiteButton>
-                </Actions>
-              </FormWrapper>
-            )}
-          </>
+          <UserPushBlock />
         ) : (
           <>
             <Subtitle>
