@@ -4,11 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 
 import { saveAs } from 'file-saver';
-import { Download, HelpCircle, Loader2, PlusCircle, Send } from 'lucide-react';
+import { HelpCircle, Send } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
 import CustomSelect from '../../components/CustomSelect';
 import FilterableTable from '../../components/FilterableTable';
+import LoaderCentered from '../../components/LoaderCentered';
 import { mockClientsHeaders } from '../../mocks/clientsInfo';
 import { addClientLocal, createClient, fetchClients } from '../../store/clientsSlice';
 
@@ -141,18 +142,7 @@ const Clients = () => {
   const returnRate = 0;
 
   if (loading) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: 'calc(100vh - 200px)',
-        }}
-      >
-        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
-      </div>
-    );
+    return <LoaderCentered />;
   }
 
   return (

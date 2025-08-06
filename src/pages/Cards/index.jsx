@@ -3,11 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 
-import { Check, HelpCircle, Loader2, Pin, PinOff } from 'lucide-react';
+import { Check, HelpCircle, Pin, PinOff } from 'lucide-react';
 
 import moveIcon from '../../assets/move-arrows.png';
 import CardButtons from '../../components/CardButtons';
 import CardInfo from '../../components/CardInfo';
+import LoaderCentered from '../../components/LoaderCentered';
 import {
   fetchCards,
   renameCardAsync,
@@ -82,18 +83,7 @@ const Cards = () => {
   }, [dispatch, isTemplatePage]);
 
   if (loading) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: 'calc(100vh - 200px)',
-        }}
-      >
-        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
-      </div>
-    );
+    return <LoaderCentered />;
   }
 
   return (

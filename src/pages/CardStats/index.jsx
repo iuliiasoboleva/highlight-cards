@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Loader2 } from 'lucide-react';
-
 import axiosInstance from '../../axiosInstance';
 import Chart from '../../components/Chart';
 import ClientPortraitCard from '../../components/ClientPortraitCard';
 import ClientsChart from '../../components/ClientsChart';
 import DashboardStats from '../../components/DashboardStats';
+import LoaderCentered from '../../components/LoaderCentered';
 import RetentionChart from '../../components/RetentionChart';
 
 import './styles.css';
@@ -42,18 +41,7 @@ const CardStats = () => {
   }, [id]);
 
   if (loading) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: 'calc(100vh - 200px)',
-        }}
-      >
-        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
-      </div>
-    );
+    return <LoaderCentered />;
   }
 
   return (

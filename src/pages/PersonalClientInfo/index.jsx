@@ -7,9 +7,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { ru } from 'date-fns/locale';
-import { Calendar, Loader2 } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 
 import axiosInstance from '../../axiosInstance';
+import LoaderCentered from '../../components/LoaderCentered';
 import { setClients } from '../../store/clientsSlice';
 import DeleteClientModal from './DeleteClientModal';
 
@@ -63,18 +64,7 @@ const PersonalClientInfo = () => {
   }, [clientFromStore]);
 
   if (loading) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: 'calc(100vh - 200px)',
-        }}
-      >
-        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
-      </div>
-    );
+    return <LoaderCentered />;
   }
 
   if (!client) return <p style={{ textAlign: 'center' }}>Клиент не найден</p>;

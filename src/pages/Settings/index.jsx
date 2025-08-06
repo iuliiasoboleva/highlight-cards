@@ -6,6 +6,7 @@ import { Loader2 } from 'lucide-react';
 import AgreementModal from '../../components/AgreementModal';
 import CustomSelect from '../../components/CustomSelect';
 import CustomTable from '../../components/CustomTable';
+import LoaderCentered from '../../components/LoaderCentered';
 import TopUpModal from '../../components/TopUpModal';
 import { pluralize } from '../../helpers/pluralize';
 import { fetchBalance, topUpBalance } from '../../store/balanceSlice';
@@ -243,18 +244,7 @@ const Settings = () => {
   ];
 
   if (loading) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: 'calc(100vh - 200px)',
-        }}
-      >
-        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
-      </div>
-    );
+    return <LoaderCentered />;
   }
 
   if (!tariffPlans.length) return <p>Тарифы не найдены</p>;

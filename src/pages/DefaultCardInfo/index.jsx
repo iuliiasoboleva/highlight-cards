@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { Loader2 } from 'lucide-react';
-
 import axiosInstance from '../../axiosInstance';
 import CardInfo from '../../components/CardInfo';
 import CustomTable from '../../components/CustomTable';
 import DashboardStats from '../../components/DashboardStats';
+import LoaderCentered from '../../components/LoaderCentered';
 import { transactionHeaders } from '../../mocks/mockTransactions';
 import { setCurrentCard } from '../../store/cardsSlice';
 import { generatePDF } from '../../utils/pdfGenerator';
@@ -64,18 +63,7 @@ const DefaultCardInfo = () => {
   }, [card]);
 
   if (loading) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: 'calc(100vh - 200px)',
-        }}
-      >
-        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
-      </div>
-    );
+    return <LoaderCentered />;
   }
 
   if (!card) return <p style={{ textAlign: 'center' }}>Карточка не найдена</p>;

@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { Loader2 } from 'lucide-react';
-
 import axiosInstance from '../../axiosInstance';
 import Chart from '../../components/Chart';
 import ClientPortraitCard from '../../components/ClientPortraitCard';
 import ClientsChart from '../../components/ClientsChart';
+import LoaderCentered from '../../components/LoaderCentered';
 import RetentionChart from '../../components/RetentionChart';
 
 import './styles.css';
@@ -43,18 +42,7 @@ const Home = () => {
   }, [orgId]);
 
   if (loading) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: 'calc(100vh - 200px)',
-        }}
-      >
-        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
-      </div>
-    );
+    return <LoaderCentered />;
   }
 
   const chartData = series.map((p) => ({

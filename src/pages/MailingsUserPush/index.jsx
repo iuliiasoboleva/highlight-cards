@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import GeoBadge from '../../components/GeoBadge';
 import PushPreview from '../../components/PushPreview';
 import UserPushBlock from '../../components/UserPushBlock';
-import { setCurrentCard } from '../../store/cardsSlice';
 import {
   Button,
   CardState,

@@ -22,11 +22,21 @@ const Footer = () => (
     </div>
 
     <div className="footer-right">
-      <a href="/oferta" target="_blank" rel="noopener noreferrer" className="footer-link">
+      <a
+        href="https://loyalclub.ru/oferta"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="footer-link"
+      >
         Публичная оферта
       </a>
       <span className="separator">|</span>
-      <a href="/privacy" target="_blank" rel="noopener noreferrer" className="footer-link">
+      <a
+        href="https://loyalclub.ru/policy"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="footer-link"
+      >
         Политика конфиденциальности
       </a>
     </div>

@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Loader2, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { useDebounce } from 'use-debounce';
 
 import CustomSelect from '../../components/CustomSelect';
 import GeoBadge from '../../components/GeoBadge';
+import LoaderCentered from '../../components/LoaderCentered';
 import PushPreview from '../../components/PushPreview';
 import ToggleSwitch from '../../components/ToggleSwitch';
 import YandexMapPicker from '../../components/YandexMapPicker';
@@ -322,18 +323,7 @@ const Locations = () => {
   const leftBlock = noLocations && !showAddForm ? renderEmptyState() : renderMapSection();
 
   if (locationsLoading) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: 'calc(100vh - 200px)',
-        }}
-      >
-        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
-      </div>
-    );
+    return <LoaderCentered />;
   }
 
   return (

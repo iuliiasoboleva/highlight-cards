@@ -1,9 +1,8 @@
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Loader2 } from 'lucide-react';
-
 import CustomSelect from '../../components/CustomSelect';
+import LoaderCentered from '../../components/LoaderCentered';
 import { logout as authLogout } from '../../store/authSlice';
 import {
   changePin,
@@ -15,8 +14,37 @@ import {
   updateUserSettings,
   uploadAvatar,
 } from '../../store/userSlice';
-
-import './styles.css';
+import {
+  AvatarContainer,
+  AvatarImage,
+  AvatarImageWrapper,
+  AvatarPlaceholder,
+  AvatarUpload,
+  AvatarUploadText,
+  CheckboxGroup,
+  Confirmation,
+  DangerButton,
+  DeleteSection,
+  DeleteTextarea,
+  FormGroup,
+  FormRow,
+  Input,
+  Label,
+  MainButton,
+  Note,
+  ProfileCard,
+  ProfileEmail,
+  ProfileForm,
+  ProfileName,
+  ProfileRightBlock,
+  ProfileSection,
+  RemoveAvatarBtn,
+  Toast,
+  Wrapper,
+  PinInputWrapper,
+  PinInput,
+  ButtonProgress,
+} from './styles';
 
 const SettingsPersonal = () => {
   const dispatch = useDispatch();
@@ -38,18 +66,7 @@ const SettingsPersonal = () => {
   const progressTimer = useRef(null);
 
   if (user.isLoading) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: 'calc(100vh - 200px)',
-        }}
-      >
-        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
-      </div>
-    );
+    return <LoaderCentered />;
   }
 
   const handleChange = (field, value) => {
@@ -57,9 +74,7 @@ const SettingsPersonal = () => {
   };
 
   const handleCheckboxChange = (key) => {
-    const updatedFeedback = { ...deleteFeedback, [key]: !deleteFeedback[key] };
-    setDeleteFeedback(updatedFeedback);
-    // dispatch(updateDeleteFeedback(updatedFeedback));
+    setDeleteFeedback({ ...deleteFeedback, [key]: !deleteFeedback[key] });
   };
 
   const handleAvatarChange = async (e) => {
@@ -68,7 +83,7 @@ const SettingsPersonal = () => {
     try {
       await dispatch(uploadAvatar(file)).unwrap();
       showToast('Фото обновлено', true);
-    } catch (err) {
+    } catch {
       showToast('Не удалось загрузить фото', false);
     }
   };
@@ -84,6 +99,7 @@ const SettingsPersonal = () => {
       setProgress((p) => (p < 95 ? p + 2 : p));
     }, 100);
   };
+
   const finishProgress = () => {
     clearInterval(progressTimer.current);
     setProgress(100);
@@ -180,14 +196,11 @@ const SettingsPersonal = () => {
 
   const handlePinKey = (type, i, e) => {
     if (e.key !== 'Backspace') return;
-
     e.preventDefault();
     const isNew = type === 'new';
     const value = isNew ? newPin : confirmPin;
     const refs = isNew ? newPinRefs : confirmPinRefs;
-
     const arr = value.padEnd(4, ' ').split('');
-
     if (arr[i]) {
       arr[i] = '';
       if (i > 0) refs[i - 1].current?.focus();
@@ -195,134 +208,122 @@ const SettingsPersonal = () => {
       refs[i - 1].current?.focus();
       arr[i - 1] = '';
     }
-
     const pin = arr.join('').trim();
     isNew ? setNewPin(pin) : setConfirmPin(pin);
   };
 
-  // Опции для селектов
   const dateFormats = [
     { value: 'DD/MM/YYYY', label: 'День/Месяц/Год (31/12/2023)' },
     { value: 'MM/DD/YYYY', label: 'Месяц/День/Год (12/31/2023)' },
   ];
-
   const countries = [{ value: 'Russia', label: 'Россия' }];
-
   const languages = [{ value: 'Russian', label: 'Русский' }];
-
   const timezones = [{ value: '(UTC+03:00) Moscow', label: '(UTC+03:00) Москва' }];
 
   return (
-    <div className="settings-wrapper">
+    <Wrapper>
       <h2>Персональные настройки</h2>
-
       <form onSubmit={handleSubmit}>
-        <div className="profile-section">
-          <div className="profile-card">
-            <div className="avatar-container">
+        <ProfileSection>
+          <ProfileCard>
+            <AvatarContainer>
               {user.avatar ? (
                 <>
-                  <div className="avatar-image-wrapper">
-                    <img
+                  <AvatarImageWrapper>
+                    <AvatarImage
                       src={user.avatar}
                       alt="Аватар"
-                      className="avatar-image"
                       onError={(e) => {
                         e.target.onerror = null;
                         dispatch(removeAvatar());
                       }}
                     />
-                  </div>
-                  <button
-                    type="button"
-                    className="remove-avatar-btn"
-                    onClick={() => dispatch(removeAvatar())}
-                  >
+                  </AvatarImageWrapper>
+                  <RemoveAvatarBtn type="button" onClick={() => dispatch(removeAvatar())}>
                     Удалить фото
-                  </button>
+                  </RemoveAvatarBtn>
                 </>
               ) : (
-                <label className="avatar-upload">
+                <AvatarUpload>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleAvatarChange}
                     style={{ display: 'none' }}
                   />
-                  <div className="avatar-placeholder">
+                  <AvatarPlaceholder>
                     <span>+</span>
-                  </div>
-                  <span className="avatar-upload-text">Добавить фото</span>
-                </label>
+                  </AvatarPlaceholder>
+                  <AvatarUploadText>Добавить фото</AvatarUploadText>
+                </AvatarUpload>
               )}
-            </div>
-            <div className="profile-name">
+            </AvatarContainer>
+            <ProfileName>
               {user.firstName} {user.lastName}
-            </div>
-            <div className="profile-email">{user.email}</div>
-          </div>
+            </ProfileName>
+            <ProfileEmail>{user.email}</ProfileEmail>
+          </ProfileCard>
 
-          <div className="profile-right-block">
-            <div className="profile-form">
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Имя*</label>
-                  <input
+          <ProfileRightBlock>
+            <ProfileForm>
+              <FormRow>
+                <FormGroup>
+                  <Label>Имя*</Label>
+                  <Input
                     value={user.firstName}
                     onChange={(e) => handleChange('firstName', e.target.value)}
                     required
                   />
-                </div>
-                <div className="form-group">
-                  <label>Название компании</label>
-                  <input value={user.company} readOnly />
-                </div>
-              </div>
+                </FormGroup>
+                <FormGroup>
+                  <Label>Название компании</Label>
+                  <Input value={user.company} readOnly />
+                </FormGroup>
+              </FormRow>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Фамилия*</label>
-                  <input
+              <FormRow>
+                <FormGroup>
+                  <Label>Фамилия*</Label>
+                  <Input
                     value={user.lastName}
                     onChange={(e) => handleChange('lastName', e.target.value)}
                     required
                   />
-                </div>
-                <div className="form-group">
-                  <label>Email*</label>
-                  <input type="email" value={user.email} readOnly />
-                </div>
-              </div>
+                </FormGroup>
+                <FormGroup>
+                  <Label>Email*</Label>
+                  <Input type="email" value={user.email} readOnly />
+                </FormGroup>
+              </FormRow>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Дополнительная контактная информация</label>
-                  <input
+              <FormRow>
+                <FormGroup>
+                  <Label>Дополнительная контактная информация</Label>
+                  <Input
                     value={user.contact}
                     onChange={(e) => handleChange('contact', e.target.value)}
-                    placeholder="Telegram, Skype и т.д."
                   />
-                </div>
-                <div className="form-group">
-                  <label>Телефон</label>
-                  <input type="tel" value={user.phone} readOnly />
-                </div>
-              </div>
+                </FormGroup>
+                <FormGroup>
+                  <Label>Телефон</Label>
+                  <Input type="tel" value={user.phone} readOnly />
+                </FormGroup>
+              </FormRow>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Формат даты</label>
+              <FormRow>
+                <FormGroup>
+                  <Label>Страна</Label>
                   <CustomSelect
-                    options={dateFormats}
-                    value={user.dateFormat}
-                    onChange={(value) => handleChange('dateFormat', value)}
+                    options={countries}
+                    value={user.country}
+                    onChange={(v) => handleChange('country', v)}
                   />
-                </div>
-                <div className="form-group">
-                  <label>Новый PIN</label>
-                  <div style={{ display: 'flex', gap: 12 }}>
+                </FormGroup>
+                <FormGroup>
+                  <Label>Новый PIN</Label>
+                  <PinInputWrapper>
                     {[0, 1, 2, 3].map((i) => (
-                      <input
+                      <PinInput
                         key={i}
                         ref={newPinRefs[i]}
                         type="tel"
@@ -331,35 +332,26 @@ const SettingsPersonal = () => {
                         value={newPin[i] || ''}
                         onChange={(e) => handlePinChange('new', i, e.target.value)}
                         onKeyDown={(e) => handlePinKey('new', i, e)}
-                        style={{
-                          width: 60,
-                          height: 60,
-                          textAlign: 'center',
-                          fontSize: 32,
-                          border: '1px solid #d1d5db',
-                          background: '#f3f4f6',
-                          borderRadius: 8,
-                        }}
                       />
                     ))}
-                  </div>
-                </div>
-              </div>
+                  </PinInputWrapper>
+                </FormGroup>
+              </FormRow>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Страна</label>
-                  <CustomSelect
-                    options={countries}
-                    value={user.country}
-                    onChange={(value) => handleChange('country', value)}
+              <FormRow>
+                <FormGroup>
+                  <Label>Город</Label>
+                  <Input
+                    value={user.city}
+                    onChange={(e) => handleChange('city', e.target.value)}
+                    required
                   />
-                </div>
-                <div className="form-group">
-                  <label>Подтверждение PIN</label>
-                  <div style={{ display: 'flex', gap: 12 }}>
+                </FormGroup>
+                <FormGroup>
+                  <Label>Подтверждение PIN</Label>
+                  <PinInputWrapper>
                     {[0, 1, 2, 3].map((i) => (
-                      <input
+                      <PinInput
                         key={i}
                         ref={confirmPinRefs[i]}
                         type="tel"
@@ -368,152 +360,97 @@ const SettingsPersonal = () => {
                         value={confirmPin[i] || ''}
                         onChange={(e) => handlePinChange('confirm', i, e.target.value)}
                         onKeyDown={(e) => handlePinKey('confirm', i, e)}
-                        style={{
-                          width: 60,
-                          height: 60,
-                          textAlign: 'center',
-                          fontSize: 32,
-                          border: '1px solid #d1d5db',
-                          background: '#f3f4f6',
-                          borderRadius: 8,
-                        }}
                       />
                     ))}
-                  </div>
-                </div>
-              </div>
+                  </PinInputWrapper>
+                </FormGroup>
+              </FormRow>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Язык интерфейса</label>
+              <FormRow>
+                <FormGroup>
+                  <Label>Язык интерфейса</Label>
                   <CustomSelect
                     options={languages}
                     value={user.language}
-                    onChange={(value) => handleChange('language', value)}
+                    onChange={(v) => handleChange('language', v)}
                   />
-                </div>
-                <div className="form-group">
-                  <label>Часовой пояс</label>
+                </FormGroup>
+                <FormGroup>
+                  <Label>Часовой пояс</Label>
                   <CustomSelect
                     options={timezones}
                     value={user.timezone}
-                    onChange={(value) => handleChange('timezone', value)}
+                    onChange={(v) => handleChange('timezone', v)}
                   />
-                </div>
-              </div>
+                </FormGroup>
+              </FormRow>
 
-              <button
-                type="submit"
-                className="custom-main-button"
-                disabled={saving}
-                style={{ position: 'relative', overflow: 'hidden' }}
-              >
+              <MainButton type="submit" disabled={saving}>
                 <span style={{ opacity: saving ? 0 : 1 }}>Сохранить изменения</span>
-                {saving && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      left: 0,
-                      top: 0,
-                      height: '100%',
-                      width: `${progress}%`,
-                      background: 'linear-gradient(90deg,#b71c32 0%,#000 100%)',
-                      transition: 'width 0.1s linear',
-                    }}
-                  />
-                )}
-              </button>
-            </div>
+                {saving && <ButtonProgress style={{ width: `${progress}%` }} />}
+              </MainButton>
+            </ProfileForm>
 
-            <div className="delete-section">
+            <DeleteSection>
               <h3>Удаление аккаунта</h3>
               <p>
                 Перед удалением аккаунта сообщите, пожалуйста, причину. Это поможет нам улучшить
                 сервис.
               </p>
-
-              <div className="checkbox-group">
-                <label className="custom-checkbox">
+              <CheckboxGroup>
+                <label>
                   <input
                     type="checkbox"
                     checked={deleteFeedback.reason1}
                     onChange={() => handleCheckboxChange('reason1')}
-                  />
+                  />{' '}
                   Сложно разобраться в интерфейсе
                 </label>
-                <label className="custom-checkbox">
+                <label>
                   <input
                     type="checkbox"
                     checked={deleteFeedback.reason2}
                     onChange={() => handleCheckboxChange('reason2')}
-                  />
+                  />{' '}
                   Нет нужного мне функционала
                 </label>
-                <label className="custom-checkbox">
+                <label>
                   <input
                     type="checkbox"
                     checked={deleteFeedback.reason3}
                     onChange={() => handleCheckboxChange('reason3')}
-                  />
+                  />{' '}
                   Не использую сервис
                 </label>
-              </div>
-
-              <textarea
-                placeholder="Другая причина (укажите подробнее)"
+              </CheckboxGroup>
+              <DeleteTextarea
                 value={deleteFeedback.other}
-                onChange={(e) => {
-                  const updated = { ...deleteFeedback, other: e.target.value };
-                  setDeleteFeedback(updated);
-                  // dispatch(updateDeleteFeedback(updated));
-                }}
+                placeholder="Другая причина (укажите подробнее)"
+                onChange={(e) => setDeleteFeedback({ ...deleteFeedback, other: e.target.value })}
               />
-
-              <div className="confirmation">
+              <Confirmation>
                 <h4>Подтверждение удаления</h4>
                 <p>
-                  Для подтверждения удаления аккаунта введите фразу <strong>"ПОДТВЕРЖДАЮ"</strong>
+                  Для подтверждения введите <strong>ПОДТВЕРЖДАЮ</strong>
                 </p>
-                <input
-                  type="text"
+                <Input
                   value={confirmDelete}
                   onChange={(e) => setConfirmDelete(e.target.value)}
                   placeholder="Введите ПОДТВЕРЖДАЮ"
                 />
-                <p className="note">
+                <Note>
                   Внимание! После удаления аккаунта все ваши данные будут безвозвратно утеряны.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                className="settings-btn-dark danger"
-                onClick={handleDeleteAccount}
-              >
+                </Note>
+              </Confirmation>
+              <DangerButton type="button" onClick={handleDeleteAccount}>
                 Удалить аккаунт
-              </button>
-            </div>
-          </div>
-        </div>
+              </DangerButton>
+            </DeleteSection>
+          </ProfileRightBlock>
+        </ProfileSection>
       </form>
-      {toast && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 90,
-            right: 40,
-            background: toast.ok ? '#00c853' : '#e53935',
-            color: '#fff',
-            padding: '12px 24px',
-            borderRadius: 8,
-            boxShadow: '0 4px 12px rgba(0,0,0,.15)',
-            zIndex: 999,
-          }}
-        >
-          {toast.msg}
-        </div>
-      )}
-    </div>
+      {toast && <Toast ok={toast.ok}>{toast.msg}</Toast>}
+    </Wrapper>
   );
 };
 

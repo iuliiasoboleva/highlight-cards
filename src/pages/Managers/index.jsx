@@ -3,9 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 
-import { Camera, HelpCircle, Loader2, PlusCircle, Search } from 'lucide-react';
+import { Camera, HelpCircle, PlusCircle, Search } from 'lucide-react';
 
 import CustomTable from '../../components/CustomTable';
+import LoaderCentered from '../../components/LoaderCentered';
 import ManagerModal from '../../components/ManagerModal';
 import NetworkModal from '../../components/NetworkModal';
 import RoleSwitcher from '../../components/RoleSwitcher';
@@ -277,19 +278,7 @@ const ManagersPage = () => {
     }
   }, [dispatch, orgId]);
 
-  if (mLoading || lLoading)
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: 'calc(100vh - 200px)',
-        }}
-      >
-        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
-      </div>
-    );
+  if (mLoading || lLoading) return <LoaderCentered />;
 
   return (
     <div className="managers-page">

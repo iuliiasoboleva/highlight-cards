@@ -4,10 +4,11 @@ import { Tooltip } from 'react-tooltip';
 
 // import { useNavigate } from 'react-router-dom';
 
-import { HelpCircle, Loader2 } from 'lucide-react';
+import { HelpCircle } from 'lucide-react';
 
 import axiosInstance from '../../axiosInstance';
 import CustomTable from '../../components/CustomTable';
+import LoaderCentered from '../../components/LoaderCentered';
 import TopUpModal from '../../components/TopUpModal';
 import { mailingsHeaders } from '../../mocks/mockMailings';
 import { fetchBalance, topUpBalance } from '../../store/balanceSlice';
@@ -95,18 +96,7 @@ const MailingsInfo = () => {
   }
 
   if (loading) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: 'calc(100vh - 200px)',
-        }}
-      >
-        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
-      </div>
-    );
+    return <LoaderCentered />;
   }
 
   return (
