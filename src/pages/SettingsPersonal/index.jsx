@@ -1,8 +1,7 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import CustomInput from '../../components/CustomInput';
-import CustomSelect from '../../components/CustomSelect';
+import ImageEditorModal from '../../components/ImageEditorModal';
 import LoaderCentered from '../../components/LoaderCentered';
 import { logout as authLogout } from '../../store/authSlice';
 import {
@@ -15,95 +14,153 @@ import {
   updateUserSettings,
   uploadAvatar,
 } from '../../store/userSlice';
+import AvatarBlock from './components/AvatarBlock';
+import DeleteAccountSection from './components/DeleteAccountSection';
+import ProfileForm from './components/ProfileForm';
+import useLinearProgress from './hooks/useLinearProgress';
+import usePinInput from './hooks/usePinInput';
 import {
-  AvatarContainer,
-  AvatarImage,
-  AvatarImageWrapper,
-  AvatarPlaceholder,
-  AvatarUpload,
-  AvatarUploadText,
   ButtonProgress,
-  CheckboxGroup,
-  Confirmation,
-  DangerButton,
-  DeleteSection,
-  DeleteTextarea,
-  FormGroup,
-  FormRow,
-  Label,
   MainButton,
-  Note,
-  PinInput,
-  PinInputWrapper,
   ProfileCard,
   ProfileEmail,
-  ProfileForm,
+  ProfileForm as ProfileFormWrap,
   ProfileName,
   ProfileRightBlock,
   ProfileSection,
-  RemoveAvatarBtn,
   Toast,
   Wrapper,
 } from './styles';
+import dataUrlToFile from './utils/dataUrlToFile';
 
 const SettingsPersonal = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
-  const [confirmDelete, setConfirmDelete] = useState('');
-  const [deleteFeedback, setDeleteFeedback] = useState({
-    reason1: false,
-    reason2: false,
-    reason3: false,
-    other: '',
-  });
-  const [newPin, setNewPin] = useState('');
-  const [confirmPin, setConfirmPin] = useState('');
-  const newPinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
-  const confirmPinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
+
+  // PIN-инпуты
+  const {
+    newPin,
+    confirmPin,
+    newPinRefs,
+    confirmPinRefs,
+    handlePinChange,
+    handlePinKey,
+    resetPins,
+  } = usePinInput();
+
+  // Тост + прогресс
   const [toast, setToast] = useState(null);
-  const [saving, setSaving] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const progressTimer = useRef(null);
-
-  if (user.isLoading) {
-    return <LoaderCentered />;
-  }
-
-  const handleChange = (field, value) => {
-    dispatch(updateField({ field, value }));
-  };
-
-  const handleCheckboxChange = (key) => {
-    setDeleteFeedback({ ...deleteFeedback, [key]: !deleteFeedback[key] });
-  };
-
-  const handleAvatarChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    try {
-      await dispatch(uploadAvatar(file)).unwrap();
-      showToast('Фото обновлено', true);
-    } catch {
-      showToast('Не удалось загрузить фото', false);
-    }
-  };
-
-  const showToast = (msg, ok = true) => {
+  const [pinSaving, setPinSaving] = useState(false);
+  const showToast = useCallback((msg, ok = true) => {
     setToast({ msg, ok });
     setTimeout(() => setToast(null), 3000);
-  };
+  }, []);
+  const { saving, startProgress, finishProgress, progress, setSaving } = useLinearProgress();
 
-  const startProgress = () => {
-    setProgress(0);
-    progressTimer.current = setInterval(() => {
-      setProgress((p) => (p < 95 ? p + 2 : p));
-    }, 100);
-  };
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [rawImageUrl, setRawImageUrl] = useState(null);
+  const [lastCropSettings, setLastCropSettings] = useState(null);
+  const [fileInputKey, setFileInputKey] = useState(Date.now());
+  const revokeRef = useRef(null);
 
-  const finishProgress = () => {
-    clearInterval(progressTimer.current);
-    setProgress(100);
-    setTimeout(() => setProgress(0), 500);
+  useEffect(() => {
+    return () => {
+      if (revokeRef.current) URL.revokeObjectURL(revokeRef.current);
+    };
+  }, []);
+
+  const openEditorWithFile = useCallback(
+    (file) => {
+      if (!file) return;
+      if (!file.type?.startsWith('image/')) {
+        showToast('Выберите файл изображения', false);
+        return;
+      }
+      if (revokeRef.current) URL.revokeObjectURL(revokeRef.current);
+      const url = URL.createObjectURL(file);
+      revokeRef.current = url;
+      setRawImageUrl(url);
+      setEditorOpen(true);
+      setFileInputKey(Date.now());
+    },
+    [showToast],
+  );
+
+  const onAvatarInput = useCallback(
+    (e) => {
+      const file = e.target.files?.[0];
+      openEditorWithFile(file);
+    },
+    [openEditorWithFile],
+  );
+
+  const handleEditorSave = useCallback(
+    async (croppedDataUrl) => {
+      try {
+        const file = await dataUrlToFile(croppedDataUrl, 'avatar.jpg');
+        await dispatch(uploadAvatar(file)).unwrap();
+        showToast('Фото обновлено', true);
+      } catch {
+        showToast('Не удалось загрузить фото', false);
+      } finally {
+        setEditorOpen(false);
+        if (revokeRef.current) {
+          URL.revokeObjectURL(revokeRef.current);
+          revokeRef.current = null;
+        }
+        setRawImageUrl(null);
+      }
+    },
+    [dispatch, showToast],
+  );
+
+  const handleEditorStateChange = useCallback((settings) => {
+    setLastCropSettings(settings);
+  }, []);
+
+  const closeEditor = useCallback(() => {
+    setEditorOpen(false);
+  }, []);
+
+  const removeAvatarAction = useCallback(async () => {
+    try {
+      await dispatch(removeAvatar());
+      showToast('Фото удалено', true);
+    } catch {
+      showToast('Не удалось удалить фото', false);
+    }
+  }, [dispatch, showToast]);
+
+  const handleChange = useCallback(
+    (field, value) => {
+      dispatch(updateField({ field, value }));
+    },
+    [dispatch],
+  );
+
+  const countries = useMemo(() => [{ value: 'Russia', label: 'Россия' }], []);
+  const languages = useMemo(() => [{ value: 'Russian', label: 'Русский' }], []);
+  const timezones = useMemo(
+    () => [{ value: '(UTC+03:00) Moscow', label: '(UTC+03:00) Москва' }],
+    [],
+  );
+
+  const handleSavePin = async () => {
+    if (!newPin || newPin.length !== 4 || newPin !== confirmPin) {
+      showToast('PIN-коды не совпадают', false);
+      return;
+    }
+
+    try {
+      setPinSaving(true);
+      await dispatch(changePin(newPin)).unwrap();
+      resetPins();
+      showToast('Изменения сохранены', true);
+    } catch {
+      showToast('Не удалось сохранить PIN', false);
+    } finally {
+      setPinSaving(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -112,64 +169,38 @@ const SettingsPersonal = () => {
     setSaving(true);
     startProgress();
     try {
-      const promises = [];
-      promises.push(
-        dispatch(
-          updateProfile({
-            name: user.firstName,
-            surname: user.lastName,
-            phone: user.phone,
-            extra_contacts: user.contact,
-          }),
-        ).unwrap(),
-      );
-      promises.push(
-        dispatch(
-          updateUserSettings({
-            date_format: user.dateFormat,
-            country: user.country,
-            language: user.language,
-            timezone: user.timezone,
-            extra_contacts: user.contact,
-            avatar_url: user.avatar,
-          }),
-        ).unwrap(),
-      );
-      if (newPin || confirmPin) {
-        if (newPin.length !== 4 || newPin !== confirmPin) {
-          showToast('PIN-коды не совпадают', false);
-          return;
-        }
-        promises.push(dispatch(changePin(newPin)).unwrap());
-        setNewPin('');
-        setConfirmPin('');
-      }
-      await Promise.all(promises);
+      await dispatch(
+        updateProfile({
+          name: user.firstName,
+          surname: user.lastName,
+          phone: user.phone,
+          extra_contacts: user.contact,
+        }),
+      ).unwrap();
+
+      await dispatch(
+        updateUserSettings({
+          date_format: user.dateFormat,
+          country: user.country,
+          language: user.language,
+          timezone: user.timezone,
+          extra_contacts: user.contact,
+          avatar_url: user.avatar,
+        }),
+      ).unwrap();
+
       showToast('Настройки сохранены', true);
     } catch (err) {
       showToast(typeof err === 'string' ? err : 'Ошибка сохранения', false);
+    } finally {
+      setSaving(false);
+      finishProgress();
     }
-    setSaving(false);
-    finishProgress();
   };
 
-  const handleDeleteAccount = async (e) => {
-    e.preventDefault();
-    const reasonProvided =
-      deleteFeedback.reason1 ||
-      deleteFeedback.reason2 ||
-      deleteFeedback.reason3 ||
-      deleteFeedback.other.trim();
-    if (!reasonProvided) {
-      showToast('Укажите причину удаления', false);
-      return;
-    }
-    if (confirmDelete.trim().toUpperCase() !== 'ПОДТВЕРЖДАЮ') {
-      showToast('Поле подтверждения обязательно', false);
-      return;
-    }
+  const handleDeleteAccount = async (payload) => {
     try {
-      await dispatch(deleteAccount(deleteFeedback)).unwrap();
+      await dispatch(deleteAccount(payload)).unwrap();
       showToast('Аккаунт удалён', true);
       setTimeout(() => {
         dispatch(logout());
@@ -181,276 +212,69 @@ const SettingsPersonal = () => {
     }
   };
 
-  const handlePinChange = (type, i, value) => {
-    if (!/\d?/.test(value)) return;
-    const digit = value.slice(-1);
-    const arr = (type === 'new' ? newPin : confirmPin).padEnd(4, ' ').split('');
-    arr[i] = digit;
-    const pin = arr.join('').trim();
-    if (type === 'new') setNewPin(pin);
-    else setConfirmPin(pin);
-    if (digit && i < 3) {
-      (type === 'new' ? newPinRefs : confirmPinRefs)[i + 1].current?.focus();
-    }
-  };
-
-  const handlePinKey = (type, i, e) => {
-    if (e.key !== 'Backspace') return;
-    e.preventDefault();
-    const isNew = type === 'new';
-    const value = isNew ? newPin : confirmPin;
-    const refs = isNew ? newPinRefs : confirmPinRefs;
-    const arr = value.padEnd(4, ' ').split('');
-    if (arr[i]) {
-      arr[i] = '';
-      if (i > 0) refs[i - 1].current?.focus();
-    } else if (i > 0) {
-      refs[i - 1].current?.focus();
-      arr[i - 1] = '';
-    }
-    const pin = arr.join('').trim();
-    isNew ? setNewPin(pin) : setConfirmPin(pin);
-  };
-
-  const dateFormats = [
-    { value: 'DD/MM/YYYY', label: 'День/Месяц/Год (31/12/2023)' },
-    { value: 'MM/DD/YYYY', label: 'Месяц/День/Год (12/31/2023)' },
-  ];
-  const countries = [{ value: 'Russia', label: 'Россия' }];
-  const languages = [{ value: 'Russian', label: 'Русский' }];
-  const timezones = [{ value: '(UTC+03:00) Moscow', label: '(UTC+03:00) Москва' }];
+  if (user.isLoading) return <LoaderCentered />;
 
   return (
-    <Wrapper>
-      <h2>Персональные настройки</h2>
-      <form onSubmit={handleSubmit}>
-        <ProfileSection>
-          <ProfileCard>
-            <AvatarContainer>
-              {user.avatar ? (
-                <>
-                  <AvatarImageWrapper>
-                    <AvatarImage
-                      src={user.avatar}
-                      alt="Аватар"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        dispatch(removeAvatar());
-                      }}
-                    />
-                  </AvatarImageWrapper>
-                  <RemoveAvatarBtn type="button" onClick={() => dispatch(removeAvatar())}>
-                    Удалить фото
-                  </RemoveAvatarBtn>
-                </>
-              ) : (
-                <AvatarUpload>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleAvatarChange}
-                    style={{ display: 'none' }}
-                  />
-                  <AvatarPlaceholder>
-                    <span>+</span>
-                  </AvatarPlaceholder>
-                  <AvatarUploadText>Добавить фото</AvatarUploadText>
-                </AvatarUpload>
-              )}
-            </AvatarContainer>
-            <ProfileName>
-              {user.firstName} {user.lastName}
-            </ProfileName>
-            <ProfileEmail>{user.email}</ProfileEmail>
-          </ProfileCard>
+    <>
+      <Wrapper>
+        <h2>Персональные настройки</h2>
 
-          <ProfileRightBlock>
-            <ProfileForm>
-              <FormRow>
-                <FormGroup>
-                  <Label>Имя*</Label>
-                  <CustomInput
-                    value={user.firstName}
-                    onChange={(e) => handleChange('firstName', e.target.value)}
-                    required
-                  />
-                </FormGroup>
-                <FormGroup>
-                  <Label>Название компании</Label>
-                  <CustomInput value={user.company} readOnly />
-                </FormGroup>
-              </FormRow>
-
-              <FormRow>
-                <FormGroup>
-                  <Label>Фамилия*</Label>
-                  <CustomInput
-                    value={user.lastName}
-                    onChange={(e) => handleChange('lastName', e.target.value)}
-                    required
-                  />
-                </FormGroup>
-                <FormGroup>
-                  <Label>Email*</Label>
-                  <CustomInput type="email" value={user.email} readOnly />
-                </FormGroup>
-              </FormRow>
-
-              <FormRow>
-                <FormGroup>
-                  <Label>Дополнительная контактная информация</Label>
-                  <CustomInput
-                    value={user.contact}
-                    onChange={(e) => handleChange('contact', e.target.value)}
-                  />
-                </FormGroup>
-                <FormGroup>
-                  <Label>Телефон</Label>
-                  <CustomInput type="tel" value={user.phone} readOnly />
-                </FormGroup>
-              </FormRow>
-
-              <FormRow>
-                <FormGroup>
-                  <Label>Страна</Label>
-                  <CustomSelect
-                    options={countries}
-                    value={user.country}
-                    onChange={(v) => handleChange('country', v)}
-                  />
-                </FormGroup>
-                <FormGroup>
-                  <Label>Новый PIN</Label>
-                  <PinInputWrapper>
-                    {[0, 1, 2, 3].map((i) => (
-                      <PinInput
-                        key={i}
-                        ref={newPinRefs[i]}
-                        type="tel"
-                        inputMode="numeric"
-                        maxLength={1}
-                        value={newPin[i] || ''}
-                        onChange={(e) => handlePinChange('new', i, e.target.value)}
-                        onKeyDown={(e) => handlePinKey('new', i, e)}
-                      />
-                    ))}
-                  </PinInputWrapper>
-                </FormGroup>
-              </FormRow>
-
-              <FormRow>
-                <FormGroup>
-                  <Label>Город</Label>
-                  <CustomInput
-                    value={user.city}
-                    onChange={(e) => handleChange('city', e.target.value)}
-                    required
-                  />
-                </FormGroup>
-                <FormGroup>
-                  <Label>Подтверждение PIN</Label>
-                  <PinInputWrapper>
-                    {[0, 1, 2, 3].map((i) => (
-                      <PinInput
-                        key={i}
-                        ref={confirmPinRefs[i]}
-                        type="tel"
-                        inputMode="numeric"
-                        maxLength={1}
-                        value={confirmPin[i] || ''}
-                        onChange={(e) => handlePinChange('confirm', i, e.target.value)}
-                        onKeyDown={(e) => handlePinKey('confirm', i, e)}
-                      />
-                    ))}
-                  </PinInputWrapper>
-                </FormGroup>
-              </FormRow>
-
-              <FormRow>
-                <FormGroup>
-                  <Label>Язык интерфейса</Label>
-                  <CustomSelect
-                    options={languages}
-                    value={user.language}
-                    onChange={(v) => handleChange('language', v)}
-                  />
-                </FormGroup>
-                <FormGroup>
-                  <Label>Часовой пояс</Label>
-                  <CustomSelect
-                    options={timezones}
-                    value={user.timezone}
-                    onChange={(v) => handleChange('timezone', v)}
-                  />
-                </FormGroup>
-              </FormRow>
-
-              <MainButton type="submit" disabled={saving}>
-                <span style={{ opacity: saving ? 0 : 1 }}>Сохранить изменения</span>
-                {saving && <ButtonProgress style={{ width: `${progress}%` }} />}
-              </MainButton>
-            </ProfileForm>
-
-            <DeleteSection>
-              <h3>Удаление аккаунта</h3>
-              <p>
-                Перед удалением аккаунта сообщите, пожалуйста, причину. Это поможет нам улучшить
-                сервис.
-              </p>
-              <CheckboxGroup>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={deleteFeedback.reason1}
-                    onChange={() => handleCheckboxChange('reason1')}
-                  />{' '}
-                  Сложно разобраться в интерфейсе
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={deleteFeedback.reason2}
-                    onChange={() => handleCheckboxChange('reason2')}
-                  />{' '}
-                  Нет нужного мне функционала
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={deleteFeedback.reason3}
-                    onChange={() => handleCheckboxChange('reason3')}
-                  />{' '}
-                  Не использую сервис
-                </label>
-              </CheckboxGroup>
-              <DeleteTextarea
-                value={deleteFeedback.other}
-                placeholder="Другая причина (укажите подробнее)"
-                onChange={(e) => setDeleteFeedback({ ...deleteFeedback, other: e.target.value })}
+        <form onSubmit={handleSubmit}>
+          <ProfileSection>
+            <ProfileCard>
+              <AvatarBlock
+                user={user}
+                fileInputKey={fileInputKey}
+                onAvatarInput={onAvatarInput}
+                removeAvatarAction={removeAvatarAction}
               />
-              <Confirmation>
-                <h4>Подтверждение удаления</h4>
-                <p>
-                  Для подтверждения введите <strong>ПОДТВЕРЖДАЮ</strong>
-                </p>
-                <CustomInput
-                  value={confirmDelete}
-                  onChange={(e) => setConfirmDelete(e.target.value)}
-                  placeholder="Введите ПОДТВЕРЖДАЮ"
+              <ProfileName>
+                {user.firstName} {user.lastName}
+              </ProfileName>
+              <ProfileEmail>{user.email}</ProfileEmail>
+            </ProfileCard>
+
+            <ProfileRightBlock>
+              <ProfileFormWrap>
+                <ProfileForm
+                  user={user}
+                  countries={countries}
+                  languages={languages}
+                  timezones={timezones}
+                  onFieldChange={handleChange}
+                  newPin={newPin}
+                  confirmPin={confirmPin}
+                  newPinRefs={newPinRefs}
+                  confirmPinRefs={confirmPinRefs}
+                  onPinChange={handlePinChange}
+                  onPinKey={handlePinKey}
+                  onSavePin={handleSavePin}
+                  pinSaving={pinSaving}
                 />
-                <Note>
-                  Внимание! После удаления аккаунта все ваши данные будут безвозвратно утеряны.
-                </Note>
-              </Confirmation>
-              <DangerButton type="button" onClick={handleDeleteAccount}>
-                Удалить аккаунт
-              </DangerButton>
-            </DeleteSection>
-          </ProfileRightBlock>
-        </ProfileSection>
-      </form>
-      {toast && <Toast ok={toast.ok}>{toast.msg}</Toast>}
-    </Wrapper>
+
+                <MainButton type="submit" disabled={saving}>
+                  <span style={{ opacity: saving ? 0 : 1 }}>Сохранить изменения</span>
+                  {saving && <ButtonProgress style={{ width: `${progress}%` }} />}
+                </MainButton>
+              </ProfileFormWrap>
+
+              <DeleteAccountSection onSubmit={handleDeleteAccount} />
+            </ProfileRightBlock>
+          </ProfileSection>
+        </form>
+
+        {toast && <Toast ok={toast.ok}>{toast.msg}</Toast>}
+      </Wrapper>
+
+      <ImageEditorModal
+        open={editorOpen}
+        image={rawImageUrl}
+        onClose={closeEditor}
+        onSave={handleEditorSave}
+        initialState={lastCropSettings || {}}
+        onStateChange={handleEditorStateChange}
+      />
+    </>
   );
 };
 

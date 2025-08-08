@@ -150,23 +150,30 @@ export const FormGroup = styled.div`
 `;
 
 export const MainButton = styled.button`
-  background: #000;
+  background: #1f1e1f;
   color: #fff;
-  padding: 12px 24px;
-  border-radius: 6px;
-  border: none;
-  margin-top: 16px;
-  cursor: pointer;
-  max-width: 250px;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-  font-size: 16px;
   font-weight: 500;
+  padding: 8px 18px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 24px;
+  min-height: 40px;
+  max-width: 200px;
+  margin-top: 8px;
 
   &:disabled {
     opacity: 0.6;
     cursor: default;
+  }
+
+  &:hover {
+    background: #111;
+  }
+
+  @media (max-width: 768px) {
+    width: -webkit-fill-available;
   }
 `;
 
@@ -184,21 +191,35 @@ export const DeleteSection = styled.div`
   border: 1px solid #ddd;
   padding: 24px;
   border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `;
 
 export const CheckboxGroup = styled.div`
-  label {
-    margin: 8px 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  margin-bottom: 14px;
+
+  input[type='checkbox'] {
+    margin-top: 2px;
+    accent-color: #bf4756;
+    cursor: pointer;
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
   }
 `;
 
 export const DeleteTextarea = styled.textarea`
-  width: 100%;
-  height: 80px;
+  width: -webkit-fill-available;
+  height: 60px;
+  padding: 12px;
+  border: 1px solid #d5d5dd;
   border-radius: 6px;
-  padding: 10px;
-  margin-top: 12px;
-  border: 1px solid #ccc;
+  font-size: 16px;
+  resize: vertical;
 `;
 
 export const Confirmation = styled.div`
@@ -239,6 +260,10 @@ export const Label = styled.p`
   font-size: 12px;
   color: #656565;
   line-height: 1.66667;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  user-select: none;
 `;
 
 export const Input = styled.input`
@@ -269,4 +294,38 @@ export const PinInput = styled.input`
   border: 1px solid #d1d5db;
   background: #f3f4f6;
   border-radius: 8px;
+`;
+
+export const PinBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+export const SavePinButton = styled.button`
+  background: ${({ $active }) => ($active ? '#1f1e1f' : '#9aa1a8')};
+  color: #fff;
+  font-weight: 500;
+  padding: 8px 18px;
+  border-radius: 4px;
+  border: none;
+  cursor: ${({ $active }) => ($active ? 'pointer' : 'not-allowed')};
+  font-size: 14px;
+  line-height: 24px;
+  min-height: 40px;
+  max-width: 200px;
+
+  &:hover {
+    background: ${({ $active }) => ($active ? '#111' : '#9aa1a8')};
+  }
+
+  @media (max-width: 768px) {
+    width: -webkit-fill-available;
+  }
+`;
+
+export const ErrorText = styled.p`
+  color: #d9534f;
+  margin-top: 6px;
+  font-size: 13px;
 `;

@@ -41,7 +41,7 @@ export const Textarea = styled.textarea`
   padding: 12px;
   border: 1px solid #d5d5dd;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: 16px;
   resize: vertical;
 `;
 
