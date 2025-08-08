@@ -5,6 +5,7 @@ export const SwitchLabel = styled.label`
   display: inline-block;
   width: 44px;
   height: 24px;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 `;
 
 export const HiddenCheckbox = styled.input.attrs({ type: 'checkbox' })`
@@ -15,7 +16,7 @@ export const HiddenCheckbox = styled.input.attrs({ type: 'checkbox' })`
 
 export const Slider = styled.span`
   position: absolute;
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   top: 0;
   left: 0;
   right: 0;

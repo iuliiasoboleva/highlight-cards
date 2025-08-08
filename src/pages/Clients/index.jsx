@@ -7,6 +7,7 @@ import { saveAs } from 'file-saver';
 import { HelpCircle, Send } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
+import CustomInput from '../../components/CustomInput';
 import CustomSelect from '../../components/CustomSelect';
 import FilterableTable from '../../components/FilterableTable';
 import LoaderCentered from '../../components/LoaderCentered';
@@ -377,7 +378,7 @@ const Clients = () => {
             </p>
 
             <div className="link-container">
-              <input type="text" value={generatedLink} readOnly className="push-input" />
+              <CustomInput type="text" value={generatedLink} readOnly />
               <button onClick={handleCopy} className={`btn-light ${isCopied ? 'copied' : ''}`}>
                 {isCopied ? 'Скопировано!' : 'Копировать'}
               </button>

@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import AutoPushCard from '../../components/AutoPushCard';
 import GeoBadge from '../../components/GeoBadge';
 import PushPreview from '../../components/PushPreview';
 import UserPushBlock from '../../components/UserPushBlock';
+import { removeUserPush, setDelay, setMessage } from '../../store/userPushSlice';
 import {
   Button,
   CardState,
   Layout,
   Left,
   Line,
+  NotificationsBlock,
   PhoneFrame,
   PhoneImage,
   PhoneScreen,
@@ -29,6 +32,8 @@ const MailingsUserPush = () => {
   const [activeTab, setActiveTab] = useState('settings');
 
   const currentCard = useSelector((state) => state.cards.currentCard);
+  const cards = useSelector((state) => state.cards.cards);
+  const userPushNotifications = useSelector((state) => state.userPush.items);
 
   useEffect(() => {
     if (currentCard) {
@@ -59,7 +64,30 @@ const MailingsUserPush = () => {
         <Line />
 
         {hasAccess ? (
-          <UserPushBlock />
+          <>
+            <UserPushBlock />
+            {userPushNotifications.length > 0 && (
+              <NotificationsBlock>
+                {userPushNotifications.map((item) => (
+                  <AutoPushCard
+                    itemId={item.id}
+                    title={item.title}
+                    message={item.message ?? item.defaultMessage ?? ''}
+                    delay={item.delay}
+                    enabled={true}
+                    onChangeMessage={(val) => dispatch(setMessage({ id: item.id, message: val }))}
+                    onChangeDelay={(val) => dispatch(setDelay({ id: item.id, delay: Number(val) }))}
+                    lockToggle
+                    removable
+                    onRemove={() => dispatch(removeUserPush(item.id))}
+                    selectedCardIds={item.selectedCards}
+                    allCards={cards}
+                    onSave={() => console.log('Save logic (optional, can be removed)')}
+                  />
+                ))}
+              </NotificationsBlock>
+            )}
+          </>
         ) : (
           <>
             <Subtitle>

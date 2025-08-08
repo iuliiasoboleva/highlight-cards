@@ -63,6 +63,13 @@ export const Right = styled.div`
   }
 `;
 
+export const NotificationsBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+`;
+
 export const Tabs = styled.div`
   display: flex;
   border-bottom: 1px solid #e5e7eb;

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import CustomInput from '../../components/CustomInput';
+
 import './styles.css';
 
 const BalanceModal = ({ type, onClose }) => {
@@ -19,9 +21,9 @@ const BalanceModal = ({ type, onClose }) => {
           Для: <strong></strong>
         </p>
         <label>Значение:</label>
-        <input type="number" placeholder="Введите значение" />
+        <CustomInput type="number" placeholder="Введите значение" />
         <label>Сумма покупки:</label>
-        <input type="number" placeholder="₽" />
+        <CustomInput type="number" placeholder="₽" />
         <label>Комментарий:</label>
         <textarea placeholder="Комментарий (необязательно)" />
 

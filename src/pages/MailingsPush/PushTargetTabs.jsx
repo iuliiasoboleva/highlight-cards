@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import CustomInput from '../../components/CustomInput';
 import CustomSelect from '../../components/CustomSelect';
 
 const PushTargetTabs = ({ onTabChange, onFilteredCountChange }) => {
@@ -81,8 +82,7 @@ const PushTargetTabs = ({ onTabChange, onFilteredCountChange }) => {
                 options={symbolsOptions}
                 className="push-segment-select"
               />
-              <input
-                className="push-input"
+              <CustomInput
                 type="number"
                 placeholder="0"
                 value={filterInput}

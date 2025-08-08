@@ -4,6 +4,7 @@ import { Tooltip } from 'react-tooltip';
 
 import { HelpCircle } from 'lucide-react';
 
+import CustomInput from '../../components/CustomInput';
 import CustomSelect from '../../components/CustomSelect';
 import { formatDateToDDMMYYYY, getMinDate } from '../../helpers/date';
 import { pluralize } from '../../helpers/pluralize';
@@ -138,9 +139,8 @@ const RadioConfigs = ({ cardStatus }) => {
           <div className="spending-config">
             <label className="spending-label">
               <span>₽</span>
-              <input
+              <CustomInput
                 type="number"
-                className="push-input"
                 min="1"
                 value={settings.spendingAmount || ''}
                 onChange={(e) =>
@@ -150,9 +150,8 @@ const RadioConfigs = ({ cardStatus }) => {
             </label>
             <span className="spending-equal">=</span>
             <label className="spending-label">
-              <input
+              <CustomInput
                 type="number"
-                className="push-input"
                 min="1"
                 value={settings.spendingStamps || ''}
                 onChange={(e) =>
@@ -166,11 +165,10 @@ const RadioConfigs = ({ cardStatus }) => {
         visit: (
           <div className="visit-config">
             <label className="visit-label">
-              <input type="number" min="1" className="push-input" value={1} disabled />
+              <CustomInput type="number" min="1" value={1} disabled />
               <span className="visit-text">визит =</span>
-              <input
+              <CustomInput
                 type="number"
-                className="push-input"
                 min="1"
                 value={settings.visitStamps || ''}
                 onChange={(e) => updateSettingsField('visitStamps', parseInt(e.target.value) || 0)}

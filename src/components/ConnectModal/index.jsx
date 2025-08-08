@@ -1,5 +1,7 @@
 import React from 'react';
 
+import CustomInput from '../CustomInput';
+
 import './styles.css';
 
 const ConnectModal = ({ service, onClose }) => {
@@ -14,7 +16,7 @@ const ConnectModal = ({ service, onClose }) => {
         </div>
         <form>
           {service.fields.map((field, index) => (
-            <input key={index} type="text" placeholder={field} required />
+            <CustomInput key={index} type="text" placeholder={field} required />
           ))}
           <div className="modal-actions">
             <button type="submit" className="btn-dark">

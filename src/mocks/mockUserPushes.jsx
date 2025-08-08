@@ -48,3 +48,13 @@ export const mockUserPushes = [
     defaultMessage: 'Новинка! Попробуйте первыми — бонусы уже начислены.',
   },
 ];
+
+export const userPushNotificationsMock = [
+  {
+    id: '1',
+    title: 'Оповещение о новом товаре/услуге',
+    defaultMessage: 'Новинка! Попробуйте первыми — бонусы уже начислены.',
+    delay: 12,
+    selectedCards: ['fixed'],
+  },
+];

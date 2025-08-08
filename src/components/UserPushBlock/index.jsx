@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { mockUserPushes } from '../../mocks/mockUserPushes';
 import { updateCurrentCardField } from '../../store/cardsSlice';
+import CustomInput from '../CustomInput';
 import CustomSelect from '../CustomSelect';
 import {
   Actions,
@@ -11,7 +12,6 @@ import {
   CardPicker,
   FormTitle,
   FormWrapper,
-  Input,
   Label,
   Tag,
   TagWrapper,
@@ -136,9 +136,9 @@ const UserPushBlock = () => {
             Для условия "{mockUserPushes.find((i) => i.key === selectedTriggerKey)?.title}"
           </Label>
 
-          <Input value={message} onChange={handleMessageChange} placeholder="Введите текст" />
+          <CustomInput value={message} onChange={handleMessageChange} placeholder="Введите текст" />
           <Label>Сообщение будет выслано по истечении</Label>
-          <Input type="number" value={delayValue} onChange={handleDelayValueChange} min={0} />
+          <CustomInput type="number" value={delayValue} onChange={handleDelayValueChange} min={0} />
           <CustomSelect
             value={delayUnit}
             onChange={handleDelayUnitChange}

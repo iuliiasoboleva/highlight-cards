@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import CustomInput from '../../components/CustomInput';
 import CustomSelect from '../../components/CustomSelect';
 import LoaderCentered from '../../components/LoaderCentered';
 import { logout as authLogout } from '../../store/authSlice';
@@ -21,6 +22,7 @@ import {
   AvatarPlaceholder,
   AvatarUpload,
   AvatarUploadText,
+  ButtonProgress,
   CheckboxGroup,
   Confirmation,
   DangerButton,
@@ -28,10 +30,11 @@ import {
   DeleteTextarea,
   FormGroup,
   FormRow,
-  Input,
   Label,
   MainButton,
   Note,
+  PinInput,
+  PinInputWrapper,
   ProfileCard,
   ProfileEmail,
   ProfileForm,
@@ -41,9 +44,6 @@ import {
   RemoveAvatarBtn,
   Toast,
   Wrapper,
-  PinInputWrapper,
-  PinInput,
-  ButtonProgress,
 } from './styles';
 
 const SettingsPersonal = () => {
@@ -269,7 +269,7 @@ const SettingsPersonal = () => {
               <FormRow>
                 <FormGroup>
                   <Label>Имя*</Label>
-                  <Input
+                  <CustomInput
                     value={user.firstName}
                     onChange={(e) => handleChange('firstName', e.target.value)}
                     required
@@ -277,14 +277,14 @@ const SettingsPersonal = () => {
                 </FormGroup>
                 <FormGroup>
                   <Label>Название компании</Label>
-                  <Input value={user.company} readOnly />
+                  <CustomInput value={user.company} readOnly />
                 </FormGroup>
               </FormRow>
 
               <FormRow>
                 <FormGroup>
                   <Label>Фамилия*</Label>
-                  <Input
+                  <CustomInput
                     value={user.lastName}
                     onChange={(e) => handleChange('lastName', e.target.value)}
                     required
@@ -292,21 +292,21 @@ const SettingsPersonal = () => {
                 </FormGroup>
                 <FormGroup>
                   <Label>Email*</Label>
-                  <Input type="email" value={user.email} readOnly />
+                  <CustomInput type="email" value={user.email} readOnly />
                 </FormGroup>
               </FormRow>
 
               <FormRow>
                 <FormGroup>
                   <Label>Дополнительная контактная информация</Label>
-                  <Input
+                  <CustomInput
                     value={user.contact}
                     onChange={(e) => handleChange('contact', e.target.value)}
                   />
                 </FormGroup>
                 <FormGroup>
                   <Label>Телефон</Label>
-                  <Input type="tel" value={user.phone} readOnly />
+                  <CustomInput type="tel" value={user.phone} readOnly />
                 </FormGroup>
               </FormRow>
 
@@ -341,7 +341,7 @@ const SettingsPersonal = () => {
               <FormRow>
                 <FormGroup>
                   <Label>Город</Label>
-                  <Input
+                  <CustomInput
                     value={user.city}
                     onChange={(e) => handleChange('city', e.target.value)}
                     required
@@ -433,7 +433,7 @@ const SettingsPersonal = () => {
                 <p>
                   Для подтверждения введите <strong>ПОДТВЕРЖДАЮ</strong>
                 </p>
-                <Input
+                <CustomInput
                   value={confirmDelete}
                   onChange={(e) => setConfirmDelete(e.target.value)}
                   placeholder="Введите ПОДТВЕРЖДАЮ"

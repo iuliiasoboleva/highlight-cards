@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 export const SelectWrapper = styled.div`
   position: relative;
   width: 100%;
-  font-size: 14px;
+  font-size: 16px;
 `;
 
 export const HeaderBox = styled.div`
