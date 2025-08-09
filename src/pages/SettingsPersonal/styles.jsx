@@ -14,7 +14,7 @@ export const ProfileSection = styled.div`
   gap: 24px;
   margin-bottom: 40px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 999px) {
     flex-direction: column;
   }
 `;
@@ -37,7 +37,7 @@ export const AvatarContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 `;
 
 export const AvatarImageWrapper = styled.div`
@@ -83,8 +83,8 @@ export const AvatarPlaceholder = styled.div`
 `;
 
 export const AvatarUploadText = styled.span`
-  color: #666;
-  font-size: 14px;
+  font-size: 12px;
+  color: #656565;
 `;
 
 export const RemoveAvatarBtn = styled.button`
@@ -100,13 +100,8 @@ export const RemoveAvatarBtn = styled.button`
   }
 `;
 
-export const ProfileName = styled.div`
-  font-weight: bold;
-  font-size: 18px;
-`;
-
 export const ProfileEmail = styled.div`
-  color: #666;
+  color: #656565;
   font-size: 14px;
 `;
 
@@ -123,6 +118,25 @@ export const ProfileForm = styled.div`
   border: 1px solid #ddd;
   padding: 24px;
   border-radius: 12px;
+
+  @media (max-width: 768px) {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'firstName'
+      'lastName'
+      'email'
+      'phone'
+      'telegram'
+      'company'
+      'country'
+      'city'
+      'pinNew'
+      'pinConfirm'
+      'language'
+      'timezone';
+    row-gap: 12px;
+  }
 `;
 
 export const FormRow = styled.div`
@@ -131,7 +145,9 @@ export const FormRow = styled.div`
   margin-bottom: 16px;
 
   @media (max-width: 768px) {
-    flex-direction: column;
+    display: contents;
+    gap: 0;
+    margin: 0;
   }
 `;
 
@@ -140,12 +156,8 @@ export const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
 
-  input,
-  select {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    margin-top: 4px;
+  @media (max-width: 768px) {
+    grid-area: ${({ $area }) => $area || 'auto'};
   }
 `;
 
@@ -173,7 +185,9 @@ export const MainButton = styled.button`
   }
 
   @media (max-width: 768px) {
-    width: -webkit-fill-available;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 `;
 
@@ -266,21 +280,6 @@ export const Label = styled.p`
   user-select: none;
 `;
 
-export const Input = styled.input`
-  width: -webkit-fill-available;
-  padding: 10px 12px;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  background-color: #fff;
-  cursor: pointer;
-  transition: all 0.3s;
-  font-size: 14px;
-
-  &:hover {
-    border-color: #bf4756;
-  }
-`;
-
 export const PinInputWrapper = styled.div`
   display: flex;
   gap: 12px;
@@ -294,6 +293,12 @@ export const PinInput = styled.input`
   border: 1px solid #d1d5db;
   background: #f3f4f6;
   border-radius: 8px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
 `;
 
 export const PinBlock = styled.div`
@@ -320,7 +325,9 @@ export const SavePinButton = styled.button`
   }
 
   @media (max-width: 768px) {
-    width: -webkit-fill-available;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 `;
 

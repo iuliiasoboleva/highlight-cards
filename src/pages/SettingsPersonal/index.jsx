@@ -25,7 +25,6 @@ import {
   ProfileCard,
   ProfileEmail,
   ProfileForm as ProfileFormWrap,
-  ProfileName,
   ProfileRightBlock,
   ProfileSection,
   Toast,
@@ -228,9 +227,9 @@ const SettingsPersonal = () => {
                 onAvatarInput={onAvatarInput}
                 removeAvatarAction={removeAvatarAction}
               />
-              <ProfileName>
+              <h3>
                 {user.firstName} {user.lastName}
-              </ProfileName>
+              </h3>
               <ProfileEmail>{user.email}</ProfileEmail>
             </ProfileCard>
 

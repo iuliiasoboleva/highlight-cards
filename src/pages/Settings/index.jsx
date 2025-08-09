@@ -247,7 +247,12 @@ const Settings = () => {
     return <LoaderCentered />;
   }
 
-  if (!tariffPlans.length) return <p>Тарифы не найдены</p>;
+  if (!tariffPlans.length)
+    return (
+      <div className="settings-container">
+        <p>Тарифы не найдены</p>
+      </div>
+    );
 
   // текущий тариф временно берём первый
   const currentTariff = tariffPlans[0];

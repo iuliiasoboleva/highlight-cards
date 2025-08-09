@@ -9,8 +9,19 @@ import { BarChart, Contact, GraduationCap, LogOut, ScanLine, Settings, User } fr
 import { logout as authLogout } from '../../store/authSlice';
 import { fetchSubscription } from '../../store/subscriptionSlice';
 import { logout as userLogout } from '../../store/userSlice';
-
-import './styles.css';
+import {
+  AvatarCircle,
+  DemoBadge,
+  DesktopHeader,
+  DropdownDivider,
+  HeaderBar,
+  HeaderIcons,
+  IconButton,
+  Logo,
+  ProfileDropdown,
+  UserName,
+  UserSection,
+} from './styles';
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -19,7 +30,6 @@ const Header = () => {
   const subscription = useSelector((state) => state.subscription.info);
   const subLoading = useSelector((state) => state.subscription.loading);
 
-  // Запрашиваем подписку, если ещё нет
   useEffect(() => {
     if (user.organization_id && !subscription && !subLoading) {
       dispatch(fetchSubscription(user.organization_id));
@@ -41,11 +51,8 @@ const Header = () => {
         setIsDropdownOpen(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleDropdownAction = (action) => {
@@ -77,41 +84,49 @@ const Header = () => {
   ];
 
   return (
-    <header className="header">
-      <div className="desktop-header">
-        <img src="/logoColored.png" alt="Logo" className="logo" onClick={() => navigate('/')} />
+    <HeaderBar>
+      <DesktopHeader>
+        <Logo src="/logoColored.png" alt="Logo" onClick={() => navigate('/')} />
         {(user.firstName || user.name) && (
-          <div className="user-section">
-            Привет, <span>{user.firstName || user.name}</span>
+          <UserSection>
+            <AvatarCircle>
+              {user.avatar ? (
+                <img src={user.avatar} alt="Avatar" />
+              ) : (
+                <>
+                  {`${(user.firstName?.[0] || user.name?.[0] || '').toUpperCase()}${(user.lastName?.[0] || '').toUpperCase()}`}
+                </>
+              )}
+            </AvatarCircle>
+            Привет, <UserName>{user.firstName || user.name}</UserName>
             {subscription?.status === 'trial' && (
-              <span className="demo-badge" onClick={() => navigate('/settings')}>
+              <DemoBadge onClick={() => navigate('/settings')}>
                 Демо: {subscription.days_left} д.
-              </span>
+              </DemoBadge>
             )}
-          </div>
+          </UserSection>
         )}
 
-        <div className="header-icons" ref={dropdownRef}>
+        <HeaderIcons ref={dropdownRef}>
           {headerIcons.map(({ icon, tooltip, onClick }, index) => {
             const tooltipId = `header-tooltip-${index}`;
             return (
               <React.Fragment key={index}>
-                <button
-                  className="icon-button"
+                <IconButton
                   onClick={onClick}
                   data-tooltip-id={tooltipId}
                   data-tooltip-content={tooltip}
                   data-tooltip-place="bottom"
                 >
                   {icon}
-                </button>
+                </IconButton>
                 <Tooltip id={tooltipId} className="sidebar-tooltip" />
               </React.Fragment>
             );
           })}
 
           {isDropdownOpen && (
-            <div className="profile-dropdown">
+            <ProfileDropdown>
               <button onClick={() => handleDropdownAction(() => navigate('/settings/personal'))}>
                 <User size={16} style={{ marginRight: '8px' }} />
                 Профиль пользователя
@@ -124,16 +139,16 @@ const Header = () => {
                 <ScanLine size={16} style={{ marginRight: '8px' }} />
                 Приложение-сканер
               </button>
-              <hr className="dropdown-divider" />
+              <DropdownDivider />
               <button onClick={() => handleDropdownAction(handleLogout)}>
                 <LogOut size={16} style={{ marginRight: '8px' }} />
                 Выйти
               </button>
-            </div>
+            </ProfileDropdown>
           )}
-        </div>
-      </div>
-    </header>
+        </HeaderIcons>
+      </DesktopHeader>
+    </HeaderBar>
   );
 };
 

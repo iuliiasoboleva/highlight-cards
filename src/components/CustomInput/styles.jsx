@@ -26,4 +26,10 @@ export const Input = styled.input`
     color: #999;
     opacity: 0.8;
   }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
 `;

@@ -37,7 +37,7 @@ const ProfileForm = ({
   return (
     <>
       <FormRow>
-        <FormGroup>
+        <FormGroup $area="firstName">
           <Label>Имя*</Label>
           <CustomInput
             value={user.firstName}
@@ -45,7 +45,7 @@ const ProfileForm = ({
             required
           />
         </FormGroup>
-        <FormGroup>
+        <FormGroup $area="email">
           <Label>Email*</Label>
           <CustomInput
             type="email"
@@ -56,7 +56,7 @@ const ProfileForm = ({
       </FormRow>
 
       <FormRow>
-        <FormGroup>
+        <FormGroup $area="lastName">
           <Label>Фамилия*</Label>
           <CustomInput
             value={user.lastName}
@@ -65,7 +65,7 @@ const ProfileForm = ({
           />
         </FormGroup>
 
-        <FormGroup>
+        <FormGroup $area="phone">
           <Label>Телефон</Label>
           <CustomInput
             type="tel"
@@ -78,12 +78,12 @@ const ProfileForm = ({
       </FormRow>
 
       <FormRow>
-        <FormGroup>
+        <FormGroup $area="company">
           <Label>Название компании</Label>
           <CustomInput value={user.company} readOnly />
         </FormGroup>
 
-        <FormGroup>
+        <FormGroup $area="telegram">
           <Label>Ваш ник в Telegram</Label>
           <CustomInput
             value={user.contact || ''}
@@ -94,7 +94,7 @@ const ProfileForm = ({
       </FormRow>
 
       <FormRow>
-        <FormGroup>
+        <FormGroup $area="country">
           <Label>Страна</Label>
           <CustomSelect
             options={countries}
@@ -102,7 +102,7 @@ const ProfileForm = ({
             onChange={(v) => onFieldChange('country', v)}
           />
         </FormGroup>
-        <FormGroup>
+        <FormGroup $area="pinNew">
           <Label>Новый PIN</Label>
           <PinInputWrapper>
             {[0, 1, 2, 3].map((i) => (
@@ -122,7 +122,7 @@ const ProfileForm = ({
       </FormRow>
 
       <FormRow>
-        <FormGroup>
+        <FormGroup $area="city">
           <Label>Город</Label>
           <CustomInput
             value={user.city}
@@ -131,7 +131,7 @@ const ProfileForm = ({
           />
         </FormGroup>
 
-        <FormGroup>
+        <FormGroup $area="pinConfirm">
           <Label>Подтверждение PIN</Label>
           <PinBlock>
             <PinInputWrapper>
@@ -166,7 +166,7 @@ const ProfileForm = ({
       </FormRow>
 
       <FormRow>
-        <FormGroup>
+        <FormGroup $area="language">
           <Label>Язык интерфейса</Label>
           <CustomSelect
             options={languages}
@@ -174,7 +174,7 @@ const ProfileForm = ({
             onChange={(v) => onFieldChange('language', v)}
           />
         </FormGroup>
-        <FormGroup>
+        <FormGroup $area="timezone">
           <Label>Часовой пояс</Label>
           <CustomSelect
             options={timezones}
