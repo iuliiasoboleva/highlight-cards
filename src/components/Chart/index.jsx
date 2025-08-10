@@ -14,9 +14,14 @@ import {
 } from '../../mocks/chartData';
 import { calculateOverallStats } from '../../utils/calculateOverallStats';
 import StatisticsCard from '../StatisticsCard';
-
-import './datepickerOverrides.css';
-import './styles.css';
+import {
+  DatepickerWrapper,
+  FilterButton,
+  Filters,
+  Title,
+  TitleBlock,
+  TitleFilterWrapper,
+} from './styles.jsx';
 
 const periods = {
   day: 'День',
@@ -189,10 +194,10 @@ const Chart = ({
 
   return (
     <>
-      <div className="title-block">
-        <div className="title-filter-wrapper">
+      <TitleBlock>
+        <TitleFilterWrapper>
           <div>
-            <h2 className="title">
+            <Title>
               {title}
               <HelpCircle
                 size={16}
@@ -200,23 +205,24 @@ const Chart = ({
                 data-tooltip-id="managers-help"
                 data-tooltip-content={subtitle}
               />
-            </h2>
+            </Title>
             <Tooltip id="managers-help" className="custom-tooltip" />
           </div>
-          <div className="filters">
+
+          <Filters>
             {Object.keys(periods).map((key) => (
-              <button
+              <FilterButton
                 key={key}
                 onClick={() => handlePeriodClick(key)}
                 className={selectedPeriod === key ? 'active' : ''}
                 ref={key === 'custom' ? periodButtonRef : null}
               >
                 {periods[key]}
-              </button>
+              </FilterButton>
             ))}
-          </div>
-        </div>
-      </div>
+          </Filters>
+        </TitleFilterWrapper>
+      </TitleBlock>
 
       <StatisticsCard
         chartData={sortedChartData}
@@ -227,8 +233,7 @@ const Chart = ({
       />
 
       {selectedPeriod === 'custom' && isCalendarVisible && (
-        <div
-          className="datepicker-wrapper"
+        <DatepickerWrapper
           ref={calendarRef}
           style={{
             top: `${calendarPosition.top}px`,
@@ -247,7 +252,7 @@ const Chart = ({
             locale={ru}
             maxDate={new Date()}
           />
-        </div>
+        </DatepickerWrapper>
       )}
     </>
   );

@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import axiosInstance from '../../axiosInstance';
+import axiosInstance from '../../axiosInstance.js';
 import Chart from '../../components/Chart';
+import ClientsChart from '../../components/Chart/ClientsChart.jsx';
+import RetentionChart from '../../components/Chart/RetentionChart.jsx';
 import ClientPortraitCard from '../../components/ClientPortraitCard';
-import ClientsChart from '../../components/ClientsChart';
-import LoaderCentered from '../../components/LoaderCentered';
-import RetentionChart from '../../components/RetentionChart';
-
-import './styles.css';
+import LoaderCentered from '../../components/LoaderCentered/index.jsx';
+import { toNum } from '../../helpers/date.jsx';
+import { PortraitChart, StatisticsContainer, Subtitle } from './styles.jsx';
 
 const Home = () => {
   const user = useSelector((state) => state.user);
@@ -41,25 +41,37 @@ const Home = () => {
     })();
   }, [orgId]);
 
+  const chartData = useMemo(() => {
+    return (series || []).map((p) => {
+      const visits = toNum(p.visits ?? p.total ?? p.count ?? 0);
+      const newClients = toNum(p.newClients ?? p.new ?? p.new_count ?? 0);
+
+      // если visits меньше newClients — берём 0
+      const repeatClients = Math.max(0, toNum(p.repeatClients ?? visits - newClients));
+
+      return {
+        date: p.date,
+        visits,
+        newClients,
+        repeatClients,
+      };
+    });
+  }, [series]);
+
+  const activityData = useMemo(() => {
+    return (series || []).map((p) => ({
+      date: p.date,
+      newClients: toNum(p.newClients ?? p.new ?? p.new_count ?? 0),
+      cardsIssued: toNum(p.visits ?? p.total ?? p.count ?? 0),
+    }));
+  }, [series]);
+
   if (loading) {
     return <LoaderCentered />;
   }
 
-  const chartData = series.map((p) => ({
-    date: p.date,
-    visits: p.visits,
-    newClients: p.newClients,
-    repeatClients: p.visits - p.newClients,
-  }));
-
-  const activityData = series.map((p) => ({
-    date: p.date,
-    newClients: p.newClients,
-    cardsIssued: p.visits,
-  }));
-
   return (
-    <div className="statistics-container">
+    <StatisticsContainer>
       <Chart
         title="Статистика аккаунта"
         subtitle="Следите за тем, сколько людей приходит к вам, кто возвращается, и как меняется активность клиентов."
@@ -67,8 +79,9 @@ const Home = () => {
       />
       <ClientsChart externalData={activityData} />
       <RetentionChart externalData={retention} />
-      <h2 className="subtitle">Портрет клиента</h2>
-      <div className="portrait-chart">
+
+      <Subtitle>Портрет клиента</Subtitle>
+      <PortraitChart>
         <ClientPortraitCard
           title="Гендерное соотношение"
           data={Object.entries(portrait.gender).map(([name, value]) => ({ name, value }))}
@@ -77,8 +90,8 @@ const Home = () => {
           title="Возраст"
           data={Object.entries(portrait.age).map(([name, value]) => ({ name, value }))}
         />
-      </div>
-    </div>
+      </PortraitChart>
+    </StatisticsContainer>
   );
 };
 

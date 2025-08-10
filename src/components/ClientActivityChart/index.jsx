@@ -11,7 +11,23 @@ import {
   YAxis,
 } from 'recharts';
 
-import './styles.css';
+import { formatChartTick } from '../../helpers/formatChartTick';
+import {
+  ChangeCircle,
+  ChangeIcon,
+  ChangeValue,
+  ChangeWrapper,
+  ChartContainer,
+  ChartWrapper,
+  ClientStatHeader,
+  ClientStatLeft,
+  ClientStatRight,
+  ClientStatSubtitle,
+  ClientStatTitle,
+  StatisticsCard,
+  StatisticsContent,
+  StatisticsLeft,
+} from './styles';
 
 const ClientsActivityChart = ({
   chartData,
@@ -35,35 +51,41 @@ const ClientsActivityChart = ({
   const changeType = isPositive ? 'positive' : isNegative ? 'negative' : 'neutral';
 
   return (
-    <div className="statistics-card">
-      <div className="client-stat-header">
-        <div className="client-stat-left">
-          <span className="client-stat-title">{label}</span>
-          <span className="client-stat-subtitle">{value}</span>
-        </div>
-        <div className="client-stat-right">
-          <span className={`client-stat-change-value ${changeType}`}>
-            {isPositive ? `+${change}` : change}
-          </span>
-          <div className={`client-stat-change-wrapper ${changeType}`}>
-            <div className={`client-stat-dropdown-icon-circle ${changeType}`}>
+    <StatisticsCard>
+      <ClientStatHeader>
+        <ClientStatLeft>
+          <ClientStatTitle>{label}</ClientStatTitle>
+          <ClientStatSubtitle>{value}</ClientStatSubtitle>
+        </ClientStatLeft>
+
+        <ClientStatRight>
+          <ChangeValue className={changeType}>{isPositive ? `+${change}` : change}</ChangeValue>
+          <ChangeWrapper className={changeType}>
+            <ChangeCircle className="circle">
               {isPositive ? (
-                <ArrowUp size={14} className={`client-stat-icon ${changeType}`} />
+                <ChangeIcon className={changeType}>
+                  <ArrowUp size={14} />
+                </ChangeIcon>
               ) : isNegative ? (
-                <ArrowDown size={14} className={`client-stat-icon ${changeType}`} />
+                <ChangeIcon className={changeType}>
+                  <ArrowDown size={14} />
+                </ChangeIcon>
               ) : (
-                <Minus size={14} className={`client-stat-icon ${changeType}`} />
+                <ChangeIcon className={changeType}>
+                  <Minus size={14} />
+                </ChangeIcon>
               )}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="statistics-content">
-        <div className="statistics-left">
-          <div className="chart-wrapper">
-            <div className="chart-container">
+            </ChangeCircle>
+          </ChangeWrapper>
+        </ClientStatRight>
+      </ClientStatHeader>
+
+      <StatisticsContent>
+        <StatisticsLeft>
+          <ChartWrapper>
+            <ChartContainer>
               <ResponsiveContainer width="100%" height={200}>
-                <LineChart data={chartData}>
+                <LineChart data={chartData} margin={{ top: 0, right: 25, bottom: 0, left: 10 }}>
                   <CartesianGrid
                     vertical={true}
                     horizontal={false}
@@ -76,14 +98,7 @@ const ClientsActivityChart = ({
                     tick={axisStyle}
                     axisLine={false}
                     tickLine={false}
-                    tickFormatter={(value) =>
-                      selectedPeriod === 'day'
-                        ? `${new Date(value).getHours()}:00`
-                        : new Date(value).toLocaleDateString('ru-RU', {
-                            month: 'short',
-                            day: '2-digit',
-                          })
-                    }
+                    tickFormatter={(value) => formatChartTick(value, selectedPeriod)}
                   />
                   <YAxis
                     tick={axisStyle}
@@ -136,11 +151,11 @@ const ClientsActivityChart = ({
                   />
                 </LineChart>
               </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            </ChartContainer>
+          </ChartWrapper>
+        </StatisticsLeft>
+      </StatisticsContent>
+    </StatisticsCard>
   );
 };
 

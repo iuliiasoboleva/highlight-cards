@@ -5,7 +5,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { ru } from 'date-fns/locale';
 import { ArrowDown, ArrowUp, Copy, Edit, Info, Minus } from 'lucide-react';
 
-import '../../components/Chart/datepickerOverrides.css';
 import './styles.css';
 
 const StatCardItem = ({

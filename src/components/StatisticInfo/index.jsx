@@ -2,41 +2,38 @@ import React from 'react';
 
 import { ArrowDown, ArrowUp, Minus } from 'lucide-react';
 
-import './styles.css';
+import { Card, ChangeCircle, ChangeValue, ChangeWrapper, Dot, LabelRow, TopRow } from './styles';
 
-const StatisticInfo = ({ colorClass, label, value = 0, change = 0 }) => {
+const StatisticInfo = ({ colorClass = 'repeat', label, value = 0, change = 0 }) => {
   const isPositive = change > 0;
   const isNegative = change < 0;
   const changeType = isPositive ? 'positive' : isNegative ? 'negative' : 'neutral';
 
   return (
-    <div className="client-stat-card">
-      <div className="client-stat-top">
-        <span className={`client-stat-change-value ${changeType}`}>
-          {isPositive ? `+${change}` : change}
-        </span>
-        <div className={`client-stat-change-wrapper ${changeType}`}>
-          <div className={`client-stat-dropdown-icon-circle ${changeType}`}>
+    <Card>
+      <TopRow>
+        <ChangeValue $type={changeType}>{isPositive ? `+${change}` : change}</ChangeValue>
+        <ChangeWrapper>
+          <ChangeCircle>
             {isPositive ? (
-              <ArrowUp size={14} className={`client-stat-icon ${changeType}`} />
+              <ArrowUp size={14} color="#1cc568" />
             ) : isNegative ? (
-              <ArrowDown size={14} className={`client-stat-icon ${changeType}`} />
+              <ArrowDown size={14} color="#f44336" />
             ) : (
-              <Minus size={14} className={`client-stat-icon ${changeType}`} />
+              <Minus size={14} color="#f0a000" />
             )}
-          </div>
-        </div>
-      </div>
-      <div className="client-stat-top">
-        <div className="client-stat-dropdown-label">
-          <span className={`client-stat-dot ${colorClass}`}></span>
+          </ChangeCircle>
+        </ChangeWrapper>
+      </TopRow>
+
+      <TopRow>
+        <LabelRow>
+          <Dot $variant={colorClass} />
           <span>{label}</span>
-        </div>
-        <span className={`client-stat-change-value ${changeType}`}>
-          {isPositive ? `+${change}` : change}
-        </span>
-      </div>
-    </div>
+        </LabelRow>
+        <ChangeValue $type={changeType}>{isPositive ? `+${change}` : change}</ChangeValue>
+      </TopRow>
+    </Card>
   );
 };
 

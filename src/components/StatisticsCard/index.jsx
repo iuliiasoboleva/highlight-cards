@@ -10,10 +10,20 @@ import {
   YAxis,
 } from 'recharts';
 
+import { formatChartTick } from '../../helpers/formatChartTick';
 import ClientStatDropdownCard from '../ClientStatDropdownCard';
 import StatisticInfo from '../StatisticInfo';
-
-import './styles.css';
+import {
+  ChartContainer,
+  ChartWrapper,
+  Content,
+  FiltersBlock,
+  Header,
+  Left,
+  Right,
+  TopGrid,
+  Wrapper,
+} from './styles';
 
 const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, getDateRange }) => {
   const axisStyle = {
@@ -25,16 +35,16 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
   };
 
   return (
-    <div className="statistics-card">
-      <div className="statistics-header">
-        <div className="filters-block">
+    <Wrapper>
+      <Header>
+        <FiltersBlock>
           <span>{getDateRange()}</span>
-        </div>
-      </div>
+        </FiltersBlock>
+      </Header>
 
-      <div className="statistics-content">
-        <div className="statistics-left">
-          <div className="statistics-card-grid">
+      <Content>
+        <Left>
+          <TopGrid>
             <ClientStatDropdownCard
               selectable={false}
               initialKey="lastPeriod"
@@ -47,7 +57,7 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
             />
 
             <ClientStatDropdownCard
-              selectable={true}
+              selectable
               statsByType={{
                 new: {
                   value: overallStats?.newClients?.value ?? 0,
@@ -74,12 +84,12 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
                 },
               }}
             />
-          </div>
+          </TopGrid>
 
-          <div className="chart-wrapper">
-            <div className="chart-container">
+          <ChartWrapper>
+            <ChartContainer>
               <ResponsiveContainer width="100%" height={200}>
-                <LineChart data={chartData}>
+                <LineChart data={chartData} margin={{ top: 0, right: 25, bottom: 0, left: 10 }}>
                   <CartesianGrid
                     vertical={true}
                     horizontal={false}
@@ -92,14 +102,7 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
                     tick={axisStyle}
                     axisLine={false}
                     tickLine={false}
-                    tickFormatter={(value) =>
-                      selectedPeriod === 'day'
-                        ? `${new Date(value).getHours()}:00`
-                        : new Date(value).toLocaleDateString('ru-RU', {
-                            month: 'short',
-                            day: '2-digit',
-                          })
-                    }
+                    tickFormatter={(value) => formatChartTick(value, selectedPeriod)}
                   />
                   <YAxis
                     tick={axisStyle}
@@ -166,11 +169,11 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
                   />
                 </LineChart>
               </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
+            </ChartContainer>
+          </ChartWrapper>
+        </Left>
 
-        <div className="statistics-right">
+        <Right>
           <StatisticInfo
             colorClass="repeat"
             label="Повторные клиенты"
@@ -189,9 +192,9 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
             value={overallStats?.referrals?.value ?? 0}
             change={overallStats?.referrals?.change ?? 0}
           />
-        </div>
-      </div>
-    </div>
+        </Right>
+      </Content>
+    </Wrapper>
   );
 };
 

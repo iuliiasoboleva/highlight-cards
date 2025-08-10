@@ -6,8 +6,15 @@ import { ru } from 'date-fns/locale';
 
 import { clientActivityMockData } from '../../mocks/clientActivityMockData';
 import ClientsActivityChart from '../ClientActivityChart';
-
-import '../../components/Chart/datepickerOverrides.css';
+import {
+  ChartsBlock,
+  DatepickerWrapper,
+  FilterButton,
+  Filters,
+  Subtitle,
+  TitleBlock,
+  TitleFilterWrapper,
+} from './styles';
 
 const periods = {
   day: 'День',
@@ -102,35 +109,26 @@ const ClientsChart = ({ title = 'Клиентская активность', ext
 
   return (
     <>
-      <div className="title-block">
-        <div className="title-filter-wrapper">
+      <TitleBlock>
+        <TitleFilterWrapper>
           <div>
-            <h2 className="subtitle">{title}</h2>
+            <Subtitle>{title}</Subtitle>
           </div>
-          <div className="filters">
+
+          <Filters>
             {Object.entries(periods).map(([key, label]) => (
-              <button
+              <FilterButton
                 key={key}
                 onClick={() => handlePeriodClick(key)}
                 className={selectedPeriod === key ? 'active' : ''}
                 ref={key === 'custom' ? clientPeriodButtonRef : null}
               >
                 {label}
-              </button>
+              </FilterButton>
             ))}
+
             {selectedPeriod === 'custom' && isCalendarVisible && (
-              <div
-                className="datepicker-wrapper"
-                ref={clientCalendarRef}
-                style={{
-                  position: 'absolute',
-                  top: `60px`,
-                  left: `50%`,
-                  opacity: 1,
-                  transition: 'opacity 0.2s ease',
-                  zIndex: 1000,
-                }}
-              >
+              <DatepickerWrapper ref={clientCalendarRef}>
                 <DatePicker
                   selected={customRange.start}
                   onChange={handleDateChange}
@@ -141,13 +139,13 @@ const ClientsChart = ({ title = 'Клиентская активность', ext
                   locale={ru}
                   maxDate={new Date()}
                 />
-              </div>
+              </DatepickerWrapper>
             )}
-          </div>
-        </div>
-      </div>
+          </Filters>
+        </TitleFilterWrapper>
+      </TitleBlock>
 
-      <div className="charts-block">
+      <ChartsBlock>
         <ClientsActivityChart
           chartData={sortedChartData}
           dataKey="newClients"
@@ -167,7 +165,7 @@ const ClientsChart = ({ title = 'Клиентская активность', ext
           value={cardsIssuedStats.value}
           change={cardsIssuedStats.change}
         />
-      </div>
+      </ChartsBlock>
     </>
   );
 };

@@ -2,13 +2,26 @@ import React, { useState } from 'react';
 
 import { ArrowDown, ArrowUp, ChevronDown, Minus } from 'lucide-react';
 
-import './styles.css';
+import {
+  BottomRow,
+  Card,
+  ChangeValue,
+  ChangeWrap,
+  IconCircle,
+  Label,
+  Option,
+  Options,
+  Popover,
+  TopRow,
+  Value,
+} from './styles';
 
 const OPTIONS = [
   { key: 'new', label: 'Новые клиенты' },
   { key: 'repeat', label: 'Повторные клиенты' },
   { key: 'referral', label: 'Рефералы' },
   { key: 'lastPeriod', label: 'Прошлый период' },
+  { key: 'visits', label: 'Всего визитов' },
 ];
 
 const selectOptions = [
@@ -38,52 +51,47 @@ const ClientStatDropdownCard = ({ statsByType = {}, initialKey = 'new', selectab
   const selectedLabel = OPTIONS.find((o) => o.key === selected)?.label || '';
 
   return (
-    <div className="client-stat-dropdown-card">
-      <div className="client-stat-dropdown-top">
-        <div
-          className={`client-stat-dropdown-label ${selectable ? 'clickable' : ''}`}
-          onClick={toggleDropdown}
-        >
+    <Card>
+      <TopRow>
+        <Label $clickable={selectable} onClick={toggleDropdown}>
           <span>{selectedLabel}</span>
           {selectable && <ChevronDown size={16} />}
-        </div>
+        </Label>
 
-        <div className="client-stat-dropdown-change">
-          <span className={`client-stat-dropdown-change-value ${changeType}`}>
-            {change > 0 ? `+${change}` : change}
-          </span>
-        </div>
-      </div>
+        <ChangeWrap>
+          <ChangeValue $type={changeType}>{isPositive ? `+${change}` : change}</ChangeValue>
+        </ChangeWrap>
+      </TopRow>
 
       {selectable && open && (
-        <div className="client-stat-dropdown-popover">
-          <div className="client-stat-dropdown-options">
+        <Popover>
+          <Options>
             {selectOptions.map((opt) => (
-              <div
+              <Option
                 key={opt.key}
-                className={`client-stat-dropdown-option ${selected === opt.key ? 'active' : ''}`}
+                className={selected === opt.key ? 'active' : ''}
                 onClick={() => handleSelect(opt.key)}
               >
                 {opt.label}
-              </div>
+              </Option>
             ))}
-          </div>
-        </div>
+          </Options>
+        </Popover>
       )}
 
-      <div className="client-stat-dropdown-bottom">
-        <div className="client-stat-dropdown-value">{value}</div>
-        <div className={`client-stat-dropdown-icon-circle ${changeType}`}>
+      <BottomRow>
+        <Value>{value}</Value>
+        <IconCircle $type={changeType}>
           {isPositive ? (
-            <ArrowUp size={14} className={`client-stat-icon ${changeType}`} />
+            <ArrowUp size={14} />
           ) : isNegative ? (
-            <ArrowDown size={14} className={`client-stat-icon ${changeType}`} />
+            <ArrowDown size={14} />
           ) : (
-            <Minus size={14} className={`client-stat-icon ${changeType}`} />
+            <Minus size={14} />
           )}
-        </div>
-      </div>
-    </div>
+        </IconCircle>
+      </BottomRow>
+    </Card>
   );
 };
 
