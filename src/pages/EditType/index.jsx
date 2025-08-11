@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Tooltip } from 'react-tooltip';
 
-import { BadgePercent, DollarSign, Gift, HelpCircle, Stamp, Ticket } from 'lucide-react';
+import { BadgePercent, DollarSign, Gift, Stamp, Ticket } from 'lucide-react';
 
 import EditLayout from '../../components/EditLayout';
+import TitleWithHelp from '../../components/TitleWithHelp';
 import { createCard, setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
 
 import './styles.css';
@@ -81,16 +81,12 @@ const EditType = () => {
 
   const typeContent = (
     <div>
-      <h2 className="subtitle">
-        Тип карты
-        <HelpCircle
-          size={16}
-          style={{ cursor: 'pointer' }}
-          data-tooltip-id="managers-help"
-          data-tooltip-html=" Выберите тип карты для дальнейшей настройки"
-        />
-      </h2>
-      <Tooltip id="managers-help" className="custom-tooltip" />
+      <TitleWithHelp
+        title={'Тип карты'}
+        tooltipId="edit-type-help"
+        tooltipHtml
+        tooltipContent={`Выберите тип карты для дальнейшей настройки`}
+      />
       <hr />
 
       <div className="card-types-grid">

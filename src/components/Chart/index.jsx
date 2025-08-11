@@ -1,10 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { Tooltip } from 'react-tooltip';
 
 import { ru } from 'date-fns/locale';
-import { HelpCircle } from 'lucide-react';
 
 import {
   mockStatsDataDay,
@@ -14,11 +12,11 @@ import {
 } from '../../mocks/chartData';
 import { calculateOverallStats } from '../../utils/calculateOverallStats';
 import StatisticsCard from '../StatisticsCard';
+import TitleWithHelp from '../TitleWithHelp/index.jsx';
 import {
   DatepickerWrapper,
   FilterButton,
   Filters,
-  Title,
   TitleBlock,
   TitleFilterWrapper,
 } from './styles.jsx';
@@ -196,19 +194,12 @@ const Chart = ({
     <>
       <TitleBlock>
         <TitleFilterWrapper>
-          <div>
-            <Title>
-              {title}
-              <HelpCircle
-                size={16}
-                style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
-                data-tooltip-id="managers-help"
-                data-tooltip-content={subtitle}
-              />
-            </Title>
-            <Tooltip id="managers-help" className="custom-tooltip" />
-          </div>
-
+          <TitleWithHelp
+            title={title}
+            tooltipId="chart-help"
+            tooltipHtml
+            tooltipContent={subtitle}
+          />
           <Filters>
             {Object.keys(periods).map((key) => (
               <FilterButton

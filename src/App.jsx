@@ -75,6 +75,7 @@ const MainLayout = () => {
   const matchSettings = matchPath('/settings/*', location.pathname);
   const matchClientsRoot = matchPath({ path: '/clients', end: true }, location.pathname);
   const matchClientsReviews = matchPath('/clients/reviews', location.pathname);
+  const matchClientsRfm = matchPath('/clients/rfm-segment', location.pathname);
   const matchClientDetails = matchPath('/clients/:id/*', location.pathname);
 
   const currentCard = useSelector((state) => state.cards.currentCard);
@@ -97,6 +98,7 @@ const MainLayout = () => {
       matchSettings ||
       matchClientsRoot ||
       matchClientsReviews ||
+      matchClientsRfm ||
       matchClientDetails;
 
     root.style.setProperty('--bar-height', showSubMenu ? '73px' : '0px');
@@ -110,7 +112,13 @@ const MainLayout = () => {
     if (matchCreate || matchEdit) return Pencil;
     if (matchMailings) return Mail;
     if (matchSettings) return SettingsIcon;
-    if (matchCardDetails || matchClientsRoot || matchClientsReviews || matchClientDetails)
+    if (
+      matchCardDetails ||
+      matchClientsRoot ||
+      matchClientsReviews ||
+      matchClientsRfm ||
+      matchClientDetails
+    )
       return Users;
     return null;
   };
@@ -151,11 +159,11 @@ const MainLayout = () => {
     if (matchMailings) {
       return [
         { to: `/mailings/info`, label: 'Рассылки' },
-        { to: `/mailings/push`, label: 'Отправить push' },
+        { to: `/mailings/push`, label: 'Создать push-рассылку' },
         { to: `/mailings/auto-push`, label: 'Автоматизация push' },
         { to: `/mailings/user-push`, label: 'Пользовательские авто-push' },
         // { to: `/mailings/settings`, label: 'Настройки' },
-        { to: `/mailings/rfm-segment`, label: 'Сегментация клиентов' },
+        { to: `/mailings/archive`, label: 'История рассылок' },
       ];
     }
 
@@ -166,9 +174,10 @@ const MainLayout = () => {
       ];
     }
 
-    if (matchClientsRoot || matchClientsReviews) {
+    if (matchClientsRoot || matchClientsReviews || matchClientsRfm) {
       return [
         { to: `/clients`, label: 'Клиенты' },
+        { to: `/clients/rfm-segment`, label: 'Сегментация клиентов' },
         // { to: `/clients/reviews`, label: 'Отзывы' },
       ];
     }
@@ -197,6 +206,7 @@ const MainLayout = () => {
         matchSettings ||
         matchClientsRoot ||
         matchClientDetails ||
+        matchClientsRfm ||
         matchClientsReviews) && (
         <SubMenu
           menuItems={getMenuItems()}
@@ -255,7 +265,7 @@ const App = () => {
               <Route path="auto-push" element={<MailingsAutoPush />} />
               <Route path="user-push" element={<MailingsUserPush />} />
               <Route path="settings" element={<MailingsSettings />} />
-              <Route path="rfm-segment" element={<SettingsRFMSegment />} />
+              <Route path="archive" element={<NotFound />} />
               <Route path=":mailingId" element={<MailingDetails />} />
             </Route>
             <Route path="/cards/:id/edit" element={<CardEditGuard />}>
@@ -280,6 +290,7 @@ const App = () => {
             />
             <Route path="/locations" element={<Locations />} />
             <Route path="/clients" element={<ClientsLayout />}>
+              <Route path="rfm-segment" element={<SettingsRFMSegment />} />
               <Route index element={<Clients />} />
               <Route path="reviews" element={<NotFound />} />
               <Route path=":id" element={<ClientDetails />} />

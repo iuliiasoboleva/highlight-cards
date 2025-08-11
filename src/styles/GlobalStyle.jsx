@@ -78,6 +78,7 @@ export const GlobalStyle = createGlobalStyle`
     margin-left: var(--sidebar-width);
     min-width: 0;
     min-height: 0;
+    max-width: 1600px;
   }
 
   a {
@@ -95,12 +96,6 @@ export const GlobalStyle = createGlobalStyle`
   form {
     display: flex;
     flex-direction: column;
-  }
-
-  .custom-tooltip {
-    max-width: 280px !important;
-    white-space: normal !important;
-    text-align: left;
   }
 
   .react-datepicker {

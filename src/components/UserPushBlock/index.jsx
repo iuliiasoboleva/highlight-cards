@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import CustomInput from '../../customs/CustomInput';
+import CustomSelect from '../../customs/CustomSelect';
 import { mockUserPushes } from '../../mocks/mockUserPushes';
 import { updateCurrentCardField } from '../../store/cardsSlice';
-import CustomInput from '../CustomInput';
-import CustomSelect from '../CustomSelect';
 import {
   Actions,
   BlackButton,

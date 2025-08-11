@@ -18,13 +18,6 @@ export const TitleFilterWrapper = styled.div`
   }
 `;
 
-export const Title = styled.h2`
-  font-size: 24px;
-  font-weight: 500;
-  margin-bottom: 16px;
-  line-height: 1.3333333333;
-`;
-
 export const Subtitle = styled.h3`
   font-size: 20px;
   font-weight: 500;

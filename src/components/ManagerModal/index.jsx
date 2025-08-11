@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import CustomSelect from '../../customs/CustomSelect';
 import ConfirmModal from '../ConfirmModal';
-import CustomSelect from '../CustomSelect';
 
 const ManagerModal = ({ isOpen, onClose, onSave, onDelete, initialData = {}, isEdit = false }) => {
   const [manager, setManager] = useState({

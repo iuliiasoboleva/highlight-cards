@@ -1,6 +1,6 @@
 import React from 'react';
 
-import CustomInput from '../CustomInput';
+import CustomInput from '../../customs/CustomInput';
 
 import './styles.css';
 

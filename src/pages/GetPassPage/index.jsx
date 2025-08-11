@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 
 import PwaIcon from '../../assets/icons/pwa.svg';
 import Accordion from '../../components/Accordion';
+import CustomCheckbox from '../../customs/CustomCheckbox';
 
 import './styles.css';
 
@@ -117,37 +118,24 @@ const GetPassPage = () => {
             ))}
 
             {card.policySettings?.policyEnabled && (
-              <label className="custom-checkbox">
-                <input
-                  type="checkbox"
-                  name="terms"
-                  checked={consent.terms}
-                  onChange={handleCheckboxChange}
-                  required
-                />
-                <span className="checkbox-label-text">
-                  Я прочитал и принимаю{' '}
-                  <a href="https://loyalclub.ru/oferta" target="_blank" rel="noreferrer">
-                    условия использования
-                  </a>
-                  .
-                </span>
-              </label>
-            )}
-
-            <label className="custom-checkbox">
-              <input
-                type="checkbox"
-                name="marketing"
-                checked={consent.marketing}
+              <CustomCheckbox
+                name="terms"
+                checked={consent.terms}
                 onChange={handleCheckboxChange}
                 required
+                label="Я прочитал и принимаю"
+                linkLabel="условия использования"
+                linkHref="https://loyalclub.ru/oferta"
               />
-              <span className="checkbox-label-text">
-                Я согласен с тем, что мои личные данные могут использоваться и предоставляться для
-                целей прямого маркетинга.
-              </span>
-            </label>
+            )}
+
+            <CustomCheckbox
+              name="marketing"
+              label="Я согласен с тем, что мои личные данные могут использоваться и предоставляться для целей прямого маркетинга."
+              checked={consent.marketing}
+              onChange={handleCheckboxChange}
+              required
+            />
 
             <button type="submit" className="getpass-install-pwa">
               <img src={PwaIcon} alt="PWA" className="getpass-install-icon" />

@@ -1,7 +1,6 @@
 import React from 'react';
-import { Tooltip } from 'react-tooltip';
 
-import { HelpCircle } from 'lucide-react';
+import CustomTooltip from '../../customs/CustomTooltip';
 
 import './styles.css';
 
@@ -16,18 +15,8 @@ const CardLimit = ({
   return (
     <>
       <div className="card-limit-header">
-        <h3 className="barcode-radio-title">
-          {title}
-          {tooltip && (
-            <HelpCircle
-              size={16}
-              style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
-              data-tooltip-id="card-limit-help"
-              data-tooltip-html={tooltip}
-            />
-          )}
-        </h3>
-        {tooltip && <Tooltip id="card-limit-help" className="custom-tooltip" />}
+        <h3 className="barcode-radio-title">{title}</h3>
+        {tooltip && <CustomTooltip id="card-limit-help" html content={tooltip} />}
         {subtitle && <span className="card-limit-subtitle">{subtitle}</span>}
       </div>
       <input

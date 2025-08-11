@@ -1,18 +1,27 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { HelpCircle, Users } from 'lucide-react';
+import { Users } from 'lucide-react';
 
 import axiosInstance from '../../axiosInstance';
-import CustomSelect from '../../components/CustomSelect';
 import PushPreview from '../../components/PushPreview';
+import TitleWithHelp from '../../components/TitleWithHelp';
+import CustomCheckbox from '../../customs/CustomCheckbox';
+import CustomSelect from '../../customs/CustomSelect';
 import { getMinDateTime } from '../../helpers/date';
 import { pluralVerb, pluralize } from '../../helpers/pluralize';
 import { setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
 import PushHistory from './PushHistory';
 import PushTargetTabs from './PushTargetTabs';
-
-import './styles.css';
+import './styles.jsx';
+import {
+  MailingsPushBox,
+  PushDate,
+  PushRecipientCount,
+  PushSchedule,
+  PushTextarea,
+  SubmitButton,
+} from './styles.jsx';
 
 const MailingsPush = () => {
   const dispatch = useDispatch();
@@ -142,11 +151,15 @@ const MailingsPush = () => {
   const pushContent = hasActiveCards ? (
     <div className="edit-type-left">
       <div className="edit-type-page">
-        <h2>
-          Отправить push <HelpCircle size={16} />
-        </h2>
-
-        <div className="mailings-push-box">
+        <TitleWithHelp
+          title="Отправить push"
+          tooltipId="push-help"
+          tooltipHtml
+          tooltipContent={`Хотите отправить пуши только нужным клиентам?<br/><br/>
+Выберите один или несколько сегментов — например, «Растущие» или «В зоне риска».<br/><br/>
+Настроить сегменты можно во вкладке  «Сегментация клиентов» в разделе «Клиенты».`}
+        />
+        <MailingsPushBox>
           <CustomSelect
             value={currentCard?.id || null}
             onChange={handleCardSelect}
@@ -159,44 +172,40 @@ const MailingsPush = () => {
 
           <PushTargetTabs onTabChange={setSelectedTab} onFilteredCountChange={setUsersCount} />
 
-          <p className="push-recipient-count">
+          <PushRecipientCount>
             <Users size={16} />
             {usersCount} {pluralize(usersCount, ['клиент', 'клиента', 'клиентов'])}{' '}
             {pluralVerb(usersCount, 'получит', 'получат')} ваше сообщение
-          </p>
+          </PushRecipientCount>
 
-          <div className="push-schedule">
-            <label className="custom-checkbox">
-              <input type="checkbox" checked={isScheduled} onChange={handleScheduleToggle} />
-              <span>Запланировать</span>
-            </label>
+          <PushSchedule>
+            <CustomCheckbox
+              label="Запланировать"
+              checked={isScheduled}
+              onChange={handleScheduleToggle}
+            />
 
             {isScheduled && (
-              <input
-                className="push-date"
+              <PushDate
                 type="datetime-local"
                 value={scheduledDate}
                 min={getMinDateTime()}
                 onChange={(e) => setScheduledDate(e.target.value)}
               />
             )}
-          </div>
+          </PushSchedule>
 
-          <textarea
-            className="push-textarea"
+          <PushTextarea
             value={pushMessage}
             onChange={(e) => setPushMessage(e.target.value)}
             placeholder="Введите текст push-уведомления"
           />
 
-          <button
-            className="card-form-add-btn"
-            onClick={handleSavePushSettings}
-            disabled={!pushMessage.trim()}
-          >
+          <SubmitButton onClick={handleSavePushSettings} disabled={!pushMessage.trim()}>
             Отправить
-          </button>
-        </div>
+          </SubmitButton>
+        </MailingsPushBox>
+
         <PushHistory
           history={history}
           onDelete={async (id) => {

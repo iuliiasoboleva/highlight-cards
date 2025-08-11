@@ -4,9 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 // import { nanoid } from '@reduxjs/toolkit';
 import { useDebounce } from 'use-debounce';
 
+import CustomSelect from '../../customs/CustomSelect';
 import { assignManagerToSalesPoint } from '../../store/managersSlice';
 import ConfirmModal from '../ConfirmModal';
-import CustomSelect from '../CustomSelect';
 import YandexMapPicker from '../YandexMapPicker';
 
 const SalesPointsModalWithMap = ({

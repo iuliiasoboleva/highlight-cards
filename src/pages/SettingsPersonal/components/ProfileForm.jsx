@@ -1,7 +1,7 @@
 import React, { useMemo, useRef } from 'react';
 
-import CustomInput from '../../../components/CustomInput';
-import CustomSelect from '../../../components/CustomSelect';
+import CustomInput from '../../../customs/CustomInput';
+import CustomSelect from '../../../customs/CustomSelect';
 import {
   ErrorText,
   FormGroup,

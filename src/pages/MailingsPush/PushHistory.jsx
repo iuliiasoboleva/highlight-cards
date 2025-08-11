@@ -2,7 +2,18 @@ import React from 'react';
 
 import { Copy, HelpCircle, Trash2 } from 'lucide-react';
 
-import './styles.css';
+import {
+  EmptyMessage,
+  PushHistoryControls,
+  PushHistoryDates,
+  PushHistoryIcon,
+  PushHistoryItem,
+  PushHistoryList,
+  PushHistoryMessage,
+  PushHistoryTitle,
+  PushHistoryTop,
+  PushHistoryWrapper,
+} from './styles';
 
 const PushHistory = ({ history = [], onDelete }) => {
   const handleCopy = (message) => {
@@ -10,41 +21,39 @@ const PushHistory = ({ history = [], onDelete }) => {
   };
 
   return (
-    <div className="push-history-wrapper">
-      <h3 className="barcode-radio-title">
-        История отправки <HelpCircle size={16} style={{ marginLeft: 6 }} />
-      </h3>
+    <PushHistoryWrapper>
+      <PushHistoryTitle>
+        История отправки <HelpCircle size={16} />
+      </PushHistoryTitle>
 
-      <div className="push-history-list">
+      <PushHistoryList>
         {history.map(({ id, dateTime, message, status }) => (
-          <div key={id} className="push-history-item">
-            <div className="push-history-top">
-              <div className="push-history-dates">{dateTime}</div>
+          <PushHistoryItem key={id}>
+            <PushHistoryTop>
+              <PushHistoryDates>{dateTime}</PushHistoryDates>
 
-              <div className="push-history-controls">
-                <span className="push-history-delivered">{status}</span>
-                <Copy
-                  size={16}
-                  className="push-history-icon"
-                  onClick={() => handleCopy(message)}
-                  title="Скопировать сообщение"
-                />
-                <Trash2
-                  size={16}
-                  className="push-history-icon"
+              <PushHistoryControls>
+                <span>{status}</span>
+                <PushHistoryIcon onClick={() => handleCopy(message)} title="Скопировать сообщение">
+                  <Copy size={16} />
+                </PushHistoryIcon>
+                <PushHistoryIcon
+                  className="danger"
                   onClick={() => onDelete && onDelete(id)}
                   title="Удалить"
-                />
-              </div>
-            </div>
+                >
+                  <Trash2 size={16} />
+                </PushHistoryIcon>
+              </PushHistoryControls>
+            </PushHistoryTop>
 
-            <div className="push-history-message">
-              {message?.trim() ? message : <span className="empty-message">Нет текста</span>}
-            </div>
-          </div>
+            <PushHistoryMessage>
+              {message?.trim() ? message : <EmptyMessage>Нет текста</EmptyMessage>}
+            </PushHistoryMessage>
+          </PushHistoryItem>
         ))}
-      </div>
-    </div>
+      </PushHistoryList>
+    </PushHistoryWrapper>
   );
 };
 

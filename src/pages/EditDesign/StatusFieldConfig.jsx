@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
-import CustomSelect from '../../components/CustomSelect';
+import CustomSelect from '../../customs/CustomSelect';
 import { updateCurrentCardField } from '../../store/cardsSlice';
 import { statusConfig } from '../../utils/statusConfig';
 

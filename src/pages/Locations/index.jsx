@@ -4,12 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Trash2 } from 'lucide-react';
 import { useDebounce } from 'use-debounce';
 
-import CustomSelect from '../../components/CustomSelect';
 import GeoBadge from '../../components/GeoBadge';
 import LoaderCentered from '../../components/LoaderCentered';
 import PushPreview from '../../components/PushPreview';
 import ToggleSwitch from '../../components/ToggleSwitch';
 import YandexMapPicker from '../../components/YandexMapPicker';
+import CustomSelect from '../../customs/CustomSelect';
 import { setCurrentCard } from '../../store/cardsSlice';
 import {
   createBranch as createBranchThunk,

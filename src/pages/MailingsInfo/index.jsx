@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Tooltip } from 'react-tooltip';
 
 // import { useNavigate } from 'react-router-dom';
-
-import { HelpCircle } from 'lucide-react';
 
 import axiosInstance from '../../axiosInstance';
 import CustomTable from '../../components/CustomTable';
 import LoaderCentered from '../../components/LoaderCentered';
+import TitleWithHelp from '../../components/TitleWithHelp';
 import TopUpModal from '../../components/TopUpModal';
 import { mailingsHeaders } from '../../mocks/mockMailings';
 import { fetchBalance, topUpBalance } from '../../store/balanceSlice';
@@ -101,17 +99,13 @@ const MailingsInfo = () => {
 
   return (
     <div className="mailings-container">
-      <h2>
-        Рассылки
-        <HelpCircle
-          size={16}
-          style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
-          data-tooltip-id="mailings-help"
-          data-tooltip-html=" Здесь вы управляете своими рассылками: создавайте, планируйте, отправляйте Push клиентам для
-        повышения лояльности."
-        />
-      </h2>
-      <Tooltip id="mailings-help" className="custom-tooltip" />
+      <TitleWithHelp
+        title="Рассылки"
+        tooltipId="mailings-help"
+        tooltipHtml
+        tooltipContent={`Здесь вы управляете своими рассылками: создавайте, планируйте, отправляйте Push клиентам для
+        повышения лояльности.`}
+      />
       <div className="stats-cards">
         {[
           { value: '0', label: 'Клиентов в базе' },

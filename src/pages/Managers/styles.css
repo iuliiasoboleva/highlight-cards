@@ -130,19 +130,6 @@
   gap: 10px;
 }
 
-.custom-tooltip {
-  max-width: 160px;
-  font-size: 12px;
-  line-height: 1;
-  text-align: center;
-  white-space: nowrap;
-  padding: 4px 8px;
-  background: #000;
-  color: #fff;
-  border-radius: 4px;
-  z-index: 9999;
-}
-
 .table-name {
   margin-top: 24px;
   margin-bottom: 18px;

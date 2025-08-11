@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Tooltip } from 'react-tooltip';
 
 import { saveAs } from 'file-saver';
-import { HelpCircle, Send } from 'lucide-react';
+import { Send } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
-import CustomInput from '../../components/CustomInput';
-import CustomSelect from '../../components/CustomSelect';
 import FilterableTable from '../../components/FilterableTable';
 import LoaderCentered from '../../components/LoaderCentered';
+import TitleWithHelp from '../../components/TitleWithHelp';
+import CustomInput from '../../customs/CustomInput';
+import CustomSelect from '../../customs/CustomSelect';
 import { mockClientsHeaders } from '../../mocks/clientsInfo';
 import { addClientLocal, createClient, fetchClients } from '../../store/clientsSlice';
 
@@ -148,17 +148,13 @@ const Clients = () => {
 
   return (
     <div className="clients-container">
-      <h2>
-        Клиентская база
-        <HelpCircle
-          size={16}
-          style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
-          data-tooltip-id="clients-help"
-          data-tooltip-html=" Здесь вы управляете своей клиентской базой: добавляете новых клиентов, импортируете
-        существующих и отправляете push-уведомления"
-        />
-      </h2>
-      <Tooltip id="clients-help" className="custom-tooltip" />
+      <TitleWithHelp
+        title={'Клиентская база'}
+        tooltipId="clients-help"
+        tooltipHtml
+        tooltipContent={`Здесь вы управляете своей клиентской базой: добавляете новых клиентов, импортируете
+        существующих и отправляете push-уведомления`}
+      />
       <div className="clients-stats-grid">
         <div className="clients-stat-card">
           <span className="stat-clients-value">{totalClients}</span>

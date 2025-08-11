@@ -1,14 +1,14 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { Tooltip } from 'react-tooltip';
 
-import { Check, HelpCircle, Pin, PinOff } from 'lucide-react';
+import { Check, Pin, PinOff } from 'lucide-react';
 
 import moveIcon from '../../assets/move-arrows.png';
 import CardButtons from '../../components/CardButtons';
 import CardInfo from '../../components/CardInfo';
 import LoaderCentered from '../../components/LoaderCentered';
+import TitleWithHelp from '../../components/TitleWithHelp';
 import {
   fetchCards,
   renameCardAsync,
@@ -88,17 +88,13 @@ const Cards = () => {
 
   return (
     <div className="mailings-container">
-      <h2 className="subtitle">
-        Создайте свою карту лояльности
-        <HelpCircle
-          size={16}
-          style={{ cursor: 'pointer' }}
-          data-tooltip-id="managers-help"
-          data-tooltip-html=" Выберите тип карты, который лучше всего подходит вашему бизнесу и настройте её за несколько
-        минут. После выбора вы сможете настроить логотип, цвета и правила начисления баллов."
-        />
-      </h2>
-      <Tooltip id="managers-help" className="custom-tooltip" />
+      <TitleWithHelp
+        title={'Создайте свою карту лояльности'}
+        tooltipId="cards-help"
+        tooltipHtml
+        tooltipContent={`Выберите тип карты, который лучше всего подходит вашему бизнесу и настройте её за несколько минут. 
+                После выбора вы сможете настроить логотип, цвета и правила начисления баллов.`}
+      />
       <div className="cards">
         {cards.map((card, idx) => (
           <div

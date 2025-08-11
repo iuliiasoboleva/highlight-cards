@@ -6,22 +6,6 @@
   min-height: calc(100vh - var(--header-height) - var(--bar-height));
 }
 
-.edit-type-page h2,
-.settings-header h2,
-.managers-header h2,
-.mailings-container h2,
-.clients-container h2,
-.mailings-settings-container h2,
-.rfm-settings-page h2,
-.settings-wrapper h2 {
-  font-size: 24px;
-  font-weight: 500;
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
 .edit-type-page {
   display: flex;
   flex-direction: column;
@@ -30,7 +14,7 @@
 
 .edit-type-left {
   width: 50%;
-  padding: 20px 20px 20px 40px;
+  padding: 20px;
 }
 
 .edit-type-right {

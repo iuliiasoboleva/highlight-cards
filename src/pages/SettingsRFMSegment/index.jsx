@@ -1,137 +1,160 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
-import './styles.css';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
-const mockRFM = [
-  {
-    title: 'Требуют внимания',
-    freqFrom: 8,
-    freqTo: 12,
-    recencyFrom: 61,
-    recencyTo: 90,
-  },
-  {
-    title: 'Лояльные - постоянные',
-    freqFrom: 8,
-    freqTo: 12,
-    recencyFrom: 31,
-    recencyTo: 60,
-  },
-  {
-    title: 'Чемпионы',
-    freqFrom: 8,
-    freqTo: 12,
-    recencyFrom: 0,
-    recencyTo: 30,
-  },
-  {
-    title: 'В зоне риска',
-    freqFrom: 4,
-    freqTo: 7,
-    recencyFrom: 61,
-    recencyTo: 90,
-  },
-  {
-    title: 'Средние (на грани)',
-    freqFrom: 4,
-    freqTo: 7,
-    recencyFrom: 31,
-    recencyTo: 60,
-  },
-  {
-    title: 'Растущие',
-    freqFrom: 4,
-    freqTo: 7,
-    recencyFrom: 0,
-    recencyTo: 30,
-  },
-];
+import CustomInput from '../../customs/CustomInput';
+import { mockClients, mockRFM } from '../../mocks/mockRFM';
+import { countClientsBySegments } from '../../utils/countClientsBySegments';
+import {
+  Card,
+  CardTitle,
+  Content,
+  EmptyCell,
+  Field,
+  Grid,
+  Label,
+  MainButton,
+  Page,
+  Row,
+  Subtitle,
+  Table,
+  TableTitle,
+  TableWrap,
+  Td,
+  Th,
+  Warning,
+} from './styles';
 
 const SettingsRFMSegment = () => {
   const [segments, setSegments] = useState(mockRFM);
+  const [savedSegments, setSavedSegments] = useState(mockRFM);
+
+  const [open, setOpen] = useState(false);
 
   const handleChange = (index, field, value) => {
     const updated = [...segments];
-    updated[index][field] = value;
+    updated[index] = { ...updated[index], [field]: value };
     setSegments(updated);
   };
 
+  const handleSave = (index) => {
+    setSavedSegments((prev) =>
+      prev.map((seg, i) => (i === index ? { ...seg, ...segments[index] } : seg)),
+    );
+  };
+
+  const counts = useMemo(() => countClientsBySegments(savedSegments, mockClients), [savedSegments]);
+
   return (
-    <div className="rfm-settings-page">
+    <Page>
       <h2>Сегментация клиентов</h2>
 
-      <h3 className="rfm-subtitle">Что такое RFM-сегментация клиентской базы?</h3>
+      <Subtitle onClick={() => setOpen(!open)}>
+        Что такое RFM-сегментация клиентской базы?
+        {open ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+      </Subtitle>
 
-      <p>
-        <span>Мы делим клиентов на группы по двум параметрам:</span>
-        <br />
-        <br />
-        - Частота — как часто клиент приходит или покупает
-        <br />- Давность — сколько дней прошло с последнего визита или покупки
-      </p>
+      {open && (
+        <Content>
+          <p>
+            <span>Мы делим клиентов на группы по двум параметрам:</span>
+            <br />
+            <br />- Частота — как часто клиент приходит или покупает
+            <br />- Давность — сколько дней прошло с последнего визита или покупки
+          </p>
 
-      <p>
-        <span>
-          Это помогает точно выделять активных, уходящих и лояльных клиентов и делать для них
-          персональные рассылки:
-        </span>
-        <br />
-        <br />
-        - Возвращать тех, кто давно не был
-        <br />
-        - Благодарить постоянных покупателей
-        <br />- Мотивировать самых активных клиентов
-      </p>
+          <p>
+            <span>
+              Это помогает точно выделять активных, уходящих и лояльных клиентов и делать для них
+              персональные рассылки:
+            </span>
+            <br />
+            <br />- Возвращать тех, кто давно не был
+            <br />- Благодарить постоянных покупателей
+            <br />- Мотивировать самых активных клиентов
+          </p>
+        </Content>
+      )}
 
-      <div className="rfm-warning">
-        При изменении настроек все сегменты автоматически пересчитаются.
-      </div>
+      <Warning>При изменении настроек все сегменты автоматически пересчитаются.</Warning>
 
-      <div className="rfm-grid">
+      <Grid>
         {segments.map((segment, index) => (
-          <div className="rfm-card" key={index}>
-            <h4 className="rfm-card-title">{segment.title}</h4>
-            <div className="rfm-field-row">
-              <div className="rfm-field">
-                <label>Частота от</label>
-                <input
+          <Card key={segment.title}>
+            <CardTitle>{segment.title}</CardTitle>
+
+            <Row>
+              <Field>
+                <Label>Частота от (~кол-во раз)</Label>
+                <CustomInput
                   type="number"
                   value={segment.freqFrom}
                   onChange={(e) => handleChange(index, 'freqFrom', e.target.value)}
                 />
-              </div>
-              <div className="rfm-field">
-                <label>Частота до</label>
-                <input
+              </Field>
+              <Field>
+                <Label>Частота до (~кол-во раз)</Label>
+                <CustomInput
                   type="number"
                   value={segment.freqTo}
                   onChange={(e) => handleChange(index, 'freqTo', e.target.value)}
                 />
-              </div>
-            </div>
-            <div className="rfm-field-row">
-              <div className="rfm-field">
-                <label>Давность от</label>
-                <input
+              </Field>
+            </Row>
+
+            <Row>
+              <Field>
+                <Label>Давность от (~дней)</Label>
+                <CustomInput
                   type="number"
                   value={segment.recencyFrom}
                   onChange={(e) => handleChange(index, 'recencyFrom', e.target.value)}
                 />
-              </div>
-              <div className="rfm-field">
-                <label>Давность до</label>
-                <input
+              </Field>
+              <Field>
+                <Label>Давность до (~дней)</Label>
+                <CustomInput
                   type="number"
                   value={segment.recencyTo}
                   onChange={(e) => handleChange(index, 'recencyTo', e.target.value)}
                 />
-              </div>
-            </div>
-            <button className="custom-main-button">Сохранить</button>
-          </div>
+              </Field>
+            </Row>
+
+            <MainButton type="button" onClick={() => handleSave(index)}>
+              Сохранить
+            </MainButton>
+          </Card>
         ))}
-      </div>
-    </div>
+      </Grid>
+      <TableTitle>Сводка по сегментам</TableTitle>
+
+      {/* Сводная таблица */}
+      <TableWrap>
+        <Table>
+          <thead>
+            <tr>
+              <Th>Название сегмента</Th>
+              <Th>Количество клиентов</Th>
+            </tr>
+          </thead>
+          <tbody>
+            {savedSegments.length === 0 ? (
+              <tr>
+                <EmptyCell colSpan={2}>Нет данных</EmptyCell>
+              </tr>
+            ) : (
+              savedSegments.map((seg, i) => (
+                <tr key={seg.title}>
+                  <Td>{seg.title}</Td>
+                  <Td>{counts[i] ?? 0}</Td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </Table>
+      </TableWrap>
+    </Page>
   );
 };
 

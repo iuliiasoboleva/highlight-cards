@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
-import CustomInput from '../../../components/CustomInput';
+import CustomInput from '../../../customs/CustomInput';
 import {
   CheckboxGroup,
   Confirmation,

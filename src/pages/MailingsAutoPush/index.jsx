@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import AutoPushCard from '../../components/AutoPushCard';
-import CustomSelect from '../../components/CustomSelect';
 import GeoBadge from '../../components/GeoBadge';
 import PushPreview from '../../components/PushPreview';
+import CustomSelect from '../../customs/CustomSelect';
 import { mockAutoPushes } from '../../mocks/mockUserPushes';
 import { setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
 import {

@@ -1,11 +1,10 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Tooltip } from 'react-tooltip';
 
-import { HelpCircle } from 'lucide-react';
-
-import CustomInput from '../../components/CustomInput';
-import CustomSelect from '../../components/CustomSelect';
+import CustomCheckbox from '../../customs/CustomCheckbox';
+import CustomInput from '../../customs/CustomInput';
+import CustomSelect from '../../customs/CustomSelect';
+import CustomTooltip from '../../customs/CustomTooltip';
 import { formatDateToDDMMYYYY, getMinDate } from '../../helpers/date';
 import { pluralize } from '../../helpers/pluralize';
 import { updateCurrentCardField } from '../../store/cardsSlice';
@@ -46,16 +45,8 @@ const RadioConfigs = ({ cardStatus }) => {
     additionalContentByValue: {
       cardFixed: (
         <>
-          <h3 className="barcode-radio-subtitle">
-            Срок
-            <HelpCircle
-              size={16}
-              style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
-              data-tooltip-id="duration-help"
-              data-tooltip-html="Условия срока действия карты"
-            />
-          </h3>
-          <Tooltip id="duration-help" className="custom-tooltip" />
+          <h3 className="barcode-radio-subtitle">Срок</h3>
+          <CustomTooltip id="card-duration-help" html content={`Условия срока действия карты`} />
           <input
             className="push-date"
             type="date"
@@ -75,16 +66,8 @@ const RadioConfigs = ({ cardStatus }) => {
       ),
       cardFixedLater: (
         <>
-          <h3 className="barcode-radio-subtitle">
-            Срок
-            <HelpCircle
-              size={16}
-              style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
-              data-tooltip-id="duration-help"
-              data-tooltip-html="Условия срока действия штампа"
-            />
-          </h3>
-          <Tooltip id="duration-help" className="custom-tooltip" />
+          <h3 className="barcode-radio-subtitle">Срок</h3>
+          <CustomTooltip id="stamp-duration-help" html content={`Условия срока действия штампа`} />
           <div className="stamp-duration-selector">
             <CustomSelect
               value={settings.cardDuration?.value || 1}
@@ -175,14 +158,11 @@ const RadioConfigs = ({ cardStatus }) => {
               />
               <span className="visit-text">штампов</span>
             </label>
-            <label className="custom-checkbox">
-              <input
-                type="checkbox"
-                checked={settings.limitVisitPerDay || false}
-                onChange={(e) => updateSettingsField('limitVisitPerDay', e.target.checked)}
-              />
-              Ограничить до 1 посещения в день
-            </label>
+            <CustomCheckbox
+              checked={settings.limitVisitPerDay || false}
+              onChange={(e) => updateSettingsField('limitVisitPerDay', e.target.checked)}
+              label="Ограничить до 1 посещения в день"
+            />
           </div>
         ),
       },
@@ -203,16 +183,12 @@ const RadioConfigs = ({ cardStatus }) => {
       additionalContentByValue: {
         stampFixedLater: (
           <>
-            <h3 className="barcode-radio-subtitle">
-              Срок
-              <HelpCircle
-                size={16}
-                style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
-                data-tooltip-id="duration-help"
-                data-tooltip-html="Условия срока действия штампа"
-              />
-            </h3>
-            <Tooltip id="duration-help" className="custom-tooltip" />
+            <h3 className="barcode-radio-subtitle">Срок</h3>
+            <CustomTooltip
+              id="stamp-duration-help"
+              html
+              content={`Условия срока действия штампа`}
+            />
             <div className="stamp-duration-selector">
               <CustomSelect
                 value={settings.stampDuration?.value || 1}
@@ -253,16 +229,8 @@ const RadioConfigs = ({ cardStatus }) => {
       additionalContentByValue: {
         pointsFixedLater: (
           <>
-            <h3 className="barcode-radio-subtitle">
-              Срок
-              <HelpCircle
-                size={16}
-                style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
-                data-tooltip-id="duration-help"
-                data-tooltip-html="Условия срока действия балла"
-              />
-            </h3>
-            <Tooltip id="duration-help" className="custom-tooltip" />
+            <h3 className="barcode-radio-subtitle">Срок</h3>
+            <CustomTooltip id="duration-help" html content={`Условия срока действия балла`} />
             <div className="stamp-duration-selector">
               <CustomSelect
                 value={settings.pointsDuration?.value || 1}

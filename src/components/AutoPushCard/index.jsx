@@ -3,8 +3,8 @@ import { useDispatch } from 'react-redux';
 
 import { Trash2 } from 'lucide-react';
 
+import CustomInput from '../../customs/CustomInput';
 import { addSelectedCard, removeSelectedCard } from '../../store/userPushSlice';
-import CustomInput from '../CustomInput';
 import ToggleSwitch from '../ToggleSwitch';
 import {
   Button,

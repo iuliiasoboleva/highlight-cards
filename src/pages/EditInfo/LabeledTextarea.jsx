@@ -1,7 +1,6 @@
 import React from 'react';
-import { Tooltip } from 'react-tooltip';
 
-import { HelpCircle } from 'lucide-react';
+import CustomTooltip from '../../customs/CustomTooltip';
 
 import './styles.css';
 
@@ -16,18 +15,8 @@ const LabeledTextarea = ({
   tooltip,
 }) => (
   <div className="labeled-textarea">
-    <h3 className="barcode-radio-title">
-      {label}
-      {tooltip && (
-        <HelpCircle
-          size={16}
-          style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
-          data-tooltip-id={`tooltip-${label}`}
-          data-tooltip-html={tooltip}
-        />
-      )}
-    </h3>
-    {tooltip && <Tooltip id={`tooltip-${label}`} className="custom-tooltip" />}
+    <h3 className="barcode-radio-title">{label}</h3>
+    {tooltip && <CustomTooltip id={`tooltip-${label}`} html content={tooltip} />}
     {subtitle && <p className="labeled-textarea-subtitle">{subtitle}</p>}
     <div className="policy-textarea-wrapper">
       <textarea

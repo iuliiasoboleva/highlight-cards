@@ -1,18 +1,24 @@
 import React, { useState } from 'react';
 
-import './styles.css';
+import { Content, HeaderBtn, Icon, Wrapper } from './styles';
 
 const Accordion = ({ title, content }) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className={`getpass-accordion-wrapper ${open ? 'open' : ''}`}>
-      <button className="getpass-accordion" onClick={() => setOpen((prev) => !prev)} type="button">
+    <Wrapper $open={open}>
+      <HeaderBtn
+        type="button"
+        onClick={() => setOpen((p) => !p)}
+        aria-expanded={open}
+        aria-controls="accordion-panel"
+      >
         <span>{title}</span>
-        <span className="getpass-accordion-icon" />
-      </button>
-      {open && <div className="getpass-accordion-content">{content}</div>}
-    </div>
+        <Icon $open={open} />
+      </HeaderBtn>
+
+      {open && <Content id="accordion-panel">{content}</Content>}
+    </Wrapper>
   );
 };
 

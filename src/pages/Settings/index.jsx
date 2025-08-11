@@ -4,10 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Loader2 } from 'lucide-react';
 
 import AgreementModal from '../../components/AgreementModal';
-import CustomSelect from '../../components/CustomSelect';
 import CustomTable from '../../components/CustomTable';
 import LoaderCentered from '../../components/LoaderCentered';
 import TopUpModal from '../../components/TopUpModal';
+import CustomSelect from '../../customs/CustomSelect';
 import { pluralize } from '../../helpers/pluralize';
 import { fetchBalance, topUpBalance } from '../../store/balanceSlice';
 import { fetchPayments } from '../../store/paymentsSlice';

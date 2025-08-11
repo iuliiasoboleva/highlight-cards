@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 
 import { Trash2 } from 'lucide-react';
 
-import CustomSelect from '../../components/CustomSelect';
+import CustomSelect from '../../customs/CustomSelect';
 
 import './styles.css';
 

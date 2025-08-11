@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import axiosInstance from '../../axiosInstance';
+import CustomCheckbox from '../../customs/CustomCheckbox';
 import {
   requestMagicLink,
   requestSmsCode,
@@ -594,24 +595,23 @@ const AuthForm = () => {
                 className="custom-input"
               />
 
-              <label className="custom-checkbox">
-                <input
-                  type="checkbox"
-                  name="acceptTerms"
-                  checked={formData.acceptTerms}
-                  onChange={handleChange}
-                />
-                <span className="checkbox-label-text">
-                  Я принимаю{' '}
-                  <a href="https://loyalclub.ru/oferta" target="_blank" rel="noopener noreferrer">
-                    условия соглашения
-                  </a>{' '}
-                  и{' '}
-                  <a href="https://loyalclub.ru/policy" target="_blank" rel="noopener noreferrer">
-                    политику обработки персональных данных
-                  </a>
-                </span>
-              </label>
+              <CustomCheckbox
+                name="acceptTerms"
+                checked={formData.acceptTerms}
+                onChange={handleChange}
+                label={
+                  <>
+                    Я принимаю{' '}
+                    <a href="https://loyalclub.ru/oferta" target="_blank" rel="noopener noreferrer">
+                      условия соглашения
+                    </a>{' '}
+                    и{' '}
+                    <a href="https://loyalclub.ru/policy" target="_blank" rel="noopener noreferrer">
+                      политику обработки персональных данных
+                    </a>
+                  </>
+                }
+              />
 
               <button
                 type="submit"

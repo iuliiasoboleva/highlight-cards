@@ -1,13 +1,13 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { Tooltip } from 'react-tooltip';
 
 import { YMaps } from '@pbe/react-yandex-maps';
-import { HelpCircle } from 'lucide-react';
 
 import EditLayout from '../../components/EditLayout';
 import QRPopup from '../../components/QRPopup';
+import TitleWithHelp from '../../components/TitleWithHelp';
+import CustomTooltip from '../../customs/CustomTooltip';
 import {
   addCurrentCardArrayItem,
   createCard,
@@ -124,16 +124,12 @@ const EditInfo = () => {
 
   const infoContent = (
     <div className="settings-inputs-container" ref={formRef}>
-      <h2>
-        Информация
-        <HelpCircle
-          size={16}
-          style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
-          data-tooltip-id="info-help"
-          data-tooltip-html="Настройка информации на тыльной стороне карты"
-        />
-      </h2>
-      <Tooltip id="info-help" className="custom-tooltip" />
+      <TitleWithHelp
+        title={'Информация'}
+        tooltipId="info-help"
+        tooltipHtml
+        tooltipContent={`Настройка информации на тыльной стороне карты`}
+      />
       <hr />
 
       <LabeledTextarea
@@ -222,16 +218,14 @@ const EditInfo = () => {
       <hr />
       <ReferralProgramConfig />
       <hr />
-      <h3 className="barcode-radio-title">
-        Активные ссылки
-        <HelpCircle
-          size={16}
-          style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
-          data-tooltip-id="active-links-help"
-          data-tooltip-html="Ссылки будут отображаться на обратной стороне карты, можно указать ваш телефон или ссылку на сайт"
-        />
-      </h3>
-      <Tooltip id="active-links-help" className="custom-tooltip" />
+      <h3 className="barcode-radio-title">Активные ссылки</h3>
+      <CustomTooltip
+        id="active-links-help"
+        html
+        content={
+          'Ссылки будут отображаться на обратной стороне карты, можно указать ваш телефон или ссылку на сайт'
+        }
+      />
       <YMaps
         query={{
           apikey: 'a886f296-c974-43b3-aa06-a94c782939c2',
@@ -261,16 +255,12 @@ const EditInfo = () => {
       </YMaps>
       <hr />
       <div>
-        <h3 className="barcode-radio-title">
-          Отзывы в сервисах
-          <HelpCircle
-            size={16}
-            style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
-            data-tooltip-id="service-links-help"
-            data-tooltip-html="Ссылки на сервисы, где клиент может оставить отзыв"
-          />
-        </h3>
-        <Tooltip id="service-links-help" className="custom-tooltip" />
+        <h3 className="barcode-radio-title">Отзывы в сервисах</h3>
+        <CustomTooltip
+          id="service-links-help"
+          html
+          content={'Ссылки на сервисы, где клиент может оставить отзыв'}
+        />
         <p className="labeled-textarea-subtitle">
           Добавьте ссылки на ваш бизнес. Это поможет клиенту оставить положительный отзыв, а вам
           поднимет рейтинг в поиске.
@@ -302,16 +292,12 @@ const EditInfo = () => {
         linkToFullTerms={infoFields.linkToFullTerms}
       />
       <hr />
-      <h3 className="barcode-radio-title">
-        Сведения об эмитенте карты
-        <HelpCircle
-          size={16}
-          style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
-          data-tooltip-id="company-help"
-          data-tooltip-html="Информация об эмитенте карты, будет отображаться на обратной стороне карты"
-        />
-      </h3>
-      <Tooltip id="company-help" className="custom-tooltip" />
+      <h3 className="barcode-radio-title">Сведения об эмитенте карты</h3>
+      <CustomTooltip
+        id="company-help"
+        html
+        content={'Информация об эмитенте карты, будет отображаться на обратной стороне карты'}
+      />
       <ClientContactFields
         name={infoFields.issuerName}
         email={infoFields.issuerEmail}

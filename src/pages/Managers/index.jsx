@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Tooltip } from 'react-tooltip';
 
-import { Camera, HelpCircle, PlusCircle, Search } from 'lucide-react';
+import { Camera, PlusCircle, Search } from 'lucide-react';
 
 import CustomTable from '../../components/CustomTable';
 import LoaderCentered from '../../components/LoaderCentered';
@@ -11,6 +10,7 @@ import ManagerModal from '../../components/ManagerModal';
 import NetworkModal from '../../components/NetworkModal';
 import RoleSwitcher from '../../components/RoleSwitcher';
 import SalesPointsModal from '../../components/SalesPointsModal';
+import TitleWithHelp from '../../components/TitleWithHelp';
 import { managersHeaders } from '../../mocks/managersInfo';
 import { locationsHeaders } from '../../mocks/mockLocations';
 import {
@@ -283,18 +283,14 @@ const ManagersPage = () => {
   return (
     <div className="managers-page">
       <div className="managers-header">
-        <h2>
-          Сотрудники и точки продаж
-          <HelpCircle
-            size={16}
-            style={{ marginLeft: 6, cursor: 'pointer', outline: 'none' }}
-            data-tooltip-id="managers-help"
-            data-tooltip-content="Здесь вы управляете своими сотрудниками и точками продаж: добавляйте новых сотрудников,
+        <TitleWithHelp
+          title={'Сотрудники и точки продаж'}
+          tooltipId="sales-help"
+          tooltipHtml
+          tooltipContent={`Здесь вы управляете своими сотрудниками и точками продаж: добавляйте новых сотрудников,
           контролируйте выдачу карт и начисление баллов клиентам. Используйте приложение-сканер,
-          чтобы упростить процесс обслуживания на местах."
-          />
-        </h2>
-        <Tooltip id="managers-help" className="custom-tooltip" />
+          чтобы упростить процесс обслуживания на местах.`}
+        />
       </div>
 
       <div className="managers-grid">
