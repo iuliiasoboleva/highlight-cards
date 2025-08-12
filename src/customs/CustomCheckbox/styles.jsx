@@ -10,7 +10,7 @@ export const CheckboxWrapper = styled.label`
 
 export const HiddenCheckbox = styled.input`
   appearance: none;
-  width: 20px;
+  width: 25px;
   height: 20px;
   background-color: #f5f5f5;
   border: 2px solid #dcdcdc;
@@ -30,14 +30,14 @@ export const HiddenCheckbox = styled.input`
 
   &::before {
     content: '';
-    width: 6px;
-    height: 10px;
+    width: 4px;
+    height: 8px;
     border: solid #fff;
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
     position: relative;
     top: -1px;
-    left: 1px;
+    left: 0;
   }
 `;
 

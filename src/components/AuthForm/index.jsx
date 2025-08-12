@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import axiosInstance from '../../axiosInstance';
-import CustomCheckbox from '../../customs/CustomCheckbox';
+import { extractError } from '../../helpers/extractError';
 import {
   requestMagicLink,
   requestSmsCode,
@@ -12,9 +12,11 @@ import {
   verifyPin,
 } from '../../store/authSlice';
 import { fetchOrganization, setUser } from '../../store/userSlice';
-import InnSuggestInput from '../InnSuggestInput';
-
-import './styles.css';
+import LoginRequest from './components/LoginRequest';
+import ModeTabs from './components/ModeTabs';
+import PinStep from './components/PinStep';
+import RegisterRequest from './components/RegisterRequest';
+import { Accent, ApiError, AuthFormStyle, AuthFormWrapper, ToggleAuth } from './styles';
 
 let debounceTimeout = null;
 
@@ -48,9 +50,6 @@ const AuthForm = () => {
   const [loadingCompany, setLoadingCompany] = useState(false);
   const [magicToken, setMagicToken] = useState('');
   const [apiError, setApiError] = useState('');
-
-  // refs для ячеек PIN
-  const pinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
 
   const [submitting, setSubmitting] = useState(false);
   const [phoneFocused, setPhoneFocused] = useState(false);
@@ -90,11 +89,9 @@ const AuthForm = () => {
           try {
             setLoadingCompany(true);
             const res = await axiosInstance.get('/company', { params: { inn: trimmedValue } });
-            console.log('Company data', res.data);
             setFormData((prev) => ({ ...prev, companyName: res.data.name }));
             setCompanyError('');
           } catch (err) {
-            console.error('Ошибка получения компании', err?.response?.status);
             setFormData((prev) => ({ ...prev, companyName: '' }));
             setCompanyError('Компания не найдена');
           } finally {
@@ -292,42 +289,6 @@ const AuthForm = () => {
     }
   };
 
-  const handlePinChange = (index, value) => {
-    if (!/\d?/.test(value)) return;
-    const digits = value.slice(-1);
-    const newPinArr = formData.pin.padEnd(4, ' ').split('');
-    newPinArr[index] = digits;
-    const newPin = newPinArr.join('').trim();
-    setFormData((prev) => ({ ...prev, pin: newPin }));
-
-    if (digits && index < 3) {
-      pinRefs[index + 1].current?.focus();
-    }
-  };
-
-  const handlePinKeyDown = (index, e) => {
-    if (e.key === 'Backspace') {
-      e.preventDefault();
-      const currentVal = formData.pin[index] || '';
-      const pinArr = formData.pin.padEnd(4, ' ').split('');
-      if (currentVal) {
-        // стираем текущую цифру
-        pinArr[index] = '';
-        setFormData((prev) => ({ ...prev, pin: pinArr.join('').trim() }));
-      } else if (index > 0) {
-        // переходим на предыдущую ячейку и стираем
-        pinRefs[index - 1].current?.focus();
-        pinArr[index - 1] = '';
-        setFormData((prev) => ({ ...prev, pin: pinArr.join('').trim() }));
-      }
-    }
-  };
-
-  const goToPinLogin = () => {
-    setStep('pinLogin');
-    setApiError('');
-  };
-
   const handleSendLinkAgain = async () => {
     if (submitting) return;
     setSubmitting(true);
@@ -369,19 +330,9 @@ const AuthForm = () => {
     isTermsAccepted &&
     isReferralValid;
 
-  const extractError = (err) => {
-    if (!err) return 'Ошибка';
-    if (typeof err === 'string') return err;
-    if (err.response?.data?.detail) return err.response.data.detail;
-    if (typeof err.response?.data === 'string') return err.response.data;
-    if (Array.isArray(err.response?.data?.detail)) return err.response.data.detail[0]?.msg;
-    return err.detail || err.message || 'Ошибка';
-  };
-
   // авто-сабмит после полной длины PIN
   useEffect(() => {
     if (formData.pin.length === 4 && !submitting && (step === 'pinLogin' || step === 'pin')) {
-      // создаём фейковый event для совместимости
       handleSubmit({ preventDefault: () => {} });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -389,81 +340,29 @@ const AuthForm = () => {
 
   return (
     <>
-      {/* {mode === 'register' ? (
-        <div className="tabs">
-          <span
-            className={userType === 'company' ? 'active' : ''}
-            onClick={() => {
-              setUserType('company');
-              resetForm();
-            }}
-          >
-            Компания
-          </span>
-          <span
-            className={userType === 'employee' ? 'active' : ''}
-            onClick={() => {
-              setUserType('employee');
-              resetForm();
-            }}
-          >
-            Сотрудник
-          </span>
-        </div>
-      ) : null} */}
-      <div className="tabs">
-        <span
-          className={mode === 'register' ? 'active' : ''}
-          onClick={() => {
-            if (mode !== 'register') {
-              setMode('register');
-              resetForm();
-            }
-          }}
-          style={{ cursor: 'pointer' }}
-        >
-          Регистрация
-        </span>
-        <span
-          className={mode === 'login' ? 'active' : ''}
-          onClick={() => {
-            if (mode !== 'login') {
-              setMode('login');
-              resetForm();
-            }
-          }}
-          style={{ cursor: 'pointer' }}
-        >
-          Вход
-        </span>
-      </div>
-      <div className="auth-form-wrapper">
-        <form onSubmit={handleSubmit} className="auth-form">
+      <ModeTabs
+        mode={mode}
+        onSelect={(next) => {
+          if (mode !== next) {
+            setMode(next);
+            resetForm();
+            setStep('request');
+            setApiError('');
+          }
+        }}
+      />
+
+      <AuthFormWrapper>
+        <AuthFormStyle onSubmit={handleSubmit}>
           {mode === 'login' && step === 'request' && (
-            <>
-              <input
-                name="phone"
-                placeholder="Телефон"
-                value={formData.phone}
-                onChange={handleChange}
-                onFocus={() => setPhoneFocused(true)}
-                onBlur={() => setPhoneFocused(false)}
-                className="custom-input"
-                required
-              />
-              {phoneFocused && formData.phone && (
-                <p className="loading-message" style={{ marginTop: '-10px' }}>
-                  Проверьте номер — SMS-код придёт на него
-                </p>
-              )}
-              <button
-                type="submit"
-                className={`custom-button ${submitting ? 'loading' : ''}`}
-                disabled={submitting || !isPhoneValid}
-              >
-                {submitting ? '' : 'Получить код'}
-              </button>
-            </>
+            <LoginRequest
+              formData={formData}
+              onChange={handleChange}
+              submitting={submitting}
+              isPhoneValid={isPhoneValid}
+              onPhoneFocus={() => setPhoneFocused(true)}
+              onPhoneBlur={() => setPhoneFocused(false)}
+            />
           )}
 
           {mode === 'login' && step === 'sent' && (
@@ -471,260 +370,58 @@ const AuthForm = () => {
           )}
 
           {mode === 'register' && step === 'request' && (
-            <>
-              <input
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleChange}
-                onBlur={() => handleBlur('email')}
-                className={`custom-input ${touchedFields.email && !isEmailValid ? 'input-error' : ''}`}
-                required
-              />
-              {touchedFields.email && !isEmailValid && (
-                <p className="error-message">Введите корректный email</p>
-              )}
-              <input
-                name="firstName"
-                placeholder="Имя"
-                value={formData.firstName}
-                onChange={handleChange}
-                className="custom-input"
-                required
-              />
-              <input
-                name="lastName"
-                placeholder="Фамилия"
-                value={formData.lastName}
-                onChange={handleChange}
-                className="custom-input"
-                required
-              />
-              <input
-                name="phone"
-                placeholder="Телефон"
-                value={formData.phone}
-                onChange={handleChange}
-                onFocus={() => setPhoneFocused(true)}
-                onBlur={() => setPhoneFocused(false)}
-                className="custom-input"
-                required
-              />
-              {phoneFocused && formData.phone && (
-                <p className="loading-message" style={{ marginTop: '-10px' }}>
-                  Проверьте номер — SMS-код для регистрации придёт на него
-                </p>
-              )}
-              {userType === 'company' && (
-                <>
-                  <InnSuggestInput
-                    value={formData.inn}
-                    onChange={(text) => {
-                      setFormData((prev) => ({ ...prev, inn: text }));
-                    }}
-                    onBlur={() => handleBlur('inn')}
-                    onSelect={(item) => {
-                      const inn = item.data.inn || '';
-                      const companyName = item.value || '';
-                      setFormData((prev) => ({ ...prev, inn, companyName }));
-                      setCompanyError('');
-                    }}
-                    placeholder="ИНН или название компании"
-                    inputClass={`custom-input ${touchedFields.inn && !isInnValid ? 'input-error' : ''}`}
-                  />
-
-                  {touchedFields.inn && !isInnValid && (
-                    <p className="error-message">ИНН должен содержать 10 или 12 цифр</p>
-                  )}
-
-                  {touchedFields.inn && isInnValid && companyError && (
-                    <p className="error-message">{companyError}</p>
-                  )}
-
-                  {loadingCompany && (
-                    <p className="loading-message">Загружаем данные компании...</p>
-                  )}
-
-                  {formData.companyName && (
-                    <input
-                      name="companyName"
-                      className="custom-input"
-                      value={formData.companyName}
-                      readOnly
-                      disabled
-                    />
-                  )}
-                </>
-              )}
-
-              <select
-                name="referral"
-                value={formData.referral}
-                onChange={handleChange}
-                className="custom-select"
-                required
-              >
-                <option value="" disabled>
-                  Откуда вы о нас узнали?
-                </option>
-                <option>Социальные сети</option>
-                <option>Telegram</option>
-                <option>Рекомендация</option>
-                <option>От представителя Loyal Club</option>
-                <option>Поиск в Google или Яндекс</option>
-                <option>На конференции</option>
-                <option>Другое</option>
-              </select>
-
-              {formData.referral === 'Другое' && (
-                <input
-                  name="otherReferral"
-                  placeholder="Укажите источник"
-                  value={formData.otherReferral}
-                  onChange={handleChange}
-                  className="custom-input"
-                  required
-                />
-              )}
-
-              <input
-                name="promoCode"
-                placeholder="Промокод (необязательно)"
-                value={formData.promoCode}
-                onChange={handleChange}
-                className="custom-input"
-              />
-
-              <CustomCheckbox
-                name="acceptTerms"
-                checked={formData.acceptTerms}
-                onChange={handleChange}
-                label={
-                  <>
-                    Я принимаю{' '}
-                    <a href="https://loyalclub.ru/oferta" target="_blank" rel="noopener noreferrer">
-                      условия соглашения
-                    </a>{' '}
-                    и{' '}
-                    <a href="https://loyalclub.ru/policy" target="_blank" rel="noopener noreferrer">
-                      политику обработки персональных данных
-                    </a>
-                  </>
-                }
-              />
-
-              <button
-                type="submit"
-                className={`custom-button ${submitting ? 'loading' : ''}`}
-                disabled={submitting || !isFormValid}
-              >
-                {submitting ? '' : 'Зарегистрироваться'}
-              </button>
-            </>
+            <RegisterRequest
+              formData={formData}
+              userType={userType}
+              touchedFields={touchedFields}
+              isEmailValid={isEmailValid}
+              isInnValid={isInnValid}
+              isCompanyLoaded={isCompanyLoaded}
+              loadingCompany={loadingCompany}
+              companyError={companyError}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              setFormData={setFormData}
+              submitting={submitting}
+              isFormValid={isFormValid}
+            />
           )}
 
           {(step === 'pin' || step === 'pinLogin') && (
-            <>
-              <p
-                className="pin-title"
-                style={{ textAlign: 'center', color: '#888', marginBottom: '20px' }}
-              >
-                {step === 'pinLogin' ? 'Введите PIN-код' : 'Для быстрого входа придумайте PIN'}
-              </p>
-              <div
-                className="pin-input-wrapper"
-                style={{
-                  display: 'flex',
-                  gap: '12px',
-                  justifyContent: 'center',
-                  marginBottom: '20px',
-                }}
-              >
-                {[0, 1, 2, 3].map((i) => (
-                  <input
-                    key={i}
-                    ref={pinRefs[i]}
-                    type="tel"
-                    inputMode="numeric"
-                    maxLength={1}
-                    value={formData.pin[i] || ''}
-                    onChange={(e) => handlePinChange(i, e.target.value)}
-                    onKeyDown={(e) => handlePinKeyDown(i, e)}
-                    disabled={submitting}
-                    style={{
-                      width: '60px',
-                      height: '60px',
-                      textAlign: 'center',
-                      fontSize: '32px',
-                      border: '1px solid #d1d5db',
-                      background: '#f3f4f6',
-                      borderRadius: '8px',
-                    }}
-                  />
-                ))}
-              </div>
-              <button
-                type="submit"
-                disabled={submitting || formData.pin.length !== 4}
-                className="custom-button"
-              >
-                {step === 'pinLogin' ? 'Войти' : 'Сохранить PIN'}
-              </button>
-              {step === 'pin' && (
-                <p
-                  style={{
-                    color: '#888',
-                    textAlign: 'center',
-                    marginTop: '16px',
-                  }}
-                >
-                  Запомните PIN — он позволит входить без SMS-кода
-                </p>
-              )}
-              {submitting && step === 'pin' && <p style={{ color: '#888' }}>Проверяем...</p>}
-              {step === 'pinLogin' && (
-                <p style={{ marginTop: '16px', textAlign: 'center' }}>
-                  <span
-                    onClick={submitting ? undefined : handleSendLinkAgain}
-                    style={{
-                      color: submitting ? '#888' : '#0b5cff',
-                      cursor: submitting ? 'default' : 'pointer',
-                      pointerEvents: submitting ? 'none' : 'auto',
-                    }}
-                  >
-                    {submitting ? 'Проверяем...' : 'Не помню PIN — войти по SMS'}
-                  </span>
-                </p>
-              )}
-            </>
+            <PinStep
+              step={step}
+              pin={formData.pin}
+              submitting={submitting}
+              onChangePin={(digits) => setFormData((p) => ({ ...p, pin: digits }))}
+              onSendLinkAgain={handleSendLinkAgain}
+              onComplete={() => handleSubmit({ preventDefault: () => {} })}
+            />
           )}
-          {apiError && (
-            <p style={{ color: '#d00', textAlign: 'center', marginBottom: '16px' }}>{apiError}</p>
-          )}
-        </form>
+
+          {apiError && <ApiError>{apiError}</ApiError>}
+        </AuthFormStyle>
+
         {step !== 'pin' && (
-          <p
-            className="toggle-auth"
+          <ToggleAuth
             onClick={() => {
               setMode(mode === 'register' ? 'login' : 'register');
               resetForm();
               setStep('request');
               setApiError('');
             }}
-            style={{ cursor: 'pointer', marginTop: '20px', textAlign: 'center' }}
           >
             {mode === 'register' ? (
               <>
-                Уже есть аккаунт? <span style={{ color: '#bf4756' }}>Войти</span>
+                Уже есть аккаунт? <Accent>Войти</Accent>
               </>
             ) : (
               <>
-                Нет аккаунта? <span style={{ color: '#bf4756' }}>Зарегистрируйтесь</span>
+                Нет аккаунта? <Accent>Зарегистрируйтесь</Accent>
               </>
             )}
-          </p>
+          </ToggleAuth>
         )}
-      </div>
+      </AuthFormWrapper>
     </>
   );
 };

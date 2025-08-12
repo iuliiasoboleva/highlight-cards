@@ -5,8 +5,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import axiosInstance from '../../axiosInstance';
 import { setCookie } from '../../cookieUtils';
 import { setUser } from '../../store/userSlice';
-
-import './styles.css';
+import { Note, Spinner, VerifyLogo, VerifyWrapper } from './styles';
 
 const LoginVerify = () => {
   const dispatch = useDispatch();
@@ -35,7 +34,7 @@ const LoginVerify = () => {
 
         dispatch(setUser(res.data));
         navigate('/');
-      } catch (err) {
+      } catch {
         navigate('/auth');
       }
     };
@@ -45,15 +44,14 @@ const LoginVerify = () => {
   }, [dispatch, navigate, searchParams]);
 
   return (
-    <div className="verify-wrapper">
-      <img
+    <VerifyWrapper>
+      <VerifyLogo
         src="https://optim.tildacdn.com/tild6639-6664-4537-b134-353639383763/-/resize/86x/-/format/webp/svg.png.webp"
         alt="Loyal Club"
-        className="verify-logo"
       />
-      <div className="spinner" />
-      <p style={{ color: '#555' }}>Проверяем ссылку...</p>
-    </div>
+      <Spinner role="status" aria-label="загрузка" />
+      <Note>Проверяем ссылку...</Note>
+    </VerifyWrapper>
   );
 };
 
