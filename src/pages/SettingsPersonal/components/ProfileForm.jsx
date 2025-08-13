@@ -1,38 +1,46 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import CustomInput from '../../../customs/CustomInput';
+import CustomPinInput from '../../../customs/CustomPinInput';
 import CustomSelect from '../../../customs/CustomSelect';
-import {
-  ErrorText,
-  FormGroup,
-  FormRow,
-  Label,
-  PinBlock,
-  PinInput,
-  PinInputWrapper,
-  SavePinButton,
-} from '../styles';
+import { changePin } from '../../../store/userSlice';
+import { ErrorText, FormGroup, FormRow, Label, PinBlock, SavePinButton } from '../styles';
 
-const ProfileForm = ({
-  user,
-  countries,
-  languages,
-  timezones,
-  onFieldChange,
-  newPin,
-  confirmPin,
-  newPinRefs,
-  confirmPinRefs,
-  onPinChange,
-  onPinKey,
-  onSavePin,
-  pinSaving = false,
-}) => {
-  const canSavePin = useMemo(
-    () => newPin?.length === 4 && confirmPin?.length === 4 && newPin === confirmPin,
-    [newPin, confirmPin],
-  );
+const sanitize = (s = '', length = 4) => (s.match(/\d/g) || []).join('').slice(0, length);
+
+const ProfileForm = ({ user, countries, languages, timezones, onFieldChange, showToast }) => {
+  const dispatch = useDispatch();
+
+  const [newPin, setNewPin] = useState('');
+  const [confirmPin, setConfirmPin] = useState('');
+  const [pinSaving, setPinSaving] = useState(false);
+
   const phoneLockedRef = useRef(Boolean(user.phone));
+
+  const onNewChange = (digits) => setNewPin(sanitize(digits, 4));
+  const onConfirmChange = (digits) => setConfirmPin(sanitize(digits, 4));
+
+  const mismatch = !!(newPin || confirmPin) && newPin !== confirmPin;
+  const canSavePin = newPin.length === 4 && confirmPin.length === 4 && !mismatch;
+
+  const handleSavePin = async () => {
+    if (!canSavePin) {
+      showToast?.('PIN-коды не совпадают', false);
+      return;
+    }
+    setPinSaving(true);
+    try {
+      await dispatch(changePin(newPin)).unwrap();
+      setNewPin('');
+      setConfirmPin('');
+      showToast?.('Изменения сохранены', true);
+    } catch {
+      showToast?.('Не удалось сохранить PIN', false);
+    } finally {
+      setPinSaving(false);
+    }
+  };
 
   return (
     <>
@@ -104,20 +112,14 @@ const ProfileForm = ({
         </FormGroup>
         <FormGroup $area="pinNew">
           <Label>Новый PIN</Label>
-          <PinInputWrapper>
-            {[0, 1, 2, 3].map((i) => (
-              <PinInput
-                key={i}
-                ref={newPinRefs[i]}
-                type="tel"
-                inputMode="numeric"
-                maxLength={1}
-                value={newPin[i] || ''}
-                onChange={(e) => onPinChange('new', i, e.target.value)}
-                onKeyDown={(e) => onPinKey('new', i, e)}
-              />
-            ))}
-          </PinInputWrapper>
+          <PinBlock>
+            <CustomPinInput
+              value={newPin}
+              onChange={onNewChange}
+              disabled={pinSaving}
+              autoFocus={false}
+            />
+          </PinBlock>
         </FormGroup>
       </FormRow>
 
@@ -134,24 +136,16 @@ const ProfileForm = ({
         <FormGroup $area="pinConfirm">
           <Label>Подтверждение PIN</Label>
           <PinBlock>
-            <PinInputWrapper>
-              {[0, 1, 2, 3].map((i) => (
-                <PinInput
-                  key={i}
-                  ref={confirmPinRefs[i]}
-                  type="tel"
-                  inputMode="numeric"
-                  maxLength={1}
-                  value={confirmPin[i] || ''}
-                  onChange={(e) => onPinChange('confirm', i, e.target.value)}
-                  onKeyDown={(e) => onPinKey('confirm', i, e)}
-                />
-              ))}
-            </PinInputWrapper>
+            <CustomPinInput
+              value={confirmPin}
+              onChange={onConfirmChange}
+              disabled={pinSaving}
+              autoFocus={false}
+            />
 
             <SavePinButton
               type="button"
-              onClick={onSavePin}
+              onClick={handleSavePin}
               disabled={!canSavePin || pinSaving}
               $active={canSavePin && !pinSaving}
             >
@@ -159,9 +153,7 @@ const ProfileForm = ({
             </SavePinButton>
           </PinBlock>
 
-          {(newPin || confirmPin) && newPin !== confirmPin && (
-            <ErrorText>PIN-коды не совпадают</ErrorText>
-          )}
+          {mismatch && <ErrorText>PIN-коды не совпадают</ErrorText>}
         </FormGroup>
       </FormRow>
 

@@ -1,13 +1,11 @@
 import React from 'react';
 
-import { Loader2 } from 'lucide-react';
-
-import { LoaderWrapper } from './styles';
+import { LoaderWrapper, SpinnerIcon } from './styles';
 
 const LoaderCentered = () => {
   return (
     <LoaderWrapper>
-      <Loader2 className="spinner" size={48} strokeWidth={1.4} />
+      <SpinnerIcon strokeWidth={1.4} role="status" aria-label="Загрузка" />
     </LoaderWrapper>
   );
 };

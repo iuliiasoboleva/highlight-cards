@@ -5,7 +5,6 @@ import ImageEditorModal from '../../components/ImageEditorModal';
 import LoaderCentered from '../../components/LoaderCentered';
 import { logout as authLogout } from '../../store/authSlice';
 import {
-  changePin,
   deleteAccount,
   logout,
   removeAvatar,
@@ -18,7 +17,6 @@ import AvatarBlock from './components/AvatarBlock';
 import DeleteAccountSection from './components/DeleteAccountSection';
 import ProfileForm from './components/ProfileForm';
 import useLinearProgress from './hooks/useLinearProgress';
-import usePinInput from './hooks/usePinInput';
 import {
   ButtonProgress,
   MainButton,
@@ -36,24 +34,14 @@ const SettingsPersonal = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
 
-  // PIN-инпуты
-  const {
-    newPin,
-    confirmPin,
-    newPinRefs,
-    confirmPinRefs,
-    handlePinChange,
-    handlePinKey,
-    resetPins,
-  } = usePinInput();
-
   // Тост + прогресс
   const [toast, setToast] = useState(null);
-  const [pinSaving, setPinSaving] = useState(false);
+
   const showToast = useCallback((msg, ok = true) => {
     setToast({ msg, ok });
     setTimeout(() => setToast(null), 3000);
   }, []);
+
   const { saving, startProgress, finishProgress, progress, setSaving } = useLinearProgress();
 
   const [editorOpen, setEditorOpen] = useState(false);
@@ -144,24 +132,6 @@ const SettingsPersonal = () => {
     [],
   );
 
-  const handleSavePin = async () => {
-    if (!newPin || newPin.length !== 4 || newPin !== confirmPin) {
-      showToast('PIN-коды не совпадают', false);
-      return;
-    }
-
-    try {
-      setPinSaving(true);
-      await dispatch(changePin(newPin)).unwrap();
-      resetPins();
-      showToast('Изменения сохранены', true);
-    } catch {
-      showToast('Не удалось сохранить PIN', false);
-    } finally {
-      setPinSaving(false);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (saving) return;
@@ -241,14 +211,7 @@ const SettingsPersonal = () => {
                   languages={languages}
                   timezones={timezones}
                   onFieldChange={handleChange}
-                  newPin={newPin}
-                  confirmPin={confirmPin}
-                  newPinRefs={newPinRefs}
-                  confirmPinRefs={confirmPinRefs}
-                  onPinChange={handlePinChange}
-                  onPinKey={handlePinKey}
-                  onSavePin={handleSavePin}
-                  pinSaving={pinSaving}
+                  showToast={showToast}
                 />
 
                 <MainButton type="submit" disabled={saving}>

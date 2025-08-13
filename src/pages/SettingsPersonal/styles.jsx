@@ -280,31 +280,11 @@ export const Label = styled.p`
   user-select: none;
 `;
 
-export const PinInputWrapper = styled.div`
-  display: flex;
-  gap: 12px;
-`;
-
-export const PinInput = styled.input`
-  width: 60px;
-  height: 60px;
-  text-align: center;
-  font-size: 32px;
-  border: 1px solid #d1d5db;
-  background: #f3f4f6;
-  border-radius: 8px;
-
-  @media (max-width: 768px) {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-  }
-`;
-
 export const PinBlock = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  align-items: flex-start;
 `;
 
 export const SavePinButton = styled.button`

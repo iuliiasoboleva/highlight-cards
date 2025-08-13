@@ -1,11 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 
-import { BarChart, Contact, GraduationCap, LogOut, ScanLine, Settings, User } from 'lucide-react';
+import { Contact, GraduationCap, LogOut } from 'lucide-react';
 
+import { pluralize } from '../../helpers/pluralize';
 import { logout as authLogout } from '../../store/authSlice';
 import { fetchSubscription } from '../../store/subscriptionSlice';
 import { logout as userLogout } from '../../store/userSlice';
@@ -13,12 +14,10 @@ import {
   AvatarCircle,
   DemoBadge,
   DesktopHeader,
-  DropdownDivider,
   HeaderBar,
   HeaderIcons,
   IconButton,
   Logo,
-  ProfileDropdown,
   UserName,
   UserSection,
 } from './styles';
@@ -26,92 +25,93 @@ import {
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const user = useSelector((state) => state.user);
   const subscription = useSelector((state) => state.subscription.info);
   const subLoading = useSelector((state) => state.subscription.loading);
 
   useEffect(() => {
-    if (user.organization_id && !subscription && !subLoading) {
+    if (!user?.organization_id || subLoading) return;
+    if (!subscription) {
       dispatch(fetchSubscription(user.organization_id));
     }
-  }, [dispatch, user.organization_id, subscription, subLoading]);
+  }, [dispatch, user?.organization_id, subscription, subLoading]);
 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const { isTrial, daysLeft, dayWord, demoLabel } = useMemo(() => {
+    const status = String(subscription?.status || '').toLowerCase();
+    const d = Math.max(0, Number(subscription?.days_left ?? 0));
+    return {
+      isTrial: status === 'trial',
+      daysLeft: d,
+      dayWord: pluralize(d, ['день', 'дня', 'дней']),
+      demoLabel: `Демо-версия доступна ещё: ${d} ${pluralize(d, ['день', 'дня', 'дней'])}`,
+    };
+  }, [subscription?.status, subscription?.days_left]);
 
-  const handleLogout = () => {
+  const initials = useMemo(() => {
+    const f = (user?.firstName || user?.name || '').trim();
+    const l = (user?.lastName || '').trim();
+    return `${f[0] || ''}${l[0] || ''}`.toUpperCase();
+  }, [user?.firstName, user?.lastName, user?.name]);
+
+  const handleLogout = useCallback(() => {
     dispatch(userLogout());
     dispatch(authLogout());
     navigate('/auth');
-  };
+  }, [dispatch, navigate]);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  const headerIcons = useMemo(
+    () => [
+      {
+        icon: <Contact size={22} strokeWidth={1.3} />,
+        tooltip: 'Мой профиль',
+        onClick: () => navigate('/settings/personal'),
+      },
+      {
+        icon: <GraduationCap size={22} strokeWidth={1.3} />,
+        tooltip: 'База знаний',
+        onClick: () => navigate('/education'),
+      },
+      {
+        icon: <LogOut size={22} strokeWidth={1.3} />,
+        tooltip: 'Выйти',
+        onClick: handleLogout,
+      },
+    ],
+    [navigate, handleLogout],
+  );
 
-  const handleDropdownAction = (action) => {
-    setIsDropdownOpen(false);
-    action();
-  };
-
-  const headerIcons = [
-    {
-      icon: <Contact size={22} strokeWidth={1.3} />,
-      tooltip: 'Мой профиль',
-      onClick: () => handleDropdownAction(() => setIsDropdownOpen((prev) => !prev)),
-    },
-    {
-      icon: <Settings size={22} strokeWidth={1.3} />,
-      tooltip: 'Настройки',
-      onClick: () => handleDropdownAction(() => navigate('/settings')),
-    },
-    {
-      icon: <GraduationCap size={22} strokeWidth={1.3} />,
-      tooltip: 'База знаний',
-      onClick: () => handleDropdownAction(() => navigate('/education')),
-    },
-    {
-      icon: <LogOut size={22} strokeWidth={1.3} />,
-      tooltip: 'Выйти',
-      onClick: () => handleDropdownAction(handleLogout),
-    },
-  ];
+  const userName = user?.firstName || user?.name;
 
   return (
     <HeaderBar>
       <DesktopHeader>
         <Logo src="/logoColored.png" alt="Logo" onClick={() => navigate('/')} />
-        {(user.firstName || user.name) && (
+
+        {userName && (
           <UserSection>
             <AvatarCircle>
-              {user.avatar ? (
-                <img src={user.avatar} alt="Avatar" />
-              ) : (
-                <>
-                  {`${(user.firstName?.[0] || user.name?.[0] || '').toUpperCase()}${(user.lastName?.[0] || '').toUpperCase()}`}
-                </>
-              )}
+              {user?.avatar ? <img src={user.avatar} alt="Avatar" /> : <>{initials}</>}
             </AvatarCircle>
-            Привет, <UserName>{user.firstName || user.name}</UserName>
-            {subscription?.status === 'trial' && (
-              <DemoBadge onClick={() => navigate('/settings')}>
-                Демо: {subscription.days_left} д.
+            <UserName>{userName}</UserName>
+
+            {isTrial && (
+              <DemoBadge
+                onClick={() => navigate('/settings')}
+                role="button"
+                aria-label={`Осталось ${daysLeft} ${dayWord}`}
+              >
+                {demoLabel}
               </DemoBadge>
             )}
           </UserSection>
         )}
 
-        <HeaderIcons ref={dropdownRef}>
-          {headerIcons.map(({ icon, tooltip, onClick }, index) => {
-            const tooltipId = `header-tooltip-${index}`;
+        <HeaderIcons>
+          {headerIcons.map(({ icon, tooltip, onClick }, i) => {
+            const tooltipId = `header-tooltip-${i}`;
             return (
-              <React.Fragment key={index}>
+              <React.Fragment key={tooltipId}>
                 <IconButton
                   onClick={onClick}
                   data-tooltip-id={tooltipId}
@@ -124,28 +124,6 @@ const Header = () => {
               </React.Fragment>
             );
           })}
-
-          {isDropdownOpen && (
-            <ProfileDropdown>
-              <button onClick={() => handleDropdownAction(() => navigate('/settings/personal'))}>
-                <User size={16} style={{ marginRight: '8px' }} />
-                Профиль пользователя
-              </button>
-              <button onClick={() => handleDropdownAction(() => navigate('/clients'))}>
-                <BarChart size={16} style={{ marginRight: '8px' }} />
-                Статистика
-              </button>
-              <button onClick={() => handleDropdownAction(() => navigate('/scan'))}>
-                <ScanLine size={16} style={{ marginRight: '8px' }} />
-                Приложение-сканер
-              </button>
-              <DropdownDivider />
-              <button onClick={() => handleDropdownAction(handleLogout)}>
-                <LogOut size={16} style={{ marginRight: '8px' }} />
-                Выйти
-              </button>
-            </ProfileDropdown>
-          )}
         </HeaderIcons>
       </DesktopHeader>
     </HeaderBar>
