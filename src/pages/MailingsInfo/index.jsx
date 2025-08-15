@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-// import { useNavigate } from 'react-router-dom';
-
 import axiosInstance from '../../axiosInstance';
 import CustomTable from '../../components/CustomTable';
 import LoaderCentered from '../../components/LoaderCentered';
@@ -11,8 +9,7 @@ import TopUpModal from '../../components/TopUpModal';
 import { mailingsHeaders } from '../../mocks/mockMailings';
 import { fetchBalance, topUpBalance } from '../../store/balanceSlice';
 import MailingDetailsModal from './MailingDetailsModal';
-
-import './styles.css';
+import { Badge, Container, Label, StatCard, StatsRow, TableWrapper, Value } from './styles';
 
 const MailingsInfo = () => {
   const [rows, setRows] = useState([]);
@@ -21,13 +18,12 @@ const MailingsInfo = () => {
 
   const orgId = useSelector((state) => state.user.organization_id);
   const dispatch = useDispatch();
-
   const { amount: smsBalance = 0, loading: smsLoading } = useSelector(
     (state) => state.balance || {},
   );
+
   const [topUpOpen, setTopUpOpen] = useState(false);
   const [hoverSms, setHoverSms] = useState(false);
-  // const navigate = useNavigate();
 
   useEffect(() => {
     if (!orgId) return;
@@ -51,6 +47,7 @@ const MailingsInfo = () => {
     dispatch(topUpBalance({ orgId, amount }));
   };
 
+  // колонки таблицы
   const columns = mailingsHeaders.map((header) => ({
     key: header.key,
     title: header.label,
@@ -58,47 +55,39 @@ const MailingsInfo = () => {
     cellClassName: 'text-left',
   }));
 
-  const statusColumnIndex = columns.findIndex((col) => col.key === 'status');
+  // отрисовка статуса как бэйджа
+  const statusIdx = columns.findIndex((col) => col.key === 'status');
+  if (statusIdx !== -1) {
+    columns[statusIdx].render = (row) => {
+      const map = {
+        Запланирована: 'planned',
+        Отправлена: 'sent',
+        Черновик: 'draft',
+        Ошибка: 'error',
+      };
+      const variant = map[row.status] || 'draft';
+      return <Badge $variant={variant}>{row.status}</Badge>;
+    };
+    columns[statusIdx].className = 'text-center';
+    columns[statusIdx].cellClassName = 'text-center';
+  }
+
+  // человекочитаемые получатели
   const recipientsIdx = columns.findIndex((col) => col.key === 'recipients');
-
-  if (statusColumnIndex !== -1) {
-    columns[statusColumnIndex].render = (row) => {
-      let statusClass = '';
-      switch (row.status) {
-        case 'Запланирована':
-          statusClass = 'status-planned';
-          break;
-        case 'Отправлена':
-          statusClass = 'status-sent';
-          break;
-        case 'Черновик':
-          statusClass = 'status-draft';
-          break;
-        case 'Ошибка':
-          statusClass = 'status-error';
-          break;
-        default:
-          statusClass = '';
-      }
-      return <span className={`status-badge ${statusClass}`}>{row.status}</span>;
-    };
-    columns[statusColumnIndex].className = 'text-center';
-    columns[statusColumnIndex].cellClassName = 'text-center';
-  }
-
   if (recipientsIdx !== -1) {
-    columns[recipientsIdx].render = (row) => {
-      if (row.recipients === 'all') return 'Всем';
-      return row.recipients;
-    };
+    columns[recipientsIdx].render = (row) => (row.recipients === 'all' ? 'Всем' : row.recipients);
   }
 
-  if (loading) {
-    return <LoaderCentered />;
-  }
+  if (loading) return <LoaderCentered />;
+
+  const cards = [
+    { value: '0', label: 'Клиентов в базе' },
+    { value: 'Бесплатно!', label: 'Push и Web-push', highlight: true },
+    { value: smsLoading ? '...' : smsBalance, label: 'Баланс SMS', sms: true },
+  ];
 
   return (
-    <div className="mailings-container">
+    <Container>
       <TitleWithHelp
         title="Рассылки"
         tooltipId="mailings-help"
@@ -106,45 +95,36 @@ const MailingsInfo = () => {
         tooltipContent={`Здесь вы управляете своими рассылками: создавайте, планируйте, отправляйте Push клиентам для
         повышения лояльности.`}
       />
-      <div className="stats-cards">
-        {[
-          { value: '0', label: 'Клиентов в базе' },
-          { value: 'Бесплатно!', label: 'Push и Web-push', className: 'highlight' },
-          { value: smsLoading ? '...' : smsBalance, label: 'Баланс SMS', clickable: true },
-        ].map((card, index) => {
-          const isSms = card.label === 'Баланс SMS';
+
+      <StatsRow>
+        {cards.map((c, idx) => {
+          const isSms = !!c.sms;
+          const showTopUp = isSms && hoverSms;
           return (
-            <div
-              className="mailing-card"
-              key={index}
+            <StatCard
+              key={idx}
+              $clickable={isSms}
               onMouseEnter={() => isSms && setHoverSms(true)}
               onMouseLeave={() => isSms && setHoverSms(false)}
               onClick={() => isSms && setTopUpOpen(true)}
-              style={{ cursor: isSms ? 'pointer' : 'default' }}
             >
-              <div className={`value ${card.className || ''}`}>
-                {isSms && hoverSms ? 'Пополнить' : card.value}
-              </div>
-              {!isSms || !hoverSms ? (
-                <div className={`label ${card.className?.includes('small') ? 'small' : ''}`}>
-                  {card.label}
-                </div>
-              ) : null}
-            </div>
+              <Value $highlight={c.highlight} $gray={c.gray}>
+                {showTopUp ? 'Пополнить' : c.value}
+              </Value>
+              {!showTopUp && <Label>{c.label}</Label>}
+            </StatCard>
           );
         })}
-      </div>
+      </StatsRow>
 
-      {/* кнопка «Пополнить» больше не нужна — действие на карточке */}
-
-      <div className="table-wrapper">
+      <TableWrapper>
         <CustomTable
           columns={columns}
           rows={rows}
           emptyText="Здесь будут ваши рассылки"
           onRowClick={(row) => setSelectedId(row.id)}
         />
-      </div>
+      </TableWrapper>
 
       <MailingDetailsModal
         isOpen={!!selectedId}
@@ -157,7 +137,7 @@ const MailingsInfo = () => {
         onClose={() => setTopUpOpen(false)}
         onConfirm={handleTopUpConfirm}
       />
-    </div>
+    </Container>
   );
 };
 

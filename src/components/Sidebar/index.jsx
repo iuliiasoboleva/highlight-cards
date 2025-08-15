@@ -25,7 +25,7 @@ const Sidebar = () => {
     { icon: <Glyph src={'/icons/chat.svg'} />, label: 'Рассылки', path: '/mailings/info' },
     { icon: <Glyph src={'/icons/location.svg'} />, label: 'Локации', path: '/locations' },
     { icon: <Glyph src={'/icons/managers.svg'} />, label: 'Менеджеры', path: '/managers' },
-    { icon: <Glyph src={'/icons/billing.svg'} />, label: 'Настройки', path: '/settings' },
+    { icon: <Glyph src={'/icons/billing.svg'} />, label: 'Подписка', path: '/settings' },
   ];
 
   const employeeItems = [

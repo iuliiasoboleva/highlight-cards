@@ -3,8 +3,8 @@ import styled from 'styled-components';
 export const PageWrap = styled.div`
   display: flex;
   justify-content: center;
-  width: 100%;
   height: 100vh;
+  width: 100vw;
   background: #fff;
 `;
 

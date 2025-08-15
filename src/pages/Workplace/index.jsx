@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { BarChart2, Camera, Search, User as UserIcon } from 'lucide-react';
 
 import RoleSwitcher from '../../components/RoleSwitcher';
+import CustomMainButton from '../../customs/CustomMainButton';
 
 const Workplace = () => {
   const user = useSelector((state) => state.user);
@@ -82,9 +83,7 @@ const Workplace = () => {
             className="location-modal-input"
             onChange={(e) => setCardNumber(e.target.value)}
           />
-          <button className="custom-main-button" onClick={handleFindCustomer}>
-            Найти клиента
-          </button>
+          <CustomMainButton onClick={handleFindCustomer}>Найти клиента</CustomMainButton>
         </div>
 
         <div className="manager-card scanner-card">
@@ -94,9 +93,7 @@ const Workplace = () => {
             они смогут пробивать штампы клиентам и выдавать награды.
           </p>
           <Camera size={32} className="scanner-icon" />
-          <button className="custom-main-button" onClick={() => navigate('/scan')}>
-            Открыть
-          </button>
+          <CustomMainButton onClick={() => navigate('/scan')}>Открыть</CustomMainButton>
         </div>
       </div>
       <RoleSwitcher />

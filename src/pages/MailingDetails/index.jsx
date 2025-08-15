@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Loader2 } from 'lucide-react';
-
 import axiosInstance from '../../axiosInstance';
-
-import './styles.css';
+import {
+  CenterSpinner,
+  Empty,
+  FieldRow,
+  MessageBlock,
+  MessagePre,
+  Page,
+  SpinnerIcon,
+  Title,
+} from './styles';
 
 const MailingDetails = () => {
   const { id } = useParams();
@@ -13,50 +19,63 @@ const MailingDetails = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let alive = true;
     (async () => {
       try {
         const res = await axiosInstance.get(`/mailings/${id}`);
-        setData(res.data);
+        if (alive) setData(res.data);
       } catch (e) {
         console.error(e);
       } finally {
-        setLoading(false);
+        if (alive) setLoading(false);
       }
     })();
+
+    return () => {
+      alive = false;
+    };
   }, [id]);
 
   if (loading) {
     return (
-      <div className="center-spinner">
-        <Loader2 className="spinner" size={48} strokeWidth={1.4} />
-      </div>
+      <CenterSpinner>
+        <SpinnerIcon size={48} strokeWidth={1.4} />
+      </CenterSpinner>
     );
   }
 
-  if (!data) return <p style={{ textAlign: 'center' }}>Рассылка не найдена</p>;
+  if (!data) {
+    return (
+      <Page>
+        <Empty>Рассылка не найдена</Empty>
+      </Page>
+    );
+  }
 
   return (
-    <div className="mailing-details-page">
-      <h2>{data.name}</h2>
-      <p>
+    <Page>
+      <Title>{data.name}</Title>
+
+      <FieldRow>
         <strong>Дата создания:</strong> {data.dateTime}
-      </p>
-      <p>
+      </FieldRow>
+      <FieldRow>
         <strong>Получатели:</strong> {data.recipients === 'all' ? 'Всем' : data.recipients}
-      </p>
-      <p>
+      </FieldRow>
+      <FieldRow>
         <strong>Тип рассылки:</strong> {data.mailingType}
-      </p>
-      <p>
+      </FieldRow>
+      <FieldRow>
         <strong>Статус:</strong> {data.status}
-      </p>
+      </FieldRow>
+
       {data.message && (
-        <div className="mailing-message-block">
+        <MessageBlock>
           <strong>Сообщение:</strong>
-          <pre>{data.message}</pre>
-        </div>
+          <MessagePre>{data.message}</MessagePre>
+        </MessageBlock>
       )}
-    </div>
+    </Page>
   );
 };
 

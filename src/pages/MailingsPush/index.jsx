@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Users } from 'lucide-react';
 
 import axiosInstance from '../../axiosInstance';
+import GeoBadge from '../../components/GeoBadge/index.jsx';
 import PushPreview from '../../components/PushPreview';
 import TitleWithHelp from '../../components/TitleWithHelp';
 import CustomCheckbox from '../../customs/CustomCheckbox';
@@ -16,6 +17,7 @@ import PushTargetTabs from './PushTargetTabs';
 import './styles.jsx';
 import {
   MailingsPushBox,
+  NoActiveCardsText,
   PushDate,
   PushRecipientCount,
   PushSchedule,
@@ -223,11 +225,11 @@ const MailingsPush = () => {
     <div className="edit-type-left">
       <div className="edit-type-page">
         <div className="mailings-push-container">
-          <h2 className="mailings-push-title">Push-уведомления</h2>
-          <p className="no-active-cards-text">
+          <GeoBadge title="Push-уведомления" />
+          <NoActiveCardsText>
             У вас нет активных карт, чтобы настроить push-уведомление. Пожалуйста, создайте и
             активируйте карту в разделе "Карты".
-          </p>
+          </NoActiveCardsText>
         </div>
       </div>
     </div>

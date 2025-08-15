@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import ConnectModal from '../../components/ConnectModal';
+import CustomMainButton from '../../customs/CustomMainButton';
 import { mockServices } from '../../mocks/mockServices';
 
 import './styles.css';
@@ -31,9 +32,9 @@ const MailingsSettings = () => {
                 </p>
               )}
             </div>
-            <button className="custom-main-button" onClick={() => setSelectedService(service)}>
+            <CustomMainButton onClick={() => setSelectedService(service)}>
               Подключить аккаунт
-            </button>
+            </CustomMainButton>
           </div>
         ))}
       </div>

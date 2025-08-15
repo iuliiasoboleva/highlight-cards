@@ -1,71 +1,89 @@
 import React, { useEffect, useState } from 'react';
 
-import { Loader2 } from 'lucide-react';
-
 import axiosInstance from '../../axiosInstance';
+import {
+  Center,
+  CloseBtn,
+  Empty,
+  Field,
+  Header,
+  Message,
+  MessageWrap,
+  Modal,
+  Overlay,
+  Spinner,
+  Title,
+} from './styles';
 
 const MailingDetailsModal = ({ isOpen, mailingId, onClose }) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // подгрузка данных при открытии
   useEffect(() => {
     if (!isOpen || !mailingId) return;
+
+    let alive = true;
+    setLoading(true);
+    setData(null);
 
     (async () => {
       try {
         const res = await axiosInstance.get(`/mailings/${mailingId}`);
-        setData(res.data);
+        if (alive) setData(res.data);
       } catch (e) {
         console.error(e);
       } finally {
-        setLoading(false);
+        if (alive) setLoading(false);
       }
     })();
+
+    return () => {
+      alive = false;
+    };
   }, [isOpen, mailingId]);
 
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+    <Overlay onClick={onClose}>
+      <Modal onClick={(e) => e.stopPropagation()}>
         {loading ? (
-          <div
-            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 200 }}
-          >
-            <Loader2 className="spinner" size={48} strokeWidth={1.4} />
-          </div>
+          <Center>
+            <Spinner size={48} strokeWidth={1.4} />
+          </Center>
         ) : !data ? (
-          <p style={{ textAlign: 'center' }}>Рассылка не найдена</p>
+          <Empty>Рассылка не найдена</Empty>
         ) : (
           <>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ margin: 0 }}>{data.name}</h3>
-              <button className="btn-light" onClick={onClose}>
-                ×
-              </button>
-            </div>
-            <p>
+            <Header>
+              <Title>{data.name}</Title>
+              <CloseBtn onClick={onClose}>×</CloseBtn>
+            </Header>
+
+            <Field>
               <strong>Дата создания:</strong> {data.dateTime}
-            </p>
-            <p>
+            </Field>
+            <Field>
               <strong>Получатели:</strong> {data.recipients === 'all' ? 'Всем' : data.recipients}
-            </p>
-            <p>
+            </Field>
+            <Field>
               <strong>Тип рассылки:</strong> {data.mailingType}
-            </p>
-            <p>
+            </Field>
+            <Field>
               <strong>Статус:</strong> {data.status}
-            </p>
+            </Field>
+
             {data.message && (
-              <div style={{ marginTop: 12 }}>
+              <MessageWrap>
                 <strong>Сообщение:</strong>
-                <pre style={{ whiteSpace: 'pre-wrap', marginTop: 4 }}>{data.message}</pre>
-              </div>
+                <Message>{data.message}</Message>
+              </MessageWrap>
             )}
           </>
         )}
-      </div>
-    </div>
+      </Modal>
+    </Overlay>
   );
 };
 

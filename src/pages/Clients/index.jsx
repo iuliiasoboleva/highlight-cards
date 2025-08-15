@@ -10,6 +10,7 @@ import FilterableTable from '../../components/FilterableTable';
 import LoaderCentered from '../../components/LoaderCentered';
 import TitleWithHelp from '../../components/TitleWithHelp';
 import CustomInput from '../../customs/CustomInput';
+import CustomMainButton from '../../customs/CustomMainButton';
 import CustomSelect from '../../customs/CustomSelect';
 import { mockClientsHeaders } from '../../mocks/clientsInfo';
 import { addClientLocal, createClient, fetchClients } from '../../store/clientsSlice';
@@ -178,8 +179,7 @@ const Clients = () => {
       </div>
 
       <div className="clients-actions-bar">
-        <button
-          className="custom-main-button"
+        <CustomMainButton
           onClick={() => {
             if (branches.length === 0) {
               setShowNoBranchModal(true);
@@ -189,7 +189,7 @@ const Clients = () => {
           }}
         >
           <span>+</span>Добавить клиента
-        </button>
+        </CustomMainButton>
       </div>
 
       {clients.length === 0 ? (
@@ -443,9 +443,9 @@ const Clients = () => {
           <span className="scanner-icon">
             <Send size={18} />
           </span>
-          <button className="custom-main-button" onClick={() => navigate('/mailings/push')}>
+          <CustomMainButton onClick={() => navigate('/mailings/push')}>
             Создать рассылку
-          </button>
+          </CustomMainButton>
         </div>
       </div>
     </div>

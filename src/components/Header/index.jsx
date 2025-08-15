@@ -70,7 +70,7 @@ const Header = () => {
     if (isMobile) {
       setMenuOpen((v) => !v);
     } else {
-      navigate('/settings/personal');
+      navigate('/profile');
     }
   }, [isMobile, navigate]);
 
@@ -202,7 +202,7 @@ const Header = () => {
               <MobileMenu ref={menuRef} role="menu">
                 {' '}
                 {/* ← меню */}
-                <MobileItem onClick={go('/settings/personal')}>
+                <MobileItem onClick={go('/profile')}>
                   <UserIcon size={18} strokeWidth={1.5} />
                   Личный кабинет
                 </MobileItem>

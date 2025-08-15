@@ -2,10 +2,11 @@ import React from 'react';
 
 import { Badge, Title } from './styles';
 
-const GeoBadge = ({ title, badgeText = 'Geo-push в радиусе 100 метров' }) => {
+const GeoBadge = ({ title, badgeText }) => {
   return (
     <Title>
-      {title} <Badge>{badgeText}</Badge>
+      {title}
+      {badgeText && <Badge>{badgeText}</Badge>}
     </Title>
   );
 };

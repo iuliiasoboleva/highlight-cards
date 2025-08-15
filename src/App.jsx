@@ -45,6 +45,7 @@ import ResetPin from './pages/ResetPin';
 import ScanPage from './pages/ScanPage';
 import SetPin from './pages/SetPin';
 import Settings from './pages/Settings';
+import SettingsArchive from './pages/SettingsArchive';
 import SettingsLayout from './pages/SettingsLayout';
 import SettingsPersonal from './pages/SettingsPersonal';
 import SettingsRFMSegment from './pages/SettingsRFMSegment';
@@ -103,7 +104,7 @@ const App = () => {
 
               <Route path="/settings" element={<SettingsLayout />}>
                 <Route index element={<Settings />} />
-                <Route path="personal" element={<SettingsPersonal />} />
+                <Route path="archive" element={<SettingsArchive />} />
               </Route>
 
               <Route path="/cards/:id" element={<CardDetails />}>
@@ -118,6 +119,7 @@ const App = () => {
                 element={user.role === 'employee' ? <Workplace /> : <Managers />}
               />
               <Route path="/locations" element={<Locations />} />
+              <Route path="/profile" element={<SettingsPersonal />} />
               <Route path="/clients" element={<ClientsLayout />}>
                 <Route path="rfm-segment" element={<SettingsRFMSegment />} />
                 <Route index element={<Clients />} />

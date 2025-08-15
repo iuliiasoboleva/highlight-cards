@@ -130,7 +130,7 @@ const MainLayout = () => {
       return [
         { to: `/mailings/info`, label: 'Рассылки' },
         { to: `/mailings/push`, label: 'Создать push-рассылку' },
-        { to: `/mailings/auto-pуш`, label: 'Автоматизация push' },
+        { to: `/mailings/auto-push`, label: 'Автоматизация push' },
         { to: `/mailings/user-push`, label: 'Пользовательские авто-push' },
         // { to: `/mailings/settings`, label: 'Настройки' },
         { to: `/mailings/archive`, label: 'История рассылок' },
@@ -139,8 +139,8 @@ const MainLayout = () => {
 
     if (matchSettings) {
       return [
-        { to: `/settings`, label: 'Тарифный план' },
-        { to: `/settings/personal`, label: 'Персональные настройки' },
+        { to: `/settings`, label: 'Подписка' },
+        { to: `/settings/archive`, label: 'История платежей' },
       ];
     }
 

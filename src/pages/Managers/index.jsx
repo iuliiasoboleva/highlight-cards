@@ -11,6 +11,7 @@ import NetworkModal from '../../components/NetworkModal';
 import RoleSwitcher from '../../components/RoleSwitcher';
 import SalesPointsModal from '../../components/SalesPointsModal';
 import TitleWithHelp from '../../components/TitleWithHelp';
+import CustomMainButton from '../../customs/CustomMainButton';
 import { managersHeaders } from '../../mocks/managersInfo';
 import { locationsHeaders } from '../../mocks/mockLocations';
 import {
@@ -303,9 +304,9 @@ const ManagersPage = () => {
           <span className="scanner-icon">
             <PlusCircle size={18} />
           </span>
-          <button className="custom-main-button" onClick={() => setShowAddModal(true)}>
+          <CustomMainButton onClick={() => setShowAddModal(true)}>
             Добавить сотрудника
-          </button>
+          </CustomMainButton>
         </div>
         <div className="manager-card create-card" onClick={() => setShowLocationModal(true)}>
           <h3>Добавить точку продаж</h3>
@@ -317,9 +318,9 @@ const ManagersPage = () => {
           <span className="scanner-icon">
             <PlusCircle size={18} />
           </span>
-          <button className="custom-main-button" onClick={() => setShowLocationModal(true)}>
+          <CustomMainButton onClick={() => setShowLocationModal(true)}>
             <span>+ </span>Добавить точку
-          </button>
+          </CustomMainButton>
         </div>
         <div className="manager-card create-card" onClick={() => setShowNetworkModal(true)}>
           <h3>Добавить сеть</h3>
@@ -327,9 +328,9 @@ const ManagersPage = () => {
           <span className="scanner-icon">
             <PlusCircle size={18} />
           </span>
-          <button className="custom-main-button" onClick={() => setShowNetworkModal(true)}>
+          <CustomMainButton onClick={() => setShowNetworkModal(true)}>
             Создать сеть
-          </button>
+          </CustomMainButton>
         </div>
         <div className="manager-card search-card">
           <h3>Поиск по карте</h3>
@@ -347,9 +348,7 @@ const ManagersPage = () => {
             className="location-modal-input"
             onChange={(e) => setCardNumber(e.target.value)}
           />
-          <button className="custom-main-button" onClick={handleFindCustomer}>
-            Найти клиента
-          </button>
+          <CustomMainButton onClick={handleFindCustomer}>Найти клиента</CustomMainButton>
         </div>
         <div className="manager-card scanner-card">
           <h3>Приложение-сканер</h3>
@@ -360,9 +359,7 @@ const ManagersPage = () => {
           <span className="scanner-icon">
             <Camera size={18} />
           </span>
-          <button className="custom-main-button" onClick={() => navigate('/scan')}>
-            Открыть
-          </button>
+          <CustomMainButton onClick={() => navigate('/scan')}>Открыть</CustomMainButton>
         </div>
       </div>
       <div className="table-wrapper">
