@@ -6,7 +6,7 @@ export const GlobalStyle = createGlobalStyle`
   @import '@fontsource/manrope/400.css';
 
   :root {
-    --header-height: 60px;
+    --header-height: 83px;
     --header-mobile-height: 100px;
     --bar-height: 73px;
     --sidebar-width: 72px;
@@ -93,6 +93,16 @@ export const GlobalStyle = createGlobalStyle`
     padding: 0;
   }
 
+  a, button, [role="button"], input, select, textarea, div {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    a, button, [role="button"], input, select, textarea { outline: none; }
+  }
+
+  :focus-visible { outline: 2px solid #444; outline-offset: 2px; }
+
   form {
     display: flex;
     flex-direction: column;
@@ -177,8 +187,8 @@ export const GlobalStyle = createGlobalStyle`
   @media (max-width: 999px) {
     .page-content {
       margin-left: 0;
-      margin-top: calc(var(--header-mobile-height) + var(--bar-height));
       min-height: 100%;
+      margin-top: auto;
     }
   }
 `;

@@ -3,6 +3,7 @@ import React, { useMemo } from 'react';
 import { Sun } from 'lucide-react';
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
 
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 import {
   EmptyState,
   Legend,
@@ -15,12 +16,8 @@ import {
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1'];
 
-const useIsMobile = () => {
-  return typeof window !== 'undefined' && window.innerWidth <= 768;
-};
-
 const ClientPortraitCard = ({ title, data }) => {
-  const isMobile = useIsMobile();
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const hasData = Array.isArray(data) && data.some((d) => Number(d?.value) > 0);
 
   const legend = useMemo(

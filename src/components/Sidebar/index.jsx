@@ -1,21 +1,9 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 
-import {
-  Camera,
-  CreditCard,
-  Home,
-  MapPin,
-  MessageSquare,
-  Settings,
-  User,
-  Users,
-} from 'lucide-react';
-
-import './styles.css';
+import { BottomNav, Glyph, IconButton, SidebarNav, StyledTooltip } from './styles';
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -26,68 +14,63 @@ const Sidebar = () => {
 
   const isActive = (path) => {
     if (path === '/') return location.pathname === path;
-
-    if (path === '/mailings/info') {
-      return location.pathname.startsWith('/mailings');
-    }
-
+    if (path === '/mailings/info') return location.pathname.startsWith('/mailings');
     return location.pathname.startsWith(path);
   };
 
   const adminItems = [
-    { icon: <Home size={20} />, label: 'Главная', path: '/' },
-    { icon: <CreditCard size={20} />, label: 'Карты', path: '/cards' },
-    { icon: <Users size={20} />, label: 'Клиенты', path: '/clients' },
-    { icon: <MessageSquare size={20} />, label: 'Рассылки', path: '/mailings/info' },
-    { icon: <MapPin size={20} />, label: 'Локации', path: '/locations' },
-    { icon: <User size={20} />, label: 'Менеджеры', path: '/managers' },
-    { icon: <Settings size={20} />, label: 'Настройки', path: '/settings' },
+    { icon: <Glyph src={'/icons/home.svg'} />, label: 'Главная', path: '/' },
+    { icon: <Glyph src={'/icons/cards.svg'} />, label: 'Карты', path: '/cards' },
+    { icon: <Glyph src={'/icons/people.svg'} />, label: 'Клиенты', path: '/clients' },
+    { icon: <Glyph src={'/icons/chat.svg'} />, label: 'Рассылки', path: '/mailings/info' },
+    { icon: <Glyph src={'/icons/location.svg'} />, label: 'Локации', path: '/locations' },
+    { icon: <Glyph src={'/icons/managers.svg'} />, label: 'Менеджеры', path: '/managers' },
+    { icon: <Glyph src={'/icons/billing.svg'} />, label: 'Настройки', path: '/settings' },
   ];
 
   const employeeItems = [
-    { icon: <Home size={20} />, label: 'Рабочее место', path: '/workplace' },
-    { icon: <Camera size={20} />, label: 'Сканер', path: '/scan' },
+    { icon: <Glyph src={'/icons/home.svg'} />, label: 'Рабочее место', path: '/workplace' },
+    { icon: <Glyph src={'/icons/scanner.svg'} />, label: 'Сканер', path: '/scan' },
   ];
 
   const items = role === 'employee' ? employeeItems : adminItems;
 
   return (
     <>
-      {/* Desktop Sidebar */}
-      <nav className="sidebar">
+      <SidebarNav>
         {items.map(({ icon, label, path }) => {
           const active = isActive(path);
           const tooltipId = `tooltip-${label}`;
           return (
             <React.Fragment key={path}>
-              <button
-                className={`icon-button ${active ? 'active' : ''}`}
+              <IconButton
+                className={active ? 'active' : ''}
                 onClick={handleNavigate(path)}
                 data-tooltip-id={tooltipId}
                 data-tooltip-content={label}
                 data-tooltip-place="right"
               >
                 {icon}
-              </button>
-              <Tooltip id={tooltipId} className="sidebar-tooltip" />
+              </IconButton>
+              <StyledTooltip id={tooltipId} />
             </React.Fragment>
           );
         })}
-      </nav>
+      </SidebarNav>
 
-      {/* Mobile Bottom Nav */}
-      <nav className="bottom-nav">
+      <BottomNav>
         {items.map(({ icon, label, path }) => (
-          <button
+          <IconButton
             key={path}
-            className={`icon-button ${isActive(path) ? 'active' : ''}`}
+            className={isActive(path) ? 'active' : ''}
             onClick={handleNavigate(path)}
             title={label}
           >
             {icon}
-          </button>
+            <p>{label}</p>
+          </IconButton>
         ))}
-      </nav>
+      </BottomNav>
     </>
   );
 };

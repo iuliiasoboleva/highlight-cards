@@ -158,5 +158,6 @@
 @media (max-width: 999px) {
   .submenu-wrapper {
     top: var(--header-mobile-height);
+    position: static;
   }
 }
