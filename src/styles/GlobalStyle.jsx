@@ -78,7 +78,6 @@ export const GlobalStyle = createGlobalStyle`
     margin-left: var(--sidebar-width);
     min-width: 0;
     min-height: 0;
-    max-width: 1600px;
   }
 
   a {

@@ -39,6 +39,17 @@ const MainLayout = () => {
 
   const currentCard = useSelector((state) => state.cards.currentCard);
 
+  const isEditFlow = !!matchEdit;
+
+  // 1) выбран тип карты?
+  const typeDone = isEditFlow && Boolean(currentCard?.typeReady);
+
+  // 2) настроен дизайн?
+  const designDone = isEditFlow && Boolean(currentCard?.designReady);
+
+  // 3) заполнены настройки?
+  const settingsDone = isEditFlow && Boolean(currentCard?.settingsReady);
+
   useEffect(() => {
     if (isTemplatePage) {
       dispatch(initializeCards({ useTemplates: true }));
@@ -78,41 +89,40 @@ const MainLayout = () => {
     return <Outlet />;
   }
 
-  const getSubMenuIcon = () => {
-    if (matchCreate || matchEdit) return Pencil;
-    if (matchMailings) return Mail;
-    if (matchSettings) return SettingsIcon;
-    if (
-      matchCardDetails ||
-      matchClientsRoot ||
-      matchClientsReviews ||
-      matchClientsRfm ||
-      matchClientDetails
-    )
-      return Users;
-    return null;
-  };
-
   const getMenuItems = () => {
     if (matchCreate) {
       const base = '/cards/create';
-      const tooltipText = 'Выберите тип карты, чтобы продолжить';
 
       return [
-        { to: `${base}`, label: 'Тип карты' },
-        { to: `${base}/settings`, label: 'Настройки', disabled: true, tooltip: tooltipText },
-        { to: `${base}/design`, label: 'Дизайн', disabled: true, tooltip: tooltipText },
-        { to: `${base}/info`, label: 'Информация', disabled: true, tooltip: tooltipText },
+        { to: `${base}`, label: '1. Тип карты' },
+        {
+          to: `${base}/design`,
+          label: '2. Дизайн карты',
+          disabled: !typeDone,
+          tooltip: 'Сначала выберите тип карты',
+        },
+        {
+          to: `${base}/settings`,
+          label: '3. Настройки карты',
+          disabled: !designDone,
+          tooltip: 'Сначала настройте дизайн',
+        },
+        {
+          to: `${base}/info`,
+          label: '4. Оборотная сторона карты',
+          disabled: !settingsDone,
+          tooltip: 'Сначала заполните настройки',
+        },
       ];
     }
 
     if (matchEdit) {
       const base = `/cards/${id}/edit`;
       return [
-        { to: `${base}/type`, label: 'Тип карты' },
-        { to: `${base}/settings`, label: 'Настройки' },
-        { to: `${base}/design`, label: 'Дизайн' },
-        { to: `${base}/info`, label: 'Информация' },
+        { to: `${base}`, label: '1. Тип карты' },
+        { to: `${base}/design`, label: '2. Дизайн карты' },
+        { to: `${base}/settings`, label: '3. Настройки карты' },
+        { to: `${base}/info`, label: '4. Оборотная сторона карты' },
       ];
     }
 
@@ -186,7 +196,6 @@ const MainLayout = () => {
         <div style={lockStyle}>
           <SubMenu
             menuItems={getMenuItems()}
-            icon={getSubMenuIcon()}
             showRightActions={matchEdit || matchCreate}
             showNameInput={!!matchEdit || !!matchCreate}
             initialName={currentCard?.name || ''}

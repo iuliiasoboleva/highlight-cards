@@ -1,27 +1,36 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { HelpCircle, QrCode } from 'lucide-react';
+import { ChevronLeft, QrCode } from 'lucide-react';
 
 import { createCard, saveCard, setCurrentCard } from '../../store/cardsSlice';
 import QRPopup from '../QRPopup';
+import {
+  CardNameInput,
+  IconButton,
+  NameEditor,
+  PageIcon,
+  RequiredStar,
+  SaveButton,
+  SubmenuCenter,
+  SubmenuInner,
+  SubmenuLeft,
+  SubmenuRight,
+  SubmenuWrapper,
+  TabButton,
+  TabLink,
+} from './styles';
 
-import './styles.css';
-
-const SubMenu = ({
-  menuItems,
-  showNameInput,
-  onNameChange,
-  initialName,
-  icon: Icon,
-  showRightActions,
-}) => {
+const SubMenu = ({ menuItems, showNameInput, onNameChange, initialName, showRightActions }) => {
   const { id } = useParams();
   const location = useLocation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const cards = useSelector((state) => state.cards.cards);
   const currentCard = useSelector((state) => state.cards.currentCard);
+
   const [name, setName] = useState(initialName || '');
   const [showQRPopup, setShowQRPopup] = useState(false);
 
@@ -32,66 +41,68 @@ const SubMenu = ({
   };
 
   return (
-    <div className="submenu-wrapper">
-      <div className="submenu-inner">
-        <div className="submenu-left">
-          <div className="submenu-page-icon">{Icon && <Icon size={22} color="#fff" />}</div>
+    <SubmenuWrapper>
+      <SubmenuInner>
+        <SubmenuLeft>
+          <PageIcon
+            as="button"
+            type="button"
+            onClick={() => navigate(-1)}
+            aria-label="Назад"
+            title="Назад"
+          >
+            <ChevronLeft size={18} color="#fff" />
+          </PageIcon>
+
           {showNameInput && (
-            <div className="name-editor">
-              <input
+            <NameEditor>
+              <CardNameInput
                 type="text"
                 value={name}
                 onChange={handleNameChange}
                 placeholder="Название карты"
-                className="card-name-button"
               />
-              <span className="required-star">*</span>
-            </div>
+              <RequiredStar>*</RequiredStar>
+            </NameEditor>
           )}
-        </div>
+        </SubmenuLeft>
 
-        <div className="submenu-center" style={showRightActions ? { flex: '1' } : {}}>
+        <SubmenuCenter $grow={showRightActions}>
           {menuItems.map((item, index) => {
             const isActive = location.pathname === item.to;
+
             return (
               <React.Fragment key={item.label}>
-                {index !== 0 && showRightActions && <span className="divider">—</span>}
                 {item.disabled ? (
-                  <button className="submenu-tab disabled" disabled>
-                    {item.label}
-                  </button>
+                  <TabButton disabled>{item.label}</TabButton>
                 ) : (
-                  <Link to={item.to} className={`submenu-tab ${isActive ? 'active' : ''}`}>
+                  <TabLink to={item.to} $active={isActive}>
                     {item.label}
-                  </Link>
+                  </TabLink>
                 )}
               </React.Fragment>
             );
           })}
-        </div>
+        </SubmenuCenter>
 
         {!showRightActions && id && (
-          <div className="submenu-right" style={{ marginLeft: 'auto' }}>
-            <Link
+          <SubmenuRight>
+            <TabLink
               to={`/cards/${id}/edit/type`}
-              className="submenu-tab"
               onClick={() => {
                 const cardData = cards.find((c) => c.id === Number(id));
                 if (cardData) dispatch(setCurrentCard(cardData));
               }}
             >
               Редактировать
-            </Link>
-          </div>
+            </TabLink>
+          </SubmenuRight>
         )}
 
+        {/* Правые действия */}
         {showRightActions && (
-          <div className="submenu-right">
-            <button className="submenu-icon-button" title="Помощь">
-              <HelpCircle size={16} color="#aaa" />
-            </button>
-            <button
-              className="submenu-tab submenu-save-button"
+          <SubmenuRight>
+            <SaveButton
               onClick={async () => {
                 const exists = cards.some((c) => c.id === currentCard.id && c.id !== 'fixed');
                 try {
@@ -106,16 +117,19 @@ const SubMenu = ({
                 }
               }}
             >
-              Сохранить и посмотреть
-            </button>
-            <button className="submenu-icon-button" title="QR">
-              <QrCode size={16} color="#aaa" />
-            </button>
-          </div>
+              Сохранить
+            </SaveButton>
+
+            <IconButton aria-label="QR">
+              <QrCode size={16} color="white" />
+              Печать QR-кода
+            </IconButton>
+          </SubmenuRight>
         )}
+
         {showQRPopup && <QRPopup cardId={id} onClose={() => setShowQRPopup(false)} />}
-      </div>
-    </div>
+      </SubmenuInner>
+    </SubmenuWrapper>
   );
 };
 

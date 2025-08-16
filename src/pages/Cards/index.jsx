@@ -16,31 +16,25 @@ import {
   saveOrder,
   togglePinAsync,
 } from '../../store/cardsSlice';
-
-import './styles.css';
-
-const cardDescriptions = {
-  discount: {
-    title: 'Скидочная карта',
-    text: 'Постоянная скидка для ваших клиентов. Клиент предъявляет карту — получает фиксированную скидку на каждый заказ.',
-  },
-  stamp: {
-    title: 'Штампы',
-    text: 'Клиент собирает виртуальные штампы за покупки и получает подарок. При регистрации он сразу получает 2 штампа: за регистрацию и первый визит — чтобы быстрее почувствовать прогресс.',
-  },
-  cashback: {
-    title: 'Кэшбэк',
-    text: 'Часть суммы каждой покупки возвращается клиенту в виде баллов. Баллами можно оплатить будущие заказы.',
-  },
-  subscription: {
-    title: 'Абонемент (клубная карта)',
-    text: 'Карта с доступом к специальным условиям или ограниченным числом посещений. Можно настроить "пакеты услуг" или "уровни клиента".',
-  },
-  certificate: {
-    title: 'Подарочный сертификат',
-    text: '',
-  },
-};
+import {
+  CardBottom,
+  CardBottomText,
+  CardImage,
+  CardImageBlock,
+  CardState,
+  CardWrap,
+  CardsGrid,
+  DragHandle,
+  DraggableInfo,
+  NameEdit,
+  NameInput,
+  NameSaveBtn,
+  Page,
+  PhoneFrame,
+  PhoneScreenImg,
+  PinBtn,
+  StatusIndicator,
+} from './styles';
 
 const Cards = () => {
   const location = useLocation();
@@ -82,130 +76,146 @@ const Cards = () => {
     }
   }, [dispatch, isTemplatePage]);
 
-  if (loading) {
-    return <LoaderCentered />;
-  }
+  if (loading) return <LoaderCentered />;
 
   return (
-    <div className="mailings-container">
+    <Page>
       <TitleWithHelp
-        title={'Создайте свою карту лояльности'}
+        title="Создайте свою карту лояльности"
         tooltipId="cards-help"
         tooltipHtml
         tooltipContent={`Выберите тип карты, который лучше всего подходит вашему бизнесу и настройте её за несколько минут. 
-                После выбора вы сможете настроить логотип, цвета и правила начисления баллов.`}
+После выбора вы сможете настроить логотип, цвета и правила начисления баллов.`}
       />
-      <div className="cards">
-        {cards.map((card, idx) => (
-          <div
-            key={card.id}
-            className={`card ${card.isActive ? 'active' : 'inactive'} ${card.isPinned ? 'pinned' : ''} ${isTemplatePage ? 'no-hover' : ''}`}
-          >
-            {!isTemplatePage && (
-              <div className="card-state">
-                <span className={`status-indicator ${card.isActive ? 'active' : 'inactive'}`} />
-                {card.title}
-              </div>
-            )}
-            <div className="card-image-block">
-              {!isTemplatePage && card.id !== 'fixed' && (
-                <div
-                  className="card-pin-btn"
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    dispatch(togglePinAsync(card.id));
-                  }}
-                >
-                  {card.isPinned ? <PinOff size={18} /> : <Pin size={18} />}
-                </div>
+
+      <CardsGrid>
+        {cards.map((card, idx) => {
+          const pinned = !!card.isPinned;
+          const noHover = isTemplatePage;
+
+          return (
+            <CardWrap key={card.id} $noHover={noHover}>
+              {!isTemplatePage && (
+                <CardState>
+                  <StatusIndicator $active={card.isActive} />
+                  {card.title}
+                </CardState>
               )}
-              {!isTemplatePage && card.id !== 'fixed' && (
-                <img src={moveIcon} alt="Переместить" className="card-drag-handle" />
-              )}
-              <img className="card-image" src={card.frameUrl} alt={card.name} draggable="false" />
-              {card.id !== 'fixed' && (
-                <div
-                  className="card-info-draggable"
-                  draggable={!isTemplatePage}
-                  onDragStart={(e) => {
-                    setDragIndex(idx);
-                    e.dataTransfer.effectAllowed = 'move';
-                  }}
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    if (dragIndex === null || dragIndex === idx) return;
-                    const updated = [...cardsRef.current];
-                    const item = updated[dragIndex];
-                    updated.splice(dragIndex, 1);
-                    updated.splice(idx, 0, item);
-                    dispatch(reorderCards(updated));
-                    setDragIndex(idx);
-                  }}
-                  onDrop={() => {
-                    const ids = cardsRef.current.slice(1).map((c) => c.id);
-                    localStorage.setItem('cards_order', JSON.stringify(ids));
-                    dispatch(saveOrder(ids));
-                    setDragIndex(null);
-                  }}
-                >
-                  <CardInfo card={card} />
-                </div>
-              )}
-            </div>
-            <div className="card-bottom">
-              <div className="card-bottom-text">
-                {editingId === card.id ? (
-                  <div className="card-name-edit">
-                    <input
-                      value={newName}
-                      onChange={(e) => setNewName(e.target.value)}
-                      onBlur={() => {
-                        if (newName.trim() && newName !== card.name) {
-                          dispatch(renameCardAsync({ id: card.id, name: newName.trim() }));
-                        }
-                        setEditingId(null);
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
+
+              <CardImageBlock>
+                {!isTemplatePage && card.id !== 'fixed' && (
+                  <PinBtn
+                    $pinned={pinned}
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      dispatch(togglePinAsync(card.id));
+                    }}
+                  >
+                    {pinned ? <PinOff size={18} /> : <Pin size={18} />}
+                  </PinBtn>
+                )}
+
+                {!isTemplatePage && card.id !== 'fixed' && (
+                  <DragHandle src={moveIcon} alt="Переместить" />
+                )}
+
+                {card.id === 'fixed' ? (
+                  <PhoneFrame src={card.frameUrl}>
+                    <PhoneScreenImg src={card.cardImg} alt={card.name} draggable="false" />
+                  </PhoneFrame>
+                ) : (
+                  <CardImage
+                    className="card-image"
+                    src={card.frameUrl}
+                    alt={card.name}
+                    draggable="false"
+                  />
+                )}
+                {card.id !== 'fixed' && (
+                  <DraggableInfo
+                    $draggable={!isTemplatePage}
+                    onDragStart={(e) => {
+                      setDragIndex(idx);
+                      e.dataTransfer.effectAllowed = 'move';
+                    }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      if (dragIndex === null || dragIndex === idx) return;
+                      const updated = [...cardsRef.current];
+                      const item = updated[dragIndex];
+                      updated.splice(dragIndex, 1);
+                      updated.splice(idx, 0, item);
+                      dispatch(reorderCards(updated));
+                      setDragIndex(idx);
+                    }}
+                    onDrop={() => {
+                      const ids = cardsRef.current.slice(1).map((c) => c.id);
+                      localStorage.setItem('cards_order', JSON.stringify(ids));
+                      dispatch(saveOrder(ids));
+                      setDragIndex(null);
+                    }}
+                  >
+                    <CardInfo card={card} />
+                  </DraggableInfo>
+                )}
+              </CardImageBlock>
+
+              <CardBottom>
+                <CardBottomText>
+                  {editingId === card.id ? (
+                    <NameEdit>
+                      <NameInput
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                        onBlur={() => {
                           if (newName.trim() && newName !== card.name) {
                             dispatch(renameCardAsync({ id: card.id, name: newName.trim() }));
                           }
                           setEditingId(null);
-                        }
-                      }}
-                      autoFocus
-                      className="card-name-input"
-                    />
-                    <button
-                      className="card-name-save-btn"
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            if (newName.trim() && newName !== card.name) {
+                              dispatch(renameCardAsync({ id: card.id, name: newName.trim() }));
+                            }
+                            setEditingId(null);
+                          }
+                        }}
+                        autoFocus
+                      />
+                      <NameSaveBtn
+                        onClick={() => {
+                          if (newName.trim() && newName !== card.name) {
+                            dispatch(renameCardAsync({ id: card.id, name: newName.trim() }));
+                          }
+                          setEditingId(null);
+                        }}
+                        aria-label="Сохранить"
+                        title="Сохранить"
+                      >
+                        <Check size={18} />
+                      </NameSaveBtn>
+                    </NameEdit>
+                  ) : (
+                    <h3
                       onClick={() => {
-                        if (newName.trim() && newName !== card.name) {
-                          dispatch(renameCardAsync({ id: card.id, name: newName.trim() }));
-                        }
-                        setEditingId(null);
+                        setEditingId(card.id);
+                        setNewName(card.name);
                       }}
+                      style={{ cursor: 'pointer' }}
                     >
-                      <Check size={18} />
-                    </button>
-                  </div>
-                ) : (
-                  <h3
-                    onClick={() => {
-                      setEditingId(card.id);
-                      setNewName(card.name);
-                    }}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    {card.name}
-                  </h3>
-                )}
-              </div>
-              <CardButtons isFixed={card.id === 'fixed'} cardId={card.id} />
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+                      {card.name}
+                    </h3>
+                  )}
+                </CardBottomText>
+
+                <CardButtons isFixed={card.id === 'fixed'} cardId={card.id} />
+              </CardBottom>
+            </CardWrap>
+          );
+        })}
+      </CardsGrid>
+    </Page>
   );
 };
 

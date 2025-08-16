@@ -14,6 +14,7 @@ export const fixedCard = {
   isFixed: true,
   frameUrl: '/phone.svg',
   name: 'Создать карту',
+  cardImg: '/images/example.png',
 };
 
 const getAllCards = (useTemplates = false) => {

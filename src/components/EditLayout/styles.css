@@ -182,6 +182,16 @@
   margin-inline: auto;
 }
 
+.card-text-default {
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 133%;
+  letter-spacing: -0.24px;
+  max-width: 190px;
+  text-align: center;
+  color: #656565;
+}
+
 @media (max-width: 999px) {
   .edit-type-tabs {
     border-bottom: none;

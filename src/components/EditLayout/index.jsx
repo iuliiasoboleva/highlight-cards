@@ -107,7 +107,9 @@ const EditLayout = ({ children, onFieldClick }) => {
                     <span
                       className={`status-indicator ${currentCard.isActive ? 'active' : 'inactive'}`}
                     />
-                    {currentCard.isActive ? 'Активна' : 'Не активна'}
+                    <p className="card-text-default">
+                      Так карта будет выглядеть в телефоне клиента
+                    </p>
                   </div>
                   <div className="phone-frame">
                     <img
@@ -161,9 +163,9 @@ const EditLayout = ({ children, onFieldClick }) => {
                   </div>
                 </div>
 
-                <button className="activate-button" onClick={handleToggleActive}>
+                {/* <button className="activate-button" onClick={handleToggleActive}>
                   Активировать
-                </button>
+                </button> */}
                 {/* <p className="activate-text">
                 Пока карта не активирована, вы можете выдать до 10 карт клиентам{' '}
               </p> */}

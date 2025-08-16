@@ -1,7 +1,7 @@
 export const defaultCardTemplate = {
   id: 3333,
   status: 'stamp',
-  name: 'Накопительная карта',
+  name: 'Новая карта лояльности',
   isActive: false,
   urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
   qrImg: '/qr-code.svg',
@@ -13,6 +13,9 @@ export const defaultCardTemplate = {
   currentLevel: '',
   balance: 500,
   title: 'Сертификат',
+  designReady: false,
+  settingsReady: false,
+  typeReady: false,
   expirationDate: '00.00.0000',
   firstVisitDiscount: '10',
   visitsCount: 8,

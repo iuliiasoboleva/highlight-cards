@@ -2,56 +2,28 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { BadgePercent, DollarSign, Gift, Stamp, Ticket } from 'lucide-react';
-
 import EditLayout from '../../components/EditLayout';
 import TitleWithHelp from '../../components/TitleWithHelp';
-import { createCard, setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
-
-import './styles.css';
-
-const cardTypes = [
-  {
-    id: 'stamp',
-    name: 'Штамп',
-    icon: Stamp,
-    tag: 'high',
-    desc: 'Собирайте визиты — и дарите бонус',
-  },
-  {
-    id: 'discount',
-    name: 'Скидка',
-    icon: BadgePercent,
-    tag: 'high',
-    desc: 'Автоматическая скидка по карте',
-  },
-  {
-    id: 'cashback',
-    name: 'Кэшбэк',
-    icon: DollarSign,
-    tag: 'high',
-    desc: 'Накопление % от суммы чека',
-  },
-  {
-    id: 'subscription',
-    name: 'Абонемент',
-    icon: Ticket,
-    tag: 'shop',
-    desc: 'Фиксированное число посещений',
-  },
-  {
-    id: 'certificate',
-    name: 'Подарочный сертификат',
-    icon: Gift,
-    tag: 'shop',
-    desc: 'Карта с фиксированной суммой',
-  },
-];
+import { setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
+import { cardTypes } from './cardTypes';
+import {
+  BottomText,
+  CreateButton,
+  Divider,
+  Grid,
+  StepNote,
+  TitleRow,
+  TypeCard,
+  TypeDesc,
+  TypeName,
+  TypeTag,
+} from './styles';
 
 const EditType = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { currentCard, cards } = useSelector((state) => state.cards);
+
   const [selectedType, setSelectedType] = useState(currentCard.status || 'stamp');
 
   useEffect(() => {
@@ -69,58 +41,62 @@ const EditType = () => {
 
   const handleTypeSelect = (typeId) => {
     setSelectedType(typeId);
-    const cardName = cardTypes.find((type) => type.id === typeId)?.name || 'Карта';
+    const cardName = cardTypes.find((t) => t.id === typeId)?.name || 'Карта';
     dispatch(updateCurrentCardField({ path: 'status', value: typeId }));
     dispatch(updateCurrentCardField({ path: 'name', value: cardName }));
   };
 
-  const handleCreateCard = () => {
+  const handleContinue = () => {
     if (!selectedType) return;
-    navigate(`/cards/${currentCard.id}/edit/settings`);
+    navigate(`/cards/${currentCard.id}/create/design`);
   };
 
-  const typeContent = (
-    <div>
-      <TitleWithHelp
-        title={'Тип карты'}
-        tooltipId="edit-type-help"
-        tooltipHtml
-        tooltipContent={`Выберите тип карты для дальнейшей настройки`}
-      />
-      <hr />
-
-      <div className="card-types-grid">
+  return (
+    <EditLayout>
+      <div>
+        <TitleRow>
+          <TitleWithHelp
+            title="Выберите тип карты"
+            tooltipId="edit-type-help"
+            tooltipHtml
+            tooltipContent="Выберите тип карты для дальнейшей настройки"
+          />
+          <StepNote>Шаг 1 из 4</StepNote>
+        </TitleRow>
+        <Divider />
+      </div>
+      <Grid>
         {cardTypes.map((type) => {
-          const isSelected = selectedType === type.id;
           const Icon = type.icon;
+          const isSelected = selectedType === type.id;
           return (
-            <div
+            <TypeCard
               key={type.id}
-              className={`edit-type-card ${isSelected ? 'selected' : ''}`}
+              type="button"
+              $selected={isSelected}
               onClick={() => handleTypeSelect(type.id)}
+              aria-pressed={isSelected}
             >
-              <Icon className="icon" size={24} />
-              <div className="edit-type-name">{type.name}</div>
-              <div className="edit-type-desc">{type.desc}</div>
-              <div
-                className={`edit-type-tag ${
-                  type.tag === 'high' ? 'edit-type-green' : 'edit-type-purple'
-                }`}
-              >
+              <Icon />
+              <TypeName>{type.name}</TypeName>
+              <TypeDesc $selected={isSelected}>{type.desc}</TypeDesc>
+              <TypeTag $kind={type.tag}>
                 {type.tag === 'high' ? 'Высокий уровень удержания' : 'Лучшее для покупок'}
-              </div>
-            </div>
+              </TypeTag>
+            </TypeCard>
           );
         })}
-      </div>
+      </Grid>
 
-      <button onClick={handleCreateCard} disabled={!selectedType} className="create-button">
-        Продолжить
-      </button>
-    </div>
+      <CreateButton onClick={handleContinue} disabled={!selectedType}>
+        Перейти к следующему шагу
+      </CreateButton>
+      <BottomText>
+        Вы выбрали карту типа {selectedType}. Перейдите к следующему шагу, чтобы настроить срок
+        действия и другие параметры
+      </BottomText>
+    </EditLayout>
   );
-
-  return <EditLayout>{typeContent}</EditLayout>;
 };
 
 export default EditType;
