@@ -4,8 +4,8 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import EditLayout from '../../components/EditLayout';
 import TitleWithHelp from '../../components/TitleWithHelp';
-import ToggleSwitch from '../../components/ToggleSwitch';
 import CustomSelect from '../../customs/CustomSelect';
+import ToggleSwitch from '../../customs/CustomToggleSwitch';
 import CustomTooltip from '../../customs/CustomTooltip';
 import {
   addCurrentCardArrayItem,

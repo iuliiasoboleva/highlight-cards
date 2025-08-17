@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Users } from 'lucide-react';
 
 import axiosInstance from '../../axiosInstance';
-import GeoBadge from '../../components/GeoBadge/index.jsx';
-import PushPreview from '../../components/PushPreview';
+import EditLayout from '../../components/EditLayout';
+import GeoBadge from '../../components/GeoBadge';
 import TitleWithHelp from '../../components/TitleWithHelp';
 import CustomCheckbox from '../../customs/CustomCheckbox';
 import CustomSelect from '../../customs/CustomSelect';
@@ -14,7 +14,6 @@ import { pluralVerb, pluralize } from '../../helpers/pluralize';
 import { setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
 import PushHistory from './PushHistory';
 import PushTargetTabs from './PushTargetTabs';
-import './styles.jsx';
 import {
   MailingsPushBox,
   NoActiveCardsText,
@@ -27,22 +26,19 @@ import {
 
 const MailingsPush = () => {
   const dispatch = useDispatch();
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
-  const [activeTab, setActiveTab] = useState('settings');
 
   const allCards = useSelector((state) => state.cards.cards);
   const cards = allCards.filter((card) => card.id !== 'fixed');
   const hasActiveCards = cards?.length > 0;
 
   const currentCard = useSelector((state) => state.cards.currentCard);
+  const user = useSelector((state) => state.user);
+
   const [pushMessage, setPushMessage] = useState('');
   const [scheduledDate, setScheduledDate] = useState('');
   const [isScheduled, setIsScheduled] = useState(false);
   const [selectedTab, setSelectedTab] = useState('all');
   const [usersCount, setUsersCount] = useState(0);
-
-  const user = useSelector((state) => state.user);
-
   const [history, setHistory] = useState([]);
 
   const fetchHistory = useCallback(async () => {
@@ -71,7 +67,7 @@ const MailingsPush = () => {
     if (currentCard) {
       setPushMessage(
         currentCard.pushNotification?.message ||
-          `Новое уведомление по вашей карте "${currentCard.title}"`,
+          `Новое уведомление по вашей карте "${currentCard.name}"`,
       );
 
       const hasSchedule = Boolean(currentCard.pushNotification?.scheduledDate);
@@ -92,7 +88,7 @@ const MailingsPush = () => {
         setCurrentCard({
           ...selected,
           pushNotification: selected.pushNotification || {
-            message: `Новое уведомление по вашей карте "${selected.title}"`,
+            message: `Новое уведомление по вашей карте "${selected.name}"`,
             scheduledDate: '',
           },
         }),
@@ -114,7 +110,7 @@ const MailingsPush = () => {
   const handleSavePushSettings = async () => {
     if (!currentCard) return;
 
-    // сохраняем в карте pushNotification через redux (для UI)
+    // Сохраняем в карту для UI/превью
     dispatch(
       updateCurrentCardField({
         path: 'pushNotification',
@@ -125,7 +121,7 @@ const MailingsPush = () => {
       }),
     );
 
-    // создаём запись рассылки
+    // Создаём запись рассылки
     try {
       await axiosInstance.post('/mailings', {
         card_id: currentCard.id,
@@ -144,147 +140,97 @@ const MailingsPush = () => {
     }
   };
 
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 1024);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const pushContent = hasActiveCards ? (
-    <div className="edit-type-left">
-      <div className="edit-type-page">
-        <TitleWithHelp
-          title="Отправить push"
-          tooltipId="push-help"
-          tooltipHtml
-          tooltipContent={`Хотите отправить пуши только нужным клиентам?<br/><br/>
+  // --- контент левой колонки (children для EditLayout) ---
+  const leftContent = hasActiveCards ? (
+    <>
+      <TitleWithHelp
+        title="Отправить push"
+        tooltipId="push-help"
+        tooltipHtml
+        tooltipContent={`Хотите отправить пуши только нужным клиентам?<br/><br/>
 Выберите один или несколько сегментов — например, «Растущие» или «В зоне риска».<br/><br/>
 Настроить сегменты можно во вкладке  «Сегментация клиентов» в разделе «Клиенты».`}
+      />
+
+      <MailingsPushBox>
+        <CustomSelect
+          value={currentCard?.id || null}
+          onChange={handleCardSelect}
+          options={cards.map((card) => ({
+            value: card.id,
+            label: card.title,
+          }))}
+          disabled={!hasActiveCards}
         />
-        <MailingsPushBox>
-          <CustomSelect
-            value={currentCard?.id || null}
-            onChange={handleCardSelect}
-            options={cards.map((card) => ({
-              value: card.id,
-              label: card.title,
-            }))}
-            disabled={!hasActiveCards}
+
+        <PushTargetTabs onTabChange={setSelectedTab} onFilteredCountChange={setUsersCount} />
+
+        <PushRecipientCount>
+          <Users size={16} />
+          {usersCount} {pluralize(usersCount, ['клиент', 'клиента', 'клиентов'])}{' '}
+          {pluralVerb(usersCount, 'получит', 'получат')} ваше сообщение
+        </PushRecipientCount>
+
+        <PushSchedule>
+          <CustomCheckbox
+            label="Запланировать"
+            checked={isScheduled}
+            onChange={handleScheduleToggle}
           />
 
-          <PushTargetTabs onTabChange={setSelectedTab} onFilteredCountChange={setUsersCount} />
-
-          <PushRecipientCount>
-            <Users size={16} />
-            {usersCount} {pluralize(usersCount, ['клиент', 'клиента', 'клиентов'])}{' '}
-            {pluralVerb(usersCount, 'получит', 'получат')} ваше сообщение
-          </PushRecipientCount>
-
-          <PushSchedule>
-            <CustomCheckbox
-              label="Запланировать"
-              checked={isScheduled}
-              onChange={handleScheduleToggle}
+          {isScheduled && (
+            <PushDate
+              type="datetime-local"
+              value={scheduledDate}
+              min={getMinDateTime()}
+              onChange={(e) => setScheduledDate(e.target.value)}
             />
+          )}
+        </PushSchedule>
 
-            {isScheduled && (
-              <PushDate
-                type="datetime-local"
-                value={scheduledDate}
-                min={getMinDateTime()}
-                onChange={(e) => setScheduledDate(e.target.value)}
-              />
-            )}
-          </PushSchedule>
-
-          <PushTextarea
-            value={pushMessage}
-            onChange={(e) => setPushMessage(e.target.value)}
-            placeholder="Введите текст push-уведомления"
-          />
-
-          <SubmitButton onClick={handleSavePushSettings} disabled={!pushMessage.trim()}>
-            Отправить
-          </SubmitButton>
-        </MailingsPushBox>
-
-        <PushHistory
-          history={history}
-          onDelete={async (id) => {
-            try {
-              await axiosInstance.delete(`/mailings/${id}`);
-              setHistory((prev) => prev.filter((m) => m.id !== id));
-            } catch (e) {
-              console.error(e);
-            }
-          }}
+        <PushTextarea
+          value={pushMessage}
+          onChange={(e) => setPushMessage(e.target.value)}
+          placeholder="Введите текст push-уведомления"
         />
-      </div>
-    </div>
+
+        <SubmitButton onClick={handleSavePushSettings} disabled={!pushMessage.trim()}>
+          Отправить
+        </SubmitButton>
+      </MailingsPushBox>
+
+      <PushHistory
+        history={history}
+        onDelete={async (id) => {
+          try {
+            await axiosInstance.delete(`/mailings/${id}`);
+            setHistory((prev) => prev.filter((m) => m.id !== id));
+          } catch (e) {
+            console.error(e);
+          }
+        }}
+      />
+    </>
   ) : (
-    <div className="edit-type-left">
-      <div className="edit-type-page">
-        <div className="mailings-push-container">
-          <GeoBadge title="Push-уведомления" />
-          <NoActiveCardsText>
-            У вас нет активных карт, чтобы настроить push-уведомление. Пожалуйста, создайте и
-            активируйте карту в разделе "Карты".
-          </NoActiveCardsText>
-        </div>
+    <>
+      <div className="mailings-push-container">
+        <GeoBadge title="Push-уведомления" />
+        <NoActiveCardsText>
+          У вас нет активных карт, чтобы настроить push-уведомление. Пожалуйста, создайте и
+          активируйте карту в разделе "Карты".
+        </NoActiveCardsText>
       </div>
-    </div>
-  );
-
-  const cardPreview = hasActiveCards && (
-    <div className="edit-type-right">
-      <div className="phone-sticky">
-        <div className="card-state">
-          <span className={`status-indicator ${currentCard.isActive ? 'active' : 'inactive'}`} />
-          {currentCard.isActive ? 'Активна' : 'Не активна'}
-        </div>
-        <div className="phone-frame">
-          <img className="phone-image" src={currentCard.frameUrl} alt={currentCard.name} />
-          <div className="phone-screen">
-            <PushPreview
-              card={currentCard}
-              message={pushMessage}
-              scheduledDate={isScheduled ? scheduledDate : null}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
+    </>
   );
 
   return (
-    <div className="edit-type-layout">
-      {isMobile && (
-        <div className="edit-type-tabs">
-          {['settings', 'card'].map((tab) => (
-            <button
-              key={tab}
-              className={`edit-type-tab ${activeTab === tab ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab === 'settings' ? 'Настройки' : 'Превью'}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {isMobile ? (
-        activeTab === 'settings' ? (
-          pushContent
-        ) : (
-          cardPreview
-        )
-      ) : (
-        <>
-          {pushContent}
-          {cardPreview}
-        </>
-      )}
-    </div>
+    <EditLayout
+      defaultPlatform="chat"
+      chatMessage={pushMessage}
+      chatScheduledDate={isScheduled ? scheduledDate : undefined}
+    >
+      {leftContent}
+    </EditLayout>
   );
 };
 

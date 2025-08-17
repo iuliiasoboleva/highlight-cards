@@ -9,6 +9,7 @@ export const Input = styled.input`
   cursor: pointer;
   transition: all 0.3s;
   font-size: 16px;
+  outline: none;
 
   &:hover {
     border-color: #bf4756;

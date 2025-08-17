@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import ImageEditorModal from '../../components/ImageEditorModal';
 import LoaderCentered from '../../components/LoaderCentered';
+import { useToast } from '../../components/Toast';
 import { logout as authLogout } from '../../store/authSlice';
 import {
   deleteAccount,
@@ -25,7 +26,6 @@ import {
   ProfileForm as ProfileFormWrap,
   ProfileRightBlock,
   ProfileSection,
-  Toast,
   Wrapper,
 } from './styles';
 import dataUrlToFile from './utils/dataUrlToFile';
@@ -33,14 +33,7 @@ import dataUrlToFile from './utils/dataUrlToFile';
 const SettingsPersonal = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
-
-  // Тост + прогресс
-  const [toast, setToast] = useState(null);
-
-  const showToast = useCallback((msg, ok = true) => {
-    setToast({ msg, ok });
-    setTimeout(() => setToast(null), 3000);
-  }, []);
+  const toast = useToast();
 
   const { saving, startProgress, finishProgress, progress, setSaving } = useLinearProgress();
 
@@ -55,6 +48,11 @@ const SettingsPersonal = () => {
       if (revokeRef.current) URL.revokeObjectURL(revokeRef.current);
     };
   }, []);
+
+  const showToast = useCallback(
+    (msg, ok = true) => (ok ? toast.success(msg) : toast.error(msg)),
+    [toast],
+  );
 
   const openEditorWithFile = useCallback(
     (file) => {
@@ -86,9 +84,9 @@ const SettingsPersonal = () => {
       try {
         const file = await dataUrlToFile(croppedDataUrl, 'avatar.jpg');
         await dispatch(uploadAvatar(file)).unwrap();
-        showToast('Фото обновлено', true);
+        toast.success('Фото обновлено');
       } catch {
-        showToast('Не удалось загрузить фото', false);
+        toast.error('Не удалось загрузить фото');
       } finally {
         setEditorOpen(false);
         if (revokeRef.current) {
@@ -98,7 +96,7 @@ const SettingsPersonal = () => {
         setRawImageUrl(null);
       }
     },
-    [dispatch, showToast],
+    [dispatch, toast],
   );
 
   const handleEditorStateChange = useCallback((settings) => {
@@ -112,11 +110,11 @@ const SettingsPersonal = () => {
   const removeAvatarAction = useCallback(async () => {
     try {
       await dispatch(removeAvatar());
-      showToast('Фото удалено', true);
+      toast.success('Фото удалено');
     } catch {
-      showToast('Не удалось удалить фото', false);
+      toast.error('Не удалось удалить фото');
     }
-  }, [dispatch, showToast]);
+  }, [dispatch, toast]);
 
   const handleChange = useCallback(
     (field, value) => {
@@ -158,9 +156,9 @@ const SettingsPersonal = () => {
         }),
       ).unwrap();
 
-      showToast('Настройки сохранены', true);
+      toast.success('Настройки сохранены');
     } catch (err) {
-      showToast(typeof err === 'string' ? err : 'Ошибка сохранения', false);
+      toast.error(typeof err === 'string' ? err : 'Ошибка сохранения');
     } finally {
       setSaving(false);
       finishProgress();
@@ -170,14 +168,14 @@ const SettingsPersonal = () => {
   const handleDeleteAccount = async (payload) => {
     try {
       await dispatch(deleteAccount(payload)).unwrap();
-      showToast('Аккаунт удалён', true);
+      toast.success('Аккаунт удалён');
       setTimeout(() => {
         dispatch(logout());
         dispatch(authLogout());
         window.location.href = '/auth';
       }, 1200);
     } catch (err) {
-      showToast(typeof err === 'string' ? err : 'Ошибка удаления', false);
+      toast.error(typeof err === 'string' ? err : 'Ошибка удаления');
     }
   };
 
@@ -211,7 +209,7 @@ const SettingsPersonal = () => {
                   languages={languages}
                   timezones={timezones}
                   onFieldChange={handleChange}
-                  showToast={showToast}
+                  showToast={(m, ok = true) => showToast(m, ok)}
                 />
 
                 <MainButton type="submit" disabled={saving}>
@@ -224,8 +222,6 @@ const SettingsPersonal = () => {
             </ProfileRightBlock>
           </ProfileSection>
         </form>
-
-        {toast && <Toast ok={toast.ok}>{toast.msg}</Toast>}
       </Wrapper>
 
       <ImageEditorModal

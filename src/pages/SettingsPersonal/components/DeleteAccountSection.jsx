@@ -1,15 +1,8 @@
 import React, { useMemo, useState } from 'react';
 
 import CustomInput from '../../../customs/CustomInput';
-import {
-  CheckboxGroup,
-  Confirmation,
-  DangerButton,
-  DeleteSection,
-  DeleteTextarea,
-  Label,
-  Note,
-} from '../styles';
+import CustomTextArea from '../../../customs/CustomTextarea';
+import { CheckboxGroup, Confirmation, DangerButton, DeleteSection, Label, Note } from '../styles';
 
 const DeleteAccountSection = ({ onSubmit }) => {
   const [feedback, setFeedback] = useState({
@@ -69,13 +62,12 @@ const DeleteAccountSection = ({ onSubmit }) => {
           Не использую сервис
         </Label>
       </CheckboxGroup>
-
-      <DeleteTextarea
+      <CustomTextArea
+        rows={3}
         value={feedback.other}
         placeholder="Другая причина (укажите подробнее)"
         onChange={(e) => setFeedback((prev) => ({ ...prev, other: e.target.value }))}
       />
-
       <Confirmation>
         <h4>Подтверждение удаления</h4>
         <Label>

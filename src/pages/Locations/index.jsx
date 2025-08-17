@@ -1,15 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Trash2 } from 'lucide-react';
+import { MapPin, Pencil, Trash2 } from 'lucide-react';
 import { useDebounce } from 'use-debounce';
 
+import EditLayout from '../../components/EditLayout';
 import GeoBadge from '../../components/GeoBadge';
 import LoaderCentered from '../../components/LoaderCentered';
-import PushPreview from '../../components/PushPreview';
-import ToggleSwitch from '../../components/ToggleSwitch';
+import { useToast } from '../../components/Toast';
 import YandexMapPicker from '../../components/YandexMapPicker';
+import CustomInput from '../../customs/CustomInput/index.jsx';
 import CustomSelect from '../../customs/CustomSelect';
+import CustomTextArea from '../../customs/CustomTextarea/index.jsx';
+import ToggleSwitch from '../../customs/CustomToggleSwitch/index.jsx';
+import { normalizeAddr, sameCoords } from '../../helpers/normalizeAddr.jsx';
 import { setCurrentCard } from '../../store/cardsSlice';
 import {
   createBranch as createBranchThunk,
@@ -17,14 +21,27 @@ import {
   editBranch,
   fetchBranches,
 } from '../../store/salesPointsSlice';
-
-import './styles.css';
+import {
+  ActionButton,
+  ActionRow,
+  AddLocationBtn,
+  DeleteLocationBtn,
+  LimitAlert,
+  LocationActions,
+  LocationCard,
+  LocationInfo,
+  LocationList,
+  LocationsSubtext,
+  PrimaryBtn,
+  SearchLoading,
+} from './styles.jsx';
 
 const MAX_LOCATIONS = 10;
 
 const Locations = () => {
   const mapRef = useRef(null);
   const dispatch = useDispatch();
+  const toast = useToast();
 
   const currentCard = useSelector((state) => state.cards.currentCard);
   const allCards = useSelector((state) => state.cards.cards);
@@ -36,44 +53,69 @@ const Locations = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
-  const [pushMessage, setPushMessage] = useState(
-    currentCard.pushNotification?.message ||
-      `Новое уведомление по вашей карте "${currentCard.title}"`,
-  );
-
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
-  const [activeTab, setActiveTab] = useState('map');
 
   const [debouncedSearchQuery] = useDebounce(searchQuery, 2000);
-
   const [showAddForm, setShowAddForm] = useState(false);
 
+  // режим единственной локации
+  const isSingleExisting = locations.length === 1;
+  const singleLoc = useMemo(
+    () => (isSingleExisting ? locations[0] : null),
+    [isSingleExisting, locations],
+  );
+  const [singleEditMode, setSingleEditMode] = useState(false);
+  const [singleAddress, setSingleAddress] = useState('');
+  const [singleCoords, setSingleCoords] = useState(null);
+  const [singleShowMap, setSingleShowMap] = useState(false); // карта по клику «Проверить адрес»
+
+  // подтягиваем список точек
+  useEffect(() => {
+    if (orgId) dispatch(fetchBranches(orgId));
+  }, [orgId, dispatch]);
+
+  // если карточка не выбрана — выберем первую
+  useEffect(() => {
+    if (!currentCard?.id && allCards?.length) {
+      dispatch(setCurrentCard(allCards[0]));
+    }
+  }, [currentCard?.id, allCards, dispatch]);
+
+  const [pushMessage, setPushMessage] = useState(
+    currentCard?.pushNotification?.message ||
+      `Новое уведомление по вашей карте "${currentCard?.name || currentCard?.title || 'Карта'}"`,
+  );
+
+  useEffect(() => {
+    if (singleLoc) {
+      setSingleAddress(singleLoc.name || singleLoc.address || '');
+      setSingleCoords(singleLoc.coords || null);
+      setSingleEditMode(false);
+      setSingleShowMap(false);
+    }
+  }, [singleLoc?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // поиск координат по адресу (только когда НЕ один адрес)
   useEffect(() => {
     const searchAddress = async () => {
       if (!debouncedSearchQuery || !mapRef.current) return;
-
       try {
         setIsSearching(true);
         const coords = await mapRef.current.search(debouncedSearchQuery.trim());
-
-        if (coords && Array.isArray(coords) && coords.length === 2) {
+        if (Array.isArray(coords) && coords.length === 2) {
           setSelectedLocation({
             address: debouncedSearchQuery,
-            coords: {
-              lat: coords[0],
-              lon: coords[1],
-            },
+            coords: { lat: coords[0], lon: coords[1] },
           });
         }
       } catch (error) {
         console.error('Ошибка поиска:', error);
+        toast.error('Ошибка поиска адреса');
       } finally {
         setIsSearching(false);
       }
     };
-
-    searchAddress();
-  }, [debouncedSearchQuery]);
+    if (!isSingleExisting) searchAddress();
+  }, [debouncedSearchQuery, toast, isSingleExisting]);
 
   const handleCardSelect = (cardId) => {
     const selected = allCards.find((c) => c.id === cardId);
@@ -82,68 +124,96 @@ const Locations = () => {
         setCurrentCard({
           ...selected,
           pushNotification: selected.pushNotification || {
-            message: `Новое уведомление по вашей карте "${selected.title}"`,
+            message: `Новое уведомление по вашей карте "${selected.name || selected.title}"`,
             scheduledDate: '',
           },
         }),
       );
+      setPushMessage(
+        selected.pushNotification?.message ||
+          `Новое уведомление по вашей карте "${selected.name || selected.title}"`,
+      );
     }
   };
 
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 1024);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(() => {
-    if (orgId) dispatch(fetchBranches(orgId));
-  }, [orgId]);
-
   const removeLocation = (id) => {
-    dispatch(deleteBranchThunk(id));
+    dispatch(deleteBranchThunk(id))
+      .unwrap()
+      .then(() => toast.success('Локация удалена'))
+      .catch(() => toast.error('Не удалось удалить локацию'));
   };
 
+  // добавление локации (заблокировано при одной)
   const handleAddLocation = () => {
-    const remaining = MAX_LOCATIONS - locations.length;
-    if (remaining <= 0) {
-      setLimitReached(true);
+    if (isSingleExisting) {
+      toast.info('Ваш тариф позволяет только одну точку продаж');
       return;
     }
 
-    const newLoc = organizationResults[0];
-    if (!newLoc) return;
+    const remaining = MAX_LOCATIONS - locations.length;
+    if (remaining <= 0) {
+      setLimitReached(true);
+      toast.info('Достигнут лимит локаций');
+      return;
+    }
 
-    const payload = {
-      name: newLoc.name,
-      address: newLoc.name,
-      coords_lat: newLoc.coords[0],
-      coords_lon: newLoc.coords[1],
-      organization_id: orgId,
+    const candidate = organizationResults[0] || selectedLocation || null;
+    if (!candidate) return;
+
+    const nextAddressRaw =
+      candidate.name || candidate.address || (debouncedSearchQuery || searchQuery || '').trim();
+    if (!nextAddressRaw) return;
+
+    const nextCoords = {
+      lat: candidate.coords?.lat ?? candidate.coords?.[0] ?? 55.75,
+      lon: candidate.coords?.lon ?? candidate.coords?.[1] ?? 37.61,
     };
-    dispatch(createBranchThunk(payload));
 
-    setOrganizationResults([]);
-    setSelectedLocation(null);
-    setSearchQuery('');
+    // строгая проверка дублей
+    const nAddr = normalizeAddr(nextAddressRaw);
+    const dupByText = locations.some((l) => normalizeAddr(l.name || l.address) === nAddr);
+    const dupByCoords = locations.some((l) => l?.coords && sameCoords(l.coords, nextCoords));
+    if (dupByText || dupByCoords) {
+      const msg = 'Точка продаж с таким адресом уже создана';
+      toast.error(msg);
+      return;
+    }
+
+    dispatch(
+      createBranchThunk({
+        name: nextAddressRaw,
+        address: nextAddressRaw,
+        coords_lat: nextCoords.lat,
+        coords_lon: nextCoords.lon,
+        organization_id: orgId,
+      }),
+    )
+      .unwrap()
+      .then(() => {
+        toast.success('Локация добавлена');
+        setOrganizationResults([]);
+        setSelectedLocation(null);
+        setSearchQuery('');
+      })
+      .catch(() => toast.error('Не удалось создать локацию'));
   };
 
+  // поиск организаций (заблокирован при одной)
   const handleSearchOrganizations = async () => {
-    if (!debouncedSearchQuery || !mapRef.current) return;
+    if (isSingleExisting) {
+      toast.info('Добавление новых адресов недоступно на текущем тарифе');
+      return;
+    }
+    const q = (debouncedSearchQuery || '').trim();
+    if (!q || !mapRef.current) return;
 
     try {
       setIsSearching(true);
-      const results = await mapRef.current.searchOrganizations(debouncedSearchQuery.trim());
-
-      if (Array.isArray(results) && results.length > 0) {
-        setOrganizationResults(results);
-        console.log('Найдено бизнес-точек:', results);
-      } else {
-        setOrganizationResults([]);
-        console.log('Бизнес-точки не найдены');
-      }
+      const results = await mapRef.current.searchOrganizations(q);
+      setOrganizationResults(Array.isArray(results) ? results : []);
     } catch (error) {
       console.error('Ошибка при поиске организаций:', error);
+      toast.error('Ошибка поиска организаций');
     } finally {
       setIsSearching(false);
     }
@@ -155,212 +225,275 @@ const Locations = () => {
         id: loc.id,
         geo_active: !loc.active,
       }),
-    );
+    )
+      .unwrap()
+      .then(() => toast.info(`Geo-push ${loc.active ? 'выключен' : 'включён'}`))
+      .catch(() => toast.error('Не удалось переключить Geo-push'));
   };
 
+  // сохранить изменённый адрес для единственной локации
+  const saveSingle = async () => {
+    const addr = (singleAddress || '').trim();
+    if (!addr) {
+      toast.error('Введите адрес');
+      return;
+    }
+
+    const targetCoords = singleCoords || singleLoc.coords || null;
+
+    const dupByText = locations.some(
+      (l) => l.id !== singleLoc.id && normalizeAddr(l.name || l.address) === normalizeAddr(addr),
+    );
+    const dupByCoords = locations.some(
+      (l) =>
+        l.id !== singleLoc.id && l.coords && targetCoords && sameCoords(l.coords, targetCoords),
+    );
+
+    if (dupByText || dupByCoords) {
+      toast.error('Точка продаж с таким адресом уже создана');
+      return;
+    }
+
+    try {
+      await dispatch(
+        editBranch({
+          id: singleLoc.id,
+          name: addr,
+          address: addr,
+          coords_lat: targetCoords?.lat,
+          coords_lon: targetCoords?.lon,
+        }),
+      ).unwrap();
+      setSingleEditMode(false);
+      toast.success('Адрес обновлён');
+    } catch {
+      toast.error('Не удалось сохранить адрес');
+    }
+  };
+
+  // показать карту по единственной локации
+  const showSingleOnMap = async () => {
+    if (!singleAddress?.trim()) {
+      toast.error('Сначала укажите адрес');
+      return;
+    }
+    try {
+      if (!singleCoords && mapRef.current) {
+        setIsSearching(true);
+        const coords = await mapRef.current.search(singleAddress.trim());
+        if (Array.isArray(coords) && coords.length === 2) {
+          setSingleCoords({ lat: coords[0], lon: coords[1] });
+        } else {
+          toast.error('Адрес не найден');
+          setIsSearching(false);
+          return;
+        }
+        setIsSearching(false);
+      }
+      setSingleShowMap(true);
+      toast.info('Адрес показан на карте');
+    } catch {
+      setIsSearching(false);
+      toast.error('Не удалось показать адрес на карте');
+    }
+  };
+
+  if (locationsLoading) return <LoaderCentered />;
+
   const renderMapSection = () => (
-    <div className="edit-type-left">
-      <div className="edit-type-page">
-        <GeoBadge title="Локации" badgeText="Geo-push в радиусе 100 метров" />
-        <p className="locations-subtext">
-          Добавьте адреса, рядом с которыми вашим клиентам будут автоматически приходить
-          push-уведомления. Geo-push работает, когда клиент оказывается в радиусе 100 метров от
-          вашей точки.
-        </p>
-        {noLocations && showAddForm && (
-          <button
-            className="card-form-add-btn location-toggle-btn"
-            onClick={() => setShowAddForm(false)}
-          >
-            Скрыть добавление локации
-          </button>
-        )}
-        <CustomSelect
-          value={currentCard?.id || allCards[0]?.id || null}
-          onChange={handleCardSelect}
-          options={allCards.map((card) => ({
-            value: card.id,
-            label: card.name || card.title,
-          }))}
-        />
-        {limitReached && (
-          <div className="limit-alert">Вы достигли лимита в {MAX_LOCATIONS} локаций</div>
-        )}
+    <>
+      <GeoBadge title="Адреса точек продаж" badgeText="Geo-push в радиусе 100 метров" />
 
-        <div className="search-container">
-          <input
-            type="text"
-            className="location-modal-input"
-            placeholder="Введите адрес локации"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && setSearchQuery(e.target.value)}
-          />
-          <button
-            className="btn btn-outline search-org-btn"
-            onClick={handleSearchOrganizations}
-            disabled={!debouncedSearchQuery.trim()}
-            style={{ marginLeft: '10px' }}
-          >
-            Найти все
-          </button>
-        </div>
+      <LocationsSubtext>
+        Добавьте адреса, рядом с которыми вашим клиентам будут автоматически приходить
+        push-уведомления. Geo-push работает, когда клиент оказывается в радиусе 100 метров от вашей
+        точки.
+      </LocationsSubtext>
 
-        {isSearching && <div className="search-loading">Идет поиск...</div>}
+      <CustomSelect
+        value={currentCard?.id || allCards?.[0]?.id || null}
+        onChange={handleCardSelect}
+        options={(allCards || []).map((card) => ({
+          value: card.id,
+          label: card.name || card.title,
+        }))}
+      />
 
-        {selectedLocation && (
-          <div className="location-info">
-            <p>Выбрано: {selectedLocation.address}</p>
-            <p>
-              Координаты: {selectedLocation.coords.lat.toFixed(6)},{' '}
-              {selectedLocation.coords.lon.toFixed(6)}
-            </p>
-          </div>
-        )}
-        {organizationResults.length > 0 && (
-          <div className="location-info">
-            <h4>Найденные организации:</h4>
-            <ul>
-              {organizationResults.map((org, index) => (
-                <li key={index}>
-                  {org.name} ({org.coords[0].toFixed(5)}, {org.coords[1].toFixed(5)})
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-        <div className="location-push-textarea">
-          <YandexMapPicker
-            ref={mapRef}
-            onSelect={setSelectedLocation}
-            initialCoords={selectedLocation?.coords}
-          />
-        </div>
+      {isSingleExisting ? (
+        <>
+          <LocationsSubtext style={{ marginTop: 8 }}>
+            У вас активен тариф с одной точкой продаж. Добавление новых адресов недоступно.
+          </LocationsSubtext>
 
-        <textarea
-          className="custom-textarea"
-          value={pushMessage}
-          onChange={(e) => setPushMessage(e.target.value)}
-          placeholder="Введите текст push-уведомления"
-        />
+          <ActionRow>
+            <CustomInput
+              value={singleAddress}
+              onChange={(e) => setSingleAddress(e.target.value)}
+              placeholder="Адрес точки продаж"
+              disabled={!singleEditMode}
+              style={{ minWidth: 320 }}
+            />
+            <ActionButton
+              variant="secondary"
+              onClick={() => setSingleEditMode((v) => !v)}
+              aria-label="Редактировать адрес"
+              title={singleEditMode ? 'Отменить редактирование' : 'Редактировать адрес'}
+            >
+              <Pencil className="icon" size={16} />
+              {singleEditMode ? 'Отмена' : 'Править'}
+            </ActionButton>
+            <ActionButton
+              variant="secondary"
+              onClick={showSingleOnMap}
+              aria-label="Проверить адрес"
+              title="Показать на карте"
+            >
+              <MapPin className="icon" size={16} />
+              Проверить адрес
+            </ActionButton>
+          </ActionRow>
 
-        <button
-          className="card-form-add-btn"
-          onClick={handleAddLocation}
-          disabled={!pushMessage.trim()}
-        >
-          Добавить
-        </button>
-        <div className="location-list">
-          {locations.map((loc) => (
-            <div key={loc.id} className="location-card">
-              <div className="location-info">
-                <p>{loc.name}</p>
-                {loc.coords && (
-                  <div className="location-coords">
-                    {loc.coords.lat.toFixed(5)}, {loc.coords.lon.toFixed(5)}
-                  </div>
-                )}
-              </div>
-              <div className="location-actions">
-                <ToggleSwitch checked={loc.active} onChange={() => toggleGeo(loc)} />
-                <button
-                  className="card-form-delete-btn"
-                  onClick={() => removeLocation(loc.id)}
-                  aria-label="Удалить поле"
-                >
-                  <Trash2 size={20} />
-                </button>
-              </div>
+          {singleEditMode && (
+            <PrimaryBtn onClick={saveSingle} disabled={!singleAddress.trim()}>
+              Сохранить
+            </PrimaryBtn>
+          )}
+
+          {isSearching && <SearchLoading>Идёт поиск…</SearchLoading>}
+
+          {singleShowMap && (
+            <div style={{ marginTop: 12, marginBottom: 12 }}>
+              <YandexMapPicker
+                ref={mapRef}
+                onSelect={() => {}}
+                initialCoords={
+                  singleCoords ? { lat: singleCoords.lat, lon: singleCoords.lon } : undefined
+                }
+              />
             </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+          )}
 
-  const renderPreviewSection = () => (
-    <div className="edit-type-right">
-      <div className="phone-sticky">
-        <div className="card-state">
-          <span className={`status-indicator ${currentCard.isActive ? 'active' : 'inactive'}`} />
-          {currentCard.isActive ? 'Активна' : 'Не активна'}
-        </div>
-        <div className="phone-frame">
-          <img className="phone-image" src={currentCard.frameUrl} alt={currentCard.name} />
-          <div className="phone-screen">
-            <PushPreview card={currentCard} message={pushMessage} />
-          </div>
-        </div>
-        <p className="activate-text">Geo-push доступны только для устройств на iOS</p>
-      </div>
-    </div>
-  );
-
-  // пустой экран при отсутствии локаций
-  const renderEmptyState = () => (
-    <div className="edit-type-left">
-      <div className="edit-type-page">
-        <GeoBadge title="Локации" badgeText="Geo-push в радиусе 100 метров" />
-        <p className="locations-subtext">
-          Добавьте адреса, рядом с которыми вашим клиентам будут автоматически приходить
-          push-уведомления. Geo-push работает, когда клиент оказывается в радиусе 100 метров от
-          вашей точки.
-        </p>
-        <button
-          className="card-form-add-btn location-toggle-btn"
-          onClick={() => setShowAddForm(true)}
-        >
-          Добавить локацию
-        </button>
-      </div>
-    </div>
-  );
-
-  const noLocations = locations.length === 0;
-
-  // будем отображать левый блок в зависимости от состояния
-  const leftBlock = noLocations && !showAddForm ? renderEmptyState() : renderMapSection();
-
-  if (locationsLoading) {
-    return <LoaderCentered />;
-  }
-
-  return (
-    <div className="edit-type-layout locations-layout">
-      {isMobile && (
-        <div className="edit-type-tabs">
-          <button
-            className={`edit-type-tab ${activeTab === 'map' ? 'active' : ''}`}
-            onClick={() => setActiveTab('map')}
-          >
-            Локация
-          </button>
-          <button
-            className={`edit-type-tab ${activeTab === 'preview' ? 'active' : ''}`}
-            onClick={() => setActiveTab('preview')}
-          >
-            Превью
-          </button>
-        </div>
-      )}
-
-      {isMobile ? (
-        activeTab === 'map' ? (
-          leftBlock
-        ) : (
-          renderPreviewSection()
-        )
+          <CustomTextArea
+            rows={3}
+            value={pushMessage}
+            placeholder="Введите текст push-уведомления"
+            onChange={(e) => setPushMessage(e.target.value)}
+          />
+        </>
       ) : (
         <>
-          {leftBlock}
-          {renderPreviewSection()}
+          {limitReached && <LimitAlert>Вы достигли лимита в {MAX_LOCATIONS} локаций</LimitAlert>}
+
+          <ActionRow>
+            <CustomInput
+              type="text"
+              placeholder="Введите адрес локации"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && setSearchQuery(e.target.value)}
+              style={{ flex: 1, minWidth: 260 }}
+            />
+            <ActionButton
+              variant="secondary"
+              onClick={handleSearchOrganizations}
+              disabled={!(debouncedSearchQuery || '').trim()}
+            >
+              Найти все
+            </ActionButton>
+          </ActionRow>
+
+          {isSearching && <SearchLoading>Идёт поиск…</SearchLoading>}
+
+          {selectedLocation && (
+            <LocationInfo>
+              <p>Выбрано: {selectedLocation.address}</p>
+              <p>
+                Координаты: {selectedLocation.coords.lat.toFixed(6)},{' '}
+                {selectedLocation.coords.lon.toFixed(6)}
+              </p>
+            </LocationInfo>
+          )}
+
+          {organizationResults.length > 0 && (
+            <LocationInfo>
+              <h4>Найденные организации:</h4>
+              <ul>
+                {organizationResults.map((org, index) => (
+                  <li key={index}>
+                    {org.name} ({org.coords[0].toFixed(5)}, {org.coords[1].toFixed(5)})
+                  </li>
+                ))}
+              </ul>
+            </LocationInfo>
+          )}
+
+          <div style={{ marginTop: 12, marginBottom: 12 }}>
+            <YandexMapPicker
+              ref={mapRef}
+              onSelect={setSelectedLocation}
+              initialCoords={selectedLocation?.coords}
+            />
+          </div>
+
+          <CustomTextArea
+            rows={3}
+            value={pushMessage}
+            placeholder="Введите текст push-уведомления"
+            onChange={(e) => setPushMessage(e.target.value)}
+          />
+
+          <PrimaryBtn onClick={handleAddLocation} disabled={!pushMessage.trim()}>
+            Добавить
+          </PrimaryBtn>
         </>
       )}
 
-      {/* если локаций ещё нет, даём кнопку скрыть форму */}
-      {noLocations && isMobile === false && <></>}
-    </div>
+      <LocationList>
+        {locations.map((loc) => (
+          <LocationCard key={loc.id}>
+            <LocationInfo>
+              <p>{loc.name}</p>
+              {loc.coords && (
+                <div className="location-coords">
+                  {loc.coords.lat.toFixed(5)}, {loc.coords.lon.toFixed(5)}
+                </div>
+              )}
+            </LocationInfo>
+
+            <LocationActions>
+              <ToggleSwitch checked={!!loc.active} onChange={() => toggleGeo(loc)} />
+              <DeleteLocationBtn
+                onClick={() => removeLocation(loc.id)}
+                aria-label="Удалить локацию"
+              >
+                <Trash2 size={20} />
+              </DeleteLocationBtn>
+            </LocationActions>
+          </LocationCard>
+        ))}
+      </LocationList>
+    </>
+  );
+
+  const leftContent =
+    locations.length === 0 && !showAddForm ? (
+      <>
+        <GeoBadge title="Адреса точек продаж" badgeText="Geo-push в радиусе 100 метров" />
+        <LocationsSubtext>
+          Добавьте адреса, рядом с которыми вашим клиентам будут автоматически приходить
+          push-уведомления. Geo-push работает, когда клиент оказывается в радиусе 100 метров от
+          вашей точки.
+        </LocationsSubtext>
+        <AddLocationBtn onClick={() => setShowAddForm(true)}>Добавить локацию</AddLocationBtn>
+      </>
+    ) : (
+      renderMapSection()
+    );
+
+  return (
+    <EditLayout defaultPlatform="chat" chatMessage={pushMessage}>
+      {leftContent}
+    </EditLayout>
   );
 };
 

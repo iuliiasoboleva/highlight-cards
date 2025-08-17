@@ -30,3 +30,37 @@ export const locationsHeaders = [
   { label: 'Баллов начислено', key: 'pointsAccumulated' },
   { label: 'Сеть', key: 'network' },
 ];
+
+export const MOCK_CARDS = [
+  {
+    id: 101,
+    name: 'Штамп',
+    title: 'Штамп',
+    frameUrl: '/frame-ios.svg',
+    isActive: true,
+    pushNotification: { message: 'Соберите штампы — получите подарок!' },
+  },
+  {
+    id: 102,
+    name: 'Скидка',
+    title: 'Скидка',
+    frameUrl: '/frame-ios.svg',
+    isActive: true,
+    pushNotification: { message: '-10% на все позиции до конца недели' },
+  },
+];
+
+export const MOCK_LOCATIONS_INIT = [
+  {
+    id: 5001,
+    name: 'Кофейня на Ленина, 10',
+    coords: { lat: 55.75222, lon: 37.61556 },
+    active: true,
+  },
+  // {
+  //   id: 5002,
+  //   name: 'ТЦ «Галактика», 2 этаж',
+  //   coords: { lat: 55.76012, lon: 37.62045 },
+  //   active: false,
+  // },
+];

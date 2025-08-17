@@ -121,7 +121,7 @@ const Cards = () => {
 
                 {card.id === 'fixed' ? (
                   <PhoneFrame src={card.frameUrl}>
-                    <PhoneScreenImg src={card.cardImg} alt={card.name} draggable="false" />
+                    <PhoneScreenImg src={'/images/example.png'} alt={card.name} draggable="false" />
                   </PhoneFrame>
                 ) : (
                   <CardImage

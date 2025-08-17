@@ -100,8 +100,6 @@ export const GlobalStyle = createGlobalStyle`
     a, button, [role="button"], input, select, textarea { outline: none; }
   }
 
-  :focus-visible { outline: 2px solid #444; outline-offset: 2px; }
-
   form {
     display: flex;
     flex-direction: column;

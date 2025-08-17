@@ -8,17 +8,38 @@ import { statusConfig } from '../../utils/statusConfig';
 import CardInfo from '../CardInfo';
 import InfoOverlay from '../InfoOverlay';
 import PushPreview from '../PushPreview';
+import {
+  CardState,
+  CardTextDefault,
+  Layout,
+  Left,
+  Page,
+  PhoneContainer,
+  PhoneFrame,
+  PhoneImage,
+  PhoneScreen,
+  PhoneSticky,
+  PlatformButton,
+  PlatformIcons,
+  Right,
+  Tab,
+  Tabs,
+} from './styles';
 
-import './styles.css';
-
-const EditLayout = ({ children, onFieldClick }) => {
+const EditLayout = ({
+  children,
+  onFieldClick,
+  defaultPlatform = 'ios',
+  chatMessage,
+  chatScheduledDate,
+}) => {
   const dispatch = useDispatch();
   const location = useLocation();
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
   const [activeTab, setActiveTab] = useState('description');
-  const [platform, setPlatform] = useState('ios');
-  const previousPlatform = useRef('ios');
+  const [platform, setPlatform] = useState(defaultPlatform);
+  const previousPlatform = useRef(defaultPlatform);
 
   const currentCard = useSelector((state) => state.cards.currentCard);
   const isDesignStep = location.pathname.includes('/edit/design');
@@ -45,15 +66,6 @@ const EditLayout = ({ children, onFieldClick }) => {
     }
   }, [currentCard.status, dispatch]);
 
-  const handleToggleActive = () => {
-    dispatch(
-      updateCurrentCardField({
-        path: 'isActive',
-        value: !currentCard.isActive,
-      }),
-    );
-  };
-
   useEffect(() => {
     if (location.pathname.includes('/edit/info')) {
       previousPlatform.current = platform;
@@ -61,7 +73,7 @@ const EditLayout = ({ children, onFieldClick }) => {
     } else if (platform === 'info') {
       setPlatform(previousPlatform.current);
     }
-  }, [location.pathname]);
+  }, [location.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSetShowInfo = (value) => {
     if (value) {
@@ -75,126 +87,116 @@ const EditLayout = ({ children, onFieldClick }) => {
   return (
     <>
       {isMobile && (
-        <div className="edit-type-tabs">
-          <button
-            className={`edit-type-tab ${activeTab === 'description' ? 'active' : ''}`}
-            onClick={() => setActiveTab('description')}
-          >
+        <Tabs>
+          <Tab $active={activeTab === 'description'} onClick={() => setActiveTab('description')}>
             Описание
-          </button>
-          <button
-            className={`edit-type-tab ${activeTab === 'card' ? 'active' : ''}`}
-            onClick={() => setActiveTab('card')}
-          >
+          </Tab>
+          <Tab $active={activeTab === 'card'} onClick={() => setActiveTab('card')}>
             Карта
-          </button>
-        </div>
+          </Tab>
+        </Tabs>
       )}
 
-      <div className="edit-type-layout">
+      <Layout>
         {(!isMobile || activeTab === 'description') && (
-          <div className="edit-type-left">
-            <div className="edit-type-page">{children}</div>
-          </div>
+          <Left>
+            <Page>{children}</Page>
+          </Left>
         )}
 
         {(!isMobile || activeTab === 'card') && (
-          <div className="edit-type-right">
-            <div className="phone-container">
-              <div>
-                <div className="phone-sticky">
-                  <div className="card-state">
-                    <span
-                      className={`status-indicator ${currentCard.isActive ? 'active' : 'inactive'}`}
-                    />
-                    <p className="card-text-default">
-                      Так карта будет выглядеть в телефоне клиента
-                    </p>
-                  </div>
-                  <div className="phone-frame">
-                    <img
-                      className="phone-image"
-                      src={platform === 'android' ? '/frame-android.svg' : currentCard.frameUrl}
-                      alt={currentCard.name}
-                    />
-                    <div className="phone-screen">
-                      {platform === 'ios' && (
-                        <CardInfo
-                          card={currentCard}
-                          setShowInfo={handleSetShowInfo}
-                          onFieldClick={onFieldClick}
-                        />
-                      )}
-                      {platform === 'android' && (
-                        <CardInfoAndroid
-                          card={currentCard}
-                          setShowInfo={handleSetShowInfo}
-                          onFieldClick={onFieldClick}
-                        />
-                      )}
-                      {platform === 'chat' && (
-                        <PushPreview
-                          card={currentCard}
-                          message={
-                            currentCard.pushNotification?.message ||
-                            `Новое уведомление по вашей карте "${currentCard.title}"`
-                          }
-                        />
-                      )}
-                      {platform === 'info' && (
-                        <InfoOverlay
-                          infoFields={
-                            isDesignStep
-                              ? {
-                                  stampsQuantity: currentCard.design?.stampsQuantity,
-                                  activeStamp: currentCard.design?.activeStamp,
-                                  inactiveStamp: currentCard.design?.inactiveStamp,
-                                  logo: currentCard.design?.logo,
-                                  icon: currentCard.design?.icon,
-                                  stampBackground: currentCard.design?.stampBackground,
-                                }
-                              : currentCard.infoFields
-                          }
-                          onClose={() => setPlatform(previousPlatform.current)}
-                          onFieldClick={onFieldClick}
-                        />
-                      )}
-                    </div>
-                  </div>
-                </div>
+          <Right>
+            <PhoneContainer>
+              <PhoneSticky>
+                <CardState>
+                  <CardTextDefault>Так карта будет выглядеть в телефоне клиента</CardTextDefault>
+                </CardState>
 
-                {/* <button className="activate-button" onClick={handleToggleActive}>
-                  Активировать
-                </button> */}
-                {/* <p className="activate-text">
-                Пока карта не активирована, вы можете выдать до 10 карт клиентам{' '}
-              </p> */}
-              </div>
+                <PhoneFrame>
+                  <PhoneImage
+                    src={platform === 'android' ? '/frame-android.svg' : currentCard.frameUrl}
+                    alt={currentCard.name}
+                  />
+                  <PhoneScreen>
+                    {platform === 'ios' && (
+                      <CardInfo
+                        card={currentCard}
+                        setShowInfo={handleSetShowInfo}
+                        onFieldClick={onFieldClick}
+                      />
+                    )}
 
-              <div className="platform-icons">
-                <button
-                  className={`platform-button ios ${platform === 'ios' ? 'active' : ''}`}
+                    {platform === 'android' && (
+                      <CardInfoAndroid
+                        card={currentCard}
+                        setShowInfo={handleSetShowInfo}
+                        onFieldClick={onFieldClick}
+                      />
+                    )}
+
+                    {platform === 'chat' && (
+                      <PushPreview
+                        card={currentCard}
+                        message={
+                          chatMessage ??
+                          currentCard.pushNotification?.message ??
+                          `Новое уведомление по вашей карте "${currentCard.name}"`
+                        }
+                        scheduledDate={
+                          chatScheduledDate ?? currentCard.pushNotification?.scheduledDate
+                        }
+                      />
+                    )}
+
+                    {platform === 'info' && (
+                      <InfoOverlay
+                        infoFields={
+                          isDesignStep
+                            ? {
+                                stampsQuantity: currentCard.design?.stampsQuantity,
+                                activeStamp: currentCard.design?.activeStamp,
+                                inactiveStamp: currentCard.design?.inactiveStamp,
+                                logo: currentCard.design?.logo,
+                                icon: currentCard.design?.icon,
+                                stampBackground: currentCard.design?.stampBackground,
+                              }
+                            : currentCard.infoFields
+                        }
+                        onClose={() => setPlatform(previousPlatform.current)}
+                        onFieldClick={onFieldClick}
+                      />
+                    )}
+                  </PhoneScreen>
+                </PhoneFrame>
+              </PhoneSticky>
+
+              <PlatformIcons>
+                <PlatformButton
+                  aria-label="iOS"
+                  $active={platform === 'ios'}
                   onClick={() => setPlatform('ios')}
                 >
                   <img src="/icons/apple-icon.svg" alt="iOS" />
-                </button>
-                <button
-                  className={`platform-button android ${platform === 'android' ? 'active' : ''}`}
+                </PlatformButton>
+                <PlatformButton
+                  aria-label="Android"
+                  $active={platform === 'android'}
                   onClick={() => setPlatform('android')}
                 >
                   <img src="/icons/android-icon.svg" alt="Android" />
-                </button>
-                <button
-                  className={`platform-button chat ${platform === 'chat' ? 'active' : ''}`}
+                </PlatformButton>
+                <PlatformButton
+                  aria-label="Chat"
+                  $active={platform === 'chat'}
                   onClick={() => setPlatform('chat')}
                 >
                   <img src="/icons/chat-icon.svg" alt="Chat" />
-                </button>
-              </div>
-            </div>
-          </div>
+                </PlatformButton>
+              </PlatformIcons>
+            </PhoneContainer>
+          </Right>
         )}
-      </div>
+      </Layout>
     </>
   );
 };

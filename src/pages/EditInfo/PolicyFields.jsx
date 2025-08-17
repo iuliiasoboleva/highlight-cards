@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
-import ToggleSwitch from '../../components/ToggleSwitch';
+import ToggleSwitch from '../../customs/CustomToggleSwitch';
 import CustomTooltip from '../../customs/CustomTooltip';
 import { updateCurrentCardField } from '../../store/cardsSlice';
 

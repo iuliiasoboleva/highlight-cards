@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ToggleSwitch from '../../components/ToggleSwitch';
+import ToggleSwitch from '../../customs/CustomToggleSwitch';
 import CustomTooltip from '../../customs/CustomTooltip';
 
 import './styles.css';

@@ -226,25 +226,11 @@ export const CheckboxGroup = styled.div`
   }
 `;
 
-export const DeleteTextarea = styled.textarea`
-  width: -webkit-fill-available;
-  height: 60px;
-  padding: 12px;
-  border: 1px solid #d5d5dd;
-  border-radius: 6px;
-  font-size: 16px;
-  resize: vertical;
-`;
-
 export const Confirmation = styled.div`
   margin-top: 24px;
 
   input {
-    width: 100%;
-    padding: 10px;
     margin-top: 8px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
   }
 `;
 
@@ -256,18 +242,6 @@ export const Note = styled.p`
 
 export const DangerButton = styled(MainButton)`
   background-color: #d40000;
-`;
-
-export const Toast = styled.div`
-  position: fixed;
-  top: 90px;
-  right: 40px;
-  background: ${({ ok }) => (ok ? '#00c853' : '#e53935')};
-  color: #fff;
-  padding: 12px 24px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 999;
 `;
 
 export const Label = styled.p`

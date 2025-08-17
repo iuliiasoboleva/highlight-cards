@@ -1,23 +1,35 @@
-.edit-type-layout {
+import styled, { css } from 'styled-components';
+
+export const Layout = styled.div`
   display: flex;
   justify-content: space-between;
   gap: 20px;
   width: 100%;
   min-height: calc(100vh - var(--header-height) - var(--bar-height));
-}
 
-.edit-type-page {
+  @media (max-width: 999px) {
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+`;
+
+export const Page = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
-}
+`;
 
-.edit-type-left {
+export const Left = styled.div`
   width: 50%;
   padding: 20px;
-}
 
-.edit-type-right {
+  @media (max-width: 999px) {
+    width: 100%;
+    padding: 16px;
+  }
+`;
+
+export const Right = styled.div`
   width: 50%;
   background: #fff;
   border-left: 1px solid #e0e0e0;
@@ -27,53 +39,68 @@
   align-self: flex-start;
   height: 100vh;
   overflow-y: auto;
-}
 
-.phone-sticky {
-  width: 100%;
+  @media (max-width: 999px) {
+    width: 100%;
+    position: static;
+    height: auto;
+    padding: 16px;
+    border-left: none;
+    border-top: none;
+    background: transparent;
+    margin-top: 24px;
+  }
+`;
+
+export const PhoneSticky = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-}
+`;
 
-.phone-frame {
+export const PhoneFrame = styled.div`
   position: relative;
   width: 100%;
-  max-width: 280px;
+  max-width: 100%;
   margin-top: 30px;
   margin-bottom: 20px;
   border-radius: 45px;
   background-color: #f2f2f7;
-}
+`;
 
-.phone-image {
+export const PhoneImage = styled.img`
   width: 100%;
   display: block;
-  height: 570px;
-}
+  height: 670px;
+`;
 
-.phone-screen {
+export const PhoneScreen = styled.div`
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
+
   display: flex;
   justify-content: center;
   align-items: center;
-}
+`;
 
-.edit-type-tabs {
+export const Tabs = styled.div`
   display: flex;
   border-bottom: 1px solid #e5e7eb;
   width: 100%;
   align-items: center;
   justify-content: center;
-}
 
-.edit-type-tab {
+  @media (max-width: 999px) {
+    border-bottom: none;
+  }
+`;
+
+export const Tab = styled.button`
   padding: 12px 16px;
   background: none;
   border: none;
@@ -82,23 +109,25 @@
   font-weight: 500;
   color: #6b7280;
   position: relative;
-}
 
-.edit-type-tab.active {
-  color: #111827;
-}
+  ${({ $active }) =>
+    $active &&
+    css`
+      color: #111827;
 
-.edit-type-tab.active::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background-color: #111827;
-}
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background-color: #111827;
+      }
+    `}
+`;
 
-.activate-button {
+export const ActivateButton = styled.button`
   background-color: #2e2e2e;
   color: white;
   border-radius: 6px;
@@ -118,9 +147,9 @@
   cursor: pointer;
   max-width: 268px;
   width: 100%;
-}
+`;
 
-.activate-text {
+export const ActivateText = styled.p`
   margin-top: 12px;
   color: #656565;
   font-size: 12px;
@@ -128,23 +157,40 @@
   max-width: 90%;
   text-align: center;
   word-break: break-word;
-}
 
-.phone-container {
+  @media (max-width: 999px) {
+    font-size: 12px;
+    text-align: center;
+    color: #666;
+    margin-top: 12px;
+    max-width: 200px;
+    margin-inline: auto;
+  }
+`;
+
+export const PhoneContainer = styled.div`
   display: flex;
   gap: 16px;
   align-items: center;
   justify-content: center;
-}
 
-.platform-icons {
+  @media (max-width: 999px) {
+    flex-direction: column;
+  }
+`;
+
+export const PlatformIcons = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
   margin-bottom: 40px;
-}
 
-.platform-button {
+  @media (max-width: 999px) {
+    flex-direction: row;
+  }
+`;
+
+export const PlatformButton = styled.button`
   width: 48px;
   height: 48px;
   background-color: #f5f5f5;
@@ -158,31 +204,31 @@
   transition:
     background-color 0.2s,
     filter 0.2s;
-}
 
-.platform-button img {
-  width: 20px;
-  height: 20px;
-}
+  ${({ $active }) =>
+    $active &&
+    css`
+      background-color: #000;
+    `}
 
-.platform-button.active {
-  background-color: #000;
-}
+  img {
+    width: 20px;
+    height: 20px;
+    ${({ $active }) =>
+      $active &&
+      css`
+        filter: invert(1);
+      `}
+  }
+`;
 
-.platform-button.active img {
-  filter: invert(1);
-}
+export const CardState = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
 
-.activate-text {
-  font-size: 12px;
-  text-align: center;
-  color: #666;
-  margin-top: 12px;
-  max-width: 200px;
-  margin-inline: auto;
-}
-
-.card-text-default {
+export const CardTextDefault = styled.p`
   font-weight: 400;
   font-size: 15px;
   line-height: 133%;
@@ -190,36 +236,4 @@
   max-width: 190px;
   text-align: center;
   color: #656565;
-}
-
-@media (max-width: 999px) {
-  .edit-type-tabs {
-    border-bottom: none;
-  }
-  .edit-type-layout {
-    flex-direction: column;
-    justify-content: flex-start;
-  }
-  .platform-icons {
-    flex-direction: row;
-  }
-
-  .phone-container {
-    flex-direction: column;
-  }
-
-  .edit-type-left,
-  .edit-type-right {
-    width: 100%;
-    position: static;
-    height: auto;
-    padding: 16px;
-  }
-
-  .edit-type-right {
-    border-left: none;
-    border-top: none;
-    background: transparent;
-    margin-top: 24px;
-  }
-}
+`;

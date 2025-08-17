@@ -2,8 +2,8 @@ import React from 'react';
 
 import { Trash2 } from 'lucide-react';
 
-import ToggleSwitch from '../../components/ToggleSwitch';
 import CustomSelect from '../../customs/CustomSelect';
+import ToggleSwitch from '../../customs/CustomToggleSwitch';
 
 import './styles.css';
 

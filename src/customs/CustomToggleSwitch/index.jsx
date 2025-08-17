@@ -2,7 +2,7 @@ import React from 'react';
 
 import { HiddenCheckbox, Slider, SwitchLabel } from './styles';
 
-const ToggleSwitch = ({ checked, onChange, disabled = false }) => {
+const CustomToggleSwitch = ({ checked, onChange, disabled = false }) => {
   return (
     <SwitchLabel disabled={disabled}>
       <HiddenCheckbox checked={checked} onChange={onChange} disabled={disabled} />
@@ -11,4 +11,4 @@ const ToggleSwitch = ({ checked, onChange, disabled = false }) => {
   );
 };
 
-export default ToggleSwitch;
+export default CustomToggleSwitch;
