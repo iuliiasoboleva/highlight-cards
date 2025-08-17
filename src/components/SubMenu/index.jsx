@@ -162,6 +162,7 @@ const SubMenu = ({
       </SubmenuWrapper>
       {showImportModal && (
         <ImportClientsModal
+          open={showImportModal}
           onClose={() => setShowImportModal(false)}
           handleExportToExcel={handleExportToExcel}
         />

@@ -1,46 +1,30 @@
 import React from 'react';
 
-import './styles.css';
+import { Company, FooterCol, FooterLink, FooterWrap, Inn, Phone, Separator } from './styles';
 
 const Footer = () => (
-  <footer className="footer">
-    <div className="footer-left">
-      <p className="company">ООО "ПРО М8"</p>
-      <p className="inn">ИНН 7743406170</p>
-    </div>
+  <FooterWrap>
+    <FooterCol>
+      <Company>ООО "ПРО М8"</Company>
+      <Inn>ИНН 7743406170</Inn>
+    </FooterCol>
 
-    <div className="footer-center">
-      {/* <a href="mailto:info@loyalclub.ru" className="footer-link">
-        info@loyalclub.ru
-      </a> */}
-      {/* <span className="separator">|</span> */}
-      <a href="mailto:support@loyalclub.ru" className="footer-link">
-        support@loyalclub.ru
-      </a>
-      <span className="separator">|</span>
-      <span className="phone">8 (800) 770-71-21</span>
-    </div>
+    <FooterCol>
+      <FooterLink href="mailto:support@loyalclub.ru">support@loyalclub.ru</FooterLink>
+      <Separator>|</Separator>
+      <Phone>8 (800) 770-71-21</Phone>
+    </FooterCol>
 
-    <div className="footer-right">
-      <a
-        href="https://loyalclub.ru/oferta"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="footer-link"
-      >
+    <FooterCol>
+      <FooterLink href="https://loyalclub.ru/oferta" target="_blank" rel="noopener noreferrer">
         Публичная оферта
-      </a>
-      <span className="separator">|</span>
-      <a
-        href="https://loyalclub.ru/policy"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="footer-link"
-      >
+      </FooterLink>
+      <Separator>|</Separator>
+      <FooterLink href="https://loyalclub.ru/policy" target="_blank" rel="noopener noreferrer">
         Политика конфиденциальности
-      </a>
-    </div>
-  </footer>
+      </FooterLink>
+    </FooterCol>
+  </FooterWrap>
 );
 
 export default Footer;

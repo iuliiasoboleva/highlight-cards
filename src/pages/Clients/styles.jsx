@@ -1,5 +1,78 @@
-import styled from 'styled-components';
+// styles.jsx
+import styled, { css } from 'styled-components';
 
+/* =========================
+   БАЗОВЫЕ КОМПОНЕНТЫ
+   ========================= */
+export const FlexRowBase = styled.div`
+  display: flex;
+  ${({ $gap }) =>
+    $gap != null &&
+    css`
+      gap: ${typeof $gap === 'number' ? `${$gap}px` : $gap};
+    `}
+  ${({ $align }) =>
+    $align &&
+    css`
+      align-items: ${$align};
+    `}
+  ${({ $justify }) =>
+    $justify &&
+    css`
+      justify-content: ${$justify};
+    `}
+  ${({ $wrap }) =>
+    $wrap &&
+    css`
+      flex-wrap: ${$wrap};
+    `}
+  ${({ $margin }) =>
+    $margin &&
+    css`
+      margin: ${$margin};
+    `}
+`;
+
+export const ParagraphBase = styled.p`
+  margin: 0;
+  font-size: 14px;
+  color: #2c3e50;
+`;
+
+export const CardBase = styled.div`
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+`;
+
+export const ButtonBase = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 10px 16px;
+  transition:
+    background 0.2s,
+    background-color 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    filter: grayscale(0.1);
+  }
+`;
+
+/* =========================
+   КОНТЕЙНЕРЫ / ЗАГОЛОВКИ
+   ========================= */
 export const ClientsContainer = styled.div`
   padding: 20px;
 `;
@@ -10,19 +83,26 @@ export const ClientsTitle = styled.h2`
   font-size: 28px;
 `;
 
-/* ===== Статистика ===== */
+/* =========================
+   СТАТИСТИКА
+   ========================= */
 export const ClientsStatsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
   margin-bottom: 30px;
+
+  /* максимум 3 в ряд */
+  grid-template-columns: 1fr;
+
+  @media (min-width: 600px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (min-width: 900px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
 `;
 
-export const ClientsStatCard = styled.div`
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+export const ClientsStatCard = styled(CardBase)`
   text-align: center;
 `;
 
@@ -39,11 +119,24 @@ export const StatClientsLabel = styled.span`
   text-align: left;
 `;
 
-export const PushDescription = styled.p`
-  margin: 0;
+/* =========================
+   ОПИСАНИЯ / ТЕКСТЫ
+   ========================= */
+export const Description = styled(ParagraphBase)`
+  margin: 0 0 16px;
+`;
+
+export const PushDescription = styled(ParagraphBase)`
   color: #7f8c8d;
-  font-size: 14px;
-  text-align: left;
+`;
+
+export const FooterCardDescription = styled(ParagraphBase)`
+  color: #7f8c8d;
+  margin-bottom: 20px;
+`;
+
+export const Hint = styled(ParagraphBase)`
+  margin: 0 0 12px 0;
 `;
 
 export const LoyaltyStars = styled.div`
@@ -52,27 +145,39 @@ export const LoyaltyStars = styled.div`
   margin-top: 10px;
 `;
 
-/* ===== Экшены ===== */
+/* =========================
+   ЭКШЕНЫ
+   ========================= */
 export const ClientsActionsBar = styled.div`
   margin: 30px 0;
 `;
 
-export const ClientsAddButton = styled.button`
+export const ClientsAddButton = styled(ButtonBase)`
   background-color: black;
   color: white;
   border: none;
   padding: 12px 24px;
-  border-radius: 6px;
   font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s;
 
   &:hover {
     background-color: #2980b9;
   }
 `;
 
-/* ===== Список клиентов ===== */
+export const GhostButton = styled(ButtonBase)`
+  padding: 8px 12px;
+  border: 1px dashed #c9c9c9;
+  background: #fff;
+  color: #2c3e50;
+
+  &:hover {
+    background: #fafafa;
+  }
+`;
+
+/* =========================
+   СПИСОК КЛИЕНТОВ
+   ========================= */
 export const ClientsListContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -80,11 +185,7 @@ export const ClientsListContainer = styled.div`
   margin-bottom: 40px;
 `;
 
-export const ClientCard = styled.div`
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+export const ClientCard = styled(CardBase)`
   display: flex;
   align-items: center;
   transition: transform 0.3s;
@@ -125,109 +226,105 @@ export const ClientMeta = styled.div`
   color: #7f8c8d;
 `;
 
-export const ClientMetaItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 5px;
-`;
+export const ClientMetaItem = styled(FlexRowBase).attrs({ $gap: 5, $align: 'center' })``;
 
-/* ===== Модалка добавления ===== */
-export const ClientsModalOverlay = styled.div`
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999900;
-`;
-
-export const ClientsModal = styled.div`
-  background: white;
-  border-radius: 10px;
-  padding: 30px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-`;
-
-export const ClientsModalTitle = styled.h3`
-  margin-top: 0;
-  color: #2c3e50;
-  margin-bottom: 20px;
-`;
-
+/* =========================
+   ФОРМА / МОДАЛКИ (частично)
+   ========================= */
 export const ClientsModalFormGroup = styled.div`
   margin-bottom: 15px;
-`;
-
-export const ClientsModalInput = styled.input`
-  width: 100%;
-  padding: 12px 15px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 16px;
-`;
-
-export const ClientsModalActions = styled.div`
   display: flex;
-  justify-content: center;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 4px;
 `;
 
-export const ClientsModalButton = styled.button`
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-size: 16px;
-  cursor: pointer;
-  border: 1px solid #ddd;
-  background: white;
+export const Label = styled.p`
+  font-size: 12px;
+  color: #656565;
+  line-height: 1.66667;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  user-select: none;
 `;
 
-export const ClientsModalButtonPrimary = styled(ClientsModalButton)`
-  background-color: black;
-  color: white;
+export const BranchesScrollContainer = styled.div`
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 6px;
+`;
+
+export const CheckboxRow = styled(FlexRowBase).attrs({ $gap: 4, $align: 'center' })``;
+
+/* =========================
+   PUSH-КАРТОЧКА
+   ========================= */
+export const PushCard = styled(ClientsStatCard)`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 8px;
+  min-height: 120px;
+`;
+
+export const PushCardWrapper = styled.div`
+  width: ${({ $width }) => ($width ? `${$width}px` : 'auto')};
+  max-width: 100%;
+`;
+
+export const SectionHeading = styled.h4`
+  margin: 32px 0 12px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+export const PushActions = styled.div`
+  margin-top: 12px;
+`;
+
+/* =========================
+   ВСПОМОГАТЕЛЬНЫЕ
+   ========================= */
+export const ErrorText = styled.div`
+  color: #e53935;
+  font-size: 12px;
+  margin-top: 6px;
+`;
+
+export const LinkContainer = styled(FlexRowBase).attrs({ $gap: 8 })`
+  margin: 16px 0;
+
+  input {
+    width: 100%;
+  }
+`;
+
+export const CopyLinkButton = styled.button`
+  background: transparent;
   border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dashed;
 `;
 
-export const ClientsModalButtonSecondary = styled(ClientsModalButton)`
-  background-color: #f5f5f5;
+export const Row = styled(FlexRowBase).attrs({ $align: 'center', $gap: 10 })``;
+
+export const IconWrap = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 `;
 
-export const FooterCardDescription = styled.p`
-  color: #7f8c8d;
-  margin-bottom: 20px;
-`;
-
-/* ===== Иконки (как псевдоэлементы) ===== */
-const IconBase = styled.span`
-  &::before {
-    display: inline-block;
-    margin-right: 4px;
-  }
-`;
-
-export const IconCalendar = styled(IconBase)`
-  &::before {
-    content: '📅';
-  }
-`;
-
-export const IconPhone = styled(IconBase)`
-  &::before {
-    content: '📞';
-  }
-`;
-
-export const IconBirthday = styled(IconBase)`
-  &::before {
-    content: '🎂';
-  }
-`;
-
-/* ===== Tooltip ===== */
+/* =========================
+   TOOLTIP
+   ========================= */
 export const ClientsTooltipWrapper = styled.span`
   position: relative;
   display: inline-block;
@@ -255,75 +352,39 @@ export const ClientsTooltip = styled.span.attrs({ className: 'clients-tooltip' }
   z-index: 10;
 `;
 
-/* ===== Link + copy ===== */
-export const LinkContainer = styled.div`
-  display: flex;
-  gap: 8px;
-  margin: 16px 0;
-
-  input {
-    width: 100%;
+/* =========================
+   ИКОНКИ (псевдоэлементы)
+   ========================= */
+const IconBase = styled.span`
+  &::before {
+    display: inline-block;
+    margin-right: 4px;
   }
 `;
 
-export const CopyLinkButton = styled.button`
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  text-decoration: underline;
-  text-decoration-style: dashed;
-`;
-
-/* ===== Карточка менеджера (адаптив) ===== */
-export const ManagerCard = styled.div`
-  @media (max-width: 999px) {
-    width: 100%;
+export const IconCalendar = styled(IconBase)`
+  &::before {
+    content: '📅';
   }
 `;
 
-export const Label = styled.p`
-  font-size: 12px;
-  color: #656565;
-  line-height: 1.66667;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  user-select: none;
+export const IconPhone = styled(IconBase)`
+  &::before {
+    content: '📞';
+  }
 `;
 
-export const BranchesScrollContainer = styled.div`
-  max-height: 180px;
-  overflow-y: auto;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 6px;
+export const IconBirthday = styled(IconBase)`
+  &::before {
+    content: '🎂';
+  }
 `;
 
-export const PushCard = styled(ClientsStatCard)`
-  /* те же визуальные параметры, что и у ClientsStatCard уже есть */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 8px;
-  min-height: 120px; /* чтобы по высоте не отличалась от стат-карт */
-`;
-
-export const PushCardWrapper = styled.div`
-  width: ${({ $width }) => ($width ? `${$width}px` : 'auto')};
-  max-width: 100%;
-`;
-
-export const SectionHeading = styled.h4`
-  margin: 32px 0 12px;
-  font-size: 18px;
-  font-weight: 600;
-  color: #2c3e50;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-export const PushActions = styled.div`
-  margin-top: 12px;
+/* =========================
+   ДОП. ХЕЛПЕРЫ ДЛЯ ПОВТОРНОГО ИСП.
+   ========================= */
+export const ActionsRow = styled(FlexRowBase).attrs({ $gap: 12, $wrap: 'wrap' })`
+  button {
+    max-width: 100%;
+  }
 `;

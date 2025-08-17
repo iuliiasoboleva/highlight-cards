@@ -12,7 +12,7 @@ export const ToastViewport = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  z-index: 999;
+  z-index: 10001;
   pointer-events: none;
 
   @media (max-width: 768px) {

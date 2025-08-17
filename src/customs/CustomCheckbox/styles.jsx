@@ -10,7 +10,7 @@ export const CheckboxWrapper = styled.label`
 
 export const HiddenCheckbox = styled.input`
   appearance: none;
-  width: 25px;
+  width: 20px;
   height: 20px;
   background-color: #f5f5f5;
   border: 2px solid #dcdcdc;

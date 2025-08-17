@@ -9,8 +9,9 @@ import CustomMainButton from '../../customs/CustomMainButton';
 import { mockClientsHeaders } from '../../mocks/clientsInfo';
 import { fetchClients } from '../../store/clientsSlice';
 import AddClientModal from './modals/AddClientModal';
-import ClientLinkModal from './modals/ClientLinkModal';
+import ClientAddedModal from './modals/ClientAddedModal';
 import NoBranchModal from './modals/NoBranchModal';
+import SmsWalletModal from './modals/SmsWalletModal';
 import {
   ClientsActionsBar,
   ClientsContainer,
@@ -32,16 +33,26 @@ const Clients = () => {
   const navigate = useNavigate();
 
   const { list: clients, loading } = useSelector((s) => s.clients);
+
   const branches = useSelector((s) => s.locations.list);
 
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showLinkModal, setShowLinkModal] = useState(false);
   const [showNoBranchModal, setShowNoBranchModal] = useState(false);
+
+  const [showAddedModal, setShowAddedModal] = useState(false);
+  const [showSmsWalletModal, setShowSmsWalletModal] = useState(false);
+
   const [generatedLink, setGeneratedLink] = useState('');
 
   useEffect(() => {
     dispatch(fetchClients());
   }, [dispatch]);
+
+  useEffect(() => {
+    const onOpenSmsWallet = () => setShowSmsWalletModal(true);
+    window.addEventListener('open-sms-wallet-modal', onOpenSmsWallet);
+    return () => window.removeEventListener('open-sms-wallet-modal', onOpenSmsWallet);
+  }, []);
 
   const columns = useMemo(() => {
     return mockClientsHeaders.map((header) => {
@@ -62,6 +73,7 @@ const Clients = () => {
   const transactions = 0;
   const cardsIssued = 0;
   const returnRate = 0;
+
   const firstStatRef = useRef(null);
   const [statWidth, setStatWidth] = useState();
 
@@ -72,19 +84,18 @@ const Clients = () => {
       }
     };
     measure();
-
     const ro = new ResizeObserver(measure);
     if (firstStatRef.current) ro.observe(firstStatRef.current);
     window.addEventListener('resize', measure);
-
     return () => {
       ro.disconnect();
       window.removeEventListener('resize', measure);
     };
   }, []);
+
   const handleOpenAdd = () => {
     if (branches.length === 0) {
-      setShowNoBranchModal(true);
+      setShowAddModal(true);
     } else {
       setShowAddModal(true);
     }
@@ -93,7 +104,9 @@ const Clients = () => {
   const handleCreated = (clientId) => {
     const link = '/example';
     setGeneratedLink(link);
-    setShowLinkModal(true);
+
+    setShowAddModal(false);
+    setShowAddedModal(true);
   };
 
   if (loading) return <LoaderCentered />;
@@ -157,11 +170,14 @@ const Clients = () => {
         onClose={() => setShowAddModal(false)}
         onCreated={handleCreated}
       />
-      <ClientLinkModal
-        open={showLinkModal}
-        onClose={() => setShowLinkModal(false)}
+
+      <ClientAddedModal
+        open={showAddedModal}
+        onClose={() => setShowAddedModal(false)}
         link={generatedLink}
       />
+
+      <SmsWalletModal open={showSmsWalletModal} onClose={() => setShowSmsWalletModal(false)} />
       <NoBranchModal open={showNoBranchModal} onClose={() => setShowNoBranchModal(false)} />
 
       <SectionHeading>Рассылка push</SectionHeading>

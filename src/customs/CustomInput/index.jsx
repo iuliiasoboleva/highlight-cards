@@ -1,10 +1,20 @@
 import React from 'react';
 
-import { Input } from './styles';
+import { Input, InputWrapper, RequiredMark } from './styles';
 
-const CustomInput = ({ value, onChange, placeholder = '', type = 'text', ...props }) => {
+const CustomInput = ({ value, onChange, placeholder = '', type = 'text', required, ...props }) => {
   return (
-    <Input value={value} onChange={onChange} placeholder={placeholder} type={type} {...props} />
+    <InputWrapper>
+      <Input
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        type={type}
+        required={required}
+        {...props}
+      />
+      {required && <RequiredMark>*</RequiredMark>}
+    </InputWrapper>
   );
 };
 

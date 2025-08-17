@@ -2,33 +2,37 @@ import React from 'react';
 
 import { Download } from 'lucide-react';
 
-import CustomMainButton from '../../../customs/CustomMainButton';
-import {
-  ClientsModal,
-  ClientsModalActions,
-  ClientsModalOverlay,
-  ClientsModalTitle,
-} from '../styles';
+import CustomModal from '../../../customs/CustomModal';
+import { GhostButton, Hint, IconWrap, Row } from '../styles';
 
-const ImportClientsModal = ({ onClose, handleExportToExcel }) => {
+const ImportClientsModal = ({ open, onClose, handleExportToExcel }) => {
+  if (!open) return null;
+
+  const handleDownloadTemplate = () => window.open('/import_customers_template.xlsx', '_blank');
+
   return (
-    <ClientsModalOverlay onClick={onClose}>
-      <ClientsModal onClick={(e) => e.stopPropagation()}>
-        <ClientsModalTitle>Импорт клиентов</ClientsModalTitle>
-        <p style={{ marginBottom: 12 }}>Импортируйте клиентов в систему с помощью xlsx шаблона</p>
-        <span className="scanner-icon">
+    <CustomModal
+      open={open}
+      onClose={onClose}
+      title="Импорт клиентов"
+      actions={
+        <>
+          <CustomModal.PrimaryButton onClick={handleExportToExcel}>
+            Импортировать клиентов
+          </CustomModal.PrimaryButton>
+          <CustomModal.SecondaryButton onClick={onClose}>Закрыть</CustomModal.SecondaryButton>
+        </>
+      }
+    >
+      <Hint>Импортируйте клиентов в систему с помощью xlsx шаблона.</Hint>
+
+      <Row>
+        <IconWrap>
           <Download size={18} />
-        </span>
-        <ClientsModalActions>
-          <CustomMainButton
-            onClick={() => window.open('/import_customers_template.xlsx', '_blank')}
-          >
-            Скачать шаблон импорта
-          </CustomMainButton>
-          <CustomMainButton onClick={handleExportToExcel}>Импортировать клиентов</CustomMainButton>
-        </ClientsModalActions>
-      </ClientsModal>
-    </ClientsModalOverlay>
+        </IconWrap>
+        <GhostButton onClick={handleDownloadTemplate}>Скачать шаблон импорта</GhostButton>
+      </Row>
+    </CustomModal>
   );
 };
 

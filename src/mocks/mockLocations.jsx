@@ -57,10 +57,15 @@ export const MOCK_LOCATIONS_INIT = [
     coords: { lat: 55.75222, lon: 37.61556 },
     active: true,
   },
-  // {
-  //   id: 5002,
-  //   name: 'ТЦ «Галактика», 2 этаж',
-  //   coords: { lat: 55.76012, lon: 37.62045 },
-  //   active: false,
-  // },
+  {
+    id: 5002,
+    name: 'ТЦ «Галактика», 2 этаж',
+    coords: { lat: 55.76012, lon: 37.62045 },
+    active: false,
+  },
+];
+
+export const mockBranches = [
+  { id: 1, name: 'Магазин на Арбате', address: 'ул. Арбат, 12', employees: ['Иванов Иван'] },
+  { id: 2, name: 'ТЦ Европа', address: 'пр-т Мира, 55', employees: ['Петров Петр'] },
 ];

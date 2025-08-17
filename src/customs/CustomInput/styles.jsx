@@ -1,4 +1,9 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+
+export const InputWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
 
 export const Input = styled.input`
   width: -webkit-fill-available;
@@ -6,7 +11,6 @@ export const Input = styled.input`
   border: 1px solid #d9d9d9;
   border-radius: 4px;
   background-color: #fff;
-  cursor: pointer;
   transition: all 0.3s;
   font-size: 16px;
   outline: none;
@@ -33,4 +37,20 @@ export const Input = styled.input`
     max-width: 100%;
     box-sizing: border-box;
   }
+
+  ${({ required }) =>
+    required &&
+    css`
+      padding-right: 20px;
+    `}
+`;
+
+export const RequiredMark = styled.span`
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #c14857;
+  font-size: 16px;
+  pointer-events: none;
 `;

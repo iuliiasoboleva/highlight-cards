@@ -1,33 +1,29 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import {
-  ClientsModal,
-  ClientsModalActions,
-  ClientsModalButtonPrimary,
-  ClientsModalButtonSecondary,
-  ClientsModalOverlay,
-  ClientsModalTitle,
-  FooterCardDescription,
-} from '../styles';
+import CustomModal from '../../../customs/CustomModal';
+import { FooterCardDescription } from '../styles';
 
 const NoBranchModal = ({ open, onClose }) => {
   const navigate = useNavigate();
   if (!open) return null;
 
   return (
-    <ClientsModalOverlay onClick={onClose}>
-      <ClientsModal onClick={(e) => e.stopPropagation()}>
-        <ClientsModalTitle>Нет точек продаж</ClientsModalTitle>
-        <FooterCardDescription>Сначала необходимо добавить точку продаж.</FooterCardDescription>
-        <ClientsModalActions>
-          <ClientsModalButtonPrimary onClick={() => navigate('/managers')}>
+    <CustomModal
+      open={open}
+      onClose={onClose}
+      title="Нет точек продаж"
+      actions={
+        <>
+          <CustomModal.PrimaryButton onClick={() => navigate('/managers')}>
             Перейти
-          </ClientsModalButtonPrimary>
-          <ClientsModalButtonSecondary onClick={onClose}>Отменить</ClientsModalButtonSecondary>
-        </ClientsModalActions>
-      </ClientsModal>
-    </ClientsModalOverlay>
+          </CustomModal.PrimaryButton>
+          <CustomModal.SecondaryButton onClick={onClose}>Отменить</CustomModal.SecondaryButton>
+        </>
+      }
+    >
+      <FooterCardDescription>Сначала необходимо добавить точку продаж.</FooterCardDescription>
+    </CustomModal>
   );
 };
 

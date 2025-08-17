@@ -48,7 +48,7 @@ const EditType = () => {
 
   const handleContinue = () => {
     if (!selectedType) return;
-    navigate(`/cards/${currentCard.id}/create/design`);
+    navigate(`/cards/${currentCard.id}/edit/design`);
   };
 
   return (
