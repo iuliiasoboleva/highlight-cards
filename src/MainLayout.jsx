@@ -156,7 +156,7 @@ const MainLayout = () => {
 
     if (matchClientsRoot || matchClientsReviews || matchClientsRfm) {
       return [
-        { to: `/clients`, label: 'Клиенты' },
+        { to: `/clients`, label: 'Клиентская база' },
         { to: `/clients/rfm-segment`, label: 'Сегментация клиентов' },
         // { to: `/clients/reviews`, label: 'Отзывы' },
       ];
@@ -197,6 +197,7 @@ const MainLayout = () => {
           <SubMenu
             menuItems={getMenuItems()}
             showRightActions={matchEdit || matchCreate}
+            showDownloadTable={matchClientsRoot}
             showNameInput={!!matchEdit || !!matchCreate}
             initialName={currentCard?.name || ''}
             onNameChange={(newName) => {

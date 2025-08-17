@@ -156,6 +156,17 @@ export const IconButton = styled.button`
   &:hover {
     background: rgba(255, 255, 255, 0.05);
   }
+
+  &:disabled {
+    background: #2a2a2a;
+    border-color: #444;
+    color: #888;
+    cursor: not-allowed;
+
+    &:hover {
+      background: #2a2a2a;
+    }
+  }
 `;
 
 export const SaveButton = styled.button`

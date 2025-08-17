@@ -1,196 +1,140 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-
-import { saveAs } from 'file-saver';
-import { Send } from 'lucide-react';
-import * as XLSX from 'xlsx';
 
 import FilterableTable from '../../components/FilterableTable';
 import LoaderCentered from '../../components/LoaderCentered';
 import TitleWithHelp from '../../components/TitleWithHelp';
-import CustomInput from '../../customs/CustomInput';
 import CustomMainButton from '../../customs/CustomMainButton';
-import CustomSelect from '../../customs/CustomSelect';
 import { mockClientsHeaders } from '../../mocks/clientsInfo';
-import { addClientLocal, createClient, fetchClients } from '../../store/clientsSlice';
-
-import './styles.css';
+import { fetchClients } from '../../store/clientsSlice';
+import AddClientModal from './modals/AddClientModal';
+import ClientLinkModal from './modals/ClientLinkModal';
+import NoBranchModal from './modals/NoBranchModal';
+import {
+  ClientsActionsBar,
+  ClientsContainer,
+  ClientsStatCard,
+  ClientsStatsGrid,
+  ClientsTooltip,
+  ClientsTooltipWrapper,
+  PushActions,
+  PushCard,
+  PushCardWrapper,
+  PushDescription,
+  SectionHeading,
+  StatClientsLabel,
+  StatClientsValue,
+} from './styles';
 
 const Clients = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
+
+  const { list: clients, loading } = useSelector((s) => s.clients);
+  const branches = useSelector((s) => s.locations.list);
+
+  const [showAddModal, setShowAddModal] = useState(false);
   const [showLinkModal, setShowLinkModal] = useState(false);
-  const [generatedLink, setGeneratedLink] = useState('');
-  const [newClient, setNewClient] = useState({
-    surname: '',
-    name: '',
-    phone: '',
-    email: '',
-    birthday: '',
-  });
-  const [selectedBranches, setSelectedBranches] = useState([]);
-  const [selectedNetwork, setSelectedNetwork] = useState(null);
-  const [mode, setMode] = useState('branches'); // 'branches' | 'network'
-  const [isCopied, setIsCopied] = useState(false);
   const [showNoBranchModal, setShowNoBranchModal] = useState(false);
-
-  const { list: clients, loading } = useSelector((state) => state.clients);
-  const orgId = useSelector((state) => state.user.organization_id);
-  const branches = useSelector((state) => state.locations.list);
-  const networks = useSelector((state) => state.networks.list);
-
-  const formatPhone = (value) => {
-    const digits = value.replace(/\D/g, '').slice(0, 11);
-    if (!digits) return '';
-
-    const parts = [
-      '+7',
-      digits.slice(1, 4),
-      digits.slice(4, 7),
-      digits.slice(7, 9),
-      digits.slice(9, 11),
-    ];
-
-    let formatted = `${parts[0]}`;
-    if (parts[1]) formatted += `(${parts[1]}`;
-    if (digits.length > 3) formatted += ')';
-    if (parts[2]) formatted += `-${parts[2]}`;
-    if (parts[3]) formatted += `-${parts[3]}`;
-    if (parts[4]) formatted += `-${parts[4]}`;
-
-    return formatted;
-  };
-
-  const handleCopy = () => {
-    navigator.clipboard
-      .writeText(generatedLink)
-      .then(() => {
-        setIsCopied(true);
-        setTimeout(() => setIsCopied(false), 2000);
-      })
-      .catch((err) => {
-        console.error('Ошибка копирования: ', err);
-        const textArea = document.createElement('textarea');
-        textArea.value = generatedLink;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        setIsCopied(true);
-        setTimeout(() => setIsCopied(false), 2000);
-      });
-  };
-
-  const columns = mockClientsHeaders.map((header) => {
-    const base = {
-      key: header.key,
-      title: header.label,
-      className: 'text-center',
-      cellClassName: 'text-center',
-    };
-    if (header.key === 'cards') {
-      base.render = (row) => (Array.isArray(row.cards) ? row.cards.length : 0);
-    }
-    return base;
-  });
-
-  const generateClientLink = (clientId) => {
-    const link = '/example';
-    setGeneratedLink(link);
-    setShowLinkModal(true);
-  };
-
-  const phoneDigits = newClient.phone.replace(/\D/g, '');
-  const isEmailValid = newClient.email ? /^\S+@\S+\.\S+$/.test(newClient.email) : false;
-
-  const handleAddClient = () => {
-    const payload = {
-      ...newClient,
-      phone: phoneDigits,
-      organization_id: orgId,
-      branch_ids: mode === 'branches' ? selectedBranches : undefined,
-      network_id: mode === 'network' ? selectedNetwork : undefined,
-    };
-    dispatch(createClient(payload))
-      .unwrap()
-      .then((res) => {
-        generateClientLink(res.id);
-        dispatch(fetchClients());
-      });
-    setShowModal(false);
-    setNewClient({ surname: '', name: '', phone: '', email: '', birthday: '' });
-    setSelectedBranches([]);
-    setSelectedNetwork(null);
-  };
-
-  const handleExportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(clients);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Клиенты');
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const data = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    saveAs(data, 'clients.xlsx');
-  };
+  const [generatedLink, setGeneratedLink] = useState('');
 
   useEffect(() => {
     dispatch(fetchClients());
   }, [dispatch]);
 
+  const columns = useMemo(() => {
+    return mockClientsHeaders.map((header) => {
+      const base = {
+        key: header.key,
+        title: header.label,
+        className: 'text-center',
+        cellClassName: 'text-center',
+      };
+      if (header.key === 'cards') {
+        base.render = (row) => (Array.isArray(row.cards) ? row.cards.length : 0);
+      }
+      return base;
+    });
+  }, []);
+
   const totalClients = clients.length;
-  const transactions = 0; // пока нет API
+  const transactions = 0;
   const cardsIssued = 0;
   const returnRate = 0;
+  const firstStatRef = useRef(null);
+  const [statWidth, setStatWidth] = useState();
 
-  if (loading) {
-    return <LoaderCentered />;
-  }
+  useEffect(() => {
+    const measure = () => {
+      if (firstStatRef.current) {
+        setStatWidth(firstStatRef.current.offsetWidth);
+      }
+    };
+    measure();
+
+    const ro = new ResizeObserver(measure);
+    if (firstStatRef.current) ro.observe(firstStatRef.current);
+    window.addEventListener('resize', measure);
+
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, []);
+  const handleOpenAdd = () => {
+    if (branches.length === 0) {
+      setShowNoBranchModal(true);
+    } else {
+      setShowAddModal(true);
+    }
+  };
+
+  const handleCreated = (clientId) => {
+    const link = '/example';
+    setGeneratedLink(link);
+    setShowLinkModal(true);
+  };
+
+  if (loading) return <LoaderCentered />;
 
   return (
-    <div className="clients-container">
+    <ClientsContainer>
       <TitleWithHelp
-        title={'Клиентская база'}
+        title="Клиентская база"
         tooltipId="clients-help"
         tooltipHtml
         tooltipContent={`Здесь вы управляете своей клиентской базой: добавляете новых клиентов, импортируете
         существующих и отправляете push-уведомления`}
       />
-      <div className="clients-stats-grid">
-        <div className="clients-stat-card">
-          <span className="stat-clients-value">{totalClients}</span>
-          <span className="stat-clients-label">Клиентов в базе</span>
-        </div>
-        <div className="clients-stat-card">
-          <span className="stat-clients-value">{transactions}</span>
-          <span className="stat-clients-label">Транзакций по картам</span>
-        </div>
-        <div className="clients-stat-card">
-          <span className="stat-clients-value">{cardsIssued}</span>
-          <span className="stat-clients-label">Карт установлено</span>
-        </div>
-        <div className="clients-stat-card clients-tooltip-wrapper">
-          <span className="stat-clients-value">{returnRate}%</span>
-          <span className="stat-clients-label">Возвращаемость</span>
-          <div className="clients-tooltip">
-            Процент клиентов, которые вернулись к вам хотя бы один раз.
-          </div>
-        </div>
-      </div>
 
-      <div className="clients-actions-bar">
-        <CustomMainButton
-          onClick={() => {
-            if (branches.length === 0) {
-              setShowNoBranchModal(true);
-            } else {
-              setShowModal(true);
-            }
-          }}
-        >
+      <ClientsStatsGrid>
+        <ClientsStatCard ref={firstStatRef}>
+          <StatClientsValue>{totalClients}</StatClientsValue>
+          <StatClientsLabel>Клиентов в базе</StatClientsLabel>
+        </ClientsStatCard>
+        <ClientsStatCard>
+          <StatClientsValue>{transactions}</StatClientsValue>
+          <StatClientsLabel>Транзакций по картам</StatClientsLabel>
+        </ClientsStatCard>
+        <ClientsStatCard>
+          <StatClientsValue>{cardsIssued}</StatClientsValue>
+          <StatClientsLabel>Карт установлено</StatClientsLabel>
+        </ClientsStatCard>
+        <ClientsStatCard as={ClientsTooltipWrapper}>
+          <StatClientsValue>{returnRate}%</StatClientsValue>
+          <StatClientsLabel>Возвращаемость</StatClientsLabel>
+          <ClientsTooltip>
+            Процент клиентов, которые вернулись к вам хотя бы один раз.
+          </ClientsTooltip>
+        </ClientsStatCard>
+      </ClientsStatsGrid>
+
+      <ClientsActionsBar>
+        <CustomMainButton onClick={handleOpenAdd}>
           <span>+</span>Добавить клиента
         </CustomMainButton>
-      </div>
+      </ClientsActionsBar>
 
       {clients.length === 0 ? (
         <div style={{ marginTop: 40, textAlign: 'center', color: '#666' }}>
@@ -202,253 +146,43 @@ const Clients = () => {
             columns={columns}
             rows={clients}
             onRowClick={(row) => navigate(`/clients/${row.id}`)}
-            onShowModal={() => setShowModal(true)}
+            onShowModal={() => setShowAddModal(true)}
           />
         </div>
       )}
 
-      {showModal && (
-        <div className="clients-modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="clients-modal" onClick={(e) => e.stopPropagation()}>
-            <h3 className="clients-modal-title">Добавить клиента</h3>
-            <div className="clients-modal-form-group">
-              <input
-                className="clients-modal-input"
-                placeholder="Фамилия"
-                type="text"
-                value={newClient.surname}
-                onChange={(e) => setNewClient({ ...newClient, surname: e.target.value })}
-              />
-            </div>
-            <div className="clients-modal-form-group">
-              <input
-                className="clients-modal-input"
-                placeholder="Имя"
-                type="text"
-                value={newClient.name}
-                onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
-              />
-            </div>
-            <div className="clients-modal-form-group">
-              <input
-                className="clients-modal-input"
-                placeholder="Телефон"
-                type="tel"
-                value={newClient.phone}
-                onChange={(e) => {
-                  const formatted = formatPhone(e.target.value);
-                  setNewClient({ ...newClient, phone: formatted });
-                }}
-              />
-            </div>
-            <div className="clients-modal-form-group">
-              <input
-                className="clients-modal-input"
-                placeholder="Email"
-                type="email"
-                value={newClient.email}
-                onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
-              />
-            </div>
-            <div className="clients-modal-form-group">
-              <label style={{ fontSize: 12, marginBottom: 4, display: 'block' }}>
-                Дата рождения
-              </label>
-              <input
-                className="clients-modal-input"
-                type="date"
-                value={newClient.birthday}
-                onChange={(e) => setNewClient({ ...newClient, birthday: e.target.value })}
-              />
-            </div>
-            <div className="clients-modal-form-group" style={{ display: 'flex', gap: 20 }}>
-              <label>
-                <input
-                  type="radio"
-                  name="mode"
-                  checked={mode === 'branches'}
-                  onChange={() => {
-                    setMode('branches');
-                    setSelectedNetwork(null);
-                  }}
-                />{' '}
-                По точкам
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="mode"
-                  checked={mode === 'network'}
-                  onChange={() => {
-                    setMode('network');
-                    setSelectedBranches([]);
-                  }}
-                />{' '}
-                По сети
-              </label>
-            </div>
-            {mode === 'branches' && (
-              <div className="clients-modal-form-group">
-                <label style={{ fontSize: 12, marginBottom: 4, display: 'block' }}>
-                  Точки продаж
-                </label>
-                <div
-                  style={{
-                    maxHeight: 180,
-                    overflowY: 'auto',
-                    border: '1px solid #ccc',
-                    borderRadius: 4,
-                    padding: 6,
-                  }}
-                >
-                  {branches.map((br) => (
-                    <label key={br.id} style={{ display: 'block', marginBottom: 4 }}>
-                      <input
-                        type="checkbox"
-                        checked={selectedBranches.includes(br.id)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedBranches([...selectedBranches, br.id]);
-                          } else {
-                            setSelectedBranches(selectedBranches.filter((id) => id !== br.id));
-                          }
-                        }}
-                      />{' '}
-                      {br.name}
-                    </label>
-                  ))}
-                  {branches.length === 0 && <p style={{ fontSize: 14 }}>Нет доступных точек.</p>}
-                </div>
-              </div>
-            )}
-            {mode === 'network' && (
-              <div className="clients-modal-form-group">
-                <label style={{ fontSize: 12, marginBottom: 4, display: 'block' }}>Сеть</label>
-                <CustomSelect
-                  value={selectedNetwork}
-                  onChange={(val) => {
-                    setSelectedNetwork(val);
-                  }}
-                  options={networks.map((n) => ({ value: n.id, label: n.name }))}
-                  placeholder="Выберите сеть"
-                />
-              </div>
-            )}
-            <div className="clients-modal-actions">
-              <button
-                className="clients-modal-button clients-modal-button-primary"
-                onClick={handleAddClient}
-                disabled={
-                  !(
-                    newClient.name &&
-                    newClient.surname &&
-                    phoneDigits.length === 11 &&
-                    isEmailValid &&
-                    newClient.birthday &&
-                    !(
-                      (mode === 'branches' && selectedBranches.length === 0) ||
-                      (mode === 'network' && selectedNetwork === null)
-                    )
-                  )
-                }
-              >
-                Добавить клиента
-              </button>
-              <button
-                className="clients-modal-button clients-modal-button-secondary"
-                onClick={() => setShowModal(false)}
-              >
-                Отменить
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Модалки */}
+      <AddClientModal
+        open={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onCreated={handleCreated}
+      />
+      <ClientLinkModal
+        open={showLinkModal}
+        onClose={() => setShowLinkModal(false)}
+        link={generatedLink}
+      />
+      <NoBranchModal open={showNoBranchModal} onClose={() => setShowNoBranchModal(false)} />
 
-      {showLinkModal && (
-        <div className="clients-modal-overlay" onClick={() => setShowLinkModal(false)}>
-          <div className="clients-modal" onClick={(e) => e.stopPropagation()}>
-            <h3 className="clients-modal-title">Ссылка для клиента</h3>
-            <p className="clients-modal-description">
-              Отправьте эту ссылку клиенту для добавления карты лояльности:
-            </p>
+      <SectionHeading>Рассылка push</SectionHeading>
 
-            <div className="link-container">
-              <CustomInput type="text" value={generatedLink} readOnly />
-              <button onClick={handleCopy} className={`btn-light ${isCopied ? 'copied' : ''}`}>
-                {isCopied ? 'Скопировано!' : 'Копировать'}
-              </button>
-            </div>
-            <div className="clients-modal-actions">
-              <button
-                className="clients-modal-button clients-modal-button-primary"
-                onClick={() => setShowLinkModal(false)}
-              >
-                Готово
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <PushCardWrapper $width={statWidth}>
+        <PushCard>
+          <StatClientsLabel as="div" style={{ fontWeight: 600 }}>
+            Отправляйте своим клиентам push-уведомления
+          </StatClientsLabel>
+          <PushDescription>
+            Настройте и отправьте кампанию по базе клиентов за пару кликов.
+          </PushDescription>
+        </PushCard>
+      </PushCardWrapper>
 
-      {showNoBranchModal && (
-        <div className="clients-modal-overlay" onClick={() => setShowNoBranchModal(false)}>
-          <div className="clients-modal" onClick={(e) => e.stopPropagation()}>
-            <h3 className="clients-modal-title">Нет точек продаж</h3>
-            <p className="clients-modal-description">Сначала необходимо добавить точку продаж.</p>
-            <div className="clients-modal-actions">
-              <button
-                className="clients-modal-button clients-modal-button-primary"
-                onClick={() => navigate('/managers')}
-              >
-                Перейти
-              </button>
-              <button
-                className="clients-modal-button clients-modal-button-secondary"
-                onClick={() => setShowNoBranchModal(false)}
-              >
-                Отменить
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="clients-footer-grid">
-        {/* НЕ УДАЛЯТЬ! ЭТО БУДЕТ ИСПОЛЬЗОВАНО ПОЗЖЕ */}
-
-        {/* <div className="manager-card">
-          <h4 className="footer-card-title">Импорт клиентов</h4>
-          <p className="footer-card-description">
-            Импортируйте клиентов в систему с помощью xlsx шаблона
-          </p>
-          <span className="scanner-icon">
-            <Download size={18} />
-          </span>
-          <div className="footer-card-actions">
-            <button
-              className="custom-main-button"
-              onClick={() => window.open('/import_customers_template.xlsx', '_blank')}
-            >
-              Скачать шаблон импорта
-            </button>
-            <button className="custom-main-button" onClick={handleExportToExcel}>
-              Импортировать клиентов
-            </button>
-          </div>
-        </div> */}
-        <div className="manager-card" style={{ width: '35%' }}>
-          <h4 className="footer-card-title">Рассылка push</h4>
-          <p className="footer-card-description">Отправляйте своим клиентам push-уведомления</p>
-          <span className="scanner-icon">
-            <Send size={18} />
-          </span>
-          <CustomMainButton onClick={() => navigate('/mailings/push')}>
-            Создать рассылку
-          </CustomMainButton>
-        </div>
-      </div>
-    </div>
+      <PushActions>
+        <CustomMainButton onClick={() => navigate('/mailings/push')}>
+          Создать рассылку
+        </CustomMainButton>
+      </PushActions>
+    </ClientsContainer>
   );
 };
 

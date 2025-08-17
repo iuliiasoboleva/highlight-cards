@@ -39,6 +39,11 @@ const CustomMainButton = styled.button`
     color: #9b9b9b;
     cursor: not-allowed;
   }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 100%;
+  }
 `;
 
 export default CustomMainButton;
