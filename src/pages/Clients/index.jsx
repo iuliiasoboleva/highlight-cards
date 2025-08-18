@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
+import CustomTable from '../../components/CustomTable';
 import FilterableTable from '../../components/FilterableTable';
 import LoaderCentered from '../../components/LoaderCentered';
 import TitleWithHelp from '../../components/TitleWithHelp';
@@ -72,6 +73,7 @@ const Clients = () => {
   const totalClients = clients.length;
   const transactions = 0;
   const cardsIssued = 0;
+  const cardsPending = 0;
   const returnRate = 0;
 
   const firstStatRef = useRef(null);
@@ -132,7 +134,11 @@ const Clients = () => {
         </ClientsStatCard>
         <ClientsStatCard>
           <StatClientsValue>{cardsIssued}</StatClientsValue>
-          <StatClientsLabel>Карт установлено</StatClientsLabel>
+          <StatClientsLabel>Активированные карты</StatClientsLabel>
+        </ClientsStatCard>
+        <ClientsStatCard>
+          <StatClientsValue>{cardsPending}</StatClientsValue>
+          <StatClientsLabel>Нективированные карты</StatClientsLabel>
         </ClientsStatCard>
         <ClientsStatCard as={ClientsTooltipWrapper}>
           <StatClientsValue>{returnRate}%</StatClientsValue>
@@ -150,9 +156,11 @@ const Clients = () => {
       </ClientsActionsBar>
 
       {clients.length === 0 ? (
-        <div style={{ marginTop: 40, textAlign: 'center', color: '#666' }}>
-          Здесь будут отображены клиенты
-        </div>
+        <CustomTable
+          columns={columns.filter((c) => c.key !== 'actions')}
+          rows={[]}
+          emptyText={'Здесь будут отображены клиенты'}
+        />
       ) : (
         <div className="table-wrapper">
           <FilterableTable

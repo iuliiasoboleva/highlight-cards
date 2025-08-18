@@ -31,7 +31,7 @@ const CustomMainButton = styled.button`
 
   &:hover:not(:disabled) {
     color: #bf4756;
-    background-color: rgba(191, 71, 86, 0.1);
+    background-color: #f9edee;
   }
 
   &:disabled {

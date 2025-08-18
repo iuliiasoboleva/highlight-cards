@@ -1,9 +1,5 @@
-// styles.jsx
 import styled, { css } from 'styled-components';
 
-/* =========================
-   БАЗОВЫЕ КОМПОНЕНТЫ
-   ========================= */
 export const FlexRowBase = styled.div`
   display: flex;
   ${({ $gap }) =>
@@ -70,9 +66,6 @@ export const ButtonBase = styled.button`
   }
 `;
 
-/* =========================
-   КОНТЕЙНЕРЫ / ЗАГОЛОВКИ
-   ========================= */
 export const ClientsContainer = styled.div`
   padding: 20px;
 `;
@@ -83,9 +76,6 @@ export const ClientsTitle = styled.h2`
   font-size: 28px;
 `;
 
-/* =========================
-   СТАТИСТИКА
-   ========================= */
 export const ClientsStatsGrid = styled.div`
   display: grid;
   gap: 20px;
@@ -119,15 +109,13 @@ export const StatClientsLabel = styled.span`
   text-align: left;
 `;
 
-/* =========================
-   ОПИСАНИЯ / ТЕКСТЫ
-   ========================= */
 export const Description = styled(ParagraphBase)`
   margin: 0 0 16px;
 `;
 
 export const PushDescription = styled(ParagraphBase)`
   color: #7f8c8d;
+  text-align: left;
 `;
 
 export const FooterCardDescription = styled(ParagraphBase)`
@@ -145,9 +133,6 @@ export const LoyaltyStars = styled.div`
   margin-top: 10px;
 `;
 
-/* =========================
-   ЭКШЕНЫ
-   ========================= */
 export const ClientsActionsBar = styled.div`
   margin: 30px 0;
 `;
@@ -175,9 +160,6 @@ export const GhostButton = styled(ButtonBase)`
   }
 `;
 
-/* =========================
-   СПИСОК КЛИЕНТОВ
-   ========================= */
 export const ClientsListContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -228,9 +210,6 @@ export const ClientMeta = styled.div`
 
 export const ClientMetaItem = styled(FlexRowBase).attrs({ $gap: 5, $align: 'center' })``;
 
-/* =========================
-   ФОРМА / МОДАЛКИ (частично)
-   ========================= */
 export const ClientsModalFormGroup = styled.div`
   margin-bottom: 15px;
   display: flex;
@@ -248,19 +227,6 @@ export const Label = styled.p`
   user-select: none;
 `;
 
-export const BranchesScrollContainer = styled.div`
-  max-height: 180px;
-  overflow-y: auto;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 6px;
-`;
-
-export const CheckboxRow = styled(FlexRowBase).attrs({ $gap: 4, $align: 'center' })``;
-
-/* =========================
-   PUSH-КАРТОЧКА
-   ========================= */
 export const PushCard = styled(ClientsStatCard)`
   display: flex;
   flex-direction: column;
@@ -289,9 +255,6 @@ export const PushActions = styled.div`
   margin-top: 12px;
 `;
 
-/* =========================
-   ВСПОМОГАТЕЛЬНЫЕ
-   ========================= */
 export const ErrorText = styled.div`
   color: #e53935;
   font-size: 12px;
@@ -322,9 +285,6 @@ export const IconWrap = styled.span`
   justify-content: center;
 `;
 
-/* =========================
-   TOOLTIP
-   ========================= */
 export const ClientsTooltipWrapper = styled.span`
   position: relative;
   display: inline-block;
@@ -352,9 +312,6 @@ export const ClientsTooltip = styled.span.attrs({ className: 'clients-tooltip' }
   z-index: 10;
 `;
 
-/* =========================
-   ИКОНКИ (псевдоэлементы)
-   ========================= */
 const IconBase = styled.span`
   &::before {
     display: inline-block;
@@ -380,9 +337,6 @@ export const IconBirthday = styled(IconBase)`
   }
 `;
 
-/* =========================
-   ДОП. ХЕЛПЕРЫ ДЛЯ ПОВТОРНОГО ИСП.
-   ========================= */
 export const ActionsRow = styled(FlexRowBase).attrs({ $gap: 12, $wrap: 'wrap' })`
   button {
     max-width: 100%;

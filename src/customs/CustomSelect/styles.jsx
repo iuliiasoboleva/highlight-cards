@@ -82,14 +82,14 @@ export const OptionItem = styled.div`
   white-space: nowrap;
 
   &:hover {
-    background-color: rgba(191, 71, 86, 0.1);
+    background-color: #f9edee;
   }
 
   ${({ $selected }) =>
     $selected &&
     css`
       color: #bf4756;
-      background-color: rgba(191, 71, 86, 0.1);
+      background-color: #f9edee;
       font-weight: 500;
     `}
 `;

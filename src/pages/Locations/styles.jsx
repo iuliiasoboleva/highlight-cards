@@ -51,7 +51,14 @@ export const LocationCard = styled.div`
 `;
 
 export const LocationInfo = styled.div`
-  font-size: 14px;
+  display: grid;
+  gap: 4px;
+  padding: 8px 10px;
+  border: 1px dashed #e0e0e0;
+  border-radius: 6px;
+  background: #fafafa;
+  color: #2c3e50;
+  font-size: 13px;
 `;
 
 export const LocationActions = styled.div`
@@ -91,7 +98,7 @@ export const PrimaryBtn = styled.button`
 
   &:hover {
     color: #bf4756;
-    background-color: rgba(191, 71, 86, 0.1);
+    background-color: #f9edee;
   }
 `;
 
@@ -99,7 +106,7 @@ export const ActionRow = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 `;
 
 export const ActionButton = styled.button`
@@ -116,6 +123,7 @@ export const ActionButton = styled.button`
   transition: 0.15s ease;
   border: 1px solid transparent;
   user-select: none;
+  white-space: nowrap;
 
   .icon {
     flex: 0 0 auto;

@@ -6,11 +6,9 @@ import { Camera, PlusCircle, Search } from 'lucide-react';
 
 import CustomTable from '../../components/CustomTable';
 import LoaderCentered from '../../components/LoaderCentered';
-import ManagerModal from '../../components/ManagerModal';
-import NetworkModal from '../../components/NetworkModal';
-import RoleSwitcher from '../../components/RoleSwitcher';
-import SalesPointsModal from '../../components/SalesPointsModal';
 import TitleWithHelp from '../../components/TitleWithHelp';
+import { useToast } from '../../components/Toast';
+import CustomInput from '../../customs/CustomInput';
 import CustomMainButton from '../../customs/CustomMainButton';
 import { managersHeaders } from '../../mocks/managersInfo';
 import { locationsHeaders } from '../../mocks/mockLocations';
@@ -33,12 +31,29 @@ import {
   editBranch,
   fetchBranches,
 } from '../../store/salesPointsSlice';
+import { normalizeErr } from '../../utils/normalizeErr';
+import ManagerModal from './modals/ManagerModal';
+import NetworkModal from './modals/NetworkModal';
+import SalesPointsModal from './modals/SalesPointsModal';
+import {
+  Card,
+  Grid,
+  Header,
+  IconWithTooltip,
+  ManagerEditButton,
+  Page,
+  ScannerIcon,
+  TableName,
+  TablesGroup,
+  Tooltip,
+} from './styles';
 
-import './styles.css';
+const CARD_LENGTH = 16;
 
 const ManagersPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const toast = useToast();
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [cardNumber, setCardNumber] = useState('');
@@ -51,7 +66,13 @@ const ManagersPage = () => {
   const { list: locations, loading: lLoading } = useSelector((state) => state.locations);
   const orgId = useSelector((state) => state.user.organization_id);
 
-  const clients = useSelector((state) => state.clients);
+  const clientsRaw = useSelector((state) => state.clients);
+  const clients = Array.isArray(clientsRaw)
+    ? clientsRaw
+    : Array.isArray(clientsRaw?.list)
+      ? clientsRaw.list
+      : [];
+
   const networks = useSelector((state) => state.networks.list);
 
   const managersColumns = [
@@ -81,13 +102,9 @@ const ManagersPage = () => {
       className: 'text-center',
       cellClassName: 'text-center',
       render: (row) => (
-        <div
-          className="manager-edit-button"
-          style={{ cursor: 'pointer' }}
-          onClick={() => setEditModalData(row)}
-        >
+        <ManagerEditButton onClick={() => setEditModalData(row)} title="Редактировать">
           ✏️
-        </div>
+        </ManagerEditButton>
       ),
     },
   ];
@@ -128,16 +145,15 @@ const ManagersPage = () => {
     className: 'text-center',
     cellClassName: 'text-center',
     render: (row) => (
-      <div
-        className="manager-edit-button"
-        style={{ cursor: 'pointer' }}
+      <ManagerEditButton
         onClick={() => {
           setInitialLocationData(row);
           setShowLocationModal(true);
         }}
+        title="Редактировать"
       >
         ✏️
-      </div>
+      </ManagerEditButton>
     ),
   });
 
@@ -196,79 +212,117 @@ const ManagersPage = () => {
     setEditModalData(null);
   };
 
-  const handleFindCustomer = () => {
-    const trimmedCard = cardNumber.trim();
-    if (!trimmedCard) return;
+  const normalizeDigits = (val) => val.replace(/\D+/g, '');
 
-    const foundClient = clients.find((client) =>
-      client.cards.some((card) => card.cardNumber === trimmedCard),
+  const validateCard = (digits) => {
+    if (!digits) return '';
+    if (digits.length < CARD_LENGTH) return `Введите ${CARD_LENGTH} цифр`;
+    if (digits.length > CARD_LENGTH) return `Номер карты должен содержать ${CARD_LENGTH} цифр`;
+    return '';
+  };
+
+  const onCardChange = (e) => {
+    const digits = normalizeDigits(e.target.value).slice(0, CARD_LENGTH);
+    setCardNumber(digits);
+  };
+
+  const handleFindCustomer = () => {
+    const trimmedCard = (cardNumber || '').trim();
+    const err = validateCard(trimmedCard);
+    if (err) return;
+
+    const foundClient = clients.find(
+      (client) =>
+        Array.isArray(client?.cards) &&
+        client.cards.some((card) => String(card?.cardNumber ?? '').trim() === trimmedCard),
     );
 
     if (foundClient) {
       navigate(`/customer/card/${trimmedCard}`);
     } else {
-      alert('Клиент с такой картой не найден');
+      toast.error('Клиент с таким номером карты не найден');
     }
   };
 
-  const handleSaveNetwork = (network) => {
+  const handleSaveNetwork = async (network) => {
     const { branches = [], ...netData } = network;
 
     const action = netData.id
-      ? editNetwork(netData)
+      ? editNetwork({ ...netData, organization_id: orgId })
       : createNetwork({ ...netData, organization_id: orgId });
 
-    dispatch(action)
-      .unwrap()
-      .then((savedNet) => {
-        const currentIds = branches;
-        const prevIds = locations.filter((b) => b.network_id === savedNet.id).map((b) => b.id);
+    try {
+      const savedNet = await dispatch(action).unwrap();
+      const netId = savedNet.id;
 
-        const toAdd = currentIds;
-        const toRemove = prevIds.filter((id) => !currentIds.includes(id));
+      const currentIds = branches;
+      const prevIds = (locations || []).filter((b) => b.network_id === netId).map((b) => b.id);
 
-        const updatePromises = [];
+      const toAdd = currentIds;
+      const toRemove = prevIds.filter((id) => !currentIds.includes(id));
 
-        toAdd.forEach((brId) => {
-          const br = locations.find((b) => b.id === brId);
-          if (br)
-            updatePromises.push(
-              dispatch(
-                editBranch({
-                  id: br.id,
-                  name: br.name,
-                  organization_id: orgId,
-                  network_id: savedNet.id,
-                }),
-              ),
-            );
-        });
+      console.debug('[Network save] netId:', netId, 'add:', toAdd, 'remove:', toRemove);
 
-        toRemove.forEach((brId) => {
-          const br = locations.find((b) => b.id === brId);
-          if (br)
-            updatePromises.push(
-              dispatch(
-                editBranch({ id: br.id, name: br.name, organization_id: orgId, network_id: null }),
-              ),
-            );
-        });
+      const updates = [];
 
-        const promisesAll = Promise.all(updatePromises);
-        return Promise.all(updatePromises);
-      })
-      .then(() => {
-        dispatch(fetchBranches(orgId));
-        dispatch(fetchNetworks(orgId));
+      toAdd.forEach((brId) => {
+        const br = locations.find((b) => b.id === brId);
+        if (br) {
+          updates.push(
+            dispatch(
+              editBranch({
+                id: br.id,
+                name: br.name,
+                organization_id: orgId,
+                network_id: netId,
+              }),
+            ).unwrap(),
+          );
+        }
       });
 
-    setShowNetworkModal(false);
-    setEditNetworkData(null);
+      toRemove.forEach((brId) => {
+        const br = locations.find((b) => b.id === brId);
+        if (br) {
+          updates.push(
+            dispatch(
+              editBranch({
+                id: br.id,
+                name: br.name,
+                organization_id: orgId,
+                network_id: null,
+              }),
+            ).unwrap(),
+          );
+        }
+      });
+
+      await Promise.all(updates);
+
+      await Promise.all([
+        dispatch(fetchBranches(orgId)).unwrap(),
+        dispatch(fetchNetworks(orgId)).unwrap(),
+      ]);
+
+      toast.success('Сеть сохранена');
+      setShowNetworkModal(false);
+      setEditNetworkData(null);
+    } catch (e) {
+      console.error('handleSaveNetwork error:', e);
+      toast.error(normalizeErr(e));
+    }
   };
 
-  const handleDeleteNetwork = (id) => {
-    dispatch(deleteNetwork(id));
-    setEditNetworkData(null);
+  const handleDeleteNetwork = async (id) => {
+    try {
+      await dispatch(deleteNetwork(id)).unwrap();
+      await dispatch(fetchNetworks(orgId)).unwrap();
+      toast.success('Сеть удалена');
+      setEditNetworkData(null);
+    } catch (e) {
+      console.error('deleteNetwork error:', e);
+      toast.error(normalizeErr(e));
+    }
   };
 
   useEffect(() => {
@@ -281,9 +335,35 @@ const ManagersPage = () => {
 
   if (mLoading || lLoading) return <LoaderCentered />;
 
+  const networkColumns = [
+    {
+      key: 'name',
+      title: 'Название',
+      className: 'text-left',
+      cellClassName: 'text-left',
+    },
+    {
+      key: 'description',
+      title: 'Описание',
+      className: 'text-left',
+      cellClassName: 'text-left',
+    },
+    {
+      key: 'actions',
+      title: 'Действия',
+      className: 'text-center',
+      cellClassName: 'text-center',
+      render: (row) => (
+        <ManagerEditButton onClick={() => setEditNetworkData(row)} title="Редактировать">
+          ✏️
+        </ManagerEditButton>
+      ),
+    },
+  ];
+
   return (
-    <div className="managers-page">
-      <div className="managers-header">
+    <Page>
+      <Header>
         <TitleWithHelp
           title={'Сотрудники и точки продаж'}
           tooltipId="sales-help"
@@ -292,131 +372,141 @@ const ManagersPage = () => {
           контролируйте выдачу карт и начисление баллов клиентам. Используйте приложение-сканер,
           чтобы упростить процесс обслуживания на местах.`}
         />
-      </div>
+      </Header>
 
-      <div className="managers-grid">
-        <div className="manager-card create-card" onClick={() => setShowAddModal(true)}>
+      <Grid>
+        <Card onClick={() => setShowAddModal(true)}>
           <h3>Добавить сотрудника</h3>
           <p>
             Добавьте сотрудника, чтобы настроить выдачу карт, начисление баллов и работу по сменам в
             вашей точке продаж.
           </p>
-          <span className="scanner-icon">
-            <PlusCircle size={18} />
-          </span>
+          <ScannerIcon>
+            <IconWithTooltip>
+              <PlusCircle size={18} />
+              <Tooltip>Создайте нового сотрудника</Tooltip>
+            </IconWithTooltip>
+          </ScannerIcon>
           <CustomMainButton onClick={() => setShowAddModal(true)}>
             Добавить сотрудника
           </CustomMainButton>
-        </div>
-        <div className="manager-card create-card" onClick={() => setShowLocationModal(true)}>
+        </Card>
+
+        <Card onClick={() => setShowLocationModal(true)}>
           <h3>Добавить точку продаж</h3>
           <p>
             Создавайте торговые точки для управления клиентами, картами лояльности и сотрудниками в
             каждой локации. Вы сможете привязывать сотрудников и настраивать отдельные акции для
-            каждой точки.{' '}
+            каждой точки.
           </p>
-          <span className="scanner-icon">
-            <PlusCircle size={18} />
-          </span>
+          <ScannerIcon>
+            <IconWithTooltip>
+              <PlusCircle size={18} />
+              <Tooltip>Создайте новую точку продаж</Tooltip>
+            </IconWithTooltip>
+          </ScannerIcon>
           <CustomMainButton onClick={() => setShowLocationModal(true)}>
-            <span>+ </span>Добавить точку
+            Добавить точку
           </CustomMainButton>
-        </div>
-        <div className="manager-card create-card" onClick={() => setShowNetworkModal(true)}>
+        </Card>
+
+        <Card onClick={() => setShowNetworkModal(true)}>
           <h3>Добавить сеть</h3>
           <p>Объедините несколько точек в одну сеть для общего учёта клиентов.</p>
-          <span className="scanner-icon">
-            <PlusCircle size={18} />
-          </span>
+          <ScannerIcon>
+            <IconWithTooltip>
+              <PlusCircle size={18} />
+              <Tooltip>Создайте новую сеть</Tooltip>
+            </IconWithTooltip>
+          </ScannerIcon>
           <CustomMainButton onClick={() => setShowNetworkModal(true)}>
             Создать сеть
           </CustomMainButton>
-        </div>
-        <div className="manager-card search-card">
+        </Card>
+
+        <Card>
           <h3>Поиск по карте</h3>
           <p>
             Введите номер карты лояльности клиента, чтобы перейти к его профилю. Удобно, если нет
             приложения-сканера.
           </p>
-          <span className="scanner-icon">
-            <Search size={18} />
-          </span>
-          <input
-            type="text"
-            placeholder="Номер карты"
+          <ScannerIcon>
+            <IconWithTooltip>
+              <Search size={18} />
+              <Tooltip>Введите номер карты клиента и найдите его профиль</Tooltip>
+            </IconWithTooltip>
+          </ScannerIcon>
+
+          <CustomInput
+            type="tel"
+            inputMode="numeric"
+            placeholder={`Номер карты (${CARD_LENGTH} цифр)`}
             value={cardNumber}
-            className="location-modal-input"
-            onChange={(e) => setCardNumber(e.target.value)}
+            onChange={onCardChange}
+            maxLength={CARD_LENGTH}
           />
-          <CustomMainButton onClick={handleFindCustomer}>Найти клиента</CustomMainButton>
-        </div>
-        <div className="manager-card scanner-card">
-          <h3>Приложение-сканер</h3>
+
+          <CustomMainButton
+            onClick={handleFindCustomer}
+            disabled={cardNumber.length !== CARD_LENGTH}
+            $mt={10}
+            $maxWidth={268}
+          >
+            Найти клиента
+          </CustomMainButton>
+        </Card>
+
+        <Card onClick={() => navigate('/scan')}>
+          <h3>Сканер QR-кодов</h3>
           <p>
-            Установите приложение-сканер карт своим менеджерам в точках продаж. С помощью приложения
-            они смогут пробивать штампы клиентам и выдавать награды.
+            Сканер QR-кодов - инструмент для ваших менеджеров. Сканируйте карты лояльности клиентов
+            прямо в браузере - быстро и удобно.
           </p>
-          <span className="scanner-icon">
-            <Camera size={18} />
-          </span>
+          <ScannerIcon>
+            <IconWithTooltip>
+              <Camera size={18} />
+              <Tooltip>Сканируйте карты лояльности клиентов</Tooltip>
+            </IconWithTooltip>
+          </ScannerIcon>
           <CustomMainButton onClick={() => navigate('/scan')}>Открыть</CustomMainButton>
-        </div>
-      </div>
-      <div className="table-wrapper">
-        <h3 className="table-name">Информация о сотрудниках</h3>
+        </Card>
+      </Grid>
+
+      <TablesGroup>
+        <TableName>Информация о сотрудниках</TableName>
         {managers.length ? (
           <CustomTable columns={managersColumns} rows={managers} />
         ) : (
-          <p>Здесь будет информация о сотрудниках.</p>
+          <CustomTable
+            columns={managersColumns.filter((c) => c.key !== 'actions')}
+            rows={[]}
+            emptyText={'Здесь будет информация о сотрудниках'}
+          />
         )}
-      </div>
-      <div className="table-wrapper">
-        <h3 className="table-name">Информация о точках продаж</h3>
+
+        <TableName>Информация о точках продаж</TableName>
         {locations.length ? (
           <CustomTable columns={locationColumns} rows={locations} />
         ) : (
-          <p>Здесь будет информация о точках продаж.</p>
-        )}
-      </div>
-      <div className="table-wrapper">
-        <h3 className="table-name">Сети точек</h3>
-        {networks.length ? (
           <CustomTable
-            columns={[
-              {
-                key: 'name',
-                title: 'Название',
-                className: 'text-center',
-                cellClassName: 'text-center',
-              },
-              {
-                key: 'description',
-                title: 'Описание',
-                className: 'text-center',
-                cellClassName: 'text-center',
-              },
-              {
-                key: 'actions',
-                title: 'Действия',
-                className: 'text-center',
-                cellClassName: 'text-center',
-                render: (row) => (
-                  <div
-                    className="manager-edit-button"
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => setEditNetworkData(row)}
-                  >
-                    ✏️
-                  </div>
-                ),
-              },
-            ]}
-            rows={networks}
+            columns={locationColumns.filter((c) => c.key !== 'actions')}
+            rows={[]}
+            emptyText={'Здесь будет информация о точках продаж'}
           />
-        ) : (
-          <p>Сетей пока нет.</p>
         )}
-      </div>
+
+        <TableName>Сети точек</TableName>
+        {networks.length ? (
+          <CustomTable columns={networkColumns} rows={networks} />
+        ) : (
+          <CustomTable
+            columns={networkColumns.filter((c) => c.key !== 'actions')}
+            rows={[]}
+            emptyText={'Здесь будет информация о сетях'}
+          />
+        )}
+      </TablesGroup>
+
       <ManagerModal
         isOpen={showAddModal || !!editModalData}
         onClose={() => {
@@ -428,6 +518,7 @@ const ManagersPage = () => {
         initialData={editModalData}
         isEdit={!!editModalData}
       />
+
       <SalesPointsModal
         isOpen={showLocationModal}
         onClose={() => {
@@ -436,7 +527,7 @@ const ManagersPage = () => {
         }}
         initialData={initialLocationData || {}}
         isEdit={!!initialLocationData}
-        onSave={(data) => {
+        onSave={async (data) => {
           const payload = {
             name: data.name,
             address: data.address,
@@ -449,27 +540,40 @@ const ManagersPage = () => {
             }),
             network_id: data.network_id,
           };
+
+          console.debug('[SalesPointsModal] payload:', payload);
+
           const idNum = data.id ? parseInt(data.id, 10) : undefined;
           const action = idNum ? editBranch({ id: idNum, ...payload }) : createBranch(payload);
-          dispatch(action)
-            .unwrap()
-            .then(() => {
-              dispatch(fetchBranches(orgId));
-            });
-          setShowLocationModal(false);
+
+          try {
+            await dispatch(action).unwrap();
+            await dispatch(fetchBranches(orgId)).unwrap();
+            toast.success('Точка продаж сохранена');
+            setShowLocationModal(false);
+            setInitialLocationData(null);
+          } catch (e) {
+            console.error('save branch error:', e);
+            toast.error(normalizeErr(e));
+          }
         }}
-        onDelete={(id) => {
+        onDelete={async (id) => {
           const idNum = parseInt(id, 10);
           if (!idNum) return;
-          dispatch(deleteBranch(idNum))
-            .unwrap()
-            .then(() => {
-              dispatch(fetchBranches(orgId));
-            });
-          setShowLocationModal(false);
-          setInitialLocationData(null);
+
+          try {
+            await dispatch(deleteBranch(idNum)).unwrap();
+            await dispatch(fetchBranches(orgId)).unwrap();
+            toast.success('Точка продаж удалена');
+            setShowLocationModal(false);
+            setInitialLocationData(null);
+          } catch (e) {
+            console.error('delete branch error:', e);
+            toast.error(normalizeErr(e));
+          }
         }}
       />
+
       <NetworkModal
         isOpen={showNetworkModal || !!editNetworkData}
         onClose={() => {
@@ -481,8 +585,7 @@ const ManagersPage = () => {
         initialData={editNetworkData || {}}
         isEdit={!!editNetworkData}
       />
-      <RoleSwitcher />
-    </div>
+    </Page>
   );
 };
 

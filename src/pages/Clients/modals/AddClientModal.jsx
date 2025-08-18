@@ -1,22 +1,15 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import BranchCheckboxList from '../../../components/BranchCheckboxList';
 import { useToast } from '../../../components/Toast';
-import CustomCheckbox from '../../../customs/CustomCheckbox';
 import CustomInput from '../../../customs/CustomInput';
 import CustomModal from '../../../customs/CustomModal';
 import { CustomRadioGroup } from '../../../customs/CustomRadio';
 import CustomSelect from '../../../customs/CustomSelect';
 import { formatPhone } from '../../../helpers/formatPhone';
 import { createClient, fetchClients } from '../../../store/clientsSlice';
-import {
-  BranchesScrollContainer,
-  CheckboxRow,
-  ClientsModalFormGroup,
-  ErrorText,
-  FooterCardDescription,
-  Label,
-} from '../styles';
+import { ClientsModalFormGroup, ErrorText, Label } from '../styles';
 
 const NAME_RE = /^[A-Za-zА-Яа-яЁё\s-]+$/;
 
@@ -230,27 +223,14 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
       {mode === 'branches' ? (
         <ClientsModalFormGroup>
           <Label>Точки продаж</Label>
-          <BranchesScrollContainer>
-            {branches.map((br) => (
-              <CheckboxRow key={br.id}>
-                <CustomCheckbox
-                  checked={selectedBranches.includes(br.id)}
-                  onChange={(e) => {
-                    setTouched((t) => ({ ...t, scope: true }));
-                    if (e.target.checked) {
-                      setSelectedBranches((prev) => [...prev, br.id]);
-                    } else {
-                      setSelectedBranches((prev) => prev.filter((id) => id !== br.id));
-                    }
-                  }}
-                />
-                {br.name}
-              </CheckboxRow>
-            ))}
-            {branches.length === 0 && (
-              <FooterCardDescription>Нет доступных точек.</FooterCardDescription>
-            )}
-          </BranchesScrollContainer>
+          <BranchCheckboxList
+            items={branches}
+            selected={selectedBranches}
+            onChange={setSelectedBranches}
+            onTouch={() => setTouched((t) => ({ ...t, scope: true }))}
+            emptyText="Нет доступных точек."
+            maxHeight={180}
+          />
           {touched.scope && errors.scope && <ErrorText>{errors.scope}</ErrorText>}
         </ClientsModalFormGroup>
       ) : (

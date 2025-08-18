@@ -3,7 +3,29 @@ import { useNavigate } from 'react-router-dom';
 
 import { Html5Qrcode } from 'html5-qrcode';
 
-import './styles.css';
+import {
+  Arrow,
+  BackBtn,
+  DesktopNotice,
+  Header,
+  Loader,
+  Logo,
+  Main,
+  Message,
+  Page,
+  QrReaderBox,
+  UserText,
+} from './styles';
+
+const isProbablyMobile = () => {
+  const ua = navigator.userAgent || '';
+  const uaMobile = /Android|iPhone|iPad|iPod|Windows Phone|Mobile/i.test(ua);
+  const coarse =
+    typeof window !== 'undefined' && window.matchMedia
+      ? window.matchMedia('(pointer: coarse)').matches
+      : false;
+  return uaMobile || coarse;
+};
 
 const ScanPage = () => {
   const scannerRef = useRef(null);
@@ -11,7 +33,7 @@ const ScanPage = () => {
   const navigate = useNavigate();
 
   const [message, setMessage] = useState('');
-  const [status, setStatus] = useState('initializing');
+  const [status, setStatus] = useState('initializing'); // initializing | scanning | error | desktop
 
   const handleScanSuccess = (decodedText) => {
     setMessage(`Найден QR-код: ${decodedText}`);
@@ -45,8 +67,17 @@ const ScanPage = () => {
   };
 
   useEffect(() => {
+    const mobile = isProbablyMobile();
+
+    if (!mobile) {
+      setStatus('desktop');
+      return;
+    }
+
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
     const scanner = new Html5Qrcode('qr-reader', false);
+    scannerRef.current = scanner;
 
     const config = {
       fps: 10,
@@ -61,7 +92,7 @@ const ScanPage = () => {
     const startScanner = async () => {
       try {
         const container = document.getElementById('qr-reader');
-        container.innerHTML = '';
+        if (container) container.innerHTML = '';
 
         await scanner.start({ facingMode: 'environment' }, config, handleScanSuccess, (err) => {
           if (err !== 'QR code parse error, ignoring...') {
@@ -88,55 +119,56 @@ const ScanPage = () => {
 
     return () => {
       if (isScannerRunning.current && scannerRef.current) {
-        scanner.stop().catch(console.warn);
+        scannerRef.current
+          .stop()
+          .then(() => (isScannerRunning.current = false))
+          .catch(console.warn);
       }
     };
-  }, []);
+  }, [navigate]);
 
   return (
-    <div className="scan-page">
-      <header className="scan-header">
-        <img src="/logoColored.png" alt="Logo" className="scan-logo" />
-      </header>
+    <Page>
+      <Header>
+        <BackBtn onClick={() => navigate(-1)}>
+          <Arrow>←</Arrow> Назад
+        </BackBtn>
+        <Logo src="/logoColored.png" alt="Logo" onClick={() => navigate('/')} />
+      </Header>
 
-      <main className="scan-main">
-        <div className="scan-user">
+      <Main>
+        <UserText>
           <p>Отсканируйте карту, чтобы найти пользователя</p>
-        </div>
+        </UserText>
 
         {status === 'initializing' && (
-          <div className="loader">
+          <Loader>
             <div className="spinner" />
             <p>🔄 Инициализация камеры...</p>
-          </div>
+          </Loader>
         )}
 
         {status === 'error' && (
-          <p className="scan-message">
+          <Message>
             ⚠️ Ошибка при запуске камеры. Проверьте разрешения или перезагрузите страницу.
-          </p>
+          </Message>
         )}
 
-        <div
-          id="qr-reader"
-          style={{
-            width: '80%',
-            maxWidth: '500px',
-            aspectRatio: '1',
-            margin: '0 auto',
-            overflow: 'hidden',
-            backgroundColor: '#000',
-            borderRadius: '12px',
-          }}
-        />
-
-        {status === 'scanning' && (
-          <p className="scan-message">📷 Камера работает. Наведите на QR-код</p>
+        {status === 'desktop' ? (
+          <>
+            <DesktopNotice>
+              Сканер предназначен для использования на мобильном устройстве (смартфоне/планшете).
+            </DesktopNotice>
+          </>
+        ) : (
+          <QrReaderBox />
         )}
 
-        {message && <p className="scan-message result">{message}</p>}
-      </main>
-    </div>
+        {status === 'scanning' && <Message>📷 Камера работает. Наведите на QR-код</Message>}
+
+        {message && <Message className="result">{message}</Message>}
+      </Main>
+    </Page>
   );
 };
 

@@ -40,9 +40,10 @@ import MailingsInfo from './pages/MailingsInfo';
 import MailingsPush from './pages/MailingsPush';
 import MailingsSettings from './pages/MailingsSettings';
 import MailingsUserPush from './pages/MailingsUserPush';
-import Managers from './pages/Managers';
 import PersonalClientInfo from './pages/PersonalClientInfo';
 import ResetPin from './pages/ResetPin';
+import Managers from './pages/SalesPoints/Managers';
+import Workplace from './pages/SalesPoints/Workplace';
 import ScanPage from './pages/ScanPage';
 import SetPin from './pages/SetPin';
 import Settings from './pages/Settings';
@@ -51,7 +52,6 @@ import SettingsLayout from './pages/SettingsLayout';
 import SettingsPersonal from './pages/SettingsPersonal';
 import SettingsRFMSegment from './pages/SettingsRFMSegment';
 import SmsLogin from './pages/SmsLogin';
-import Workplace from './pages/Workplace';
 import { GlobalStyle } from './styles/GlobalStyle';
 
 const App = () => {

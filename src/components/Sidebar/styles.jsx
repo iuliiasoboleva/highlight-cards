@@ -78,7 +78,7 @@ export const IconButton = styled.button`
     gap: 8px;
   }
 
-  @media (max-width: 470px) {
+  @media (max-width: 520px) {
     p {
       display: none;
     }
