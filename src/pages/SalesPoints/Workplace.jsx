@@ -7,9 +7,8 @@ import { BarChart2, Camera, Search, User as UserIcon } from 'lucide-react';
 import { useToast } from '../../components/Toast';
 import CustomInput from '../../customs/CustomInput';
 import CustomMainButton from '../../customs/CustomMainButton';
+import { CARD_LENGTH, normalizeDigits, validateCard } from '../../utils/cardUtils';
 import { Card, Grid, Header, IconWithTooltip, Page, ScannerIcon, Tooltip } from './styles';
-
-const CARD_LENGTH = 16;
 
 const Workplace = () => {
   const navigate = useNavigate();
@@ -34,15 +33,6 @@ const Workplace = () => {
           loc.employees.includes(`${user?.name || ''} ${user?.surname || ''}`.trim()),
       )
     : null;
-
-  const normalizeDigits = (val) => (val || '').replace(/\D+/g, '');
-
-  const validateCard = (digits) => {
-    if (!digits) return 'Введите номер карты';
-    if (digits.length < CARD_LENGTH) return `Введите ${CARD_LENGTH} цифр`;
-    if (digits.length > CARD_LENGTH) return `Номер карты должен содержать ${CARD_LENGTH} цифр`;
-    return '';
-  };
 
   const onCardChange = (e) => {
     const digits = normalizeDigits(e.target.value).slice(0, CARD_LENGTH);
@@ -90,14 +80,8 @@ const Workplace = () => {
           <strong>
             {user?.name || '—'} <strong>{user?.surname || ''}</strong>
           </strong>
-          {userLocation ? (
-            <>
-              ! Вы находитесь в точке <strong>{userLocation.name}</strong>. Начните работу —
-              отсканируйте карту клиента или введите номер карты и начислите баллы.
-            </>
-          ) : (
-            <>! Для вашего профиля не привязана точка продаж.</>
-          )}
+          ! Вы находитесь в точке <strong>{userLocation.name}</strong>. Начните работу —
+          отсканируйте карту клиента или введите номер карты и начислите баллы.
         </p>
       </Header>
 
