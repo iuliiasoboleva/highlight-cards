@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Trash2 } from 'lucide-react';
 
@@ -19,9 +19,20 @@ const ImageUploader = ({ inputId, onSave, infoText, externalImage }) => {
   const [fileName, setFileName] = useState('');
   const [isDragOver, setIsDragOver] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
-  const [rawImage, setRawImage] = useState(null); // object URL
+  const [rawImage, setRawImage] = useState(null);
   const [lastCropSettings, setLastCropSettings] = useState(null);
   const [inputKey, setInputKey] = useState(Date.now());
+  const [error, setError] = useState('');
+
+  const inputRef = useRef(null);
+
+  const SUPPORTED_MIME = ['image/png', 'image/jpeg'];
+  const isSupportedFile = (file) => {
+    if (!file) return false;
+    if (SUPPORTED_MIME.includes(file.type)) return true;
+    const name = (file.name || '').toLowerCase();
+    return name.endsWith('.png') || name.endsWith('.jpg') || name.endsWith('.jpeg');
+  };
 
   useEffect(() => {
     if (externalImage) {
@@ -33,7 +44,6 @@ const ImageUploader = ({ inputId, onSave, infoText, externalImage }) => {
     }
   }, [externalImage]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // освобождаем URL при размонтировании/смене
   useEffect(() => {
     return () => {
       if (rawImage) URL.revokeObjectURL(rawImage);
@@ -42,12 +52,16 @@ const ImageUploader = ({ inputId, onSave, infoText, externalImage }) => {
 
   const handleFile = useCallback(
     (file) => {
-      if (file && file.type.startsWith('image/')) {
+      setError('');
+      if (file && isSupportedFile(file)) {
         if (rawImage) URL.revokeObjectURL(rawImage);
         const imageUrl = URL.createObjectURL(file);
         setRawImage(imageUrl);
         setEditorOpen(true);
         setInputKey(Date.now());
+        setFileName(file.name || 'edited-image.jpg');
+      } else if (file) {
+        setError('Недоступный формат для загрузки, выберите файл PNG или JPEG');
       }
     },
     [rawImage],
@@ -55,7 +69,7 @@ const ImageUploader = ({ inputId, onSave, infoText, externalImage }) => {
 
   const handleEditorSave = (croppedImageUrl) => {
     setPreview(croppedImageUrl);
-    setFileName('edited-image.jpg');
+    if (!fileName) setFileName('edited-image.jpg');
     onSave?.(croppedImageUrl);
   };
 
@@ -91,11 +105,16 @@ const ImageUploader = ({ inputId, onSave, infoText, externalImage }) => {
     setPreview(null);
     setFileName('');
     setRawImage(null);
+    setError('');
     setLastCropSettings(null);
     onSave?.(null);
 
-    const input = document.getElementById(inputId);
+    const input = inputRef.current || document.getElementById(inputId);
     if (input) input.value = '';
+  };
+
+  const openFileDialog = () => {
+    inputRef.current?.click();
   };
 
   return (
@@ -113,21 +132,22 @@ const ImageUploader = ({ inputId, onSave, infoText, externalImage }) => {
 
           <input
             key={inputKey}
+            ref={inputRef}
             type="file"
             id={inputId}
-            hidden
-            accept="image/*"
+            accept="image/png,image/jpeg"
             onChange={handleFileChange}
+            style={{ display: 'none' }}
           />
 
           <FileNameBlock>
-            {!preview ? (
-              <FileButton htmlFor={inputId}>Выбрать файл</FileButton>
-            ) : (
-              <FileButton type="button" onClick={handleOpenEditorAgain}>
-                {fileName || 'edited-image.jpg'}
-              </FileButton>
-            )}
+            <FileButton
+              type="button"
+              onClick={preview ? handleOpenEditorAgain : openFileDialog}
+              $uploaded={!!preview}
+            >
+              {preview ? 'Загружено' : 'Выбрать файл'}
+            </FileButton>
 
             {preview && <PreviewImg src={preview} alt="preview" />}
 
@@ -139,7 +159,10 @@ const ImageUploader = ({ inputId, onSave, infoText, externalImage }) => {
           </FileNameBlock>
         </DragDropBox>
 
-        <FileInfo>{infoText}</FileInfo>
+        <FileInfo>
+          {infoText}
+          {error && <div style={{ color: '#ff3b30', marginTop: 6, fontSize: 12 }}>{error}</div>}
+        </FileInfo>
       </SimpleImageUploader>
 
       <ImageEditorModal

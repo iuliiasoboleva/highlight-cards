@@ -6,6 +6,18 @@ export const TitleRow = styled.div`
   gap: 12px;
 `;
 
+export const TopRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+`;
+
 export const StepNote = styled.span`
   margin-left: auto;
   color: #6b7280;

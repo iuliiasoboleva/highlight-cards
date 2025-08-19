@@ -67,6 +67,12 @@ export const PhoneFrame = styled.div`
   margin-bottom: 20px;
   border-radius: 45px;
   background-color: #f2f2f7;
+
+  @media (max-width: 999px) {
+    background-color: transparent;
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
 `;
 
 export const PhoneImage = styled.img`

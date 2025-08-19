@@ -8,8 +8,14 @@ import { Copy, Power, Wallet, X } from 'lucide-react';
 import { copyCardAsync, deleteCardAsync, setCurrentCard, updateCard } from '../../store/cardsSlice';
 import { downloadPkPass } from '../../utils/downloadPkPass';
 import DeleteCardModal from '../DeleteCardModal';
-
-import './styles.css';
+import {
+  ActionButton,
+  ButtonsBlock,
+  ButtonsWrapper,
+  IconBtn,
+  IconButtons,
+  TemplateSelectButton,
+} from './styles';
 
 const CardButtons = ({ isFixed, cardId }) => {
   const navigate = useNavigate();
@@ -26,30 +32,30 @@ const CardButtons = ({ isFixed, cardId }) => {
 
   if (isFixed) {
     return (
-      <div className="card-buttons">
+      <ButtonsWrapper>
         {isTemplatePage ? (
-          <button
+          <ActionButton
             onClick={() => {
-              dispatch(setCurrentCard({})); // инициализация пустой карты
+              dispatch(setCurrentCard({}));
               navigate('/cards/create');
             }}
           >
             Без шаблона
-          </button>
+          </ActionButton>
         ) : (
           <>
-            <button onClick={() => navigate('/cards/template')}>На шаблоне</button>
-            <button
+            <ActionButton onClick={() => navigate('/cards/template')}>На шаблоне</ActionButton>
+            <ActionButton
               onClick={() => {
                 dispatch(setCurrentCard({}));
                 navigate('/cards/create');
               }}
             >
               Без шаблона
-            </button>
+            </ActionButton>
           </>
         )}
-      </div>
+      </ButtonsWrapper>
     );
   }
 
@@ -60,11 +66,9 @@ const CardButtons = ({ isFixed, cardId }) => {
     };
 
     return (
-      <div className="card-buttons">
-        <button className="template-select-button" onClick={handleTemplateSelect}>
-          Выбрать шаблон
-        </button>
-      </div>
+      <ButtonsWrapper>
+        <TemplateSelectButton onClick={handleTemplateSelect}>Выбрать шаблон</TemplateSelectButton>
+      </ButtonsWrapper>
     );
   }
 
@@ -98,39 +102,39 @@ const CardButtons = ({ isFixed, cardId }) => {
   };
 
   return (
-    <div className="card-buttons-block">
-      <button onClick={() => navigate(`/cards/${cardId}/info`)}>Перейти</button>
-      <div className="icon-buttons">
-        <button
+    <ButtonsBlock>
+      <ActionButton onClick={() => navigate(`/cards/${cardId}/info`)}>Перейти</ActionButton>
+      <IconButtons>
+        <IconBtn
           onClick={handleToggleActive}
           data-tooltip-id="card-action-tooltip"
           data-tooltip-html={card.isActive ? 'Деактивировать' : 'Активировать'}
         >
           <Power size={20} />
-        </button>
-        <button
+        </IconBtn>
+        <IconBtn
           onClick={handleDownloadPkPass}
           data-tooltip-id="card-action-tooltip"
           data-tooltip-html="Apple Wallet"
         >
           <Wallet size={20} />
-        </button>
-        <button
+        </IconBtn>
+        <IconBtn
           onClick={handleCopy}
           data-tooltip-id="card-action-tooltip"
           data-tooltip-html="Скопировать карту"
           disabled={copyLoading}
         >
           <Copy size={20} />
-        </button>
-        <button
+        </IconBtn>
+        <IconBtn
           onClick={handleDelete}
           data-tooltip-id="card-action-tooltip"
           data-tooltip-html="Удалить карту"
         >
           <X size={20} />
-        </button>
-      </div>
+        </IconBtn>
+      </IconButtons>
       {showDel && (
         <DeleteCardModal
           cardName={card.name}
@@ -151,7 +155,7 @@ const CardButtons = ({ isFixed, cardId }) => {
           whiteSpace: 'nowrap',
         }}
       />
-    </div>
+    </ButtonsBlock>
   );
 };
 

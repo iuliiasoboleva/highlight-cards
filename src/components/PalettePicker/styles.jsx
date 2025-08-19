@@ -34,6 +34,13 @@ export const Trigger = styled.button`
     border-radius: 10px;
     opacity: ${({ $alpha }) => ($alpha != null ? $alpha / 100 : 1)};
   }
+
+  &:hover {
+    border-color: #bdbdc6;
+    box-shadow:
+      0 0 0 2px #dfe0e6,
+      0 2px 8px rgba(0, 0, 0, 0.08);
+  }
 `;
 
 export const Popover = styled.div`
@@ -60,6 +67,11 @@ export const Panel = styled.div`
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
   padding: 12px;
   position: relative;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    width: 100%;
+  }
 `;
 
 export const Tail = styled.div`

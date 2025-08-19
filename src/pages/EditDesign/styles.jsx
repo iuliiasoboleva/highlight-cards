@@ -11,6 +11,22 @@ export const TitleRow = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
+
+  @media (max-width: 768px) {
+    margin-bottom: 4px;
+  }
+`;
+
+export const TopRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
 `;
 
 export const StepNote = styled.span`
@@ -40,6 +56,10 @@ export const StampQuantityGrid = styled.div`
   flex-wrap: wrap;
   gap: 8px;
   margin: 12px 0;
+
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
 `;
 
 export const StampQuantityButton = styled.button`
@@ -242,7 +262,7 @@ export const DragIcon = styled.div`
 `;
 
 export const FileButton = styled.button`
-  background-color: #222;
+  background: ${({ $uploaded }) => ($uploaded ? '#4CAF50' : '#222')};
   color: #fff;
   padding: 10px 12px;
   border: none;
@@ -379,6 +399,10 @@ export const CardFieldsHeader = styled.div`
     color: rgb(101, 101, 101);
     line-height: 1.66667;
   }
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 export const CardFieldsRow = styled.div`
@@ -387,4 +411,18 @@ export const CardFieldsRow = styled.div`
   margin-bottom: 10px;
   gap: 20px;
   grid-template-columns: 1fr 1fr;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+export const MobileLabel = styled.span`
+  display: none;
+  font-size: 12px;
+  color: #6c6c72;
+
+  @media (max-width: 768px) {
+    display: inline-block;
+  }
 `;

@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 
-import CardInfoAndroid from '../../components/CardInfoAndroid';
 import { updateCurrentCardField } from '../../store/cardsSlice';
 import { statusConfig } from '../../utils/statusConfig';
-import CardInfo from '../CardInfo';
+import CardInfo from '../CardInfo/CardInfo';
+import CardInfoAndroid from '../CardInfo/CardInfoAndroid';
 import InfoOverlay from '../InfoOverlay';
 import PushPreview from '../PushPreview';
 import {
@@ -32,6 +32,8 @@ const EditLayout = ({
   defaultPlatform = 'ios',
   chatMessage,
   chatScheduledDate,
+  hoverDesignKey,
+  mainImgRef,
 }) => {
   const dispatch = useDispatch();
   const location = useLocation();
@@ -123,6 +125,8 @@ const EditLayout = ({
                         card={currentCard}
                         setShowInfo={handleSetShowInfo}
                         onFieldClick={onFieldClick}
+                        hoverDesignKey={hoverDesignKey}
+                        mainImgRef={mainImgRef}
                       />
                     )}
 
@@ -131,6 +135,8 @@ const EditLayout = ({
                         card={currentCard}
                         setShowInfo={handleSetShowInfo}
                         onFieldClick={onFieldClick}
+                        hoverDesignKey={hoverDesignKey}
+                        mainImgRef={mainImgRef}
                       />
                     )}
 

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import axiosInstance from '../../axiosInstance';
-import CardInfo from '../../components/CardInfo';
+import CardInfo from '../../components/CardInfo/CardInfo';
 import CustomTable from '../../components/CustomTable';
 import DashboardStats from '../../components/DashboardStats';
 import LoaderCentered from '../../components/LoaderCentered';

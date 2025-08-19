@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
@@ -24,7 +24,7 @@ import {
   StampSettings,
   StampSettingsBlock,
   StepNote,
-  TitleRow,
+  TopRow,
   Wrapper,
 } from './styles';
 
@@ -33,6 +33,9 @@ const EditDesign = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
+  const mainImgRef = useRef(null);
+
+  const [hoverDesignKey, setHoverDesignKey] = useState(null);
 
   const currentCard = useSelector((state) => state.cards.currentCard);
   const fieldsName = useSelector((state) => state.cards.currentCard.fieldsName) || [];
@@ -83,18 +86,17 @@ const EditDesign = () => {
 
   const handleSave = async () => {
     if (isStampCard) {
-      const targetEl = document.querySelector('.card-info-main-img-wrapper');
+      const targetEl = mainImgRef.current;
       if (targetEl) {
         try {
           const canvas = await html2canvas(targetEl, { scale: 3, backgroundColor: null });
           const dataUrl = canvas.toDataURL('image/png');
           dispatch(updateCurrentCardField({ path: 'design.stampBackground', value: dataUrl }));
         } catch {
-          // ignore
+          /* ignore */
         }
       }
     }
-
     dispatch(updateCurrentCardField({ path: 'designReady', value: true }));
     navigate(`/cards/${id}/edit/settings`);
   };
@@ -139,7 +141,7 @@ const EditDesign = () => {
 
           <ImageUploader
             inputId="active-stamp-upload"
-            infoText="Минимальный размер файла 200 x 200 пикселей. Только PNG формат. 3 мегабайта"
+            infoText="Минимальный размер файла 200×200 пикселей. Поддерживаемые форматы: PNG, JPEG. До 3 МБ."
             onSave={(img) => handleImageChangeFromEditor(img, 'activeStampImage')}
             externalImage={design.activeStampImage}
           />
@@ -159,7 +161,7 @@ const EditDesign = () => {
 
           <ImageUploader
             inputId="inactive-stamp-upload"
-            infoText="Минимальный размер файла 200 x 200 пикселей. Только PNG формат. 3 мегабайта"
+            infoText="Минимальный размер файла 200×200 пикселей. Поддерживаемые форматы: PNG, JPEG. До 3 МБ."
             onSave={(img) => handleImageChangeFromEditor(img, 'inactiveStampImage')}
             externalImage={design.inactiveStampImage}
           />
@@ -173,7 +175,7 @@ const EditDesign = () => {
   const designContent = (
     <DesignSection ref={formRef}>
       <div>
-        <TitleRow>
+        <TopRow>
           <TitleWithHelp
             title="Выберите тип карты"
             tooltipId="edit-type-help"
@@ -181,7 +183,7 @@ const EditDesign = () => {
             tooltipContent="Выберите тип карты для дальнейшей настройки"
           />
           <StepNote>Шаг 2 из 4</StepNote>
-        </TitleRow>
+        </TopRow>
         <Divider />
       </div>
 
@@ -200,7 +202,7 @@ const EditDesign = () => {
 
           <ImageUploader
             inputId="logo-upload"
-            infoText="Рекомендованный размер: 480х150 пикселей. Минимальная высота 150 пикселей. Только PNG формат. 3 мегабайта"
+            infoText="Рекомендованный размер: 480×150 пикселей (минимальная высота 150). Поддерживаемые форматы: PNG, JPEG. До 3 МБ."
             onSave={(img) => handleImageChangeFromEditor(img, 'logo')}
           />
         </StampSettingsBlock>
@@ -216,7 +218,7 @@ const EditDesign = () => {
           </StampSectionLabel>
           <ImageUploader
             inputId="icon-upload"
-            infoText="Рекомендованный размер иконки: 512х512 пикселей. Изображение должно быть квадратное. Только PNG формат. 3 мегабайта"
+            infoText="Рекомендованный размер иконки: 512×512 (квадрат). Поддерживаемые форматы: PNG, JPEG. До 3 МБ."
             onSave={(img) => handleImageChangeFromEditor(img, 'icon')}
           />
         </StampSettingsBlock>
@@ -231,7 +233,7 @@ const EditDesign = () => {
 
           <ImageUploader
             inputId="stamp-background-upload"
-            infoText="Минимальный размер файла 1125 х 432 пикселя. Только PNG формат. 3 мегабайта"
+            infoText="Минимальный размер файла 1125×432 пикселя. Поддерживаемые форматы: PNG, JPEG. До 3 МБ."
             onSave={(img) => handleImageChangeFromEditor(img, 'stampBackground')}
           />
         </StampSettingsBlock>
@@ -251,6 +253,7 @@ const EditDesign = () => {
           dispatch(updateCurrentCardField({ path: `design.colors.${key}`, value }))
         }
         isStampCard={isStampCard}
+        onHoverKeyChange={(key) => setHoverDesignKey(key)}
       />
 
       <hr />
@@ -268,7 +271,11 @@ const EditDesign = () => {
   );
 
   return (
-    <EditLayout onFieldClick={handleFieldClick}>
+    <EditLayout
+      onFieldClick={handleFieldClick}
+      hoverDesignKey={hoverDesignKey}
+      mainImgRef={mainImgRef}
+    >
       {designContent}
       <CreateButton onClick={handleSave}>Перейти к следующему шагу</CreateButton>
     </EditLayout>

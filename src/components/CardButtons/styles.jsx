@@ -1,31 +1,19 @@
-.card-buttons-block {
-  display: flex;
-  gap: 8px;
-}
+import styled from 'styled-components';
 
-.card-buttons-block div {
-  cursor: pointer;
-  font-size: 24px;
-  color: #87879c;
-  transition: color 0.2s ease;
-}
-
-.card-buttons-block div:hover {
-  color: #1dcd27;
-}
-
-.card-buttons,
-.card-buttons-block {
+export const ButtonsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
   align-items: center;
   width: 100%;
   margin-top: auto;
-}
+`;
 
-.card-buttons button,
-.card-buttons-block button {
+export const ButtonsBlock = styled(ButtonsWrapper)`
+  flex-direction: column;
+`;
+
+export const ActionButton = styled.button`
   background-color: #2e2e2e;
   color: white;
   border-radius: 6px;
@@ -45,33 +33,36 @@
   cursor: pointer;
   max-width: 268px;
   width: 100%;
-}
 
-.card-buttons button:hover,
-.card-buttons-block button:hover {
-  color: #bf4756;
-  background-color: #f9edee;
-}
+  &:hover {
+    color: #bf4756;
+    background-color: #f9edee;
+  }
+`;
 
-.icon-buttons {
+export const TemplateSelectButton = styled(ActionButton)`
+  max-width: none;
+`;
+
+export const IconButtons = styled.div`
   display: flex;
   gap: 12px;
   margin-top: 8px;
-}
+`;
 
-.icon-buttons button {
+export const IconBtn = styled.button`
   background-color: #eaeaed;
   border: none;
   border-radius: 8px;
   padding: 8px;
   cursor: pointer;
   transition: background-color 0.2s;
-}
 
-.icon-buttons button:hover {
-  background-color: #e0e0e5;
-}
+  &:hover {
+    background-color: #e0e0e5;
+  }
 
-.icon-buttons svg {
-  stroke: #1f1e1f;
-}
+  svg {
+    stroke: #1f1e1f;
+  }
+`;

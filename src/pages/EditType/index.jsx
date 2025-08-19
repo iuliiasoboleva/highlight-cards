@@ -12,7 +12,7 @@ import {
   Divider,
   Grid,
   StepNote,
-  TitleRow,
+  TopRow,
   TypeCard,
   TypeDesc,
   TypeName,
@@ -56,7 +56,7 @@ const EditType = () => {
   return (
     <EditLayout>
       <div>
-        <TitleRow>
+        <TopRow>
           <TitleWithHelp
             title="Выберите тип карты"
             tooltipId="edit-type-help"
@@ -64,7 +64,7 @@ const EditType = () => {
             tooltipContent="Выберите тип карты для дальнейшей настройки"
           />
           <StepNote>Шаг 1 из 4</StepNote>
-        </TitleRow>
+        </TopRow>
         <Divider />
       </div>
       <Grid>

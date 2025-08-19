@@ -30,7 +30,7 @@ const normalizeColor = (str) => {
   return h || '';
 };
 
-const ColorSettings = ({ colors = {}, handleColorChange, isStampCard }) => {
+const ColorSettings = ({ colors = {}, handleColorChange, isStampCard, onHoverKeyChange }) => {
   const [validColors, setValidColors] = useState({});
   const [localInputs, setLocalInputs] = useState({});
 
@@ -106,7 +106,12 @@ const ColorSettings = ({ colors = {}, handleColorChange, isStampCard }) => {
         const pickerValue = currentColor || '#000000';
 
         return (
-          <ColorOptionLabel key={key} data-design-key={key}>
+          <ColorOptionLabel
+            key={key}
+            data-design-key={key}
+            onMouseEnter={() => onHoverKeyChange?.(key)}
+            onMouseLeave={() => onHoverKeyChange?.(null)}
+          >
             <Label>{label}</Label>
 
             <InputGroup>

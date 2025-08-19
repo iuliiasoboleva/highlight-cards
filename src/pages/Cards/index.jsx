@@ -6,7 +6,7 @@ import { Check, Pin, PinOff } from 'lucide-react';
 
 import moveIcon from '../../assets/move-arrows.png';
 import CardButtons from '../../components/CardButtons';
-import CardInfo from '../../components/CardInfo';
+import CardInfo from '../../components/CardInfo/CardInfo';
 import LoaderCentered from '../../components/LoaderCentered';
 import TitleWithHelp from '../../components/TitleWithHelp';
 import {

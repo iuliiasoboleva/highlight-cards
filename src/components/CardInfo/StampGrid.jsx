@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { getStampLayout } from '../../utils/stampLayout';
+import { StampContainer, StampImage, StampItem, StampRow } from './styles';
 
 const StampGrid = ({
   totalStamps = 10,
@@ -17,6 +18,9 @@ const StampGrid = ({
   containerWidth = 200,
   containerHeight = 88,
   onStampClick,
+  hoverActive,
+  hoverInactive,
+  hoverBorder,
 }) => {
   const layout = getStampLayout(totalStamps);
   const maxItemsPerRow = Math.max(...layout);
@@ -37,21 +41,9 @@ const StampGrid = ({
   let currentStamp = 0;
 
   return (
-    <div
-      className="stamp-container"
-      style={{ width: `${containerWidth}px`, height: `${containerHeight}px` }}
-    >
+    <StampContainer width={containerWidth} height={containerHeight}>
       {layout.map((itemsInRow, rowIndex) => (
-        <div
-          className="stamp-row"
-          key={`row-${rowIndex}`}
-          style={{
-            display: 'flex',
-            gap: `${gap}px`,
-            justifyContent: 'center',
-            marginBottom: rowIndex < totalRows - 1 ? `${gap}px` : 0,
-          }}
-        >
+        <StampRow key={`row-${rowIndex}`} gap={gap} isLast={rowIndex === totalRows - 1}>
           {Array.from({ length: itemsInRow }).map((_, colIndex) => {
             if (currentStamp >= totalStamps) return null;
 
@@ -59,41 +51,39 @@ const StampGrid = ({
             const stampNumber = currentStamp;
             currentStamp++;
 
+            const highlight = (isActive && hoverActive) || (!isActive && hoverInactive);
+            const noBorder = (isActive && !!activeImage) || (!isActive && !!inactiveImage);
+
             return (
-              <div
+              <StampItem
                 key={`stamp-${stampNumber}`}
-                className={`stamp-item ${isActive && activeImage ? 'no-border' : ''} ${!isActive && inactiveImage ? 'no-border' : ''}`}
-                style={{
-                  width: `${itemSize}px`,
-                  height: `${itemSize}px`,
-                  border: `2px solid ${borderColor}`,
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: isActive ? activeStampBgColor : inactiveStampBgColor,
-                  padding: `${itemPadding}px`,
-                  cursor: onStampClick ? 'pointer' : 'default',
-                }}
+                size={itemSize}
+                borderColor={borderColor}
+                bgColor={isActive ? activeStampBgColor : inactiveStampBgColor}
+                padding={itemPadding}
+                clickable={!!onStampClick}
+                $noBorder={noBorder}
+                $hi={highlight}
+                $hiBorder={!!hoverBorder}
                 onClick={() => onStampClick && onStampClick(isActive)}
               >
                 {isActive ? (
                   activeImage ? (
-                    <img src={activeImage} alt="active-stamp" className="stamp-image" />
+                    <StampImage src={activeImage} alt="active-stamp" />
                   ) : (
                     <ActiveIcon width={iconSize} height={iconSize} color={activeColor} />
                   )
                 ) : inactiveImage ? (
-                  <img src={inactiveImage} alt="inactive-stamp" className="stamp-image" />
+                  <StampImage src={inactiveImage} alt="inactive-stamp" />
                 ) : (
                   <InactiveIcon width={iconSize} height={iconSize} color={inactiveColor} />
                 )}
-              </div>
+              </StampItem>
             );
           })}
-        </div>
+        </StampRow>
       ))}
-    </div>
+    </StampContainer>
   );
 };
 
