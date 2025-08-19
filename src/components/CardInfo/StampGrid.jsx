@@ -43,7 +43,7 @@ const StampGrid = ({
   return (
     <StampContainer width={containerWidth} height={containerHeight}>
       {layout.map((itemsInRow, rowIndex) => (
-        <StampRow key={`row-${rowIndex}`} gap={gap} isLast={rowIndex === totalRows - 1}>
+        <StampRow key={`row-${rowIndex}`}>
           {Array.from({ length: itemsInRow }).map((_, colIndex) => {
             if (currentStamp >= totalStamps) return null;
 
@@ -58,10 +58,10 @@ const StampGrid = ({
               <StampItem
                 key={`stamp-${stampNumber}`}
                 size={itemSize}
-                borderColor={borderColor}
-                bgColor={isActive ? activeStampBgColor : inactiveStampBgColor}
-                padding={itemPadding}
-                clickable={!!onStampClick}
+                $borderColor={borderColor}
+                $bgColor={isActive ? activeStampBgColor : inactiveStampBgColor}
+                $padding={itemPadding}
+                $clickable={!!onStampClick}
                 $noBorder={noBorder}
                 $hi={highlight}
                 $hiBorder={!!hoverBorder}

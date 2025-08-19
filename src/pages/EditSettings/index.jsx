@@ -13,15 +13,29 @@ import {
   removeCurrentCardArrayItem,
   updateCurrentCardField,
 } from '../../store/cardsSlice';
+import { BarcodeRadioTitle, CreateButton } from '../EditDesign/styles';
 import CardIssueForm from './CardIssueForm';
 import CardLimit from './CardLimit';
 import CardStatusForm from './CardStatusForm';
 import LocationModal from './LocationModal';
-import PersonalDataPolicy from './PersonalDataPolicy';
 import RadioConfigs from './RadioConfigs';
-import UTMLinks from './UTMLinks';
-
-import './styles.css';
+import {
+  Divider,
+  EmptyLocations,
+  EmptyLocationsButton,
+  FullWidthHr,
+  LocationTag,
+  LocationsWrapper,
+  PolicyBordered,
+  PolicyBorderedHeader,
+  SectionTitle,
+  SettingsInputsContainer,
+  SmallActionButton,
+  StampSectionLabel,
+  StepNote,
+  TagIconButton,
+  TopRow,
+} from './styles';
 
 const EditSettings = () => {
   const { id } = useParams();
@@ -33,7 +47,8 @@ const EditSettings = () => {
   const settings = currentCard.settings || {};
   const policySettings = currentCard.policySettings;
   const cardStatus = currentCard.status;
-  const locations = settings?.locations ?? [];
+
+  const locations = settings?.locations && settings.locations.length > 0 ? settings.locations : [];
 
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
@@ -47,10 +62,20 @@ const EditSettings = () => {
 
   const handleEditLocation = (idx) => {
     const loc = locations[idx] || {};
-    const safeAddress = loc.address || formatCoords(loc.coords) || '';
+
+    const safeAddress =
+      loc.address ??
+      (loc?.coords && typeof loc.coords.lat === 'number' && typeof loc.coords.lng === 'number'
+        ? formatCoords(loc.coords)
+        : '');
+
     setEditingIndex(idx);
     setInitialLocation({ ...loc, address: safeAddress });
     setShowLocationModal(true);
+  };
+
+  const updateSettingsField = (field, value) => {
+    dispatch(updateCurrentCardField({ path: `settings.${field}`, value }));
   };
 
   const handleSaveLocation = (loc) => {
@@ -63,6 +88,12 @@ const EditSettings = () => {
     setShowLocationModal(false);
     setEditingIndex(null);
     setInitialLocation(null);
+  };
+
+  const handleRemoveLocation = (index) => {
+    const next = locations.filter((_, i) => i !== index);
+    updateSettingsField('locations', next);
+    dispatch(removeCurrentCardArrayItem({ path: 'settings.locations', index }));
   };
 
   const formRef = useRef(null);
@@ -78,23 +109,34 @@ const EditSettings = () => {
     navigate(`/cards/${id}/edit/info`);
   };
 
-  const updateSettingsField = (field, value) => {
-    dispatch(updateCurrentCardField({ path: `settings.${field}`, value }));
-  };
+  const flashInput = useCallback((key) => {
+    const el = formRef.current?.querySelector(`[data-settings-key="${key}"]`);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.add('flash-border');
+    setTimeout(() => el.classList.remove('flash-border'), 1000);
+  }, []);
 
-  const handleRemoveLocation = (index) => {
-    dispatch(removeCurrentCardArrayItem({ path: 'settings.locations', index }));
-  };
+  useEffect(() => {
+    if (location.state?.flashKey) {
+      flashInput(location.state.flashKey);
+    }
+  }, [location.state, flashInput]);
 
   const settingsContent = (
-    <div className="settings-inputs-container" ref={formRef}>
-      <TitleWithHelp
-        title={'Настройки'}
-        tooltipId="settings-help"
-        tooltipHtml
-        tooltipContent={`Настройки карты и формы установки карты`}
-      />
-      <hr />
+    <SettingsInputsContainer ref={formRef}>
+      <div>
+        <TopRow>
+          <TitleWithHelp
+            title={'Настройки'}
+            tooltipId="settings-help"
+            tooltipHtml
+            tooltipContent={`Настройки карты и формы установки карты`}
+          />
+          <StepNote>Шаг 3 из 4</StepNote>
+        </TopRow>
+        <Divider />
+      </div>
 
       <RadioConfigs cardStatus={cardStatus} />
 
@@ -112,70 +154,80 @@ const EditSettings = () => {
         />
       )}
 
-      <hr />
-      <h3 className="barcode-radio-title">Адрес точки продаж</h3>
-      <CustomTooltip
-        id="location-help"
-        html
-        content={`Здесь указываем где именно клиент сможет использовать вашу карту`}
-      />
+      <FullWidthHr />
+      <StampSectionLabel>
+        <BarcodeRadioTitle>Адрес точки продаж</BarcodeRadioTitle>
+        <CustomTooltip
+          id="location-help"
+          html
+          content={`Здесь указываем где именно клиент сможет использовать вашу карту`}
+        />
+      </StampSectionLabel>
       {locations.length === 0 ? (
-        <div className="no-location-wrapper">
+        <EmptyLocations onClick={handleAddLocation}>
           У вас еще не создано ни одной локации
-          <button onClick={handleAddLocation}>Добавить локацию</button>
-        </div>
+          <EmptyLocationsButton type="button" onClick={handleAddLocation}>
+            Добавить локацию
+          </EmptyLocationsButton>
+        </EmptyLocations>
       ) : (
-        <>
-          <div className="locations-wrapper">
-            {locations.map((location, index) => (
-              <div key={index} className="location-tag">
-                {location.name}
-                <button
-                  className="edit-btn"
-                  title="Редактировать"
-                  onClick={() => handleEditLocation(index)}
-                >
-                  ✏
-                </button>
-                <button
-                  className="remove-btn"
-                  title="Удалить"
-                  onClick={() => handleRemoveLocation(index)}
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-            <button className="add-btn" onClick={handleAddLocation}>
-              +
-            </button>
-            <button className="clear-btn" onClick={() => updateSettingsField('locations', [])}>
-              ×
-            </button>
-          </div>
-        </>
-      )}
-      <hr />
+        <LocationsWrapper>
+          {locations.map((location, index) => (
+            <LocationTag key={index}>
+              {location.name}
+              <TagIconButton
+                title="Редактировать"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEditLocation(index);
+                }}
+              >
+                ✏
+              </TagIconButton>
 
-      <h3 className="barcode-radio-title">Язык карты</h3>
-      <CustomTooltip
-        id="language-help"
-        html
-        content={`Язык, на котором будет отображаться информация карты`}
-      />
+              <TagIconButton
+                title="Удалить"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemoveLocation(index);
+                }}
+              >
+                ×
+              </TagIconButton>
+            </LocationTag>
+          ))}
+
+          <SmallActionButton onClick={handleAddLocation}>＋</SmallActionButton>
+          <SmallActionButton onClick={() => updateSettingsField('locations', [])}>
+            ×
+          </SmallActionButton>
+        </LocationsWrapper>
+      )}
+
+      <FullWidthHr />
+      <StampSectionLabel>
+        <BarcodeRadioTitle>Язык карты</BarcodeRadioTitle>
+        <CustomTooltip
+          id="language-help"
+          html
+          content={`Язык, на котором будет отображаться информация карты`}
+        />
+      </StampSectionLabel>
       <CustomSelect
         value={settings.language?.value || 'ru'}
         onChange={(value) => updateSettingsField('language', { ...settings.language, value })}
         options={[{ value: 'ru', label: 'Русский (ru)' }]}
       />
-      <hr />
 
-      <h3 className="barcode-radio-title">Форма выдачи карты</h3>
-      <CustomTooltip
-        id="fields-help"
-        html
-        content={`Поля, которые будут заполнять клиенты при установке карты`}
-      />
+      <FullWidthHr />
+      <StampSectionLabel>
+        <BarcodeRadioTitle>Анкета клиента при установке карты</BarcodeRadioTitle>
+        <CustomTooltip
+          id="fields-help"
+          html
+          content={`Эти поля заполняет клиент, когда оформляет карту. Отсюда начинается его знакомство с вами`}
+        />
+      </StampSectionLabel>
       <CardIssueForm
         formFields={currentCard.issueFormFields}
         onFieldChange={(index, key, value) =>
@@ -193,52 +245,23 @@ const EditSettings = () => {
           dispatch(removeCurrentCardArrayItem({ path: 'issueFormFields', index }))
         }
       />
-      <hr />
 
-      <h3 className="barcode-radio-title">UTM</h3>
-      <CustomTooltip id="utm-help" html content={`UTM метки для формы установки карты`} />
-      <UTMLinks
-        utmLinks={currentCard.utmLinks}
-        onAddLink={(source) =>
-          dispatch(
-            addCurrentCardArrayItem({
-              path: 'utmLinks',
-              item: {
-                source,
-                url: `http://147.45.229.94:3000/${Math.random().toString(36).substr(2, 5)}`,
-              },
-            }),
-          )
-        }
-        onRemoveLink={(index) => dispatch(removeCurrentCardArrayItem({ path: 'utmLinks', index }))}
-      />
-      <hr />
-
-      <h3 className="barcode-radio-title">Маска для номера телефона</h3>
-      <CustomTooltip
-        id="mask-help"
-        html
-        content={`Выберите маску телефона, в зависимости от страны использования карты. Для формы установки карты`}
-      />
+      <FullWidthHr />
+      <StampSectionLabel>
+        <BarcodeRadioTitle>Код страны</BarcodeRadioTitle>
+        <CustomTooltip
+          id="mask-help"
+          html
+          content={`Выберите маску телефона, в зависимости от страны использования карты. Для формы установки карты`}
+        />
+      </StampSectionLabel>
       <CustomSelect
         value={settings.phoneMask?.value || 'Russia'}
         onChange={(value) => updateSettingsField('phoneMask', { ...settings.phoneMask, value })}
-        options={[{ value: 'Russia', label: 'РФ (+7)' }]}
+        options={[{ value: 'Russia', label: '+7 (XXX) XXX-XX-XX' }]}
       />
-      <hr />
 
-      <PersonalDataPolicy
-        settings={policySettings}
-        onToggle={(key) =>
-          dispatch(
-            updateCurrentCardField({ path: `policySettings.${key}`, value: !policySettings[key] }),
-          )
-        }
-        onTextChange={(key, value) =>
-          dispatch(updateCurrentCardField({ path: `policySettings.${key}`, value }))
-        }
-      />
-      <hr />
+      <FullWidthHr />
 
       <CardLimit
         value={currentCard.issueLimit}
@@ -246,8 +269,8 @@ const EditSettings = () => {
         title="Ограничить количество выданных карт"
         subtitle="0 — без ограничений"
       />
-      <hr />
 
+      <FullWidthHr />
       {(cardStatus === 'cashback' || cardStatus === 'certificate') && (
         <CardLimit
           value={currentCard.initialPointsOnIssue}
@@ -278,7 +301,7 @@ const EditSettings = () => {
 
       {(cardStatus === 'discount' || cardStatus === 'cashback') && (
         <>
-          <h3 className="barcode-radio-title">Статус держателя карты</h3>
+          <SectionTitle>Статус держателя карты</SectionTitle>
           <CardStatusForm
             statusFields={currentCard.statusFields}
             onFieldChange={(index, key, value) =>
@@ -296,16 +319,14 @@ const EditSettings = () => {
               dispatch(removeCurrentCardArrayItem({ path: 'statusFields', index }))
             }
           />
-          <hr />
+          <FullWidthHr />
         </>
       )}
 
-      <h3 className="barcode-radio-title">Сумма покупки при начислении</h3>
-      <div className="policy-section policy-bordered">
-        <div className="policy-bordered-header">
-          <h3 className="barcode-radio-subtitle">
-            Требовать указания суммы покупки при начислении
-          </h3>
+      <SectionTitle>Сумма покупки при начислении</SectionTitle>
+      <PolicyBordered className="policy-bordered">
+        <PolicyBorderedHeader className="policy-bordered-header">
+          <BarcodeRadioTitle>Требовать указания суммы покупки при начислении</BarcodeRadioTitle>
           <ToggleSwitch
             checked={currentCard.requirePurchaseAmountOnAccrual}
             onChange={() =>
@@ -317,35 +338,20 @@ const EditSettings = () => {
               )
             }
           />
-        </div>
-      </div>
+        </PolicyBorderedHeader>
+      </PolicyBordered>
 
-      <button
+      <CreateButton
         onClick={handleSave}
-        className="create-button"
         disabled={
           policySettings?.policyEnabled &&
           (!policySettings?.policyText.trim() || !policySettings?.fullPolicyText.trim())
         }
       >
-        Продолжить
-      </button>
-    </div>
+        Перейти к следующему шагу
+      </CreateButton>
+    </SettingsInputsContainer>
   );
-
-  const flashInput = useCallback((key) => {
-    const el = formRef.current?.querySelector(`[data-settings-key="${key}"]`);
-    if (!el) return;
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    el.classList.add('flash-border');
-    setTimeout(() => el.classList.remove('flash-border'), 1000);
-  }, []);
-
-  useEffect(() => {
-    if (location.state?.flashKey) {
-      flashInput(location.state.flashKey);
-    }
-  }, [location.state, flashInput]);
 
   return <EditLayout onFieldClick={flashInput}>{settingsContent}</EditLayout>;
 };

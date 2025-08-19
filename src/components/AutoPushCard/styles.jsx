@@ -34,17 +34,6 @@ export const Line = styled.hr`
   border-bottom: 1px solid #d5d5dd;
 `;
 
-export const Textarea = styled.textarea`
-  width: -webkit-fill-available;
-  height: 60px;
-  margin: 0 15px;
-  padding: 12px;
-  border: 1px solid #d5d5dd;
-  border-radius: 6px;
-  font-size: 16px;
-  resize: vertical;
-`;
-
 export const Button = styled.button`
   background: #1f1e1f;
   color: #fff;

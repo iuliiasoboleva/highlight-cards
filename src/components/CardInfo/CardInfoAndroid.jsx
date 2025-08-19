@@ -84,12 +84,6 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick, hoverDesignKey, main
   const ActiveIcon = normalizeIcon(design?.activeStamp || 'Star');
   const InactiveIcon = normalizeIcon(design?.inactiveStamp || 'Star');
 
-  const defaultInactiveColor = '#CDCDCD';
-  const effectiveInactiveColor =
-    !design?.inactiveStampColor || /^#?fff?f?f?$/i.test(design?.inactiveStampColor)
-      ? defaultInactiveColor
-      : design?.inactiveStampColor;
-
   const restStamps =
     card.status === 'stamp' ? (design?.stampsQuantity || 10) - (card.stamps || 0) : 0;
 
@@ -245,7 +239,7 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick, hoverDesignKey, main
             activeImage={activeStampImage}
             inactiveImage={inactiveStampImage}
             activeColor={mergedCard.activeStampColor}
-            inactiveColor={effectiveInactiveColor}
+            inactiveColor={mergedCard.inactiveStampColor || '#CDCDCD'}
             borderColor={mergedCard.borderColor}
             activeStampBgColor={mergedCard.activeStampBgColor}
             inactiveStampBgColor={mergedCard.inactiveStampBgColor}

@@ -2,7 +2,8 @@ import React from 'react';
 
 import { CustomRadioGroup } from '../../customs/CustomRadio';
 import CustomTooltip from '../../customs/CustomTooltip';
-import { AdditionalBox, GroupWrap, Subtitle, Title } from './styles';
+import { BarcodeRadioTitle } from '../EditDesign/styles';
+import { AdditionalBox, GroupWrap, StampSectionLabel, Subtitle } from './styles';
 
 const BarcodeRadio = ({
   options,
@@ -19,8 +20,10 @@ const BarcodeRadio = ({
 
   return (
     <GroupWrap data-info-key={dataKey}>
-      {title && <Title>{title}</Title>}
-      {tooltip && <CustomTooltip id={tooltipId} html content={tooltip.replace(/\n/g, '<br/>')} />}
+      <StampSectionLabel>
+        {title && <BarcodeRadioTitle>{title}</BarcodeRadioTitle>}
+        {tooltip && <CustomTooltip id={tooltipId} html content={tooltip.replace(/\n/g, '<br/>')} />}
+      </StampSectionLabel>
       {subtitle && <Subtitle>{subtitle}</Subtitle>}
 
       <CustomRadioGroup

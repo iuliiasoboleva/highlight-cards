@@ -11,6 +11,7 @@ import CustomMainButton from '../../customs/CustomMainButton';
 import CustomModal from '../../customs/CustomModal';
 import CustomSelect from '../../customs/CustomSelect';
 import CustomToggleSwitch from '../../customs/CustomToggleSwitch';
+import { normalizeCoords } from '../../helpers/formatCoords';
 import { assignManagerToSalesPoint } from '../../store/managersSlice';
 import { DADATA_TOKEN, DADATA_URL, MAX_LOCATIONS } from '../../utils/locations';
 import { normalizeErr } from '../../utils/normalizeErr';
@@ -48,7 +49,6 @@ const LocationModal = ({ isOpen, onClose, onSave, initialData = {}, isEdit = fal
     null;
 
   const mapRef = useRef(null);
-  const addressInputRef = useRef(null);
   const clickAwayRef = useRef(null);
 
   const [selectedManager, setSelectedManager] = useState(null);
@@ -57,7 +57,7 @@ const LocationModal = ({ isOpen, onClose, onSave, initialData = {}, isEdit = fal
   const [searchQuery, setSearchQuery] = useState(initialData.address || '');
   const [selectedLocation, setSelectedLocation] = useState(
     initialData.address && initialData.coords
-      ? { address: initialData.address, coords: initialData.coords }
+      ? { address: initialData.address, coords: normalizeCoords(initialData.coords) }
       : null,
   );
   const [isSearching, setIsSearching] = useState(false);
@@ -89,17 +89,23 @@ const LocationModal = ({ isOpen, onClose, onSave, initialData = {}, isEdit = fal
 
     setName(n);
     setSearchQuery(a);
+
     if (c) {
-      setSelectedLocation({ address: a, coords: c });
-      if (mapRef.current?.setCenter) mapRef.current.setCenter([c.lat, c.lon]);
+      const nc = normalizeCoords(c);
+      setSelectedLocation({ address: a, coords: nc });
+      if (mapRef.current?.setCenter && nc.lat != null && nc.lng != null) {
+        mapRef.current.setCenter([nc.lat, nc.lng]);
+      }
     } else {
       setSelectedLocation(null);
     }
+
     setIsPartOfNetwork(Boolean(initialData.network_id));
     setSelectedNetwork(initialData.network_id || null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, initialData]);
 
+  // Поиск адреса через карту, если DaData недоступна
   useEffect(() => {
     const searchAddress = async () => {
       if (!debouncedSearchQuery || !mapRef.current) return;
@@ -109,9 +115,10 @@ const LocationModal = ({ isOpen, onClose, onSave, initialData = {}, isEdit = fal
         setIsSearching(true);
         const coords = await mapRef.current.search(debouncedSearchQuery.trim());
         if (Array.isArray(coords) && coords.length === 2) {
+          const nc = normalizeCoords({ lat: coords[0], lon: coords[1] });
           setSelectedLocation({
             address: debouncedSearchQuery,
-            coords: { lat: coords[0], lon: coords[1] },
+            coords: nc,
           });
         }
       } catch (error) {
@@ -194,7 +201,8 @@ const LocationModal = ({ isOpen, onClose, onSave, initialData = {}, isEdit = fal
   }, []);
 
   const handleMapSelect = useCallback((location) => {
-    setSelectedLocation(location);
+    const nc = normalizeCoords(location?.coords);
+    setSelectedLocation({ address: location?.address ?? '', coords: nc });
     if (location?.address) setSearchQuery(location.address);
   }, []);
 
@@ -221,18 +229,17 @@ const LocationModal = ({ isOpen, onClose, onSave, initialData = {}, isEdit = fal
       setShowSuggests(false);
 
       if (!Number.isNaN(lat) && !Number.isNaN(lon)) {
-        setSelectedLocation({ address: addr, coords: { lat, lon } });
-        if (mapRef.current?.setCenter) mapRef.current.setCenter([lat, lon]);
+        const nc = normalizeCoords({ lat, lon });
+        setSelectedLocation({ address: addr, coords: nc });
+        if (mapRef.current?.setCenter) mapRef.current.setCenter([nc.lat, nc.lng]);
         return;
       }
 
       if (mapRef.current?.search) {
         const coords = await mapRef.current.search(addr);
         if (Array.isArray(coords) && coords.length === 2) {
-          setSelectedLocation({
-            address: addr,
-            coords: { lat: coords[0], lon: coords[1] },
-          });
+          const nc = normalizeCoords({ lat: coords[0], lon: coords[1] });
+          setSelectedLocation({ address: addr, coords: nc });
         }
       }
     } catch (e) {
@@ -308,6 +315,7 @@ const LocationModal = ({ isOpen, onClose, onSave, initialData = {}, isEdit = fal
   };
 
   const title = isEdit ? 'Редактировать локацию' : 'Добавить локацию';
+  const initialCoords = selectedLocation?.coords || null;
 
   return (
     <CustomModal
@@ -348,15 +356,9 @@ const LocationModal = ({ isOpen, onClose, onSave, initialData = {}, isEdit = fal
         </FieldGroup>
 
         <FieldGroup>
-          <Label>
-            <RowBetween>
-              <span>Адрес</span>
-            </RowBetween>
-          </Label>
-
+          <Label>Адрес</Label>
           <AddressWrap>
             <CustomInput
-              ref={addressInputRef}
               placeholder="Введите адрес"
               value={searchQuery}
               onChange={(e) => {
@@ -394,39 +396,33 @@ const LocationModal = ({ isOpen, onClose, onSave, initialData = {}, isEdit = fal
           </AddressWrap>
         </FieldGroup>
 
-        {selectedLocation && (
-          <LocationInfo>
-            {(selectedLocation.address || searchQuery) && (
-              <div>Адрес: {selectedLocation.address || searchQuery}</div>
-            )}
-            {selectedLocation.coords && (
-              <div>
-                Координаты:&nbsp;
-                {selectedLocation.coords.lat.toFixed(6)}, {selectedLocation.coords.lon.toFixed(6)}
-              </div>
-            )}
-          </LocationInfo>
-        )}
+        {selectedLocation &&
+          (() => {
+            const { lat, lng } = normalizeCoords(selectedLocation.coords);
+            const hasCoords = lat != null && lng != null;
+            const addr = selectedLocation.address || searchQuery;
+            if (!addr && !hasCoords) return null;
+
+            return (
+              <LocationInfo>
+                {addr && <div>Адрес: {addr}</div>}
+                {hasCoords && (
+                  <div>
+                    Координаты:&nbsp;{lat.toFixed(6)}, {lng.toFixed(6)}
+                  </div>
+                )}
+              </LocationInfo>
+            );
+          })()}
 
         <FieldGroup>
-          <YandexMapPicker
-            ref={mapRef}
-            onSelect={handleMapSelect}
-            initialCoords={selectedLocation?.coords}
-          />
+          <YandexMapPicker ref={mapRef} onSelect={handleMapSelect} initialCoords={initialCoords} />
         </FieldGroup>
 
         <InlineRow>
           <FieldGroup style={{ flex: 1, minWidth: 280 }}>
-            <Label
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 12,
-                justifyContent: 'space-between',
-              }}
-            >
-              Эта локация является частью сети?
+            <RowBetween style={{ alignItems: 'center' }}>
+              <Label as="span">Эта локация является частью сети?</Label>
               <CustomToggleSwitch
                 checked={isPartOfNetwork}
                 onChange={(e) => {
@@ -435,7 +431,7 @@ const LocationModal = ({ isOpen, onClose, onSave, initialData = {}, isEdit = fal
                   if (!checked) setSelectedNetwork(null);
                 }}
               />
-            </Label>
+            </RowBetween>
 
             {isPartOfNetwork && (
               <div style={{ marginTop: 10 }}>

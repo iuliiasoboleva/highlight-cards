@@ -1,8 +1,9 @@
 import React from 'react';
 
+import CustomInput from '../../customs/CustomInput';
 import CustomTooltip from '../../customs/CustomTooltip';
-
-import './styles.css';
+import { BarcodeRadioTitle } from '../EditDesign/styles';
+import { StampSectionLabel, SubTitle } from './styles';
 
 const CardLimit = ({
   value,
@@ -14,14 +15,15 @@ const CardLimit = ({
 }) => {
   return (
     <>
-      <div className="card-limit-header">
-        <h3 className="barcode-radio-title">{title}</h3>
-        {tooltip && <CustomTooltip id="card-limit-help" html content={tooltip} />}
-        {subtitle && <span className="card-limit-subtitle">{subtitle}</span>}
+      <div>
+        <StampSectionLabel>
+          <BarcodeRadioTitle>{title}</BarcodeRadioTitle>
+          {tooltip && <CustomTooltip id="card-limit-help" html content={tooltip} />}
+        </StampSectionLabel>
+        {subtitle && <SubTitle>{subtitle}</SubTitle>}
       </div>
-      <input
+      <CustomInput
         type="number"
-        className="custom-input"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}

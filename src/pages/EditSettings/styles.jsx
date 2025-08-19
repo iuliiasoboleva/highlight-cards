@@ -146,3 +146,429 @@ export const SmallGray = styled.span`
   font-size: 12px;
   color: #a0a0a0;
 `;
+
+export const SettingsInputsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  & .flash-border {
+    animation: flashBorder 1s ease;
+  }
+
+  @keyframes flashBorder {
+    0% {
+      box-shadow: 0 0 0 0 rgba(74, 144, 226, 0.7);
+    }
+    100% {
+      box-shadow: 0 0 0 6px rgba(74, 144, 226, 0);
+    }
+  }
+`;
+
+export const FullWidthHr = styled.hr`
+  width: 100%;
+`;
+
+export const EmptyLocations = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  padding: 10px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background-color: #fff;
+
+  font-size: 14px;
+  cursor: pointer;
+  gap: 8px;
+`;
+
+export const EmptyLocationsButton = styled.button`
+  width: 100%;
+  padding: 14px;
+  background-color: #1a1a1a;
+  color: #fff;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #000;
+  }
+`;
+
+/* ==== УНИФИЦИРОВАННЫЕ ЗАГОЛОВКИ ==== */
+export const SectionTitle = Title; // алиас
+export const SectionSubTitle = styled(Title)`
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+`;
+
+/* === ЛОКАЦИИ: как TagWrapper === */
+export const LocationsWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #d5d5dd;
+  border-radius: 4px;
+  padding: 10px 12px;
+`;
+
+export const LocationTag = styled.div`
+  padding: 8px 12px;
+  background-color: transparent;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid #d5d5dd;
+  cursor: pointer;
+`;
+
+export const TagIconButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
+  font-weight: bold;
+  margin-left: 4px;
+  margin-top: 2px;
+  cursor: pointer;
+  color: inherit;
+
+  &:hover {
+    color: #000;
+  }
+`;
+
+export const SmallActionButton = styled(LocationTag).attrs({ as: 'button', type: 'button' })``;
+
+export const Section = styled.div`
+  ${({ $bordered }) =>
+    $bordered
+      ? `
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 12px 8px;
+  `
+      : ''}
+`;
+
+export const TopRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+`;
+
+export const StepNote = styled.span`
+  margin-left: auto;
+  color: #6b7280;
+  font-size: 14px;
+
+  @media (max-width: 640px) {
+    margin-left: 0;
+  }
+`;
+
+export const Divider = styled.hr`
+  border: none;
+  border-bottom: 1px solid #e0e0e0;
+  margin: 0;
+`;
+
+export const StampSectionLabel = styled.span`
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+`;
+
+export const Warning = styled.div`
+  background-color: #ffa500;
+  color: #fff;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+`;
+
+export const Header = styled.div`
+  display: grid;
+  grid-template-columns: 3fr 3fr 1fr 1fr;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 10px;
+`;
+
+export const PolicyBorderedHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  @media (max-width: 360px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+`;
+
+export const PolicyBordered = Section;
+
+export const SpanHint = styled.span`
+  font-size: 12px;
+  font-weight: 400;
+  color: rgb(101, 101, 101);
+  line-height: 1.66667;
+`;
+
+export const SubTitle = styled.span`
+  font-size: 12px;
+  color: #888;
+`;
+
+export const gridTemplate = '3fr 3fr 1fr 1fr';
+
+export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+export const Row = styled.div`
+  display: grid;
+  grid-template-columns: ${gridTemplate} 1fr;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 10px;
+`;
+
+export const DeleteBtn = styled.button`
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #555;
+
+  &:hover {
+    color: #d00;
+  }
+
+  & svg {
+    width: 20px;
+    height: 20px;
+  }
+`;
+
+export const AddBtn = styled.button`
+  width: 100%;
+  padding: 14px;
+  background-color: #1a1a1a;
+  color: #fff;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    background-color: #000;
+  }
+`;
+
+export const TextareaWrap = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+export const Asterisk = styled.span`
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  color: #888;
+`;
+
+export const LinkCell = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  a {
+    overflow-wrap: anywhere;
+    text-decoration: none;
+  }
+`;
+
+export const IconBtn = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #555;
+  padding: 0;
+
+  &:hover {
+    color: #000;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+`;
+
+export const DurationRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+`;
+
+export const SpendingRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+`;
+
+export const SpendingLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+export const Equal = styled.span`
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 1;
+`;
+
+export const VisitConfig = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+`;
+
+export const VisitLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+const HEADER_PAD_LEFT = '12px';
+
+const BP = '680px';
+export const HeaderLabel = styled(SpanHint)`
+  padding-left: ${HEADER_PAD_LEFT};
+`;
+export const HeaderLabelCenter = styled(SpanHint)`
+  justify-self: center;
+`;
+export const HeaderLabelTrash = styled.span`
+  justify-self: center;
+`;
+
+export const IssueHeader = styled(Header)`
+  grid-template-columns: minmax(240px, 340px) minmax(200px, 1fr) auto 40px;
+  gap: 16px;
+
+  @media (max-width: ${BP}) {
+    display: none;
+  }
+`;
+
+export const IssueRow = styled(Row)`
+  grid-template-columns: minmax(240px, 340px) minmax(200px, 1fr) auto 40px;
+  gap: 16px;
+  margin-bottom: 8px;
+
+  @media (max-width: ${BP}) {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'type delete'
+      'name name'
+      'required required';
+    gap: 10px 12px;
+    align-items: start;
+
+    padding: 10px 12px;
+    border: 1px solid #e6e6e6;
+    border-radius: 10px;
+    background: #fff;
+  }
+`;
+
+export const TypeCell = styled.div`
+  display: flex;
+  align-items: center;
+
+  @media (max-width: ${BP}) {
+    grid-area: type;
+  }
+`;
+
+export const NameCell = styled.div`
+  display: flex;
+  align-items: center;
+
+  @media (max-width: ${BP}) {
+    grid-area: name;
+  }
+`;
+
+export const NamePlaceholder = styled.span`
+  font-size: 13px;
+  color: #a0a0a0;
+
+  @media (max-width: ${BP}) {
+    display: none;
+  }
+`;
+
+export const RequiredCell = styled.div`
+  display: flex;
+  align-items: center;
+  justify-self: center;
+
+  @media (max-width: ${BP}) {
+    grid-area: required;
+    justify-self: stretch;
+    justify-content: space-between;
+    gap: 8px;
+  }
+`;
+
+export const RequiredLabel = styled.span`
+  display: none;
+  font-size: 13px;
+  color: #656565;
+
+  @media (max-width: ${BP}) {
+    display: inline;
+  }
+`;
+
+export const DeleteCell = styled(DeleteBtn)`
+  @media (max-width: ${BP}) {
+    grid-area: delete;
+    justify-self: end;
+    align-self: center;
+  }
+`;

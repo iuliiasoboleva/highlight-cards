@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { PreviewPlatformContext } from '../../components/EditLayout';
 import CustomInput from '../../customs/CustomInput';
 import CustomSelect from '../../customs/CustomSelect';
 import { updateCurrentCardField } from '../../store/cardsSlice';
@@ -19,6 +20,7 @@ const systemTypes = ['balanceMoney', 'credits', 'balance', 'expirationDate'];
 
 const StatusFieldConfig = ({ statusType, fields }) => {
   const dispatch = useDispatch();
+  const platform = useContext(PreviewPlatformContext);
 
   const statusOptions = (statusConfig[statusType] || [])
     .filter((item) => !systemTypes.includes(item.valueKey))
@@ -79,6 +81,7 @@ const StatusFieldConfig = ({ statusType, fields }) => {
               value={field.type}
               onChange={(value) => handleTypeChange(index, value)}
               options={fieldOptions}
+              disabled={platform === 'android'}
             />
           </div>
 
@@ -89,7 +92,7 @@ const StatusFieldConfig = ({ statusType, fields }) => {
               value={field.name}
               onChange={(e) => handleNameChange(index, e.target.value)}
               placeholder=""
-              disabled={!field.type}
+              disabled={!field.type || platform === 'android'}
               aria-label="Название для отображения"
             />
           </div>

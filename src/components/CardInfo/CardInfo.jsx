@@ -84,12 +84,6 @@ const CardInfo = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef 
   const ActiveIcon = normalizeIcon(design?.activeStamp || 'Star');
   const InactiveIcon = normalizeIcon(design?.inactiveStamp || 'Star');
 
-  const defaultInactiveColor = '#CDCDCD';
-  const effectiveInactiveColor =
-    !design?.inactiveStampColor || /^#?fff?f?f?$/i.test(design?.inactiveStampColor)
-      ? defaultInactiveColor
-      : design?.inactiveStampColor;
-
   const restStamps =
     card.status === 'stamp' ? (design?.stampsQuantity || 10) - (card.stamps || 0) : 0;
 
@@ -229,7 +223,10 @@ const CardInfo = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef 
       )}
 
       {(card.status === 'subscription' || card.status === 'stamp') && (
-        <StampOverlay style={{ backgroundImage: `url(${design.stampBackground})` }}>
+        <StampOverlay
+          data-stamp-overlay
+          style={{ backgroundImage: `url(${design.stampBackground})` }}
+        >
           <StampGrid
             totalStamps={mergedCard.stampsQuantity}
             activeStamps={typeof card.stamps === 'number' ? card.stamps : 0}
@@ -238,7 +235,7 @@ const CardInfo = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef 
             activeImage={activeStampImage}
             inactiveImage={inactiveStampImage}
             activeColor={mergedCard.activeStampColor}
-            inactiveColor={effectiveInactiveColor}
+            inactiveColor={mergedCard.inactiveStampColor || '#CDCDCD'}
             borderColor={mergedCard.borderColor}
             activeStampBgColor={mergedCard.activeStampBgColor}
             inactiveStampBgColor={mergedCard.inactiveStampBgColor}

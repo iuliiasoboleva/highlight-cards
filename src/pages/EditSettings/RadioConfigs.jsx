@@ -8,7 +8,17 @@ import CustomTooltip from '../../customs/CustomTooltip';
 import { formatDateToDDMMYYYY, getMinDate } from '../../helpers/date';
 import { pluralize } from '../../helpers/pluralize';
 import { updateCurrentCardField } from '../../store/cardsSlice';
+import { BarcodeRadioTitle } from '../EditDesign/styles';
 import BarcodeRadio from './BarcodeRadio';
+import {
+  DurationRow,
+  Equal,
+  SpendingLabel,
+  SpendingRow,
+  StampSectionLabel,
+  VisitConfig,
+  VisitLabel,
+} from './styles';
 
 const RadioConfigs = ({ cardStatus }) => {
   const dispatch = useDispatch();
@@ -45,10 +55,11 @@ const RadioConfigs = ({ cardStatus }) => {
     additionalContentByValue: {
       cardFixed: (
         <>
-          <h3 className="barcode-radio-subtitle">Срок</h3>
-          <CustomTooltip id="card-duration-help" html content={`Условия срока действия карты`} />
-          <input
-            className="push-date"
+          <StampSectionLabel>
+            <BarcodeRadioTitle>Срок</BarcodeRadioTitle>
+            <CustomTooltip id="card-duration-help" html content={`Условия срока действия карты`} />
+          </StampSectionLabel>
+          <CustomInput
             type="date"
             value={settings.cardFixedDate || ''}
             min={getMinDate()}
@@ -66,9 +77,15 @@ const RadioConfigs = ({ cardStatus }) => {
       ),
       cardFixedLater: (
         <>
-          <h3 className="barcode-radio-subtitle">Срок</h3>
-          <CustomTooltip id="stamp-duration-help" html content={`Условия срока действия штампа`} />
-          <div className="stamp-duration-selector">
+          <StampSectionLabel>
+            <BarcodeRadioTitle>Срок</BarcodeRadioTitle>
+            <CustomTooltip
+              id="stamp-duration-help"
+              html
+              content={`Условия срока действия штампа`}
+            />
+          </StampSectionLabel>
+          <DurationRow>
             <CustomSelect
               value={settings.cardDuration?.value || 1}
               onChange={(value) =>
@@ -88,7 +105,7 @@ const RadioConfigs = ({ cardStatus }) => {
               options={getDurationOptions(settings.cardDuration?.value || 1)}
               className="duration-unit-select"
             />
-          </div>
+          </DurationRow>
         </>
       ),
     },
@@ -119,8 +136,8 @@ const RadioConfigs = ({ cardStatus }) => {
       name: 'reward-program',
       additionalContentByValue: {
         spending: (
-          <div className="spending-config">
-            <label className="spending-label">
+          <SpendingRow>
+            <SpendingLabel>
               <span>₽</span>
               <CustomInput
                 type="number"
@@ -130,9 +147,9 @@ const RadioConfigs = ({ cardStatus }) => {
                   updateSettingsField('spendingAmount', parseInt(e.target.value) || 0)
                 }
               />
-            </label>
-            <span className="spending-equal">=</span>
-            <label className="spending-label">
+            </SpendingLabel>
+            <Equal>=</Equal>
+            <SpendingLabel>
               <CustomInput
                 type="number"
                 min="1"
@@ -142,12 +159,12 @@ const RadioConfigs = ({ cardStatus }) => {
                 }
               />
               <span>штампов</span>
-            </label>
-          </div>
+            </SpendingLabel>
+          </SpendingRow>
         ),
         visit: (
-          <div className="visit-config">
-            <label className="visit-label">
+          <VisitConfig>
+            <VisitLabel>
               <CustomInput type="number" min="1" value={1} disabled />
               <span className="visit-text">визит =</span>
               <CustomInput
@@ -157,13 +174,13 @@ const RadioConfigs = ({ cardStatus }) => {
                 onChange={(e) => updateSettingsField('visitStamps', parseInt(e.target.value) || 0)}
               />
               <span className="visit-text">штампов</span>
-            </label>
+            </VisitLabel>
             <CustomCheckbox
               checked={settings.limitVisitPerDay || false}
               onChange={(e) => updateSettingsField('limitVisitPerDay', e.target.checked)}
               label="Ограничить до 1 посещения в день"
             />
-          </div>
+          </VisitConfig>
         ),
       },
     });
@@ -179,17 +196,19 @@ const RadioConfigs = ({ cardStatus }) => {
       onChange: (value) => updateSettingsField('stampLimit', value),
       title: 'Срок жизни штампа',
       name: 'stamp-limit',
-      tooltip: `Срок действия штампа`,
+      tooltip: `Сделайте штамп ограниченным по времени - например, один раз в месяц, чтобы мотивировать регулярные визиты`,
       additionalContentByValue: {
         stampFixedLater: (
           <>
-            <h3 className="barcode-radio-subtitle">Срок</h3>
-            <CustomTooltip
-              id="stamp-duration-help"
-              html
-              content={`Условия срока действия штампа`}
-            />
-            <div className="stamp-duration-selector">
+            <StampSectionLabel>
+              <BarcodeRadioTitle>Срок</BarcodeRadioTitle>
+              <CustomTooltip
+                id="stamp-duration-help"
+                html
+                content={`Условия срока действия штампа`}
+              />
+            </StampSectionLabel>
+            <DurationRow>
               <CustomSelect
                 value={settings.stampDuration?.value || 1}
                 onChange={(value) =>
@@ -209,7 +228,7 @@ const RadioConfigs = ({ cardStatus }) => {
                 options={getDurationOptions(settings.stampDuration?.value || 1)}
                 className="duration-unit-select"
               />
-            </div>
+            </DurationRow>
           </>
         ),
       },
@@ -229,9 +248,11 @@ const RadioConfigs = ({ cardStatus }) => {
       additionalContentByValue: {
         pointsFixedLater: (
           <>
-            <h3 className="barcode-radio-subtitle">Срок</h3>
-            <CustomTooltip id="duration-help" html content={`Условия срока действия балла`} />
-            <div className="stamp-duration-selector">
+            <StampSectionLabel>
+              <BarcodeRadioTitle>Срок</BarcodeRadioTitle>
+              <CustomTooltip id="duration-help" html content={`Условия срока действия балла`} />
+            </StampSectionLabel>
+            <DurationRow>
               <CustomSelect
                 value={settings.pointsDuration?.value || 1}
                 onChange={(value) =>
@@ -251,7 +272,7 @@ const RadioConfigs = ({ cardStatus }) => {
                 options={getDurationOptions(settings.pointsDuration?.value || 1)}
                 className="duration-unit-select"
               />
-            </div>
+            </DurationRow>
           </>
         ),
       },

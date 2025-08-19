@@ -4,6 +4,7 @@ export const RadioGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-top: 12px;
 `;
 
 export const RadioOption = styled.label`
@@ -57,9 +58,7 @@ export const Checkmark = styled.span`
   }
 `;
 
-export const Label = styled.span`
-  margin-top: 2px;
-`;
+export const Label = styled.span``;
 
 export const LabelSub = styled.span`
   margin-left: 4px;

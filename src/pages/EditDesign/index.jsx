@@ -89,14 +89,28 @@ const EditDesign = () => {
       const targetEl = mainImgRef.current;
       if (targetEl) {
         try {
-          const canvas = await html2canvas(targetEl, { scale: 3, backgroundColor: null });
+          const overlay = targetEl.querySelector('[data-stamp-overlay]');
+          if (
+            overlay &&
+            (!design.stampBackground || overlay.style.backgroundImage.includes('null'))
+          ) {
+            overlay.style.backgroundImage = 'none';
+          }
+
+          const canvas = await html2canvas(targetEl, {
+            scale: 3,
+            backgroundColor: null,
+            useCORS: true,
+            allowTaint: false,
+            logging: false,
+          });
+
           const dataUrl = canvas.toDataURL('image/png');
           dispatch(updateCurrentCardField({ path: 'design.stampBackground', value: dataUrl }));
-        } catch {
-          /* ignore */
-        }
+        } catch (e) {}
       }
     }
+
     dispatch(updateCurrentCardField({ path: 'designReady', value: true }));
     navigate(`/cards/${id}/edit/settings`);
   };

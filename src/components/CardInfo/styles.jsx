@@ -56,20 +56,6 @@ export const CardInfoRowLabel = styled.div`
   text-overflow: ellipsis;
 `;
 
-export const CardInfoRowValue = styled.span`
-  font-size: 16px;
-  display: block;
-  font-weight: 400;
-  line-height: 28px;
-  white-space: nowrap;
-`;
-
-export const CardName = styled.div`
-  font-weight: 700;
-  font-size: 10px;
-  text-align: left;
-`;
-
 export const CardInfoMainImgWrapper = styled.div`
   width: 100%;
   position: relative;
@@ -87,19 +73,6 @@ export const CardInfoQrImg = styled.img`
   max-width: 140px;
   width: 100%;
   align-self: center;
-`;
-
-export const CardInlineValue = styled.div`
-  min-height: 15px;
-  display: flex;
-  font-weight: 400;
-  font-size: 8px;
-  text-transform: uppercase;
-  gap: 4px;
-
-  &.top {
-    flex-direction: column;
-  }
 `;
 
 export const CardInfoLogo = styled.img`
@@ -145,19 +118,47 @@ export const StampRow = styled.div`
 `;
 
 export const StampItem = styled.div`
-  background-color: white;
+  width: ${({ size }) => size}px;
+  height: ${({ size }) => size}px;
   border-radius: 50%;
+  padding: ${({ $padding }) => $padding}px;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  overflow: hidden;
+
+  background-color: ${({ $bgColor }) =>
+    typeof $bgColor === 'string' && $bgColor !== '' ? $bgColor : 'transparent'};
+
+  border: ${({ $noBorder, $borderColor }) => ($noBorder ? 'none' : `2px solid ${$borderColor}`)};
+
+  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
 
   box-shadow: ${({ $hi, $hiBorder }) => {
-    const shadows = [];
-    if ($hi) shadows.push('0 0 0 2px #ff3b30');
-    if ($hiBorder) shadows.push('inset 0 0 0 2px #ff3b30');
-    return shadows.length ? shadows.join(', ') : 'none';
+    const list = [];
+    if ($hi) list.push('0 0 0 2px #ff3b30');
+    if ($hiBorder) list.push('inset 0 0 0 2px #ff3b30');
+    return list.length ? list.join(', ') : 'none';
   }};
+
+  transition:
+    box-shadow 120ms ease,
+    transform 80ms ease,
+    background-color 120ms ease;
+
+  &:hover {
+    ${({ $clickable }) => $clickable && 'box-shadow: 0 1px 0 0 rgba(0,0,0,.06);'}
+  }
+
+  &:active {
+    ${({ $clickable }) => $clickable && 'transform: translateY(0.5px);'}
+  }
+
+  &:focus-visible {
+    outline: 2px solid #7c9af2;
+    outline-offset: 2px;
+  }
 `;
 
 export const StampImage = styled.img`
@@ -177,21 +178,82 @@ export const CardBackground = styled.div`
   width: 100%;
 `;
 
-export const TopFieldsBlock = styled.div`
-  display: flex;
-  gap: 12px;
-`;
-
 export const CardInfoTitleRow = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
-  gap: 4px;
+  gap: 8px;
+
+  & > div:first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
 
   &.android {
     border-bottom: 1px solid #d5d5dd;
     padding-bottom: 10px;
   }
+`;
+
+export const TopFieldsBlock = styled.div`
+  display: flex;
+  gap: 8px 12px;
+  justify-content: flex-end;
+  flex: 0 1 55%;
+  min-width: 0;
+  overflow: hidden;
+
+  & > * {
+    min-width: 0;
+    flex: 0 1 auto;
+  }
+`;
+
+export const CardName = styled.div`
+  font-weight: 700;
+  font-size: 10px;
+  text-align: left;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+export const CardInlineValue = styled.div`
+  min-height: 15px;
+  display: inline-flex;
+  align-items: baseline;
+  font-weight: 400;
+  font-size: 8px;
+  text-transform: uppercase;
+  gap: 4px;
+  min-width: 0;
+
+  & > :last-child {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &.top {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+`;
+
+export const CardInfoRowValue = styled.span`
+  font-size: 16px;
+  display: block;
+  font-weight: 400;
+  line-height: 28px;
+  white-space: nowrap;
+
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const CardNumber = styled.div`

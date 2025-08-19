@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { Trash2 } from 'lucide-react';
 
 import CustomInput from '../../customs/CustomInput';
+import CustomTextArea from '../../customs/CustomTextarea';
 import ToggleSwitch from '../../customs/CustomToggleSwitch';
 import { addSelectedCard, removeSelectedCard } from '../../store/userPushSlice';
 import {
@@ -17,7 +18,6 @@ import {
   Subtitle,
   Tag,
   TagWrapper,
-  Textarea,
   Title,
   TitleRow,
   TrashButton,
@@ -77,7 +77,7 @@ const AutoPushCard = ({
 
       <div>
         <Subtitle>Текст сообщения</Subtitle>
-        <Textarea
+        <CustomTextArea
           value={message}
           onChange={(e) => onChangeMessage(e.target.value)}
           disabled={!editableMessage}

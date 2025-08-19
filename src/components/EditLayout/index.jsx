@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { createContext, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 
@@ -25,6 +25,8 @@ import {
   Tab,
   Tabs,
 } from './styles';
+
+export const PreviewPlatformContext = createContext('ios');
 
 const EditLayout = ({
   children,
@@ -102,7 +104,9 @@ const EditLayout = ({
       <Layout>
         {(!isMobile || activeTab === 'description') && (
           <Left>
-            <Page>{children}</Page>
+            <PreviewPlatformContext.Provider value={platform}>
+              <Page>{children}</Page>
+            </PreviewPlatformContext.Provider>
           </Left>
         )}
 
