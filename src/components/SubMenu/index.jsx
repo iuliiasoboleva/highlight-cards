@@ -88,7 +88,6 @@ const SubMenu = ({
                   onChange={handleNameChange}
                   placeholder="Название карты"
                 />
-                <RequiredStar>*</RequiredStar>
               </NameEditor>
             )}
           </SubmenuLeft>

@@ -1,15 +1,36 @@
 import React, { useEffect, useState } from 'react';
 
-import './styles.css';
+import dicesIcon from '../../assets/icons/dices.svg';
+import PalettePicker from '../../components/PalettePicker';
+import CustomInput from '../../customs/CustomInput';
+import { CardFieldsRow, ColorOptionLabel, InputGroup, Label } from './styles';
 
-const isValidHex = (value) => /^#([0-9a-f]{6})$/i.test(value);
+const HEX6 = /^#?([0-9a-f]{6})$/i;
+const HEX3 = /^#?([0-9a-f]{3})$/i;
+const RGBA = /^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})(?:\s*,\s*(0|1|0?\.\d+))?\s*\)$/i;
 
-const formatHex = (value) => {
-  if (!value.startsWith('#')) return `#${value}`;
-  return value;
+const toHex6 = (str) => {
+  if (!str) return null;
+  const s = String(str).trim();
+  let m = HEX6.exec(s);
+  if (m) return `#${m[1].toLowerCase()}`;
+  m = HEX3.exec(s);
+  if (m) {
+    const [r, g, b] = m[1].toLowerCase().split('');
+    return `#${r}${r}${g}${g}${b}${b}`;
+  }
+  return null;
+};
+const isRgba = (str) => RGBA.test(String(str).trim());
+const normalizeColor = (str) => {
+  if (!str) return '';
+  const s = String(str).trim();
+  if (isRgba(s)) return s;
+  const h = toHex6(s);
+  return h || '';
 };
 
-const ColorSettings = ({ colors, handleColorChange, isStampCard }) => {
+const ColorSettings = ({ colors = {}, handleColorChange, isStampCard }) => {
   const [validColors, setValidColors] = useState({});
   const [localInputs, setLocalInputs] = useState({});
 
@@ -18,35 +39,40 @@ const ColorSettings = ({ colors, handleColorChange, isStampCard }) => {
     setLocalInputs({ ...colors });
   }, [colors]);
 
+  const softTryParse = (value) => {
+    if (!value) return '';
+    const s = String(value).trim();
+    if (isRgba(s)) return s;
+    const h = toHex6(s);
+    return h || '';
+  };
+
   const handleInputChange = (key, rawValue) => {
-    const value = formatHex(rawValue);
-    const isValid = isValidHex(value);
+    setLocalInputs((prev) => ({ ...prev, [key]: rawValue }));
 
-    setLocalInputs((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+    const parsed = softTryParse(rawValue);
+    if (parsed !== '') {
+      setValidColors((prev) => ({ ...prev, [key]: parsed }));
+      handleColorChange(key, parsed);
+    }
+  };
 
-    if (isValid) {
-      setValidColors((prev) => ({
-        ...prev,
-        [key]: value,
-      }));
-      handleColorChange(key, value);
+  const handleInputBlur = (key) => {
+    const raw = localInputs[key] ?? '';
+    const normalized = normalizeColor(raw);
+    setLocalInputs((prev) => ({ ...prev, [key]: normalized }));
+    if (normalized !== '') {
+      setValidColors((prev) => ({ ...prev, [key]: normalized }));
+      handleColorChange(key, normalized);
     } else {
-      handleColorChange(key, value);
+      setValidColors((prev) => ({ ...prev, [key]: '' }));
+      handleColorChange(key, '');
     }
   };
 
   const handleColorPickerChange = (key, value) => {
-    setLocalInputs((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-    setValidColors((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+    setLocalInputs((prev) => ({ ...prev, [key]: value }));
+    setValidColors((prev) => ({ ...prev, [key]: value }));
     handleColorChange(key, value);
   };
 
@@ -70,41 +96,51 @@ const ColorSettings = ({ colors, handleColorChange, isStampCard }) => {
   const colorFields = isStampCard ? fullColorFields : limitedColorFields;
 
   return (
-    <div className="color-settings-grid">
+    <CardFieldsRow>
       {colorFields.map(({ key, label }) => {
-        const rawValue = localInputs[key] || '';
-        const displayValue = rawValue === 'none' ? '' : rawValue;
-        const isValid = isValidHex(displayValue);
+        const raw = localInputs[key] ?? '';
+        const displayValue = raw === 'none' ? '' : raw;
+        const currentColor = validColors[key] || '';
+        const invalid = Boolean(displayValue) && normalizeColor(displayValue) === '';
+
+        const pickerValue = currentColor || '#000000';
 
         return (
-          <div className="color-settings-item" key={key}>
-            <span>{label}</span>
-            <div className="color-input-group">
-              <input
-                type="color"
-                value={validColors[key] || '#000000'}
-                onChange={(e) => handleColorPickerChange(key, e.target.value)}
+          <ColorOptionLabel key={key} data-design-key={key}>
+            <Label>{label}</Label>
+
+            <InputGroup>
+              <PalettePicker
+                value={pickerValue}
+                emitAlpha
+                onChange={(val) => handleColorPickerChange(key, val)}
               />
-              <input
-                type="text"
+
+              <CustomInput
                 value={displayValue}
                 onChange={(e) => handleInputChange(key, e.target.value)}
+                onBlur={() => handleInputBlur(key)}
                 placeholder="Не задано"
-                style={{
-                  borderColor: isValid ? '#ccc' : 'red',
-                  outline: 'none',
+                $invalid={invalid}
+                data-invalid={invalid}
+                iconSrc={dicesIcon}
+                iconTitle="Случайный цвет"
+                onIconClick={() => {
+                  const rnd =
+                    '#' +
+                    Math.floor(Math.random() * 0xffffff)
+                      .toString(16)
+                      .padStart(6, '0');
+                  setLocalInputs((p) => ({ ...p, [key]: rnd }));
+                  setValidColors((p) => ({ ...p, [key]: rnd }));
+                  handleColorChange(key, rnd);
                 }}
               />
-              {/* {!isValid && value.length > 0 && (
-                <div style={{ color: 'red', fontSize: '12px' }}>
-                  Неверный HEX, должно быть 6 символов (#RRGGBB)
-                </div>
-              )} */}
-            </div>
-          </div>
+            </InputGroup>
+          </ColorOptionLabel>
         );
       })}
-    </div>
+    </CardFieldsRow>
   );
 };
 

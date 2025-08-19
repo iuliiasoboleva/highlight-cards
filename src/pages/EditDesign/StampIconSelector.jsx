@@ -1,40 +1,49 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import CustomSelect from '../../customs/CustomSelect';
 import CustomTooltip from '../../customs/CustomTooltip';
+import { BarcodeRadioTitle, OptionLabel, TitleRow, Wrapper } from './styles';
 
-const StampIconSelector = ({ label, value, options, onChange, tooltip }) => {
-  const formattedOptions = options.map((opt) => ({
-    value: opt.value, // строка, например: 'Star'
-    label: (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-        {opt.component && <opt.component size={16} />}
-        {opt.name}
-      </div>
-    ),
-  }));
+const StampIconSelector = ({ label, value, options = [], onChange, tooltip, tooltipId }) => {
+  const formattedOptions = useMemo(
+    () =>
+      options.map((opt) => ({
+        value: opt.value,
+        label: (
+          <OptionLabel>
+            {opt.component ? <opt.component size={16} /> : null}
+            {opt.name}
+          </OptionLabel>
+        ),
+      })),
+    [options],
+  );
 
   const normalizedValue = typeof value === 'string' ? value : '';
   const selectedOption =
     formattedOptions.find((opt) => opt.value === normalizedValue) || formattedOptions[0];
 
   useEffect(() => {
-    if (!normalizedValue && formattedOptions.length > 0) {
+    if (!normalizedValue && formattedOptions.length > 0 && onChange) {
       onChange(formattedOptions[0].value);
     }
-  }, [normalizedValue, onChange, formattedOptions]);
+  }, [normalizedValue, formattedOptions, onChange]);
 
   return (
-    <div className="stamp-icon-selector">
-      <h3 className="barcode-radio-title">{label}</h3>
-      <CustomTooltip id="stamp-design-help" html content={tooltip} />
+    <Wrapper>
+      <TitleRow>
+        <BarcodeRadioTitle>{label}</BarcodeRadioTitle>
+        {tooltip ? (
+          <CustomTooltip id={tooltipId || 'stamp-design-help'} html content={tooltip} />
+        ) : null}
+      </TitleRow>
+
       <CustomSelect
-        value={selectedOption.value}
+        value={selectedOption ? selectedOption.value : ''}
         onChange={onChange}
         options={formattedOptions}
-        className="stamp-icon-select"
       />
-    </div>
+    </Wrapper>
   );
 };
 

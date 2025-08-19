@@ -19,6 +19,12 @@ export const Input = styled.input`
     border-color: #bf4756;
   }
 
+  ${({ $hasIcon }) =>
+    $hasIcon &&
+    css`
+      padding-right: 40px;
+    `}
+
   &:read-only {
     background-color: #f8f8f8;
     cursor: default;
@@ -52,5 +58,42 @@ export const RequiredMark = styled.span`
   transform: translateY(-50%);
   color: #c14857;
   font-size: 16px;
+  pointer-events: none;
+`;
+
+export const IconButton = styled.button`
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: #fff;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    background: #f0f0f3;
+  }
+
+  &:active {
+    background: #e8e8ee;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+`;
+
+export const IconImg = styled.img`
+  display: block;
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
   pointer-events: none;
 `;

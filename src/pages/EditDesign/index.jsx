@@ -5,6 +5,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import html2canvas from 'html2canvas';
 
 import EditLayout from '../../components/EditLayout';
+import TitleWithHelp from '../../components/TitleWithHelp';
 import CustomTooltip from '../../customs/CustomTooltip';
 import { updateCurrentCardField } from '../../store/cardsSlice';
 import { stampIcons } from '../../utils/stampIcons';
@@ -12,8 +13,20 @@ import ColorSettings from './ColorSettings';
 import ImageUploader from './ImageUploader';
 import StampIconSelector from './StampIconSelector';
 import StatusFieldConfig from './StatusFieldConfig';
-
-import './styles.css';
+import {
+  BarcodeRadioTitle,
+  CreateButton,
+  DesignSection,
+  Divider,
+  StampQuantityButton,
+  StampQuantityGrid,
+  StampSectionLabel,
+  StampSettings,
+  StampSettingsBlock,
+  StepNote,
+  TitleRow,
+  Wrapper,
+} from './styles';
 
 const EditDesign = () => {
   const { id } = useParams();
@@ -32,7 +45,6 @@ const EditDesign = () => {
   const formRef = useRef(null);
   const stampSectionRef = useRef(null);
 
-  // функция подсветки
   const flashInput = useCallback((key) => {
     const el = formRef.current?.querySelector(`[data-design-key="${key}"]`);
     if (!el) return;
@@ -77,8 +89,8 @@ const EditDesign = () => {
           const canvas = await html2canvas(targetEl, { scale: 3, backgroundColor: null });
           const dataUrl = canvas.toDataURL('image/png');
           dispatch(updateCurrentCardField({ path: 'design.stampBackground', value: dataUrl }));
-        } catch (e) {
-          // ignore errors silently
+        } catch {
+          // ignore
         }
       }
     }
@@ -89,133 +101,150 @@ const EditDesign = () => {
 
   const renderStampControls = () => (
     <>
-      <div ref={stampSectionRef} className="design-stamp-controls" data-design-key="stampsQuantity">
-        <label className="stamp-section-label">
-          <h3 className="barcode-radio-title">Количество штампов</h3>
-          <CustomTooltip
-            id={`stamps-help`}
-            html
-            content={'Количество штампов отображаемых на карте'}
-          />
-        </label>
-        <div className="stamp-quantity-grid">
+      <Wrapper ref={stampSectionRef} data-design-key="stampsQuantity">
+        <StampSectionLabel>
+          <BarcodeRadioTitle>Количество штампов</BarcodeRadioTitle>
+          <CustomTooltip id="stamps-help" html content="Количество штампов отображаемых на карте" />
+        </StampSectionLabel>
+
+        <StampQuantityGrid>
           {Array.from({ length: 30 }, (_, i) => i + 1).map((num) => (
-            <button
+            <StampQuantityButton
               key={num}
-              className={`stamp-quantity-button ${num <= stampsQuantity ? 'active' : ''}`}
+              $active={num <= stampsQuantity}
               onClick={() =>
                 dispatch(updateCurrentCardField({ path: 'design.stampsQuantity', value: num }))
               }
             >
               {num}
-            </button>
+            </StampQuantityButton>
           ))}
-        </div>
-      </div>
+        </StampQuantityGrid>
+      </Wrapper>
+
       <hr />
 
-      <div className="stamp-settings">
-        <div className="stamp-settings-block" data-design-key="activeStamp">
+      <StampSettings>
+        <StampSettingsBlock data-design-key="activeStamp">
           <StampIconSelector
             label="Активный штамп"
-            tooltip={'Дизайн активного штампа'}
+            tooltip="Дизайн активного штампа"
             value={typeof design.activeStamp === 'string' ? design.activeStamp : 'Star'}
             options={stampIcons}
             onChange={(val) => {
-              handleStampIconChange(`design.activeStamp`, val);
-              dispatch(updateCurrentCardField({ path: `design.activeStampImage`, value: null }));
+              handleStampIconChange('design.activeStamp', val);
+              dispatch(updateCurrentCardField({ path: 'design.activeStampImage', value: null }));
             }}
           />
+
           <ImageUploader
             inputId="active-stamp-upload"
             infoText="Минимальный размер файла 200 x 200 пикселей. Только PNG формат. 3 мегабайта"
-            onSave={(croppedImage) => handleImageChangeFromEditor(croppedImage, 'activeStampImage')}
+            onSave={(img) => handleImageChangeFromEditor(img, 'activeStampImage')}
             externalImage={design.activeStampImage}
           />
-        </div>
+        </StampSettingsBlock>
 
-        <div className="stamp-settings-block" data-design-key="inactiveStamp">
+        <StampSettingsBlock data-design-key="inactiveStamp">
           <StampIconSelector
             label="Неактивный штамп"
-            tooltip={'Дизайн неактивного штампа'}
+            tooltip="Дизайн неактивного штампа"
             value={typeof design.inactiveStamp === 'string' ? design.inactiveStamp : 'Star'}
             options={stampIcons}
             onChange={(val) => {
-              handleStampIconChange(`design.inactiveStamp`, val);
-              dispatch(updateCurrentCardField({ path: `design.inactiveStampImage`, value: null }));
+              handleStampIconChange('design.inactiveStamp', val);
+              dispatch(updateCurrentCardField({ path: 'design.inactiveStampImage', value: null }));
             }}
           />
+
           <ImageUploader
             inputId="inactive-stamp-upload"
             infoText="Минимальный размер файла 200 x 200 пикселей. Только PNG формат. 3 мегабайта"
-            onSave={(croppedImage) =>
-              handleImageChangeFromEditor(croppedImage, 'inactiveStampImage')
-            }
+            onSave={(img) => handleImageChangeFromEditor(img, 'inactiveStampImage')}
             externalImage={design.inactiveStampImage}
           />
-        </div>
-      </div>
+        </StampSettingsBlock>
+      </StampSettings>
+
       <hr />
     </>
   );
 
   const designContent = (
-    <div className="settings-inputs-container" ref={formRef}>
-      <h2>Дизайн</h2>
-      <CustomTooltip id={`design-help`} html content={'Настройки внешнего вида карты'} />
-      <hr />
+    <DesignSection ref={formRef}>
+      <div>
+        <TitleRow>
+          <TitleWithHelp
+            title="Выберите тип карты"
+            tooltipId="edit-type-help"
+            tooltipHtml
+            tooltipContent="Выберите тип карты для дальнейшей настройки"
+          />
+          <StepNote>Шаг 2 из 4</StepNote>
+        </TitleRow>
+        <Divider />
+      </div>
 
       {isStampCard && renderStampControls()}
 
-      <div className="stamp-settings">
-        <div className="stamp-settings-block" data-design-key="logo">
-          <h3 className="barcode-radio-title">Логотип</h3>
-          <CustomTooltip
-            id={`logo-help`}
-            html
-            content={
-              'Логотип будет отображаться на карте, а так же в форме выпуска карты (если настройка включена)'
-            }
-          />
+      <StampSettings>
+        <StampSettingsBlock data-design-key="logo">
+          <StampSectionLabel>
+            <BarcodeRadioTitle>Логотип</BarcodeRadioTitle>
+            <CustomTooltip
+              id="logo-help"
+              html
+              content="Логотип будет отображаться на карте, а так же в форме выпуска карты (если настройка включена)"
+            />
+          </StampSectionLabel>
+
           <ImageUploader
             inputId="logo-upload"
             infoText="Рекомендованный размер: 480х150 пикселей. Минимальная высота 150 пикселей. Только PNG формат. 3 мегабайта"
-            onSave={(croppedImage) => handleImageChangeFromEditor(croppedImage, 'logo')}
+            onSave={(img) => handleImageChangeFromEditor(img, 'logo')}
           />
-        </div>
+        </StampSettingsBlock>
 
-        <div className="stamp-settings-block" data-design-key="icon">
-          <h3 className="barcode-radio-title">Иконка</h3>
-          <CustomTooltip
-            id={`icon-help`}
-            html
-            content={
-              'Иконка будет отображаться в push-сообщениях, а так же при установке карты на Домашний экран'
-            }
-          />
+        <StampSettingsBlock data-design-key="icon">
+          <StampSectionLabel>
+            <BarcodeRadioTitle>Иконка push-уведомления</BarcodeRadioTitle>
+            <CustomTooltip
+              id="icon-help"
+              html
+              content="Иконка будет отображаться в push-сообщениях, а так же при установке карты на Домашний экран"
+            />
+          </StampSectionLabel>
           <ImageUploader
             inputId="icon-upload"
             infoText="Рекомендованный размер иконки: 512х512 пикселей. Изображение должно быть квадратное. Только PNG формат. 3 мегабайта"
-            onSave={(croppedImage) => handleImageChangeFromEditor(croppedImage, 'icon')}
+            onSave={(img) => handleImageChangeFromEditor(img, 'icon')}
           />
-        </div>
-      </div>
-      <div className="stamp-settings">
-        <div className="stamp-settings-block" data-design-key="stampBackground">
-          <h3 className="barcode-radio-title">Фон центральной части</h3>
-          <CustomTooltip id={`center-help`} html content={'Дизайн фоновой части под штампами'} />
+        </StampSettingsBlock>
+      </StampSettings>
+
+      <StampSettings>
+        <StampSettingsBlock data-design-key="stampBackground">
+          <StampSectionLabel>
+            <BarcodeRadioTitle>Фон центральной части</BarcodeRadioTitle>
+            <CustomTooltip id="center-help" html content="Дизайн фоновой части под штампами" />
+          </StampSectionLabel>
+
           <ImageUploader
             inputId="stamp-background-upload"
             infoText="Минимальный размер файла 1125 х 432 пикселя. Только PNG формат. 3 мегабайта"
-            onSave={(croppedImage) => handleImageChangeFromEditor(croppedImage, 'stampBackground')}
+            onSave={(img) => handleImageChangeFromEditor(img, 'stampBackground')}
           />
-        </div>
-        <div className="stamp-settings-block"></div>
-      </div>
-      <hr />
+        </StampSettingsBlock>
 
-      <h3 className="barcode-radio-title">Цвета</h3>
-      <CustomTooltip id={`color-help`} html content={'Настройка цветов карты'} />
+        <StampSettingsBlock />
+      </StampSettings>
+
+      <hr />
+      <StampSectionLabel>
+        <BarcodeRadioTitle>Цвета</BarcodeRadioTitle>
+        <CustomTooltip id="color-help" html content="Настройка цветов карты" />
+      </StampSectionLabel>
+
       <ColorSettings
         colors={design.colors}
         handleColorChange={(key, value) =>
@@ -225,24 +254,23 @@ const EditDesign = () => {
       />
 
       <hr />
-      <h3 className="barcode-radio-title">Названия полей</h3>
-      <CustomTooltip
-        id={`color-fields-help`}
-        html
-        content={'Настройка полей для отображения на лицевой стороне карты (только для iPhone)'}
-      />
+      <StampSectionLabel>
+        <BarcodeRadioTitle>Названия полей</BarcodeRadioTitle>
+        <CustomTooltip
+          id="color-fields-help"
+          html
+          content="Настройка полей для отображения на лицевой стороне карты (только для iPhone)"
+        />
+      </StampSectionLabel>
+
       <StatusFieldConfig statusType={statusType} fields={fieldsName} />
-    </div>
+    </DesignSection>
   );
 
   return (
     <EditLayout onFieldClick={handleFieldClick}>
       {designContent}
-      <div className="design-save-container">
-        <button className="create-button" onClick={handleSave}>
-          Далее
-        </button>
-      </div>
+      <CreateButton onClick={handleSave}>Перейти к следующему шагу</CreateButton>
     </EditLayout>
   );
 };

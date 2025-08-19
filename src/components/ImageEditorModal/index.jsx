@@ -2,8 +2,18 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Cropper from 'react-easy-crop';
 
 import { getCroppedImg } from '../../utils/cropImage';
-
-import './styles.css';
+import {
+  CloseButton,
+  ControlBtn,
+  Controls,
+  CropperContainer,
+  Footer,
+  Header,
+  Modal,
+  Overlay,
+  PrimaryBtn,
+  TransformWrap,
+} from './styles';
 
 const ImageEditorModal = ({
   open,
@@ -60,33 +70,59 @@ const ImageEditorModal = ({
   if (!open) return null;
 
   return (
-    <div className="editor-modal-overlay">
-      <div className="editor-modal-content">
-        <div className="editor-header">
+    <Overlay>
+      <Modal>
+        <Header>
           <h3>Обрезать изображение</h3>
-          <button className="close-button" onClick={onClose}>
+          <CloseButton onClick={onClose} aria-label="Закрыть">
             ×
-          </button>
-        </div>
+          </CloseButton>
+        </Header>
 
-        <div className="editor-controls">
-          <button onClick={() => setZoom((z) => Math.min(z + 0.1, 3))}>＋</button>
-          <button onClick={() => setZoom((z) => Math.max(z - 0.1, 1))}>－</button>
-          <button onClick={() => setCrop((c) => ({ ...c, x: c.x - 10 }))}>←</button>
-          <button onClick={() => setCrop((c) => ({ ...c, x: c.x + 10 }))}>→</button>
-          <button onClick={() => setCrop((c) => ({ ...c, y: c.y - 10 }))}>↑</button>
-          <button onClick={() => setCrop((c) => ({ ...c, y: c.y + 10 }))}>↓</button>
-          <button onClick={() => setFlipX((f) => !f)}>↔</button>
-          <button onClick={() => setFlipY((f) => !f)}>↕</button>
-          <button onClick={() => setRotation((r) => r + 90)}>⟳</button>
-          <button onClick={() => setRotation((r) => r - 90)}>⟲</button>
-          <button onClick={() => setAspect(1)}>1:1</button>
-          <button onClick={() => setAspect(16 / 9)}>16:9</button>
-          <button onClick={() => setAspect(4 / 3)}>4:3</button>
-        </div>
+        <Controls>
+          <ControlBtn onClick={() => setZoom((z) => Math.min(z + 0.1, 3))} title="Приблизить">
+            ＋
+          </ControlBtn>
+          <ControlBtn onClick={() => setZoom((z) => Math.max(z - 0.1, 1))} title="Отдалить">
+            －
+          </ControlBtn>
+          <ControlBtn onClick={() => setCrop((c) => ({ ...c, x: c.x - 10 }))} title="Сдвиг влево">
+            ←
+          </ControlBtn>
+          <ControlBtn onClick={() => setCrop((c) => ({ ...c, x: c.x + 10 }))} title="Сдвиг вправо">
+            →
+          </ControlBtn>
+          <ControlBtn onClick={() => setCrop((c) => ({ ...c, y: c.y - 10 }))} title="Сдвиг вверх">
+            ↑
+          </ControlBtn>
+          <ControlBtn onClick={() => setCrop((c) => ({ ...c, y: c.y + 10 }))} title="Сдвиг вниз">
+            ↓
+          </ControlBtn>
+          <ControlBtn onClick={() => setFlipX((f) => !f)} title="Отразить по X">
+            ↔
+          </ControlBtn>
+          <ControlBtn onClick={() => setFlipY((f) => !f)} title="Отразить по Y">
+            ↕
+          </ControlBtn>
+          <ControlBtn onClick={() => setRotation((r) => r + 90)} title="Повернуть по часовой">
+            ⟳
+          </ControlBtn>
+          <ControlBtn onClick={() => setRotation((r) => r - 90)} title="Повернуть против часовой">
+            ⟲
+          </ControlBtn>
+          <ControlBtn onClick={() => setAspect(1)} title="Соотношение 1:1">
+            1:1
+          </ControlBtn>
+          <ControlBtn onClick={() => setAspect(16 / 9)} title="Соотношение 16:9">
+            16:9
+          </ControlBtn>
+          <ControlBtn onClick={() => setAspect(4 / 3)} title="Соотношение 4:3">
+            4:3
+          </ControlBtn>
+        </Controls>
 
-        <div className="cropper-container">
-          <div className={`crop-transform ${flipX ? 'flipped-x' : ''} ${flipY ? 'flipped-y' : ''}`}>
+        <CropperContainer>
+          <TransformWrap $flipX={flipX} $flipY={flipY}>
             <Cropper
               image={image}
               crop={crop}
@@ -98,14 +134,14 @@ const ImageEditorModal = ({
               onRotationChange={setRotation}
               onCropComplete={onCropComplete}
             />
-          </div>
-        </div>
+          </TransformWrap>
+        </CropperContainer>
 
-        <div className="editor-footer">
-          <button onClick={handleSave}>Сохранить</button>
-        </div>
-      </div>
-    </div>
+        <Footer>
+          <PrimaryBtn onClick={handleSave}>Сохранить</PrimaryBtn>
+        </Footer>
+      </Modal>
+    </Overlay>
   );
 };
 

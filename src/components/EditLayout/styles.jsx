@@ -37,7 +37,7 @@ export const Right = styled.div`
   position: sticky;
   top: calc(var(--header-height) + var(--bar-height));
   align-self: flex-start;
-  height: 100vh;
+  // height: 100vh;
   overflow-y: auto;
 
   @media (max-width: 999px) {

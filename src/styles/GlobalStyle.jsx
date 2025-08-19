@@ -1,10 +1,11 @@
 import { createGlobalStyle } from 'styled-components';
 
-export const GlobalStyle = createGlobalStyle`
-  @import '@fontsource/manrope';
-  @import '@fontsource/manrope/700.css';
-  @import '@fontsource/manrope/400.css';
+import '@fontsource/manrope/400.css';
+import '@fontsource/manrope/500.css';
+import '@fontsource/manrope/600.css';
+import '@fontsource/manrope/700.css';
 
+export const GlobalStyle = createGlobalStyle`
   :root {
     --header-height: 83px;
     --header-mobile-height: 100px;

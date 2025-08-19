@@ -1,11 +1,11 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
+import CustomInput from '../../customs/CustomInput';
 import CustomSelect from '../../customs/CustomSelect';
 import { updateCurrentCardField } from '../../store/cardsSlice';
 import { statusConfig } from '../../utils/statusConfig';
-
-import './styles.css';
+import { CardFieldsHeader, CardFieldsRow, Wrapper } from './styles';
 
 const commonFieldOptions = [
   { value: 'name', label: 'Имя' },
@@ -66,31 +66,30 @@ const StatusFieldConfig = ({ statusType, fields }) => {
   };
 
   return (
-    <div className="card-form-container">
-      <div className="card-fields-header">
+    <Wrapper>
+      <CardFieldsHeader>
         <span>Поле</span>
         <span>Название для отображения</span>
-      </div>
+      </CardFieldsHeader>
 
       {editableFields.map((field, index) => (
-        <div key={index} className="card-fields-row">
+        <CardFieldsRow key={index}>
           <CustomSelect
             value={field.type}
             onChange={(value) => handleTypeChange(index, value)}
             options={fieldOptions}
           />
 
-          <input
+          <CustomInput
             type="text"
-            className="custom-input"
             value={field.name}
             onChange={(e) => handleNameChange(index, e.target.value)}
             placeholder=""
             disabled={!field.type}
           />
-        </div>
+        </CardFieldsRow>
       ))}
-    </div>
+    </Wrapper>
   );
 };
 
