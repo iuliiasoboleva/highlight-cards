@@ -62,6 +62,9 @@ const SubMenu = ({
     saveAs(data, 'clients.xlsx');
   };
 
+  const isDisabled =
+    !currentCard?.settingsReady || !currentCard?.designReady || !currentCard?.typeReady;
+
   return (
     <>
       <SubmenuWrapper>
@@ -91,15 +94,31 @@ const SubMenu = ({
           </SubmenuLeft>
 
           <SubmenuCenter $grow={showRightActions}>
-            {menuItems.map((item, index) => {
+            {menuItems.map((item) => {
               const isActive = location.pathname === item.to;
+              const isDisabled = Boolean(item.disabled && !isActive);
 
               return (
                 <React.Fragment key={item.label}>
-                  {item.disabled ? (
-                    <TabButton disabled>{item.label}</TabButton>
+                  {isDisabled ? (
+                    <TabButton
+                      type="button"
+                      $disabled
+                      title={item.tooltip}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                    >
+                      {item.label}
+                    </TabButton>
                   ) : (
-                    <TabLink to={item.to} $active={isActive}>
+                    <TabLink
+                      to={item.to}
+                      $active={isActive}
+                      aria-current={isActive ? 'page' : undefined}
+                      title={isActive ? undefined : item.tooltip}
+                    >
                       {item.label}
                     </TabLink>
                   )}
@@ -126,6 +145,7 @@ const SubMenu = ({
           {showRightActions && (
             <SubmenuRight>
               <SaveButton
+                disabled={isDisabled}
                 onClick={async () => {
                   const exists = cards.some((c) => c.id === currentCard.id && c.id !== 'fixed');
                   try {
@@ -143,8 +163,12 @@ const SubMenu = ({
                 Сохранить
               </SaveButton>
 
-              <IconButton aria-label="QR" onClick={() => generatePDF(currentCard)}>
-                <QrCode size={16} color="white" />
+              <IconButton
+                aria-label="QR"
+                disabled={isDisabled}
+                onClick={() => generatePDF(currentCard)}
+              >
+                <QrCode size={16} color={isDisabled ? 'gray' : 'white'} />
                 Печать QR-кода
               </IconButton>
             </SubmenuRight>

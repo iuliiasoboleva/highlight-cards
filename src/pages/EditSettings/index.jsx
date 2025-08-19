@@ -7,6 +7,7 @@ import TitleWithHelp from '../../components/TitleWithHelp';
 import CustomSelect from '../../customs/CustomSelect';
 import ToggleSwitch from '../../customs/CustomToggleSwitch';
 import CustomTooltip from '../../customs/CustomTooltip';
+import { formatCoords } from '../../helpers/formatCoords';
 import {
   addCurrentCardArrayItem,
   removeCurrentCardArrayItem,
@@ -32,8 +33,37 @@ const EditSettings = () => {
   const settings = currentCard.settings || {};
   const policySettings = currentCard.policySettings;
   const cardStatus = currentCard.status;
+  const locations = settings?.locations ?? [];
 
   const [showLocationModal, setShowLocationModal] = useState(false);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [initialLocation, setInitialLocation] = useState(null);
+
+  const handleAddLocation = () => {
+    setEditingIndex(null);
+    setInitialLocation(null);
+    setShowLocationModal(true);
+  };
+
+  const handleEditLocation = (idx) => {
+    const loc = locations[idx] || {};
+    const safeAddress = loc.address || formatCoords(loc.coords) || '';
+    setEditingIndex(idx);
+    setInitialLocation({ ...loc, address: safeAddress });
+    setShowLocationModal(true);
+  };
+
+  const handleSaveLocation = (loc) => {
+    if (editingIndex !== null) {
+      const next = locations.map((l, i) => (i === editingIndex ? loc : l));
+      updateSettingsField('locations', next);
+    } else {
+      updateSettingsField('locations', [...locations, loc]);
+    }
+    setShowLocationModal(false);
+    setEditingIndex(null);
+    setInitialLocation(null);
+  };
 
   const formRef = useRef(null);
 
@@ -44,15 +74,12 @@ const EditSettings = () => {
         return;
       }
     }
-    navigate(`/cards/${id}/edit/design`);
+    dispatch(updateCurrentCardField({ path: 'settingsReady', value: true }));
+    navigate(`/cards/${id}/edit/info`);
   };
 
   const updateSettingsField = (field, value) => {
     dispatch(updateCurrentCardField({ path: `settings.${field}`, value }));
-  };
-
-  const handleAddLocation = (location) => {
-    dispatch(addCurrentCardArrayItem({ path: 'settings.locations', item: location }));
   };
 
   const handleRemoveLocation = (index) => {
@@ -72,29 +99,54 @@ const EditSettings = () => {
       <RadioConfigs cardStatus={cardStatus} />
 
       {showLocationModal && (
-        <LocationModal onClose={() => setShowLocationModal(false)} onSave={handleAddLocation} />
+        <LocationModal
+          isOpen={showLocationModal}
+          onClose={() => {
+            setShowLocationModal(false);
+            setEditingIndex(null);
+            setInitialLocation(null);
+          }}
+          onSave={handleSaveLocation}
+          initialData={initialLocation || {}}
+          isEdit={editingIndex !== null}
+        />
       )}
 
       <hr />
-      <h3 className="barcode-radio-title">Локации</h3>
-      <CustomTooltip id="location-help" html content={`Локации, к которым привязана карта`} />
-      {settings?.locations?.length === 0 ? (
+      <h3 className="barcode-radio-title">Адрес точки продаж</h3>
+      <CustomTooltip
+        id="location-help"
+        html
+        content={`Здесь указываем где именно клиент сможет использовать вашу карту`}
+      />
+      {locations.length === 0 ? (
         <div className="no-location-wrapper">
           У вас еще не создано ни одной локации
-          <button onClick={() => setShowLocationModal(true)}>Добавить локацию</button>
+          <button onClick={handleAddLocation}>Добавить локацию</button>
         </div>
       ) : (
         <>
           <div className="locations-wrapper">
-            {settings?.locations?.map((location, index) => (
+            {locations.map((location, index) => (
               <div key={index} className="location-tag">
                 {location.name}
-                <button className="remove-btn" onClick={() => handleRemoveLocation(index)}>
+                <button
+                  className="edit-btn"
+                  title="Редактировать"
+                  onClick={() => handleEditLocation(index)}
+                >
+                  ✏
+                </button>
+                <button
+                  className="remove-btn"
+                  title="Удалить"
+                  onClick={() => handleRemoveLocation(index)}
+                >
                   ×
                 </button>
               </div>
             ))}
-            <button className="add-btn" onClick={() => setShowLocationModal(true)}>
+            <button className="add-btn" onClick={handleAddLocation}>
               +
             </button>
             <button className="clear-btn" onClick={() => updateSettingsField('locations', [])}>

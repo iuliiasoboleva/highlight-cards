@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useDebounce } from 'use-debounce';
@@ -11,7 +11,19 @@ import CustomModal from '../../../customs/CustomModal';
 import CustomSelect from '../../../customs/CustomSelect';
 import CustomToggleSwitch from '../../../customs/CustomToggleSwitch';
 import { assignManagerToSalesPoint } from '../../../store/managersSlice';
-import { FieldGroup, InlineRow, Label, LocationInfo, ModalBody, Spacer } from '../styles';
+import { DADATA_TOKEN, DADATA_URL } from '../../../utils/locations';
+import { normalizeErr } from '../../../utils/normalizeErr';
+import {
+  AddressWrap,
+  FieldGroup,
+  InlineRow,
+  Label,
+  LocationInfo,
+  ModalBody,
+  Spacer,
+  SuggestItem,
+  SuggestList,
+} from '../styles';
 
 const SalesPointsModalWithMap = ({
   isOpen,
@@ -24,10 +36,26 @@ const SalesPointsModalWithMap = ({
   const dispatch = useDispatch();
   const toast = useToast();
 
-  const allManagers = useSelector((s) => s.managers.list) || [];
-  const networks = useSelector((s) => s.networks.list) || [];
+  const managersList = useSelector((s) => s.managers.list);
+  const networksList = useSelector((s) => s.networks.list);
 
+  const allManagers = useMemo(() => managersList ?? [], [managersList]);
+  const networks = useMemo(() => networksList ?? [], [networksList]);
   const currentUser = useSelector((s) => s.user) || {};
+
+  const hasManagers = useMemo(
+    () => Array.isArray(allManagers) && allManagers.length > 0,
+    [allManagers],
+  );
+  const managerOptions = useMemo(
+    () =>
+      (allManagers || []).map((m) => ({
+        value: m.id,
+        label: `${m.name || ''} ${m.surname || ''}`.trim() || 'Без имени',
+      })),
+    [allManagers],
+  );
+
   const currentAdminId =
     currentUser?.id ||
     currentUser?.userId ||
@@ -41,6 +69,8 @@ const SalesPointsModalWithMap = ({
     'Текущий администратор';
 
   const mapRef = useRef(null);
+  const clickAwayRef = useRef(null);
+  const addressInputRef = useRef(null);
 
   const [selectedManager, setSelectedManager] = useState(null);
   const [name, setName] = useState(initialData.name || '');
@@ -57,7 +87,11 @@ const SalesPointsModalWithMap = ({
 
   const [confirmOpen, setConfirmOpen] = useState(false);
 
-  const [debouncedSearchQuery] = useDebounce(searchQuery, 1500);
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 400);
+
+  const [suggests, setSuggests] = useState([]);
+  const [showSuggests, setShowSuggests] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
 
   const isDeletable =
     !initialData.clientsCount && !initialData.cardsIssued && !initialData.pointsAccumulated;
@@ -65,15 +99,14 @@ const SalesPointsModalWithMap = ({
   useEffect(() => {
     if (!isOpen) return;
 
-    if (Array.isArray(allManagers) && allManagers.length > 0) {
+    if (hasManagers) {
       const initialManagerFromData =
         (Array.isArray(initialData.employees) && initialData.employees[0]) || null;
       setSelectedManager(initialManagerFromData ?? allManagers[0]?.id ?? null);
-      return;
+    } else {
+      setSelectedManager(currentAdminId ?? null);
     }
-
-    setSelectedManager(currentAdminId ?? null);
-  }, [isOpen, allManagers, initialData.employees, currentAdminId]);
+  }, [isOpen, hasManagers, allManagers, initialData.employees, currentAdminId]);
 
   useEffect(() => {
     if (isOpen) {
@@ -91,10 +124,21 @@ const SalesPointsModalWithMap = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialData, isOpen]);
 
-  // поиск координат по вводу адреса
+  useEffect(() => {
+    const onDocClick = (e) => {
+      if (!clickAwayRef.current) return;
+      if (!clickAwayRef.current.contains(e.target)) {
+        setShowSuggests(false);
+      }
+    };
+    document.addEventListener('mousedown', onDocClick);
+    return () => document.removeEventListener('mousedown', onDocClick);
+  }, []);
+
   useEffect(() => {
     const searchAddress = async () => {
       if (!debouncedSearchQuery || !mapRef.current) return;
+      if (DADATA_TOKEN) return;
 
       try {
         setIsSearching(true);
@@ -115,10 +159,113 @@ const SalesPointsModalWithMap = ({
     searchAddress();
   }, [debouncedSearchQuery]);
 
+  useEffect(() => {
+    let aborted = false;
+
+    const fetchSuggests = async () => {
+      if (!DADATA_TOKEN) {
+        setSuggests([]);
+        setShowSuggests(false);
+        return;
+      }
+
+      const q = debouncedSearchQuery?.trim();
+      if (!q) {
+        setSuggests([]);
+        setShowSuggests(false);
+        return;
+      }
+
+      try {
+        setIsSearching(true);
+
+        const body = { query: q, count: 8 };
+
+        const res = await fetch(DADATA_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${DADATA_TOKEN}`,
+          },
+          body: JSON.stringify(body),
+        });
+
+        if (!res.ok) throw new Error(`DaData ${res.status}`);
+        const data = await res.json();
+
+        if (!aborted) {
+          const s = Array.isArray(data?.suggestions) ? data.suggestions : [];
+          setSuggests(s);
+          setShowSuggests(true);
+          setActiveIndex(-1);
+        }
+      } catch (err) {
+        if (!aborted) {
+          setSuggests([]);
+          setShowSuggests(false);
+        }
+      } finally {
+        if (!aborted) setIsSearching(false);
+      }
+    };
+
+    fetchSuggests();
+    return () => {
+      aborted = true;
+    };
+  }, [debouncedSearchQuery]);
+
   const handleMapSelect = useCallback((location) => {
     setSelectedLocation(location);
     if (location?.address) setSearchQuery(location.address);
   }, []);
+
+  const applySuggest = async (s) => {
+    try {
+      const addr = s?.value || s?.unrestricted_value || '';
+      const lat = Number(s?.data?.geo_lat);
+      const lon = Number(s?.data?.geo_lon);
+
+      setSearchQuery(addr);
+      setShowSuggests(false);
+
+      if (!Number.isNaN(lat) && !Number.isNaN(lon)) {
+        setSelectedLocation({ address: addr, coords: { lat, lon } });
+        if (mapRef.current?.setCenter) mapRef.current.setCenter([lat, lon]);
+        return;
+      }
+
+      if (mapRef.current?.search) {
+        const coords = await mapRef.current.search(addr);
+        if (Array.isArray(coords) && coords.length === 2) {
+          setSelectedLocation({
+            address: addr,
+            coords: { lat: coords[0], lon: coords[1] },
+          });
+        }
+      }
+    } catch (e) {
+      console.error('applySuggest error:', e);
+    }
+  };
+
+  const handleKeyDownOnInput = (e) => {
+    if (!showSuggests || !suggests.length) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveIndex((i) => (i + 1) % suggests.length);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveIndex((i) => (i - 1 + suggests.length) % suggests.length);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      const s = suggests[activeIndex] || suggests[0];
+      if (s) applySuggest(s);
+    } else if (e.key === 'Escape') {
+      setShowSuggests(false);
+    }
+  };
 
   const resetForm = () => {
     setSelectedManager(null);
@@ -129,20 +276,9 @@ const SalesPointsModalWithMap = ({
     setIsPartOfNetwork(false);
     setSelectedNetwork(null);
     setConfirmOpen(false);
-  };
-
-  const normalizeErr = (e) => {
-    if (!e) return 'Неизвестная ошибка';
-    if (typeof e === 'string') return e;
-    if (e instanceof Error) return e.message;
-    if (e?.response?.data?.message) return e.response.data.message;
-    if (e?.data?.message) return e.data.message;
-    if (e?.message) return e.message;
-    try {
-      return JSON.stringify(e);
-    } catch {
-      return String(e);
-    }
+    setSuggests([]);
+    setShowSuggests(false);
+    setActiveIndex(-1);
   };
 
   const handleSave = async () => {
@@ -152,24 +288,19 @@ const SalesPointsModalWithMap = ({
     }
 
     const responsibleId =
-      (Array.isArray(allManagers) && allManagers.length > 0 ? selectedManager : currentAdminId) ||
-      selectedManager ||
-      null;
+      (hasManagers ? selectedManager : currentAdminId) || selectedManager || null;
 
     const newSalesPoint = {
       name,
       address: selectedLocation.address,
-      coords: selectedLocation.coords, // { lat, lon }
+      coords: selectedLocation.coords,
       employees: responsibleId ? [responsibleId] : initialData.employees || [],
       network_id: isPartOfNetwork ? (selectedNetwork ?? null) : null,
     };
 
-    console.debug('[SalesPointsModal] save payload:', newSalesPoint);
-
     try {
       await Promise.resolve(onSave?.(newSalesPoint));
 
-      // Привязка менеджера (если выбран/определён)
       if (responsibleId) {
         await Promise.resolve(
           dispatch(
@@ -250,7 +381,7 @@ const SalesPointsModalWithMap = ({
           Удалить точку продаж без возможности восстановления? Все данные будут потеряны.
         </Label>
       ) : (
-        <ModalBody>
+        <ModalBody ref={clickAwayRef}>
           <FieldGroup>
             <Label>Название точки</Label>
             <CustomInput
@@ -263,18 +394,51 @@ const SalesPointsModalWithMap = ({
 
           <FieldGroup>
             <Label>Адрес</Label>
-            <CustomInput
-              placeholder="Введите адрес"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              required
-            />
-            {isSearching && <Label style={{ color: '#7f8c8d' }}>Поиск адреса…</Label>}
+
+            <AddressWrap>
+              <CustomInput
+                ref={addressInputRef}
+                placeholder="Введите адрес"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  if (DADATA_TOKEN) setShowSuggests(true);
+                }}
+                onFocus={() => {
+                  if (DADATA_TOKEN && suggests.length) setShowSuggests(true);
+                }}
+                onKeyDown={handleKeyDownOnInput}
+                required
+              />
+
+              {isSearching && (
+                <Label style={{ color: '#7f8c8d', marginTop: 6 }}>Поиск адреса…</Label>
+              )}
+
+              {showSuggests && suggests.length > 0 && (
+                <SuggestList role="listbox">
+                  {suggests.map((s, idx) => (
+                    <SuggestItem
+                      key={`${s.value}-${idx}`}
+                      $active={idx === activeIndex}
+                      onMouseEnter={() => setActiveIndex(idx)}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        applySuggest(s);
+                      }}
+                      role="option"
+                      aria-selected={idx === activeIndex}
+                    >
+                      {s.value}
+                    </SuggestItem>
+                  ))}
+                </SuggestList>
+              )}
+            </AddressWrap>
           </FieldGroup>
 
           {selectedLocation && (
             <LocationInfo>
-              <div>Выбрано: {selectedLocation.address}</div>
               <div>
                 Координаты:&nbsp;
                 {selectedLocation.coords.lat.toFixed(6)}, {selectedLocation.coords.lon.toFixed(6)}
@@ -294,24 +458,19 @@ const SalesPointsModalWithMap = ({
             <FieldGroup style={{ flex: 1, minWidth: 280 }}>
               <Label>Ответственный сотрудник</Label>
 
-              {Array.isArray(allManagers) && allManagers.length > 0 ? (
+              {hasManagers ? (
                 <CustomSelect
                   value={selectedManager}
                   onChange={setSelectedManager}
-                  options={allManagers.map((m) => ({
-                    value: m.id,
-                    label: `${m.name} ${m.surname}`.trim(),
-                  }))}
+                  options={managerOptions}
                   placeholder="Выберите сотрудника"
                 />
               ) : (
-                <>
-                  <CustomInput
-                    value={currentAdminName}
-                    disabled
-                    placeholder="Будет назначен текущий администратор"
-                  />
-                </>
+                <CustomInput
+                  value={currentAdminName}
+                  disabled
+                  placeholder="Будет назначен текущий администратор"
+                />
               )}
             </FieldGroup>
 

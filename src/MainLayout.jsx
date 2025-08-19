@@ -2,8 +2,6 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet, matchPath, useLocation, useParams } from 'react-router-dom';
 
-import { Mail, Pencil, SettingsIcon, Users } from 'lucide-react';
-
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import SubMenu from './components/SubMenu';
@@ -38,17 +36,6 @@ const MainLayout = () => {
   const matchClientDetails = matchPath('/clients/:id/*', location.pathname);
 
   const currentCard = useSelector((state) => state.cards.currentCard);
-
-  const isEditFlow = !!matchEdit;
-
-  // 1) выбран тип карты?
-  const typeDone = isEditFlow && Boolean(currentCard?.typeReady);
-
-  // 2) настроен дизайн?
-  const designDone = isEditFlow && Boolean(currentCard?.designReady);
-
-  // 3) заполнены настройки?
-  const settingsDone = isEditFlow && Boolean(currentCard?.settingsReady);
 
   useEffect(() => {
     if (isTemplatePage) {
@@ -90,39 +77,30 @@ const MainLayout = () => {
   }
 
   const getMenuItems = () => {
-    if (matchCreate) {
-      const base = '/cards/create';
+    if (matchCreate || matchEdit) {
+      const base = matchCreate ? '/cards/create' : `/cards/${id}/edit`;
+      const firstStepTo = matchCreate ? `${base}` : `${base}/type`;
 
       return [
-        { to: `${base}`, label: '1. Тип карты' },
+        { to: firstStepTo, label: '1. Тип карты' },
         {
           to: `${base}/design`,
           label: '2. Дизайн карты',
-          disabled: !typeDone,
+          disabled: !currentCard?.typeReady,
           tooltip: 'Сначала выберите тип карты',
         },
         {
           to: `${base}/settings`,
           label: '3. Настройки карты',
-          disabled: !designDone,
+          disabled: !currentCard?.designReady,
           tooltip: 'Сначала настройте дизайн',
         },
         {
           to: `${base}/info`,
           label: '4. Оборотная сторона карты',
-          disabled: !settingsDone,
+          disabled: !currentCard?.settingsReady,
           tooltip: 'Сначала заполните настройки',
         },
-      ];
-    }
-
-    if (matchEdit) {
-      const base = `/cards/${id}/edit`;
-      return [
-        { to: `${base}`, label: '1. Тип карты' },
-        { to: `${base}/design`, label: '2. Дизайн карты' },
-        { to: `${base}/settings`, label: '3. Настройки карты' },
-        { to: `${base}/info`, label: '4. Оборотная сторона карты' },
       ];
     }
 

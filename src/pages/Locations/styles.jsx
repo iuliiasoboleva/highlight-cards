@@ -161,3 +161,45 @@ export const ActionButton = styled.button`
     box-sizing: border-box;
   }
 `;
+
+export const AddressWrap = styled.div`
+  position: relative;
+`;
+
+export const SuggestList = styled.ul`
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  max-height: 260px;
+  overflow: auto;
+  margin: 0;
+  padding: 6px 0;
+  list-style: none;
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+`;
+
+export const SuggestItem = styled.li`
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #e9e9e9;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  line-height: 1.35;
+
+  ${({ $active }) =>
+    $active &&
+    css`
+      background: rgba(255, 255, 255, 0.06);
+    `}
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+`;

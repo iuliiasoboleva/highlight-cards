@@ -133,10 +133,12 @@ export const TabLink = styled(Link)`
 
 export const TabButton = styled.button`
   ${baseTabStyles}
-  ${({ disabled }) =>
-    disabled &&
+  ${({ $disabled }) =>
+    $disabled &&
     css`
       cursor: not-allowed;
+      opacity: 0.6;
+      pointer-events: auto; /* важно, чтобы title работал */
     `}
 `;
 
@@ -184,4 +186,14 @@ export const SaveButton = styled.button`
     background: rgba(255, 255, 255, 0.05);
     color: #fff;
   }
+
+   &:disabled {
+    background: #2a2a2a;
+    border-color: #444;
+    color: #888;
+    cursor: not-allowed;
+
+    &:hover {
+      background: #2a2a2a;
+    }
 `;

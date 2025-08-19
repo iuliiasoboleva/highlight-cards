@@ -97,6 +97,7 @@ const App = () => {
                 </Route>
 
                 <Route path="/cards/:id/edit" element={<CardEditGuard />}>
+                  <Route index element={<Navigate to="type" replace />} />
                   <Route path="type" element={<EditType />} />
                   <Route path="settings" element={<EditSettings />} />
                   <Route path="design" element={<EditDesign />} />

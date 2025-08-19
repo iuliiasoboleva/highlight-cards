@@ -82,7 +82,9 @@ const EditDesign = () => {
         }
       }
     }
-    navigate(`/cards/${id}/edit/info`);
+
+    dispatch(updateCurrentCardField({ path: 'designReady', value: true }));
+    navigate(`/cards/${id}/edit/settings`);
   };
 
   const renderStampControls = () => (

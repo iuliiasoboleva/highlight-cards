@@ -25,6 +25,7 @@ const EditType = () => {
   const { currentCard, cards } = useSelector((state) => state.cards);
 
   const [selectedType, setSelectedType] = useState(currentCard.status || 'stamp');
+  const selectedTypeName = cardTypes.find((t) => t.id === selectedType)?.name || '';
 
   useEffect(() => {
     if (!currentCard.id) {
@@ -48,6 +49,7 @@ const EditType = () => {
 
   const handleContinue = () => {
     if (!selectedType) return;
+    dispatch(updateCurrentCardField({ path: 'typeReady', value: true }));
     navigate(`/cards/${currentCard.id}/edit/design`);
   };
 
@@ -92,7 +94,7 @@ const EditType = () => {
         Перейти к следующему шагу
       </CreateButton>
       <BottomText>
-        Вы выбрали карту типа {selectedType}. Перейдите к следующему шагу, чтобы настроить срок
+        Вы выбрали карту типа {selectedTypeName}. Перейдите к следующему шагу, чтобы настроить срок
         действия и другие параметры
       </BottomText>
     </EditLayout>

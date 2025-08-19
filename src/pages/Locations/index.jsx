@@ -21,10 +21,12 @@ import {
   editBranch,
   fetchBranches,
 } from '../../store/salesPointsSlice';
+import { DADATA_TOKEN, DADATA_URL, MAX_LOCATIONS } from '../../utils/locations.jsx';
 import {
   ActionButton,
   ActionRow,
   AddLocationBtn,
+  AddressWrap,
   DeleteLocationBtn,
   LimitAlert,
   LocationActions,
@@ -34,12 +36,13 @@ import {
   LocationsSubtext,
   PrimaryBtn,
   SearchLoading,
+  SuggestItem,
+  SuggestList,
 } from './styles.jsx';
-
-const MAX_LOCATIONS = 10;
 
 const Locations = () => {
   const mapRef = useRef(null);
+  const clickAwayRef = useRef(null);
   const dispatch = useDispatch();
   const toast = useToast();
 
@@ -47,6 +50,7 @@ const Locations = () => {
   const allCards = useSelector((state) => state.cards.cards);
   const { list: locations, loading: locationsLoading } = useSelector((state) => state.locations);
   const orgId = useSelector((state) => state.user.organization_id);
+  const currentUser = useSelector((s) => s.user);
 
   const [organizationResults, setOrganizationResults] = useState([]);
   const [limitReached, setLimitReached] = useState(false);
@@ -54,10 +58,13 @@ const Locations = () => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
 
-  const [debouncedSearchQuery] = useDebounce(searchQuery, 2000);
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 400);
   const [showAddForm, setShowAddForm] = useState(false);
 
-  // режим единственной локации
+  const [suggests, setSuggests] = useState([]);
+  const [showSuggests, setShowSuggests] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
+
   const isSingleExisting = locations.length === 1;
   const singleLoc = useMemo(
     () => (isSingleExisting ? locations[0] : null),
@@ -66,7 +73,7 @@ const Locations = () => {
   const [singleEditMode, setSingleEditMode] = useState(false);
   const [singleAddress, setSingleAddress] = useState('');
   const [singleCoords, setSingleCoords] = useState(null);
-  const [singleShowMap, setSingleShowMap] = useState(false); // карта по клику «Проверить адрес»
+  const [singleShowMap, setSingleShowMap] = useState(false);
 
   // подтягиваем список точек
   useEffect(() => {
@@ -92,12 +99,80 @@ const Locations = () => {
       setSingleEditMode(false);
       setSingleShowMap(false);
     }
-  }, [singleLoc?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [singleLoc?.id]);
 
-  // поиск координат по адресу (только когда НЕ один адрес)
+  useEffect(() => {
+    let aborted = false;
+    const fetchSuggests = async () => {
+      if (!DADATA_TOKEN || isSingleExisting) {
+        setSuggests([]);
+        setShowSuggests(false);
+        return;
+      }
+      const q = debouncedSearchQuery.trim();
+      if (!q) {
+        setSuggests([]);
+        setShowSuggests(false);
+        return;
+      }
+
+      try {
+        setIsSearching(true);
+
+        const city = currentUser?.company?.city || currentUser?.profile?.city || null;
+        const body = { query: q, count: 8 };
+        if (city) body.locations = [{ city }];
+
+        const res = await fetch(DADATA_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${DADATA_TOKEN}`,
+          },
+          body: JSON.stringify(body),
+        });
+        if (!res.ok) throw new Error(`DaData ${res.status}`);
+        const data = await res.json();
+        if (!aborted) {
+          const s = Array.isArray(data?.suggestions) ? data.suggestions : [];
+          setSuggests(s);
+          setShowSuggests(true);
+          setActiveIndex(-1);
+        }
+      } catch (e) {
+        if (!aborted) {
+          setSuggests([]);
+          setShowSuggests(false);
+        }
+      } finally {
+        if (!aborted) setIsSearching(false);
+      }
+    };
+    fetchSuggests();
+    return () => {
+      aborted = true;
+    };
+  }, [
+    debouncedSearchQuery,
+    isSingleExisting,
+    currentUser?.company?.city,
+    currentUser?.profile?.city,
+  ]);
+
+  useEffect(() => {
+    const onDocClick = (e) => {
+      if (!clickAwayRef.current) return;
+      if (!clickAwayRef.current.contains(e.target)) setShowSuggests(false);
+    };
+    document.addEventListener('mousedown', onDocClick);
+    return () => document.removeEventListener('mousedown', onDocClick);
+  }, []);
+
   useEffect(() => {
     const searchAddress = async () => {
-      if (!debouncedSearchQuery || !mapRef.current) return;
+      if (!debouncedSearchQuery || !mapRef.current || isSingleExisting) return;
+      if (DADATA_TOKEN) return;
       try {
         setIsSearching(true);
         const coords = await mapRef.current.search(debouncedSearchQuery.trim());
@@ -114,7 +189,7 @@ const Locations = () => {
         setIsSearching(false);
       }
     };
-    if (!isSingleExisting) searchAddress();
+    searchAddress();
   }, [debouncedSearchQuery, toast, isSingleExisting]);
 
   const handleCardSelect = (cardId) => {
@@ -141,6 +216,50 @@ const Locations = () => {
       .unwrap()
       .then(() => toast.success('Локация удалена'))
       .catch(() => toast.error('Не удалось удалить локацию'));
+  };
+
+  const applySuggest = async (s) => {
+    const addr = s?.value || s?.unrestricted_value || '';
+    const lat = Number(s?.data?.geo_lat);
+    const lon = Number(s?.data?.geo_lon);
+
+    setSearchQuery(addr);
+    setShowSuggests(false);
+
+    if (!Number.isNaN(lat) && !Number.isNaN(lon)) {
+      const loc = { address: addr, coords: { lat, lon } };
+      setSelectedLocation(loc);
+      if (mapRef.current?.setCenter) mapRef.current.setCenter([lat, lon]);
+      return;
+    }
+
+    if (mapRef.current?.search) {
+      const coords = await mapRef.current.search(addr);
+      if (Array.isArray(coords) && coords.length === 2) {
+        setSelectedLocation({
+          address: addr,
+          coords: { lat: coords[0], lon: coords[1] },
+        });
+      }
+    }
+  };
+
+  const handleKeyDownOnSearch = (e) => {
+    if (!showSuggests || !suggests.length) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveIndex((i) => (i + 1) % suggests.length);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveIndex((i) => (i - 1 + suggests.length) % suggests.length);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      const s = suggests[activeIndex] || suggests[0];
+      if (s) applySuggest(s);
+    } else if (e.key === 'Escape') {
+      setShowSuggests(false);
+    }
   };
 
   // добавление локации (заблокировано при одной)
@@ -174,8 +293,7 @@ const Locations = () => {
     const dupByText = locations.some((l) => normalizeAddr(l.name || l.address) === nAddr);
     const dupByCoords = locations.some((l) => l?.coords && sameCoords(l.coords, nextCoords));
     if (dupByText || dupByCoords) {
-      const msg = 'Точка продаж с таким адресом уже создана';
-      toast.error(msg);
+      toast.error('Точка продаж с таким адресом уже создана');
       return;
     }
 
@@ -384,15 +502,44 @@ const Locations = () => {
         <>
           {limitReached && <LimitAlert>Вы достигли лимита в {MAX_LOCATIONS} локаций</LimitAlert>}
 
-          <ActionRow>
-            <CustomInput
-              type="text"
-              placeholder="Введите адрес локации"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && setSearchQuery(e.target.value)}
-              style={{ flex: 1, minWidth: 260 }}
-            />
+          <ActionRow ref={clickAwayRef}>
+            <AddressWrap style={{ flex: 1 }}>
+              <CustomInput
+                type="text"
+                placeholder="Введите адрес локации"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  if (DADATA_TOKEN) setShowSuggests(true);
+                }}
+                onFocus={() => {
+                  if (DADATA_TOKEN && suggests.length) setShowSuggests(true);
+                }}
+                onKeyDown={handleKeyDownOnSearch}
+                style={{ width: '100%' }}
+              />
+
+              {showSuggests && suggests.length > 0 && (
+                <SuggestList role="listbox">
+                  {suggests.map((s, idx) => (
+                    <SuggestItem
+                      key={`${s.value}-${idx}`}
+                      $active={idx === activeIndex}
+                      onMouseEnter={() => setActiveIndex(idx)}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        applySuggest(s);
+                      }}
+                      role="option"
+                      aria-selected={idx === activeIndex}
+                    >
+                      {s.value}
+                    </SuggestItem>
+                  ))}
+                </SuggestList>
+              )}
+            </AddressWrap>
+
             <ActionButton
               variant="secondary"
               onClick={handleSearchOrganizations}
@@ -402,11 +549,8 @@ const Locations = () => {
             </ActionButton>
           </ActionRow>
 
-          {isSearching && <SearchLoading>Идёт поиск…</SearchLoading>}
-
           {selectedLocation && (
             <LocationInfo>
-              <p>Выбрано: {selectedLocation.address}</p>
               <p>
                 Координаты: {selectedLocation.coords.lat.toFixed(6)},{' '}
                 {selectedLocation.coords.lon.toFixed(6)}
