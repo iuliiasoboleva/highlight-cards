@@ -35,3 +35,17 @@ export const StyledTextarea = styled.textarea`
       border-color: #ef4444;
     `}
 `;
+
+export const Counter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: ${({ $danger, $warn }) => ($danger ? '#dc2626' : $warn ? '#d97706' : '#9ca3af')};
+
+  p {
+    margin-right: auto;
+  }
+`;

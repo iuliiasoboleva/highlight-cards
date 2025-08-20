@@ -1,8 +1,8 @@
+// src/components/CardInfo/index.jsx
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import html2canvas from 'html2canvas';
 import { HelpCircle, Star } from 'lucide-react';
 
 import { getStampIconComponent } from '../../utils/stampIcons';
@@ -22,7 +22,6 @@ import {
   CardInfoRowValue,
   CardInfoTitleRow,
   CardInlineValue,
-  CardName,
   CardNumber,
   HiZone,
   InfoButton,
@@ -96,16 +95,19 @@ const CardInfo = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef 
   };
 
   const renderFieldValue = (value, { type }) => {
-    if (value === undefined || value === null) {
-      const wl = card.settings?.walletLabels || {};
-      return wl.noData || 'НЕТ ДАННЫХ';
+    const wl = card.settings?.walletLabels || {};
+
+    if (type === 'expirationDate') {
+      return value ? value : wl.perpetual || 'бессрочно';
     }
-    if (type === 'restStamps' && value <= 0) {
-      const wl = card.settings?.walletLabels || {};
+
+    if (value === undefined || value === null) {
       return wl.noData || 'НЕТ ДАННЫХ';
     }
 
-    const wl = card.settings?.walletLabels || {};
+    if (type === 'restStamps' && value <= 0) {
+      return wl.noData || 'НЕТ ДАННЫХ';
+    }
 
     if (type === 'restStamps') {
       const word = wl.stampsWord || 'штампов';
@@ -132,6 +134,22 @@ const CardInfo = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef 
     return map[type] || defaultName;
   };
 
+  const DEFAULT_TOP_TYPES = [
+    'balanceMoney',
+    'credits',
+    'balance',
+    'discountPercent',
+    'discountStatus',
+    'restStamps',
+    'score',
+  ];
+
+  let topTypes = DEFAULT_TOP_TYPES;
+  if (card.status === 'subscription') {
+    topTypes = DEFAULT_TOP_TYPES.filter((t) => t !== 'score');
+    if (!topTypes.includes('expirationDate')) topTypes = [...topTypes, 'expirationDate'];
+  }
+
   // --- RENDER ---
   const HeaderBlock = (
     <CardInfoHeader>
@@ -140,17 +158,7 @@ const CardInfo = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef 
 
         <TopFieldsBlock>
           {fields
-            .filter(({ type }) =>
-              [
-                'balanceMoney',
-                'credits',
-                'balance',
-                'discountPercent',
-                'discountStatus',
-                'restStamps',
-                'score',
-              ].includes(type),
-            )
+            .filter(({ type }) => topTypes.includes(type))
             .map(({ name, type }) => {
               const value = mergedCard[type];
               const fieldLabel = getFieldLabel(type, name);
@@ -174,19 +182,7 @@ const CardInfo = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef 
   const FooterBlock = (
     <CardInfoFooter>
       {fields
-        .filter(
-          ({ type }) =>
-            type &&
-            ![
-              'balanceMoney',
-              'credits',
-              'balance',
-              'discountPercent',
-              'discountStatus',
-              'restStamps',
-              'score',
-            ].includes(type),
-        )
+        .filter(({ type }) => type && !topTypes.includes(type))
         .map(({ type, name }) => {
           const value = mergedCard[type];
           const fieldLabel = getFieldLabel(type, name);

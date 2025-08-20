@@ -39,11 +39,27 @@ const EditDesign = () => {
 
   const currentCard = useSelector((state) => state.cards.currentCard);
   const fieldsName = useSelector((state) => state.cards.currentCard.fieldsName) || [];
-  const statusType = currentCard.status;
-  const design = currentCard.design || {};
+  const statusType = currentCard?.status;
+  const design = currentCard?.design || {};
   const { stampsQuantity = 0 } = design;
 
-  const isStampCard = ['stamp', 'subscription'].includes(currentCard.status);
+  const isStampCard = ['stamp', 'subscription'].includes(statusType);
+  const isSubscription = statusType === 'subscription';
+  const isCashback = statusType === 'cashback';
+
+  const TEXT = {
+    qtyTitle: isSubscription ? 'Количество визитов' : 'Количество штампов',
+    qtyTooltip: isSubscription
+      ? 'Количество визитов, отображаемых на карте'
+      : 'Количество штампов, отображаемых на карте',
+    activeLabel: isSubscription ? 'Активный визит' : 'Активный штамп',
+    activeTooltip: isSubscription ? 'Дизайн активного визита' : 'Дизайн активного штампа',
+    inactiveLabel: isSubscription ? 'Неактивный визит' : 'Неактивный штамп',
+    inactiveTooltip: isSubscription ? 'Дизайн неактивного визита' : 'Дизайн неактивного штампа',
+    centerTooltip: isSubscription
+      ? 'Дизайн фоновой части под визитами'
+      : 'Дизайн фоновой части под штампами',
+  };
 
   const formRef = useRef(null);
   const stampSectionRef = useRef(null);
@@ -107,7 +123,9 @@ const EditDesign = () => {
 
           const dataUrl = canvas.toDataURL('image/png');
           dispatch(updateCurrentCardField({ path: 'design.stampBackground', value: dataUrl }));
-        } catch (e) {}
+        } catch (e) {
+          // no-op
+        }
       }
     }
 
@@ -119,8 +137,8 @@ const EditDesign = () => {
     <>
       <Wrapper ref={stampSectionRef} data-design-key="stampsQuantity">
         <StampSectionLabel>
-          <BarcodeRadioTitle>Количество штампов</BarcodeRadioTitle>
-          <CustomTooltip id="stamps-help" html content="Количество штампов отображаемых на карте" />
+          <BarcodeRadioTitle>{TEXT.qtyTitle}</BarcodeRadioTitle>
+          <CustomTooltip id="stamps-help" html content={TEXT.qtyTooltip} />
         </StampSectionLabel>
 
         <StampQuantityGrid>
@@ -143,8 +161,8 @@ const EditDesign = () => {
       <StampSettings>
         <StampSettingsBlock data-design-key="activeStamp">
           <StampIconSelector
-            label="Активный штамп"
-            tooltip="Дизайн активного штампа"
+            label={TEXT.activeLabel}
+            tooltip={TEXT.activeTooltip}
             value={typeof design.activeStamp === 'string' ? design.activeStamp : 'Star'}
             options={stampIcons}
             onChange={(val) => {
@@ -163,8 +181,8 @@ const EditDesign = () => {
 
         <StampSettingsBlock data-design-key="inactiveStamp">
           <StampIconSelector
-            label="Неактивный штамп"
-            tooltip="Дизайн неактивного штампа"
+            label={TEXT.inactiveLabel}
+            tooltip={TEXT.inactiveTooltip}
             value={typeof design.inactiveStamp === 'string' ? design.inactiveStamp : 'Star'}
             options={stampIcons}
             onChange={(val) => {
@@ -242,7 +260,7 @@ const EditDesign = () => {
         <StampSettingsBlock data-design-key="stampBackground">
           <StampSectionLabel>
             <BarcodeRadioTitle>Фон центральной части</BarcodeRadioTitle>
-            <CustomTooltip id="center-help" html content="Дизайн фоновой части под штампами" />
+            <CustomTooltip id="center-help" html content={TEXT.centerTooltip} />
           </StampSectionLabel>
 
           <ImageUploader
@@ -269,18 +287,22 @@ const EditDesign = () => {
         isStampCard={isStampCard}
         onHoverKeyChange={(key) => setHoverDesignKey(key)}
       />
-
       <hr />
-      <StampSectionLabel>
-        <BarcodeRadioTitle>Названия полей</BarcodeRadioTitle>
-        <CustomTooltip
-          id="color-fields-help"
-          html
-          content="Настройка полей для отображения на лицевой стороне карты (только для iPhone)"
-        />
-      </StampSectionLabel>
 
-      <StatusFieldConfig statusType={statusType} fields={fieldsName} />
+      {!isCashback && (
+        <>
+          <StampSectionLabel>
+            <BarcodeRadioTitle>Названия полей</BarcodeRadioTitle>
+            <CustomTooltip
+              id="color-fields-help"
+              html
+              content="Настройка полей для отображения на лицевой стороне карты (только для iPhone)"
+            />
+          </StampSectionLabel>
+
+          <StatusFieldConfig statusType={statusType} fields={fieldsName} />
+        </>
+      )}
     </DesignSection>
   );
 

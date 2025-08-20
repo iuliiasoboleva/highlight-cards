@@ -2,7 +2,43 @@ import React from 'react';
 
 import { X } from 'lucide-react';
 
-import './styles.css';
+import {
+  CloseButton,
+  Content,
+  Header,
+  Item,
+  ItemLabel,
+  LinkLabel,
+  LinkLine,
+  LinkValue,
+  Multiline,
+  Overlay,
+  Title,
+  Value,
+} from './styles';
+
+// 1) Фиксированный список полей и порядок вывода (whitelist)
+const FIELDS_ORDER = [
+  'description',
+  'howToGetStamp',
+  'companyName',
+  'rewardDescription',
+  'stampMessage',
+  'claimRewardMessage',
+  'autoRedeem',
+  'referralProgramActive',
+  'referralMoment',
+  'referrerStampsQuantity',
+  'referralStampsQuantity',
+  'activeLinks',
+  'reviewLinks',
+  'fullPolicyText',
+  'linkToFullTerms',
+  'policyEnabled',
+  'issuerName',
+  'issuerEmail',
+  'issuerPhone',
+];
 
 const fieldLabels = {
   description: 'Описание карты',
@@ -37,80 +73,83 @@ const valueFormatters = {
   autoRedeem: (v) => (v ? 'Да' : 'Нет'),
   referralProgramActive: (v) => (v ? 'Да' : 'Нет'),
   referralMoment: (v) => (v === 'visit' ? 'Первого визита' : v === 'issue' ? 'Выдачи карты' : v),
-  // multiRewards: (v) => (Array.isArray(v) && v.length > 0 ? v.join(', ') : 'Не указаны'),
   policyEnabled: (v) => (v ? 'Да' : 'Нет'),
   activeLinks: (v) =>
     Array.isArray(v) && v.length
       ? v.map((link) => `${link.text || 'Без названия'} → ${link.link || '—'}`).join('\n')
-      : 'Нет ссылок',
+      : '',
   reviewLinks: (v) =>
     Array.isArray(v) && v.length
       ? v
           .map((link) => `${link.text || 'Без названия'} (${link.type}): ${link.link || '—'}`)
           .join('\n')
-      : 'Нет отзывов',
+      : '',
+};
+
+const toDisplay = (key, raw) => {
+  const isEmpty =
+    raw === null ||
+    raw === undefined ||
+    (typeof raw === 'string' && raw.trim() === '') ||
+    (Array.isArray(raw) && raw.length === 0);
+
+  if (isEmpty) return 'Нет данных';
+
+  const formatted = valueFormatters[key]
+    ? valueFormatters[key](raw)
+    : Array.isArray(raw)
+      ? raw.join(', ')
+      : String(raw);
+
+  return formatted && String(formatted).trim() !== '' ? formatted : 'Нет данных';
 };
 
 const InfoOverlay = ({ infoFields, onClose, onFieldClick }) => {
   if (!infoFields) return null;
 
   return (
-    <div className="info-overlay">
-      <div className="info-overlay-header">
-        <h3>Информация</h3>
-        <button className="info-overlay-close-button" onClick={onClose}>
+    <Overlay>
+      <Header>
+        <Title>Информация</Title>
+        <CloseButton aria-label="Закрыть" onClick={onClose}>
           <X size={20} />
-        </button>
-      </div>
-      <div className="info-overlay-content">
-        {Object.entries(infoFields)
-          .filter(([key]) => key !== 'multiRewards')
-          .map(([key, value]) => {
-            const label = fieldLabels[key] || key;
-            const formattedValue = valueFormatters[key]
-              ? valueFormatters[key](value)
-              : Array.isArray(value)
-                ? value.join(', ')
-                : String(value);
+        </CloseButton>
+      </Header>
 
-            return (
-              <div key={key} className="info-overlay-item">
-                <strong>{label}:</strong>{' '}
-                {String(formattedValue).includes('\n') ? (
-                  <div
-                    className="info-overlay-multiline"
-                    onClick={() => onFieldClick && onFieldClick(key)}
-                  >
-                    {String(formattedValue)
-                      .split('\n')
-                      .map((line, i) => {
-                        const [labelPart, linkPart] = line.split(/ → |: /);
-                        return (
-                          <div key={i} className="info-overlay-link-line">
-                            <span className="info-overlay-link-label">{labelPart}</span>{' '}
-                            {linkPart && (
-                              <div className="info-overlay-link-value" title={linkPart}>
-                                {linkPart}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                  </div>
-                ) : (
-                  <span
-                    className="info-overlay-link-value"
-                    title={formattedValue}
-                    onClick={() => onFieldClick && onFieldClick(key)}
-                  >
-                    {formattedValue || 'Нет данных'}
-                  </span>
-                )}
-              </div>
-            );
-          })}
-      </div>
-    </div>
+      <Content>
+        {FIELDS_ORDER.map((key) => {
+          const label = fieldLabels[key] || key;
+          const displayValue = toDisplay(key, infoFields[key]);
+          const isMultiline = String(displayValue).includes('\n');
+
+          return (
+            <Item key={key}>
+              <ItemLabel>{label}:</ItemLabel>
+
+              {isMultiline ? (
+                <Multiline onClick={() => onFieldClick && onFieldClick(key)}>
+                  {String(displayValue)
+                    .split('\n')
+                    .map((line, i) => {
+                      const [labelPart, linkPart] = line.split(/ → |: /);
+                      return (
+                        <LinkLine key={`${key}-${i}`}>
+                          <LinkLabel>{labelPart}</LinkLabel>
+                          {linkPart && <LinkValue title={linkPart}>{linkPart}</LinkValue>}
+                        </LinkLine>
+                      );
+                    })}
+                </Multiline>
+              ) : (
+                <Value title={displayValue} onClick={() => onFieldClick && onFieldClick(key)}>
+                  {displayValue}
+                </Value>
+              )}
+            </Item>
+          );
+        })}
+      </Content>
+    </Overlay>
   );
 };
 

@@ -41,6 +41,7 @@ const RadioConfigs = ({ cardStatus }) => {
 
   const configs = [];
 
+  const isSubscription = cardStatus === 'subscription';
   configs.push({
     options: [
       { value: 'cardUnlimit', label: 'Неограниченный' },
@@ -49,15 +50,23 @@ const RadioConfigs = ({ cardStatus }) => {
     ],
     selected: settings.cardLimit,
     onChange: (value) => updateSettingsField('cardLimit', value),
-    title: 'Срок действия карты',
+    title: isSubscription ? 'Срок действия абонемента' : 'Срок действия карты',
     name: 'card-limit',
-    tooltip: `Выберите срок действия карты`,
+    tooltip: isSubscription ? 'Выберите срок действия абонемента' : 'Выберите срок действия карты',
     additionalContentByValue: {
       cardFixed: (
         <>
           <StampSectionLabel>
             <BarcodeRadioTitle>Срок</BarcodeRadioTitle>
-            <CustomTooltip id="card-duration-help" html content={`Условия срока действия карты`} />
+            <CustomTooltip
+              id="card-duration-help"
+              html
+              content={
+                isSubscription
+                  ? 'Условия срока действия абонемента'
+                  : 'Условия срока действия карты'
+              }
+            />
           </StampSectionLabel>
           <CustomInput
             type="date"
@@ -80,9 +89,13 @@ const RadioConfigs = ({ cardStatus }) => {
           <StampSectionLabel>
             <BarcodeRadioTitle>Срок</BarcodeRadioTitle>
             <CustomTooltip
-              id="stamp-duration-help"
+              id="card-duration-later-help"
               html
-              content={`Условия срока действия штампа`}
+              content={
+                isSubscription
+                  ? 'Условия срока действия абонемента с момента выпуска'
+                  : 'Условия срока действия карты с момента выпуска'
+              }
             />
           </StampSectionLabel>
           <DurationRow>
@@ -91,7 +104,7 @@ const RadioConfigs = ({ cardStatus }) => {
               onChange={(value) =>
                 updateSettingsField('cardDuration', {
                   ...settings.cardDuration,
-                  value: parseInt(value),
+                  value: parseInt(value, 10),
                 })
               }
               options={numberOptions}
@@ -110,6 +123,47 @@ const RadioConfigs = ({ cardStatus }) => {
       ),
     },
   });
+
+  if (isSubscription) {
+    configs.push({
+      options: [
+        { value: 'withVisits', label: 'Срок + кол-во визитов' },
+        { value: 'unlimited', label: 'Срок без ограничения визитов' },
+      ],
+      selected: settings.subscriptionVisitPolicy || 'withVisits',
+      onChange: (value) => updateSettingsField('subscriptionVisitPolicy', value),
+      title: 'Правила посещений абонемента',
+      name: 'subscription-visit-policy',
+      tooltip: 'Выберите, ограничивать ли число визитов за выбранный срок абонемента',
+      additionalContentByValue: {
+        withVisits: (
+          <>
+            <StampSectionLabel>
+              <BarcodeRadioTitle>Количество визитов за срок</BarcodeRadioTitle>
+              <CustomTooltip
+                id="subscription-visits-help"
+                html
+                content="Укажите, сколько визитов разрешено в рамках выбранного срока"
+              />
+            </StampSectionLabel>
+            <CustomInput
+              type="number"
+              min="1"
+              value={settings.subscriptionVisitsCount ?? ''}
+              onChange={(e) =>
+                updateSettingsField(
+                  'subscriptionVisitsCount',
+                  Math.max(1, parseInt(e.target.value || '0', 10) || 1),
+                )
+              }
+              placeholder="Например: 8"
+            />
+          </>
+        ),
+        // для unlimited — ничего не показываем
+      },
+    });
+  }
 
   if (cardStatus === 'stamp') {
     configs.push({
@@ -144,7 +198,7 @@ const RadioConfigs = ({ cardStatus }) => {
                 min="1"
                 value={settings.spendingAmount || ''}
                 onChange={(e) =>
-                  updateSettingsField('spendingAmount', parseInt(e.target.value) || 0)
+                  updateSettingsField('spendingAmount', parseInt(e.target.value, 10) || 0)
                 }
               />
             </SpendingLabel>
@@ -155,7 +209,7 @@ const RadioConfigs = ({ cardStatus }) => {
                 min="1"
                 value={settings.spendingStamps || ''}
                 onChange={(e) =>
-                  updateSettingsField('spendingStamps', parseInt(e.target.value) || 0)
+                  updateSettingsField('spendingStamps', parseInt(e.target.value, 10) || 0)
                 }
               />
               <span>штампов</span>
@@ -171,7 +225,9 @@ const RadioConfigs = ({ cardStatus }) => {
                 type="number"
                 min="1"
                 value={settings.visitStamps || ''}
-                onChange={(e) => updateSettingsField('visitStamps', parseInt(e.target.value) || 0)}
+                onChange={(e) =>
+                  updateSettingsField('visitStamps', parseInt(e.target.value, 10) || 0)
+                }
               />
               <span className="visit-text">штампов</span>
             </VisitLabel>
@@ -186,7 +242,7 @@ const RadioConfigs = ({ cardStatus }) => {
     });
   }
 
-  if (['stamp', 'subscription'].includes(cardStatus)) {
+  if (['stamp'].includes(cardStatus)) {
     configs.push({
       options: [
         { value: 'stampUnlimit', label: 'Неограниченный' },
@@ -196,7 +252,8 @@ const RadioConfigs = ({ cardStatus }) => {
       onChange: (value) => updateSettingsField('stampLimit', value),
       title: 'Срок жизни штампа',
       name: 'stamp-limit',
-      tooltip: `Сделайте штамп ограниченным по времени - например, один раз в месяц, чтобы мотивировать регулярные визиты`,
+      tooltip:
+        'Сделайте штамп ограниченным по времени — например, один раз в месяц, чтобы мотивировать регулярные визиты',
       additionalContentByValue: {
         stampFixedLater: (
           <>
@@ -205,7 +262,7 @@ const RadioConfigs = ({ cardStatus }) => {
               <CustomTooltip
                 id="stamp-duration-help"
                 html
-                content={`Условия срока действия штампа`}
+                content="Условия срока действия штампа"
               />
             </StampSectionLabel>
             <DurationRow>
@@ -214,7 +271,7 @@ const RadioConfigs = ({ cardStatus }) => {
                 onChange={(value) =>
                   updateSettingsField('stampDuration', {
                     ...settings.stampDuration,
-                    value: parseInt(value),
+                    value: parseInt(value, 10),
                   })
                 }
                 options={numberOptions}
@@ -235,7 +292,7 @@ const RadioConfigs = ({ cardStatus }) => {
     });
   }
 
-  if (['cashback', 'subscription', 'certificate'].includes(cardStatus)) {
+  if (['cashback', 'certificate'].includes(cardStatus)) {
     configs.push({
       options: [
         { value: 'pointsUnlimit', label: 'Неограниченный' },
@@ -250,7 +307,7 @@ const RadioConfigs = ({ cardStatus }) => {
           <>
             <StampSectionLabel>
               <BarcodeRadioTitle>Срок</BarcodeRadioTitle>
-              <CustomTooltip id="duration-help" html content={`Условия срока действия балла`} />
+              <CustomTooltip id="duration-help" html content="Условия срока действия балла" />
             </StampSectionLabel>
             <DurationRow>
               <CustomSelect
@@ -258,7 +315,7 @@ const RadioConfigs = ({ cardStatus }) => {
                 onChange={(value) =>
                   updateSettingsField('pointsDuration', {
                     ...settings.pointsDuration,
-                    value: parseInt(value),
+                    value: parseInt(value, 10),
                   })
                 }
                 options={numberOptions}

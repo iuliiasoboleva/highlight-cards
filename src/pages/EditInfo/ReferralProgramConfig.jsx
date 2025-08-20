@@ -2,7 +2,19 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { updateCurrentCardField } from '../../store/cardsSlice';
+import { BarcodeRadioTitle } from '../EditDesign/styles';
 import BarcodeRadio from '../EditSettings/BarcodeRadio';
+import {
+  AdditionalWrapper,
+  ControlsBlock,
+  Hr,
+  QuantityButton,
+  QuantityGrid,
+  QuantityHeader,
+  StampSectionLabel,
+  Subnote,
+  Subtitle,
+} from './styles';
 
 const ReferralProgramConfig = () => {
   const dispatch = useDispatch();
@@ -28,7 +40,7 @@ const ReferralProgramConfig = () => {
       additionalContentByValue={{
         true: (
           <>
-            <div>
+            <div style={{ marginTop: '8px' }}>
               <BarcodeRadio
                 title="Производить начисления в момент"
                 options={[
@@ -44,52 +56,60 @@ const ReferralProgramConfig = () => {
                 dataKey="referralMoment"
               />
             </div>
-            <hr />
-            <div className="barcode-radio-additional">
-              <div className="design-stamp-controls" data-info-key="referrerStampsQuantity">
-                <label className="stamp-section-label">
-                  <h3 className="barcode-radio-title">Количество штампов для реферера</h3>
-                  <p className="labeled-textarea-subtitle">
-                    Выберите, сколько штампов начислить тому, кто пригласил.
-                  </p>
-                </label>
-                <div className="stamp-quantity-grid">
-                  {Array.from({ length: 11 }, (_, i) => i).map((num) => (
-                    <button
-                      key={num}
-                      className={`stamp-quantity-button ${
-                        num <= infoFields.referrerStampsQuantity ? 'active' : ''
-                      }`}
-                      onClick={() => updateInfoField('referrerStampsQuantity', num)}
-                    >
-                      {num}
-                    </button>
-                  ))}
-                </div>
-              </div>
 
-              <div className="design-stamp-controls" data-info-key="referralStampsQuantity">
-                <label className="stamp-section-label">
-                  <h3 className="barcode-radio-title">Количество штампов для реферала</h3>
-                  <p className="labeled-textarea-subtitle">
-                    Выберите, сколько штампов начислить тому, кто установил карту.
-                  </p>
-                </label>
-                <div className="stamp-quantity-grid">
+            <Hr />
+
+            <AdditionalWrapper>
+              <ControlsBlock data-info-key="referrerStampsQuantity">
+                <QuantityHeader>
+                  <BarcodeRadioTitle>Количество штампов для реферера</BarcodeRadioTitle>
+                  <Subnote>Выберите, сколько штампов начислить тому, кто пригласил.</Subnote>
+                </QuantityHeader>
+
+                <QuantityGrid className="stamp-quantity-grid">
                   {Array.from({ length: 11 }, (_, i) => i).map((num) => (
-                    <button
+                    <QuantityButton
                       key={num}
-                      className={`stamp-quantity-button ${
-                        num <= infoFields.referralStampsQuantity ? 'active' : ''
+                      type="button"
+                      $active={num <= (infoFields.referrerStampsQuantity ?? 0)}
+                      onClick={() => updateInfoField('referrerStampsQuantity', num)}
+                      aria-pressed={num <= (infoFields.referrerStampsQuantity ?? 0)}
+                      aria-label={`Начислить ${num} штампов рефереру`}
+                      className={`stamp-quantity-button${
+                        num <= (infoFields.referrerStampsQuantity ?? 0) ? ' active' : ''
                       }`}
-                      onClick={() => updateInfoField('referralStampsQuantity', num)}
                     >
                       {num}
-                    </button>
+                    </QuantityButton>
                   ))}
-                </div>
-              </div>
-            </div>
+                </QuantityGrid>
+              </ControlsBlock>
+
+              <ControlsBlock data-info-key="referralStampsQuantity">
+                <QuantityHeader>
+                  <BarcodeRadioTitle>Количество штампов для реферала</BarcodeRadioTitle>
+                  <Subnote>Выберите, сколько штампов начислить тому, кто установил карту.</Subnote>
+                </QuantityHeader>
+
+                <QuantityGrid>
+                  {Array.from({ length: 11 }, (_, i) => i).map((num) => (
+                    <QuantityButton
+                      key={num}
+                      type="button"
+                      $active={num <= (infoFields.referralStampsQuantity ?? 0)}
+                      onClick={() => updateInfoField('referralStampsQuantity', num)}
+                      aria-pressed={num <= (infoFields.referralStampsQuantity ?? 0)}
+                      aria-label={`Начислить ${num} штампов рефералу`}
+                      className={`stamp-quantity-button${
+                        num <= (infoFields.referralStampsQuantity ?? 0) ? ' active' : ''
+                      }`}
+                    >
+                      {num}
+                    </QuantityButton>
+                  ))}
+                </QuantityGrid>
+              </ControlsBlock>
+            </AdditionalWrapper>
           </>
         ),
       }}

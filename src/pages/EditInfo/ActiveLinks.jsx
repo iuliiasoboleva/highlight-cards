@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 
 import { Trash2 } from 'lucide-react';
 
+import CustomInput from '../../customs/CustomInput';
 import CustomSelect from '../../customs/CustomSelect';
-
-import './styles.css';
+import { AddBtn, Container, DeleteBtn, HeaderGrid, RowGrid } from './styles';
 
 const fieldOptions = [
   { value: 'url', label: 'URL' },
@@ -30,6 +30,7 @@ const ActiveLinks = ({ formFields, onFieldChange, onAddField, onRemoveField }) =
         text: '',
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleTypeChange = (index, value) => {
@@ -47,7 +48,6 @@ const ActiveLinks = ({ formFields, onFieldChange, onAddField, onRemoveField }) =
     onFieldChange(index, 'text', value);
 
     const match = knownAddresses.find((addr) => addr.toLowerCase() === value.toLowerCase());
-
     if (match) {
       const link = `https://yandex.ru/maps/?text=${encodeURIComponent(match)}`;
       onFieldChange(index, 'link', link);
@@ -55,24 +55,24 @@ const ActiveLinks = ({ formFields, onFieldChange, onAddField, onRemoveField }) =
   };
 
   return (
-    <div className="card-form-container" data-info-key="activeLinks">
-      <div className="card-info-form-header">
+    <Container data-info-key="activeLinks">
+      <HeaderGrid>
         <span>Тип</span>
         <span>Ссылка</span>
         <span>Текст</span>
-      </div>
+        <span />
+      </HeaderGrid>
 
       {formFields?.map((field, index) => (
-        <div key={index} className="card-info-form-row">
+        <RowGrid key={index}>
           <CustomSelect
             value={field.type}
             onChange={(value) => handleTypeChange(index, value)}
             options={fieldOptions}
           />
 
-          <input
+          <CustomInput
             type="text"
-            className="custom-input"
             value={field.link}
             onChange={(e) => onFieldChange(index, 'link', e.target.value)}
             placeholder={
@@ -88,10 +88,9 @@ const ActiveLinks = ({ formFields, onFieldChange, onAddField, onRemoveField }) =
 
           {field.type === 'address' ? (
             <>
-              <input
+              <CustomInput
                 type="text"
                 list={`address-list-${index}`}
-                className="custom-input"
                 value={field.text}
                 onChange={(e) => handleAddressChange(index, e.target.value)}
                 placeholder="Введите адрес"
@@ -103,27 +102,21 @@ const ActiveLinks = ({ formFields, onFieldChange, onAddField, onRemoveField }) =
               </datalist>
             </>
           ) : (
-            <input
+            <CustomInput
               type="text"
-              className="custom-input"
               value={field.text}
               onChange={(e) => onFieldChange(index, 'text', e.target.value)}
               placeholder="Отображаемый текст"
             />
           )}
 
-          <button
-            className="card-form-delete-btn"
-            onClick={() => onRemoveField(index)}
-            aria-label="Удалить поле"
-          >
-            <Trash2 size={20} />
-          </button>
-        </div>
+          <DeleteBtn onClick={() => onRemoveField(index)} aria-label="Удалить поле">
+            <Trash2 size={18} />
+          </DeleteBtn>
+        </RowGrid>
       ))}
 
-      <button
-        className="card-form-add-btn"
+      <AddBtn
         onClick={() =>
           onAddField({
             type: 'url',
@@ -134,8 +127,8 @@ const ActiveLinks = ({ formFields, onFieldChange, onAddField, onRemoveField }) =
         disabled={formFields?.length >= 6}
       >
         Добавить ссылку
-      </button>
-    </div>
+      </AddBtn>
+    </Container>
   );
 };
 

@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 
 import { Trash2 } from 'lucide-react';
+import styled from 'styled-components';
 
+import CustomInput from '../../customs/CustomInput';
 import CustomSelect from '../../customs/CustomSelect';
-
-import './styles.css';
+import { AddBtn, Container, DeleteBtn, RowGrid } from './styles';
 
 const fieldOptions = [
   { value: '2gis', label: '2GIS' },
@@ -13,7 +14,7 @@ const fieldOptions = [
 ];
 
 const generateReviewLink = (type, query) => {
-  const encoded = encodeURIComponent(query.trim());
+  const encoded = encodeURIComponent((query || '').trim());
   switch (type) {
     case '2gis':
       return `https://2gis.ru/search/${encoded}`;
@@ -35,6 +36,7 @@ const ReviewLinks = ({ formFields, onFieldChange, onAddField, onRemoveField }) =
         text: '',
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleTypeChange = (index, newType) => {
@@ -52,9 +54,9 @@ const ReviewLinks = ({ formFields, onFieldChange, onAddField, onRemoveField }) =
   };
 
   return (
-    <div className="card-form-container" data-info-key="reviewLinks">
+    <Container data-info-key="reviewLinks">
       {formFields?.map((field, index) => (
-        <div key={index} className="card-info-form-row">
+        <RowGrid key={index}>
           {/* Платформа */}
           <CustomSelect
             value={field.type}
@@ -63,36 +65,29 @@ const ReviewLinks = ({ formFields, onFieldChange, onAddField, onRemoveField }) =
           />
 
           {/* Ссылка */}
-          <input
+          <CustomInput
             type="text"
-            className="custom-input"
             value={field.link}
             onChange={(e) => onFieldChange(index, 'link', e.target.value)}
             placeholder="https://"
           />
 
           {/* Название / Отображаемый текст */}
-          <input
+          <CustomInput
             type="text"
-            className="custom-input"
             value={field.text}
             onChange={(e) => handleTextChange(index, e.target.value)}
             placeholder="Название компании"
           />
 
           {/* Удалить */}
-          <button
-            className="card-form-delete-btn"
-            onClick={() => onRemoveField(index)}
-            aria-label="Удалить ссылку"
-          >
-            <Trash2 size={20} />
-          </button>
-        </div>
+          <DeleteBtn onClick={() => onRemoveField(index)} aria-label="Удалить ссылку">
+            <Trash2 size={18} />
+          </DeleteBtn>
+        </RowGrid>
       ))}
 
-      <button
-        className="card-form-add-btn"
+      <AddBtn
         onClick={() =>
           onAddField({
             type: 'yandex',
@@ -103,8 +98,8 @@ const ReviewLinks = ({ formFields, onFieldChange, onAddField, onRemoveField }) =
         disabled={formFields?.length >= 6}
       >
         Добавить ссылку
-      </button>
-    </div>
+      </AddBtn>
+    </Container>
   );
 };
 

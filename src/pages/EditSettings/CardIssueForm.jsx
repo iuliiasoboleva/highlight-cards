@@ -18,8 +18,6 @@ import {
   NamePlaceholder,
   RequiredCell,
   RequiredLabel,
-  Row,
-  SpanHint,
   TypeCell,
   Warning,
 } from './styles';

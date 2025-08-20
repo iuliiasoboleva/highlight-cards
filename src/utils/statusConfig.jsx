@@ -9,11 +9,11 @@ export const statusConfig = {
   cashback: [
     { label: 'Баллы', valueKey: 'credits', suffix: '' },
     {
-      label: 'Текущий процент кешбэка',
+      label: '% кешбэка',
       valueKey: 'cashbackPercent',
       suffix: '%',
     },
-    { label: 'Текущий статус кешбэка', valueKey: 'cashbackStatus' },
+    { label: 'Владелец карты', valueKey: 'cashbackStatus' },
   ],
   subscription: [
     { label: 'Текущие визиты', valueKey: 'score' },

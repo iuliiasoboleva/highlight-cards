@@ -3,9 +3,13 @@ import React from 'react';
 import CustomTextArea from '../../customs/CustomTextarea';
 import CustomTooltip from '../../customs/CustomTooltip';
 import { BarcodeRadioTitle } from '../EditDesign/styles';
-import { StampSectionLabel, Subtitle } from './styles';
-
-import './styles.css';
+import {
+  LabeledTextareaWrapper,
+  PolicyTextareaWrapper,
+  RequiredAsterisk,
+  StampSectionLabel,
+  Subtitle,
+} from './styles';
 
 const LabeledTextarea = ({
   label,
@@ -16,25 +20,32 @@ const LabeledTextarea = ({
   required = false,
   dataKey,
   tooltip,
+  showCounter,
+  maxLength,
+  warnAt,
 }) => (
-  <div className="labeled-textarea">
+  <LabeledTextareaWrapper>
     <StampSectionLabel>
       {label && <BarcodeRadioTitle>{label}</BarcodeRadioTitle>}
       {tooltip && <CustomTooltip id={`tooltip-${label}`} html content={tooltip} />}
     </StampSectionLabel>
+
     {subtitle && <Subtitle>{subtitle}</Subtitle>}
 
-    <div className="policy-textarea-wrapper">
+    <PolicyTextareaWrapper>
       <CustomTextArea
         data-info-key={dataKey}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
         required={required}
+        showCounter={showCounter}
+        maxLength={maxLength}
+        warnAt={warnAt}
       />
-      {required && <span className="required-asterisk">*</span>}
-    </div>
-  </div>
+      {required && <RequiredAsterisk>*</RequiredAsterisk>}
+    </PolicyTextareaWrapper>
+  </LabeledTextareaWrapper>
 );
 
 export default LabeledTextarea;

@@ -1,4 +1,3 @@
-// src/pages/EditInfo/index.jsx
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -16,6 +15,7 @@ import {
   saveCard,
   updateCurrentCardField,
 } from '../../store/cardsSlice';
+import { BarcodeRadioTitle, CreateButton } from '../EditDesign/styles';
 import BarcodeRadio from '../EditSettings/BarcodeRadio';
 import ActiveLinks from './ActiveLinks';
 import ClientContactFields from './ClientContactFields';
@@ -23,9 +23,15 @@ import LabeledTextarea from './LabeledTextarea';
 import PolicyFields from './PolicyFields';
 import ReferralProgramConfig from './ReferralProgramConfig';
 import ReviewLinks from './ReviewLinks';
-import { Divider, StepNote, TopRow } from './styles';
-
-import './styles.css';
+import {
+  Divider,
+  Hr,
+  SettingsInputsContainer,
+  StampSectionLabel,
+  StepNote,
+  SubtitleText,
+  TopRow,
+} from './styles';
 
 const EditInfo = () => {
   const { id } = useParams();
@@ -129,14 +135,14 @@ const EditInfo = () => {
   };
 
   const infoContent = (
-    <div className="settings-inputs-container" ref={formRef}>
+    <SettingsInputsContainer ref={formRef}>
       <div>
         <TopRow>
           <TitleWithHelp
-            title={'Информация'}
+            title={'Оборотная сторона карты'}
             tooltipId="info-help"
             tooltipHtml
-            tooltipContent={`Настройка информации на тыльной стороне карты`}
+            tooltipContent={`Здесь вы можете описать условия вашей акции или программы лояльности — так, как хотите донести это до клиента. Например: Штампы начисляются при покупке от 300 ₽. Срок действия — 30 дней.`}
           />
           <StepNote>Шаг 4 из 4</StepNote>
         </TopRow>
@@ -151,6 +157,9 @@ const EditInfo = () => {
         tooltip="Укажите краткое описание бонусной программы"
         required
         dataKey="description"
+        showCounter
+        maxLength={300}
+        warnAt={20}
       />
       <LabeledTextarea
         label="Как клиенту получить штамп"
@@ -160,6 +169,9 @@ const EditInfo = () => {
         placeholder=""
         required
         dataKey="howToGetStamp"
+        showCounter
+        maxLength={300}
+        warnAt={20}
       />
       <LabeledTextarea
         label="Название компании"
@@ -169,6 +181,9 @@ const EditInfo = () => {
         placeholder="Название компании"
         required
         dataKey="companyName"
+        showCounter
+        maxLength={300}
+        warnAt={20}
       />
       <LabeledTextarea
         label="Описание награды"
@@ -178,6 +193,9 @@ const EditInfo = () => {
         placeholder=""
         required
         dataKey="rewardDescription"
+        showCounter
+        maxLength={300}
+        warnAt={20}
       />
       <LabeledTextarea
         label="Сообщение о начисленном штампе"
@@ -188,6 +206,9 @@ const EditInfo = () => {
         placeholder=""
         required
         dataKey="stampMessage"
+        showCounter
+        maxLength={300}
+        warnAt={20}
       />
       <LabeledTextarea
         label="Сообщение о начисленной награде"
@@ -197,8 +218,14 @@ const EditInfo = () => {
         placeholder=""
         required
         dataKey="claimRewardMessage"
+        showCounter
+        maxLength={300}
+        warnAt={20}
       />
-      <hr />
+
+      <Hr />
+
+      {/* Если вернёшь поле — оно будет работать как раньше */}
       {/* <LabeledTextarea
         label="Мультинаграды"
         subtitle={
@@ -208,6 +235,7 @@ const EditInfo = () => {
         onChange={handleMultiRewardsChange}
         placeholder="Например: 3,5,7"
       /> */}
+
       <BarcodeRadio
         options={[
           { value: 'true', label: 'Да' },
@@ -226,17 +254,22 @@ const EditInfo = () => {
         additionalContentByValue={{}}
       />
 
-      <hr />
+      <Hr />
+
       <ReferralProgramConfig />
-      <hr />
-      <h3 className="barcode-radio-title">Активные ссылки</h3>
-      <CustomTooltip
-        id="active-links-help"
-        html
-        content={
-          'Ссылки будут отображаться на обратной стороне карты, можно указать ваш телефон или ссылку на сайт'
-        }
-      />
+
+      <Hr />
+
+      <StampSectionLabel>
+        <BarcodeRadioTitle>Активные ссылки</BarcodeRadioTitle>
+        <CustomTooltip
+          id="active-links-help"
+          html
+          content={
+            'Ссылки будут отображаться на обратной стороне карты, можно указать ваш телефон или ссылку на сайт'
+          }
+        />
+      </StampSectionLabel>
       <YMaps
         query={{
           apikey: 'a886f296-c974-43b3-aa06-a94c782939c2',
@@ -264,19 +297,24 @@ const EditInfo = () => {
           }
         />
       </YMaps>
-      <hr />
+
+      <Hr />
+
       <div>
-        <h3 className="barcode-radio-title">Отзывы в сервисах</h3>
-        <CustomTooltip
-          id="service-links-help"
-          html
-          content={'Ссылки на сервисы, где клиент может оставить отзыв'}
-        />
-        <p className="labeled-textarea-subtitle">
+        <StampSectionLabel>
+          <BarcodeRadioTitle>Отзывы в сервисах</BarcodeRadioTitle>
+          <CustomTooltip
+            id="service-links-help"
+            html
+            content={'Ссылки на сервисы, где клиент может оставить отзыв'}
+          />
+        </StampSectionLabel>
+        <SubtitleText>
           Добавьте ссылки на ваш бизнес. Это поможет клиенту оставить положительный отзыв, а вам
           поднимет рейтинг в поиске.
-        </p>
+        </SubtitleText>
       </div>
+
       <ReviewLinks
         formFields={currentCard.infoFields.reviewLinks}
         onFieldChange={(index, key, value) =>
@@ -296,19 +334,24 @@ const EditInfo = () => {
           dispatch(removeCurrentCardArrayItem({ path: 'infoFields.reviewLinks', index }))
         }
       />
-      <hr />
+
+      <Hr />
+
       <PolicyFields
         policyEnabled={infoFields.policyEnabled}
         fullPolicyText={infoFields.fullPolicyText}
         linkToFullTerms={infoFields.linkToFullTerms}
       />
-      <hr />
-      <h3 className="barcode-radio-title">Сведения об эмитенте карты</h3>
-      <CustomTooltip
-        id="company-help"
-        html
-        content={'Информация об эмитенте карты, будет отображаться на обратной стороне карты'}
-      />
+
+      <Hr />
+      <StampSectionLabel>
+        <BarcodeRadioTitle>Сведения об эмитенте карты</BarcodeRadioTitle>
+        <CustomTooltip
+          id="company-help"
+          html
+          content={'Информация об эмитенте карты, будет отображаться на обратной стороне карты'}
+        />
+      </StampSectionLabel>
       <ClientContactFields
         name={infoFields.issuerName}
         email={infoFields.issuerEmail}
@@ -317,10 +360,9 @@ const EditInfo = () => {
           dispatch(updateCurrentCardField({ path: `infoFields.${field}`, value }))
         }
       />
-      <button onClick={() => setShowQRPopup(true)} className="create-button">
-        Активировать
-      </button>
-    </div>
+
+      <CreateButton onClick={() => setShowQRPopup(true)}>Активировать</CreateButton>
+    </SettingsInputsContainer>
   );
 
   return (

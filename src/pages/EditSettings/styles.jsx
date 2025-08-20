@@ -475,6 +475,7 @@ export const VisitLabel = styled.label`
 const HEADER_PAD_LEFT = '12px';
 
 const BP = '680px';
+
 export const HeaderLabel = styled(SpanHint)`
   padding-left: ${HEADER_PAD_LEFT};
 `;
@@ -485,9 +486,39 @@ export const HeaderLabelTrash = styled.span`
   justify-self: center;
 `;
 
+export const NamePlaceholder = styled.span`
+  font-size: 13px;
+  color: #a0a0a0;
+
+  @media (max-width: ${BP}) {
+    display: none;
+  }
+`;
+
+export const RequiredLabel = styled.span`
+  display: none;
+  font-size: 13px;
+  color: #656565;
+
+  @media (max-width: ${BP}) {
+    display: inline;
+  }
+`;
+
+export const DeleteCell = styled(DeleteBtn)`
+  @media (max-width: ${BP}) {
+    grid-area: delete;
+    justify-self: end;
+    align-self: center;
+  }
+`;
+const ISSUE_COLUMNS = '2fr 3fr 120px 40px';
+
 export const IssueHeader = styled(Header)`
-  grid-template-columns: minmax(240px, 340px) minmax(200px, 1fr) auto 40px;
-  gap: 16px;
+  grid-template-columns: ${ISSUE_COLUMNS};
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 6px;
 
   @media (max-width: ${BP}) {
     display: none;
@@ -495,9 +526,14 @@ export const IssueHeader = styled(Header)`
 `;
 
 export const IssueRow = styled(Row)`
-  grid-template-columns: minmax(240px, 340px) minmax(200px, 1fr) auto 40px;
-  gap: 16px;
+  grid-template-columns: ${ISSUE_COLUMNS};
+  gap: 12px;
   margin-bottom: 8px;
+  align-items: center;
+
+  & > * {
+    min-width: 0;
+  }
 
   @media (max-width: ${BP}) {
     grid-template-columns: 1fr auto;
@@ -518,7 +554,10 @@ export const IssueRow = styled(Row)`
 export const TypeCell = styled.div`
   display: flex;
   align-items: center;
-
+  min-width: 0;
+  & > * {
+    width: 100%;
+  }
   @media (max-width: ${BP}) {
     grid-area: type;
   }
@@ -527,48 +566,90 @@ export const TypeCell = styled.div`
 export const NameCell = styled.div`
   display: flex;
   align-items: center;
-
+  min-width: 0;
+  & > * {
+    width: 100%;
+  }
   @media (max-width: ${BP}) {
     grid-area: name;
-  }
-`;
-
-export const NamePlaceholder = styled.span`
-  font-size: 13px;
-  color: #a0a0a0;
-
-  @media (max-width: ${BP}) {
-    display: none;
   }
 `;
 
 export const RequiredCell = styled.div`
   display: flex;
   align-items: center;
-  justify-self: center;
-
+  justify-content: center; /* центр для тумблера на десктопе */
   @media (max-width: ${BP}) {
     grid-area: required;
-    justify-self: stretch;
     justify-content: space-between;
+    justify-self: stretch;
     gap: 8px;
   }
 `;
 
-export const RequiredLabel = styled.span`
-  display: none;
-  font-size: 13px;
-  color: #656565;
+const STATUS_COLUMNS = '2fr 3fr 120px 40px';
+
+export const StatusIssueHeader = styled(Header)`
+  grid-template-columns: ${STATUS_COLUMNS};
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 6px;
 
   @media (max-width: ${BP}) {
-    display: inline;
+    display: none;
   }
 `;
 
-export const DeleteCell = styled(DeleteBtn)`
+export const StatusIssueRow = styled.div`
+  display: grid;
+  grid-template-columns: ${STATUS_COLUMNS};
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+
+  & > * {
+    min-width: 0;
+  }
+
   @media (max-width: ${BP}) {
-    grid-area: delete;
-    justify-self: end;
-    align-self: center;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'type delete'
+      'name name'
+      'required required';
+    gap: 10px 12px;
+    align-items: start;
+    padding: 10px 12px;
+    border: 1px solid #e6e6e6;
+    border-radius: 10px;
+    background: #fff;
+  }
+`;
+
+export const CellBase = styled.div`
+  display: flex;
+  align-items: center;
+  min-width: 0;
+
+  & > * {
+    width: 100%;
+    height: 38px;
+  }
+`;
+
+export const StatusTypeCell = styled(CellBase)`
+  @media (max-width: ${BP}) {
+    grid-area: type;
+  }
+`;
+export const StatusNameCell = styled(CellBase)`
+  @media (max-width: ${BP}) {
+    grid-area: name;
+  }
+`;
+export const StatusRequiredCell = styled(CellBase)`
+  justify-self: stretch;
+  @media (max-width: ${BP}) {
+    grid-area: required;
   }
 `;

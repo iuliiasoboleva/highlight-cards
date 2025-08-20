@@ -160,18 +160,7 @@ const EditLayout = ({
 
                     {platform === 'info' && (
                       <InfoOverlay
-                        infoFields={
-                          isDesignStep
-                            ? {
-                                stampsQuantity: currentCard.design?.stampsQuantity,
-                                activeStamp: currentCard.design?.activeStamp,
-                                inactiveStamp: currentCard.design?.inactiveStamp,
-                                logo: currentCard.design?.logo,
-                                icon: currentCard.design?.icon,
-                                stampBackground: currentCard.design?.stampBackground,
-                              }
-                            : currentCard.infoFields
-                        }
+                        infoFields={currentCard.infoFields}
                         onClose={() => setPlatform(previousPlatform.current)}
                         onFieldClick={onFieldClick}
                       />

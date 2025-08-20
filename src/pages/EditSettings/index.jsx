@@ -4,6 +4,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import EditLayout from '../../components/EditLayout';
 import TitleWithHelp from '../../components/TitleWithHelp';
+import CustomInput from '../../customs/CustomInput';
 import CustomSelect from '../../customs/CustomSelect';
 import ToggleSwitch from '../../customs/CustomToggleSwitch';
 import CustomTooltip from '../../customs/CustomTooltip';
@@ -26,15 +27,15 @@ import {
   FullWidthHr,
   LocationTag,
   LocationsWrapper,
-  PolicyBordered,
-  PolicyBorderedHeader,
-  SectionTitle,
   SettingsInputsContainer,
   SmallActionButton,
+  SpendingLabel,
   StampSectionLabel,
   StepNote,
+  SubTitle,
   TagIconButton,
   TopRow,
+  Warning,
 } from './styles';
 
 const EditSettings = () => {
@@ -42,12 +43,15 @@ const EditSettings = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
+  const [redeemWarn, setRedeemWarn] = useState(false);
+  const warnTimerRef = useRef(null);
 
   const currentCard = useSelector((state) => state.cards.currentCard);
   const settings = currentCard.settings || {};
   const policySettings = currentCard.policySettings;
   const cardStatus = currentCard.status;
 
+  const isStampCard = cardStatus === 'stamp';
   const locations = settings?.locations && settings.locations.length > 0 ? settings.locations : [];
 
   const [showLocationModal, setShowLocationModal] = useState(false);
@@ -277,7 +281,8 @@ const EditSettings = () => {
           onChange={(value) =>
             dispatch(updateCurrentCardField({ path: 'initialPointsOnIssue', value }))
           }
-          title="Количество баллов при выпуске карты"
+          title="Приветственные баллы для клиента"
+          placeholder="₽"
         />
       )}
       {cardStatus === 'stamp' && (
@@ -286,7 +291,7 @@ const EditSettings = () => {
           onChange={(value) =>
             dispatch(updateCurrentCardField({ path: 'initialStampsOnIssue', value }))
           }
-          title="Количество штампов при выпуске карты"
+          title="Количество приветственных штампов"
           tooltip="Столько штампов начислится клиенту при выпуске карты"
         />
       )}
@@ -296,12 +301,13 @@ const EditSettings = () => {
           onChange={(value) => dispatch(updateCurrentCardField({ path: 'stampDailyLimit', value }))}
           title="Ограничить количество начислений штампов в день"
           subtitle="0 — без ограничений"
+          tooltip="Укажите лимит на количество карт, выпускаемых клиентам в рамках текущей программы. Если без ограничений - напишите 0"
         />
       )}
 
-      {(cardStatus === 'discount' || cardStatus === 'cashback') && (
+      {cardStatus === 'discount' && (
         <>
-          <SectionTitle>Статус держателя карты</SectionTitle>
+          <BarcodeRadioTitle>Статус держателя карты</BarcodeRadioTitle>
           <CardStatusForm
             statusFields={currentCard.statusFields}
             onFieldChange={(index, key, value) =>
@@ -323,23 +329,148 @@ const EditSettings = () => {
         </>
       )}
 
-      <SectionTitle>Сумма покупки при начислении</SectionTitle>
-      <PolicyBordered className="policy-bordered">
-        <PolicyBorderedHeader className="policy-bordered-header">
-          <BarcodeRadioTitle>Требовать указания суммы покупки при начислении</BarcodeRadioTitle>
-          <ToggleSwitch
-            checked={currentCard.requirePurchaseAmountOnAccrual}
-            onChange={() =>
-              dispatch(
-                updateCurrentCardField({
-                  path: 'requirePurchaseAmountOnAccrual',
-                  value: !currentCard.requirePurchaseAmountOnAccrual,
-                }),
-              )
-            }
+      {cardStatus === 'cashback' && (
+        <>
+          <BarcodeRadioTitle>Процент начисления кэшбэка</BarcodeRadioTitle>
+          <SubTitle>
+            Установите, сколько баллов получит клиент при выпуске карты - теплый старт работает
+            лучше всего
+          </SubTitle>
+
+          <SpendingLabel style={{ marginTop: 8 }}>
+            <CustomInput
+              type="number"
+              min="0"
+              max="100"
+              step="1"
+              value={settings.cashbackAccrualPercent ?? ''}
+              onChange={(e) => {
+                const n = parseInt(e.target.value || '0', 10);
+                const v = isNaN(n) ? 0 : Math.max(0, Math.min(100, n));
+                updateSettingsField('cashbackAccrualPercent', v);
+              }}
+              placeholder="Напр.: 5"
+            />
+            <span>%</span>
+          </SpendingLabel>
+
+          <FullWidthHr />
+
+          {/* Процент оплаты кэшбэком (ограничение 5–50%) */}
+          <BarcodeRadioTitle>Процент оплаты кэшбэком</BarcodeRadioTitle>
+          <SubTitle>
+            Это максимум, который клиент сможет оплатить бонусами за покупку. Например, если вы
+            укажете 10%, клиент сможет списать до 10% от чека.
+          </SubTitle>
+
+          <SpendingLabel style={{ marginTop: 8 }}>
+            <CustomInput
+              type="number"
+              min="5"
+              max="50"
+              step="1"
+              value={
+                typeof currentCard?.maxRedeemPercent === 'number'
+                  ? currentCard.maxRedeemPercent
+                  : ''
+              }
+              onChange={(e) => {
+                const n = parseInt(e.target.value || '0', 10);
+
+                // показываем предупреждение, если пользователь ввёл > 50
+                if (!isNaN(n) && n > 50) {
+                  setRedeemWarn(true);
+                  if (warnTimerRef.current) clearTimeout(warnTimerRef.current);
+                  warnTimerRef.current = setTimeout(() => setRedeemWarn(false), 6000);
+                } else if (!isNaN(n) && n <= 50 && redeemWarn) {
+                  setRedeemWarn(false);
+                }
+
+                // сохраняем с жёстким ограничением 5–50
+                const v = isNaN(n) ? 5 : Math.max(5, Math.min(50, n));
+                dispatch(updateCurrentCardField({ path: 'maxRedeemPercent', value: v }));
+              }}
+              placeholder="Напр.: 30"
+            />
+            <span>%</span>
+          </SpendingLabel>
+
+          {redeemWarn && (
+            <Warning role="alert" style={{ marginTop: 8 }}>
+              Мы рекомендуем устанавливать не более 50%, чтобы бонусы не съедали всю прибыль. Так вы
+              сохраните мотивацию к покупкам — и маржинальность бизнеса.
+            </Warning>
+          )}
+
+          <FullWidthHr />
+
+          {/* Срок действия кэшбэка, в днях */}
+          <BarcodeRadioTitle>Срок действия кэшбэка</BarcodeRadioTitle>
+          <SubTitle>
+            Задайте, сколько времени будут действовать бонусы. Например, <b>60 дней</b> — это
+            стимулирует клиента вернуться.
+          </SubTitle>
+
+          <SpendingLabel style={{ marginTop: 8 }}>
+            <CustomInput
+              type="number"
+              min="0"
+              step="1"
+              value={settings.cashbackLifetimeDays ?? ''}
+              onChange={(e) => {
+                const n = parseInt(e.target.value || '0', 10);
+                const v = isNaN(n) ? 0 : Math.max(0, n);
+                updateSettingsField('cashbackLifetimeDays', v);
+              }}
+              placeholder="Напр.: 60"
+            />
+            <span>дней</span>
+          </SpendingLabel>
+
+          <FullWidthHr />
+
+          {/* Как списываются бонусы */}
+          <BarcodeRadioTitle>Как списываются бонусы</BarcodeRadioTitle>
+          <SubTitle>
+            Выберите, как клиент будет использовать бонусы — автоматически или по запросу.
+          </SubTitle>
+
+          <CustomSelect
+            value={settings.cashbackRedemptionMode || 'auto'}
+            onChange={(value) => updateSettingsField('cashbackRedemptionMode', value)}
+            options={[
+              { value: 'auto', label: 'Автоматически' },
+              { value: 'manual', label: 'Вручную по запросу клиента' },
+            ]}
           />
-        </PolicyBorderedHeader>
-      </PolicyBordered>
+
+          <FullWidthHr />
+        </>
+      )}
+
+      <BarcodeRadioTitle>
+        {isStampCard
+          ? 'Минимальная сумма чека для начисления штампов'
+          : 'Сумма покупки при начислении'}
+      </BarcodeRadioTitle>
+
+      <SpendingLabel>
+        <CustomInput
+          type="number"
+          min="0"
+          step="1"
+          value={currentCard?.minCheckForStamps ?? ''}
+          onChange={(e) =>
+            dispatch(
+              updateCurrentCardField({
+                path: 'minCheckForStamps',
+                value: Math.max(0, parseInt(e.target.value || '0', 10)),
+              }),
+            )
+          }
+          placeholder="Например: 500₽"
+        />
+      </SpendingLabel>
 
       <CreateButton
         onClick={handleSave}

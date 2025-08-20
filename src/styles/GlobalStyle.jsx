@@ -64,6 +64,10 @@ export const GlobalStyle = createGlobalStyle`
     width: 100%;
   }
 
+  .flash-border {
+    border: 1px solid #bf4756 !important;
+  }
+    
   .main {
     display: flex;
     flex-direction: column;
