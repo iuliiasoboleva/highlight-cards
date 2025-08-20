@@ -48,6 +48,8 @@ export const IconButtons = styled.div`
   display: flex;
   gap: 12px;
   margin-top: 8px;
+  width: 100%;
+  max-width: 268px;
 `;
 
 export const IconBtn = styled.button`
@@ -57,6 +59,11 @@ export const IconBtn = styled.button`
   padding: 8px;
   cursor: pointer;
   transition: background-color 0.2s;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     background-color: #e0e0e5;

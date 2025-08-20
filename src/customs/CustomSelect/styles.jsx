@@ -4,6 +4,12 @@ export const SelectWrapper = styled.div`
   position: relative;
   width: 100%;
   font-size: 16px;
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      opacity: 0.8;
+    `}
 `;
 
 export const HeaderBox = styled.div`
@@ -31,6 +37,20 @@ export const HeaderBox = styled.div`
     css`
       border-color: #bf4756;
     `}
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      background-color: #f3f3f3;
+      color: #999;
+      cursor: not-allowed;
+      border-color: #d9d9d9;
+      pointer-events: none;
+
+      &:hover {
+        border-color: #d9d9d9;
+      }
+    `}
 `;
 
 export const CurrentValue = styled.span`
@@ -42,13 +62,21 @@ export const CurrentValue = styled.span`
 export const ArrowIcon = styled.svg`
   margin-left: 8px;
   color: rgba(0, 0, 0, 0.25);
-  transition: transform 0.3s;
+  transition:
+    transform 0.3s,
+    color 0.3s;
 
   ${({ $up }) =>
     $up &&
     css`
       transform: rotate(180deg);
       color: rgba(0, 0, 0, 0.45);
+    `}
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      color: #999;
     `}
 `;
 
@@ -66,7 +94,6 @@ export const OptionsList = styled.div`
     0 6px 16px 0 rgba(0, 0, 0, 0.08),
     0 9px 28px 8px rgba(0, 0, 0, 0.05);
   z-index: 10000;
-
   svg {
     width: 20px;
     height: 20px;

@@ -1,70 +1,68 @@
 import React, { useEffect, useState } from 'react';
 import QRCodeComponent from 'react-qr-code';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-import { updateCurrentCardField } from '../../store/cardsSlice';
-import { generatePDF } from '../../utils/pdfGenerator';
+import CustomModal from '../../customs/CustomModal';
+import { Actions, Content, QRBlock, QRLink } from './styles';
 
-import './styles.css';
+// import { generatePDF } from '../../utils/pdfGenerator'; // если понадобится — раскомментируй
 
-const QRPopup = ({ cardId, onClose }) => {
-  const dispatch = useDispatch();
+const QRPopup = ({ cardId, onClose, activateCard, open = true }) => {
   const currentCard = useSelector((state) => state.cards.currentCard);
-  const cards = useSelector((state) => state.cards.cards);
   const [isCopied, setIsCopied] = useState(false);
-
-  const exists = cards.some((c) => c.id === currentCard.id && c.id !== 'fixed');
 
   const link = currentCard?.urlCopy || 'https://example.com';
 
   const copyToClipboard = () => {
+    if (!link) return;
     navigator.clipboard.writeText(link);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  const activateCard = async () => {
-    try {
-      await dispatch(
-        updateCurrentCardField({
-          path: 'isActive',
-          value: !currentCard.isActive,
-        }),
-      );
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = open ? 'hidden' : prev;
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
 
   return (
-    <div className="qr-popup-overlay">
-      <div className="qr-popup-container">
-        <div className="location-modal-header">
-          <h2>Посмотреть на своем телефоне</h2>
-          <button className="location-modal-close" onClick={onClose}>
-            ×
-          </button>
-        </div>
-
-        <div className="qr-code-wrapper" id="qr-code">
+    <CustomModal
+      open={open}
+      onClose={onClose}
+      title="Посмотреть на своём телефоне"
+      maxWidth={520}
+      closeOnOverlayClick
+    >
+      <Content>
+        <QRBlock>
           <QRCodeComponent value={link} size={200} />
-          <p className="qr-link">{link}</p>
-        </div>
+          <QRLink>{link}</QRLink>
+        </QRBlock>
 
-        <div className="action-buttons">
-          <button onClick={copyToClipboard} className="action-button">
+        {/* Если понадобится — добавь блок статуса/информации */}
+        {/* <InfoCard>
+          <InfoTitle>Статус карты</InfoTitle>
+          <p>{currentCard?.isActive ? 'Активна' : 'Не активна'}</p>
+        </InfoCard> */}
+
+        <Actions>
+          <CustomModal.SecondaryButton onClick={copyToClipboard}>
             {isCopied ? 'Скопировано!' : 'Скопировать ссылку'}
-          </button>
-          {/* НЕ УДАЛЯТЬ, ПОЯВИТСЯ ПОЗЖЕ */}
-          {/* <button onClick={() => generatePDF(currentCard)} className="action-button">
+          </CustomModal.SecondaryButton>
+
+          {/* <CustomModal.SecondaryButton onClick={() => generatePDF(currentCard)}>
             Скачать PDF
-          </button> */}
-          <button onClick={activateCard} className="action-button primary">
-            {currentCard.isActive ? 'Деактивировать карту' : 'Активировать карту'}
-          </button>
-        </div>
-      </div>
-    </div>
+          </CustomModal.SecondaryButton> */}
+
+          <CustomModal.PrimaryButton onClick={activateCard}>
+            {currentCard?.isActive ? 'Деактивировать карту' : 'Активировать карту'}
+          </CustomModal.PrimaryButton>
+        </Actions>
+      </Content>
+    </CustomModal>
   );
 };
 

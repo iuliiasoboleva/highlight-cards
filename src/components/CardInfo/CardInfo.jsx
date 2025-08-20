@@ -136,13 +136,7 @@ const CardInfo = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef 
   const HeaderBlock = (
     <CardInfoHeader>
       <CardInfoTitleRow>
-        <div>
-          {design.logo ? (
-            <CardInfoLogo src={design.logo} alt="Лого" draggable="false" />
-          ) : (
-            <CardName>{mergedCard.name}</CardName>
-          )}
-        </div>
+        <div>{design.logo && <CardInfoLogo src={design.logo} alt="Лого" draggable="false" />}</div>
 
         <TopFieldsBlock>
           {fields

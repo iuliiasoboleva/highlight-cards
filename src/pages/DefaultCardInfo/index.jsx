@@ -8,10 +8,22 @@ import CustomTable from '../../components/CustomTable';
 import DashboardStats from '../../components/DashboardStats';
 import LoaderCentered from '../../components/LoaderCentered';
 import { transactionHeaders } from '../../mocks/mockTransactions';
-import { setCurrentCard } from '../../store/cardsSlice';
-import { generatePDF } from '../../utils/pdfGenerator';
-
-import './styles.css';
+import {
+  Button,
+  ButtonsRow,
+  FrameImg,
+  ImageWrapper,
+  InfoBlock,
+  PhoneContainer,
+  QrContainer,
+  QrImage,
+  QrLink,
+  StateTag,
+  StatusIndicator,
+  TableWrapper,
+  TitleRow,
+  Wrapper,
+} from './styles';
 
 const DefaultCardInfo = () => {
   const { id } = useParams();
@@ -66,48 +78,55 @@ const DefaultCardInfo = () => {
     return <LoaderCentered />;
   }
 
-  if (!card) return <p style={{ textAlign: 'center' }}>Карточка не найдена</p>;
+  if (!card) return;
+  <Wrapper>
+    <p style={{ textAlign: 'center' }}>Карточка не найдена</p>
+  </Wrapper>;
 
   return (
-    <div className="card-info-wrapper">
-      <div className="card-info-title" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+    <Wrapper>
+      <TitleRow>
         <h1>{card.name}</h1>
-        <div className="card-state">
-          <span className={`status-indicator ${card.isActive ? 'active' : 'inactive'}`} />
+        <StateTag>
+          <StatusIndicator $active={card.isActive} />
           {card.isActive ? 'Активна' : 'Не активна'}
-        </div>
-        <div className="card-state">{card.title}</div>
-      </div>
-      <div className="card-image-wrapper">
-        <div className="card-info-block">
-          <div className="card-image-container">
-            <img className="card-image-add" src={card.frameUrl} alt={card.name} />
-            <CardInfo card={card} />
-          </div>
-          <div className="card-info-container">
-            <img src={card.qrImg} alt="QR code" />
-            <div className="card-info-link">{card.urlCopy}</div>
+        </StateTag>
+        <StateTag>{card.title}</StateTag>
+      </TitleRow>
 
-            <div className="card-buttons">
-              <button
+      <ImageWrapper>
+        <InfoBlock>
+          <PhoneContainer>
+            <FrameImg src={card.frameUrl} alt={card.name} />
+            <CardInfo card={card} />
+          </PhoneContainer>
+
+          <QrContainer>
+            <QrImage src={card.qrImg} alt="QR code" />
+            <QrLink title={card.urlCopy}>{card.urlCopy}</QrLink>
+
+            <ButtonsRow>
+              <Button
                 onClick={() => {
                   navigator.clipboard.writeText(card.urlCopy);
                 }}
               >
                 Скопировать ссылку
-              </button>
+              </Button>
               {/* НЕ УДАЛЯТЬ, ПОЯВИТСЯ ПОЗЖЕ */}
-              {/* <button onClick={() => generatePDF(card)}>Скачать PDF</button> */}
-            </div>
-          </div>
-        </div>
+              {/* <Button onClick={() => generatePDF(card)}>Скачать PDF</Button> */}
+            </ButtonsRow>
+          </QrContainer>
+        </InfoBlock>
+
         <DashboardStats />
-      </div>
-      <div className="table-wrapper">
+      </ImageWrapper>
+
+      <TableWrapper>
         <h3 className="table-name">Последние транзакции по карте</h3>
         <CustomTable columns={transactionHeaders} rows={transactions} />
-      </div>
-    </div>
+      </TableWrapper>
+    </Wrapper>
   );
 };
 

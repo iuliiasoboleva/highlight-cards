@@ -178,6 +178,29 @@ export const NoActiveCardsText = styled.p`
 `;
 
 /* История рассылок */
+export const EmptyStub = styled.div`
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 14px;
+  color: #666;
+  background: #fafafa;
+  border: 1px dashed #ddd;
+  border-radius: 12px;
+  font-size: 14px;
+
+  svg {
+    opacity: 0.9;
+  }
+
+  p {
+    margin: 0;
+    font-size: 13px;
+    color: #777;
+    text-align: center;
+  }
+`;
+
 export const PushHistoryContainer = styled.div`
   margin-top: 32px;
   background-color: #fff;
@@ -188,9 +211,6 @@ export const PushHistoryContainer = styled.div`
 
 export const PushHistoryWrapper = styled.div`
   padding: 20px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
   gap: 16px;

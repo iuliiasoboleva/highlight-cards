@@ -213,6 +213,62 @@ export const NameSaveBtn = styled.button`
   }
 `;
 
+export const EditableName = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto;
+  padding: 6px 10px;
+  max-width: 240px;
+
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.2;
+  color: #333;
+
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+
+  .text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .pencil {
+    opacity: 0;
+    transform: translateY(1px);
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  &:hover,
+  &:focus-visible {
+    border-color: #d5d5dd;
+    background-color: #f7f7f8;
+    outline: none;
+  }
+
+  &:hover .pencil,
+  &:focus-visible .pencil {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (hover: none) {
+    .pencil {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`;
+
 export const DraggableInfo = styled.div.attrs((p) => ({
   draggable: p.$draggable,
   className: 'card-info-draggable',

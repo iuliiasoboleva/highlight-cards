@@ -1,6 +1,7 @@
-import React, { useCallback, useRef, useState } from 'react';
+// src/pages/EditInfo/index.jsx
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { YMaps } from '@pbe/react-yandex-maps';
 
@@ -22,22 +23,25 @@ import LabeledTextarea from './LabeledTextarea';
 import PolicyFields from './PolicyFields';
 import ReferralProgramConfig from './ReferralProgramConfig';
 import ReviewLinks from './ReviewLinks';
+import { Divider, StepNote, TopRow } from './styles';
 
 import './styles.css';
 
 const EditInfo = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const currentCard = useSelector((state) => state.cards.currentCard);
   const [showQRPopup, setShowQRPopup] = useState(false);
   const formRef = useRef(null);
 
   const user = useSelector((state) => state.user);
   const cards = useSelector((state) => state.cards.cards);
-  const exists = cards.some((c) => c.id === currentCard.id && c.id !== 'fixed');
+  const exists = cards.some((c) => c.id === currentCard?.id && c.id !== 'fixed');
 
   // Prefill issuer fields from organization/user data on first render
-  React.useEffect(() => {
+  useEffect(() => {
     if (!currentCard) return;
     const updates = {};
     if (!currentCard.infoFields?.issuerName && user.company) updates.issuerName = user.company;
@@ -53,7 +57,7 @@ const EditInfo = () => {
     }
   }, [currentCard, user.company, user.email, user.phone, dispatch]);
 
-  const infoFields = currentCard.infoFields || {
+  const infoFields = currentCard?.infoFields || {
     description: '',
     howToGetStamp: '',
     companyName: '',
@@ -109,28 +113,35 @@ const EditInfo = () => {
     );
   };
 
-  const handleFinish = async () => {
+  const handleActivate = async () => {
     try {
       if (!exists) {
         await dispatch(createCard()).unwrap();
       } else {
         await dispatch(saveCard()).unwrap();
       }
+      dispatch(updateCurrentCardField({ path: 'active', value: true }));
     } catch (e) {
-      console.error('Ошибка при создании/сохранении карты', e);
+      console.error('Ошибка при активации карты', e);
+    } finally {
+      navigate('/cards', { state: { skipLeaveGuard: true } });
     }
-    setShowQRPopup(true);
   };
 
   const infoContent = (
     <div className="settings-inputs-container" ref={formRef}>
-      <TitleWithHelp
-        title={'Информация'}
-        tooltipId="info-help"
-        tooltipHtml
-        tooltipContent={`Настройка информации на тыльной стороне карты`}
-      />
-      <hr />
+      <div>
+        <TopRow>
+          <TitleWithHelp
+            title={'Информация'}
+            tooltipId="info-help"
+            tooltipHtml
+            tooltipContent={`Настройка информации на тыльной стороне карты`}
+          />
+          <StepNote>Шаг 4 из 4</StepNote>
+        </TopRow>
+        <Divider />
+      </div>
 
       <LabeledTextarea
         label="Описание карты"
@@ -306,8 +317,8 @@ const EditInfo = () => {
           dispatch(updateCurrentCardField({ path: `infoFields.${field}`, value }))
         }
       />
-      <button onClick={handleFinish} className="create-button">
-        Завершить
+      <button onClick={() => setShowQRPopup(true)} className="create-button">
+        Активировать
       </button>
     </div>
   );
@@ -320,8 +331,8 @@ const EditInfo = () => {
           cardId={id}
           onClose={() => {
             setShowQRPopup(false);
-            window.location.href = '/cards';
           }}
+          activateCard={handleActivate}
         />
       )}
     </>

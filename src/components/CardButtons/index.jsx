@@ -3,10 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 
-import { Copy, Power, Wallet, X } from 'lucide-react';
+import { Copy, Pin, PinOff, Power, X } from 'lucide-react';
 
-import { copyCardAsync, deleteCardAsync, setCurrentCard, updateCard } from '../../store/cardsSlice';
-import { downloadPkPass } from '../../utils/downloadPkPass';
+import {
+  copyCardAsync,
+  deleteCardAsync,
+  setCurrentCard,
+  togglePinAsync,
+  updateCard,
+} from '../../store/cardsSlice';
 import DeleteCardModal from '../DeleteCardModal';
 import {
   ActionButton,
@@ -81,6 +86,10 @@ const CardButtons = ({ isFixed, cardId }) => {
     );
   };
 
+  const handleTogglePin = () => {
+    dispatch(togglePinAsync(cardId));
+  };
+
   const handleCopy = () => {
     setCopyLoading(true);
     dispatch(copyCardAsync(cardId))
@@ -90,12 +99,6 @@ const CardButtons = ({ isFixed, cardId }) => {
 
   const handleDelete = () => setShowDel(true);
 
-  const handleDownloadPkPass = async () => {
-    try {
-      await downloadPkPass(cardId);
-    } catch (e) {}
-  };
-
   const confirmDelete = () => {
     dispatch(deleteCardAsync(cardId));
     setShowDel(false);
@@ -104,6 +107,7 @@ const CardButtons = ({ isFixed, cardId }) => {
   return (
     <ButtonsBlock>
       <ActionButton onClick={() => navigate(`/cards/${cardId}/info`)}>Перейти</ActionButton>
+
       <IconButtons>
         <IconBtn
           onClick={handleToggleActive}
@@ -112,13 +116,15 @@ const CardButtons = ({ isFixed, cardId }) => {
         >
           <Power size={20} />
         </IconBtn>
+
         <IconBtn
-          onClick={handleDownloadPkPass}
+          onClick={handleTogglePin}
           data-tooltip-id="card-action-tooltip"
-          data-tooltip-html="Apple Wallet"
+          data-tooltip-html={card.isPinned ? 'Открепить' : 'Закрепить'}
         >
-          <Wallet size={20} />
+          {card.isPinned ? <Pin size={20} /> : <PinOff size={20} />}
         </IconBtn>
+
         <IconBtn
           onClick={handleCopy}
           data-tooltip-id="card-action-tooltip"
@@ -127,6 +133,7 @@ const CardButtons = ({ isFixed, cardId }) => {
         >
           <Copy size={20} />
         </IconBtn>
+
         <IconBtn
           onClick={handleDelete}
           data-tooltip-id="card-action-tooltip"
@@ -135,6 +142,7 @@ const CardButtons = ({ isFixed, cardId }) => {
           <X size={20} />
         </IconBtn>
       </IconButtons>
+
       {showDel && (
         <DeleteCardModal
           cardName={card.name}
@@ -142,6 +150,7 @@ const CardButtons = ({ isFixed, cardId }) => {
           onCancel={() => setShowDel(false)}
         />
       )}
+
       <Tooltip
         id="card-action-tooltip"
         className="custom-tooltip"

@@ -15,7 +15,6 @@ import {
   IconButton,
   NameEditor,
   PageIcon,
-  RequiredStar,
   SaveButton,
   SubmenuCenter,
   SubmenuInner,
@@ -128,15 +127,15 @@ const SubMenu = ({
 
           {!showRightActions && id && (
             <SubmenuRight>
-              <TabLink
-                to={`/cards/${id}/edit/type`}
+              <SaveButton
                 onClick={() => {
                   const cardData = cards.find((c) => c.id === Number(id));
                   if (cardData) dispatch(setCurrentCard(cardData));
+                  navigate(`/cards/${id}/edit/type`);
                 }}
               >
                 Редактировать
-              </TabLink>
+              </SaveButton>
             </SubmenuRight>
           )}
 
@@ -153,7 +152,7 @@ const SubMenu = ({
                     } else {
                       await dispatch(saveCard()).unwrap();
                     }
-                    window.location.href = '/cards';
+                    navigate('/cards', { state: { skipLeaveGuard: true } });
                   } catch {
                     setShowQRPopup(true);
                   }

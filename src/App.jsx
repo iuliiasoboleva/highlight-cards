@@ -38,6 +38,7 @@ import Mailings from './pages/Mailings';
 import MailingsAutoPush from './pages/MailingsAutoPush';
 import MailingsInfo from './pages/MailingsInfo';
 import MailingsPush from './pages/MailingsPush';
+import PushHistory from './pages/MailingsPush/PushHistory';
 import MailingsSettings from './pages/MailingsSettings';
 import MailingsUserPush from './pages/MailingsUserPush';
 import PersonalClientInfo from './pages/PersonalClientInfo';
@@ -92,7 +93,7 @@ const App = () => {
                   <Route path="auto-push" element={<MailingsAutoPush />} />
                   <Route path="user-push" element={<MailingsUserPush />} />
                   <Route path="settings" element={<MailingsSettings />} />
-                  <Route path="archive" element={<NotFound />} />
+                  <Route path="archive" element={<PushHistory />} />
                   <Route path=":mailingId" element={<MailingDetails />} />
                 </Route>
 

@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 
 import { Users } from 'lucide-react';
 
@@ -12,7 +13,6 @@ import CustomSelect from '../../customs/CustomSelect';
 import { getMinDateTime } from '../../helpers/date';
 import { pluralVerb, pluralize } from '../../helpers/pluralize';
 import { setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
-import PushHistory from './PushHistory';
 import PushTargetTabs from './PushTargetTabs';
 import {
   MailingsPushBox,
@@ -26,6 +26,7 @@ import {
 
 const MailingsPush = () => {
   const dispatch = useDispatch();
+  const { id: routeId } = useParams();
 
   const allCards = useSelector((state) => state.cards.cards);
   const cards = allCards.filter((card) => card.id !== 'fixed');
@@ -39,67 +40,78 @@ const MailingsPush = () => {
   const [isScheduled, setIsScheduled] = useState(false);
   const [selectedTab, setSelectedTab] = useState('all');
   const [usersCount, setUsersCount] = useState(0);
-  const [history, setHistory] = useState([]);
-
-  const fetchHistory = useCallback(async () => {
-    if (!currentCard) return;
-    try {
-      const res = await axiosInstance.get('/mailings', {
-        params: { organization_id: user.organization_id, card_id: currentCard.id },
-      });
-      setHistory(res.data.filter((m) => m.mailingType === 'Push'));
-    } catch (e) {
-      console.error(e);
-    }
-  }, [currentCard, user.organization_id]);
 
   useEffect(() => {
-    fetchHistory();
-  }, [fetchHistory]);
+    if (!cards.length) return;
 
-  useEffect(() => {
-    if ((!currentCard || !cards.find((c) => c.id === currentCard.id)) && cards.length > 0) {
-      dispatch(setCurrentCard(cards[0]));
-    }
-  }, [currentCard, cards, dispatch]);
+    const byRoute = routeId ? cards.find((c) => String(c.id) === String(routeId)) : null;
 
-  useEffect(() => {
-    if (currentCard) {
-      setPushMessage(
-        currentCard.pushNotification?.message ||
-          `Новое уведомление по вашей карте "${currentCard.name}"`,
-      );
-
-      const hasSchedule = Boolean(currentCard.pushNotification?.scheduledDate);
-      setIsScheduled(hasSchedule);
-
-      if (hasSchedule) {
-        setScheduledDate(currentCard.pushNotification.scheduledDate);
-      } else {
-        setScheduledDate(getMinDateTime());
-      }
-    }
-  }, [currentCard]);
-
-  const handleCardSelect = (cardId) => {
-    const selected = cards.find((c) => c.id === cardId);
-    if (selected) {
+    if (byRoute && (!currentCard || String(currentCard.id) !== String(byRoute.id))) {
       dispatch(
         setCurrentCard({
-          ...selected,
-          pushNotification: selected.pushNotification || {
-            message: `Новое уведомление по вашей карте "${selected.name}"`,
+          ...byRoute,
+          pushNotification: byRoute.pushNotification || {
+            message: `Новое уведомление по вашей карте "${byRoute.name}"`,
+            scheduledDate: '',
+          },
+        }),
+      );
+      return;
+    }
+
+    if (
+      (!currentCard || !cards.find((c) => String(c.id) === String(currentCard.id))) &&
+      cards.length > 0
+    ) {
+      const first = cards[0];
+      dispatch(
+        setCurrentCard({
+          ...first,
+          pushNotification: first.pushNotification || {
+            message: `Новое уведомление по вашей карте "${first.name}"`,
             scheduledDate: '',
           },
         }),
       );
     }
+  }, [routeId, cards, currentCard, dispatch]);
+
+  useEffect(() => {
+    if (!currentCard) return;
+
+    setPushMessage(
+      currentCard.pushNotification?.message ||
+        `Новое уведомление по вашей карте "${currentCard.name}"`,
+    );
+
+    const hasSchedule = Boolean(currentCard.pushNotification?.scheduledDate);
+    setIsScheduled(hasSchedule);
+
+    if (hasSchedule) {
+      setScheduledDate(currentCard.pushNotification.scheduledDate);
+    } else {
+      setScheduledDate(getMinDateTime());
+    }
+  }, [currentCard]);
+
+  const handleCardSelect = (cardId) => {
+    const selected = cards.find((c) => String(c.id) === String(cardId));
+    if (!selected) return;
+
+    dispatch(
+      setCurrentCard({
+        ...selected,
+        pushNotification: selected.pushNotification || {
+          message: `Новое уведомление по вашей карте "${selected.name}"`,
+          scheduledDate: '',
+        },
+      }),
+    );
   };
 
   const handleScheduleToggle = (e) => {
     const shouldSchedule = e.target.checked;
     setIsScheduled(shouldSchedule);
-
     if (!shouldSchedule) {
       setScheduledDate('');
     } else if (!scheduledDate) {
@@ -110,7 +122,6 @@ const MailingsPush = () => {
   const handleSavePushSettings = async () => {
     if (!currentCard) return;
 
-    // Сохраняем в карту для UI/превью
     dispatch(
       updateCurrentCardField({
         path: 'pushNotification',
@@ -121,11 +132,10 @@ const MailingsPush = () => {
       }),
     );
 
-    // Создаём запись рассылки
     try {
       await axiosInstance.post('/mailings', {
         card_id: currentCard.id,
-        name: `Push по карте ${currentCard.title}`,
+        name: `Push по карте ${currentCard.name ?? currentCard.title}`,
         date_time: isScheduled ? scheduledDate : new Date().toISOString(),
         recipients: selectedTab === 'all' ? 'all' : 'segment',
         mailing_type: 'Push',
@@ -134,13 +144,11 @@ const MailingsPush = () => {
         author_id: user.id,
         message: pushMessage,
       });
-      fetchHistory();
     } catch (e) {
       console.error(e);
     }
   };
 
-  // --- контент левой колонки (children для EditLayout) ---
   const leftContent = hasActiveCards ? (
     <>
       <TitleWithHelp
@@ -158,7 +166,7 @@ const MailingsPush = () => {
           onChange={handleCardSelect}
           options={cards.map((card) => ({
             value: card.id,
-            label: card.title,
+            label: card.name,
           }))}
           disabled={!hasActiveCards}
         />
@@ -198,18 +206,6 @@ const MailingsPush = () => {
           Отправить
         </SubmitButton>
       </MailingsPushBox>
-
-      <PushHistory
-        history={history}
-        onDelete={async (id) => {
-          try {
-            await axiosInstance.delete(`/mailings/${id}`);
-            setHistory((prev) => prev.filter((m) => m.id !== id));
-          } catch (e) {
-            console.error(e);
-          }
-        }}
-      />
     </>
   ) : (
     <>

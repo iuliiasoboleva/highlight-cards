@@ -1,22 +1,43 @@
 import { defaultCardTemplate } from '../utils/defaultCardInfo';
 
-export const mergeCardWithDefault = (card) => {
-  const deepMerge = (defaultObj, overrideObj) => {
+const RUS_BY_STATUS = {
+  stamp: 'Штамп',
+  discount: 'Скидка',
+  cashback: 'Кэшбэк',
+  subscription: 'Абонемент',
+  certificate: 'Подарочный сертификат',
+};
+
+export const mergeCardWithDefault = (raw) => {
+  const card = raw || {};
+
+  const deepMerge = (defaultObj, overrideObj = {}) => {
     return Object.keys(defaultObj).reduce((acc, key) => {
-      if (
-        typeof defaultObj[key] === 'object' &&
-        defaultObj[key] !== null &&
-        !Array.isArray(defaultObj[key])
-      ) {
-        acc[key] = deepMerge(defaultObj[key], overrideObj[key] || {});
-      } else if (Array.isArray(defaultObj[key])) {
-        acc[key] = overrideObj[key] !== undefined ? overrideObj[key] : [...defaultObj[key]];
-      } else {
-        acc[key] = overrideObj.hasOwnProperty(key) ? overrideObj[key] : defaultObj[key];
+      const defVal = defaultObj[key];
+      const overVal = overrideObj[key];
+
+      if (Array.isArray(defVal)) {
+        acc[key] = overVal !== undefined ? overVal : [...defVal];
+        return acc;
       }
+
+      if (defVal && typeof defVal === 'object') {
+        acc[key] = deepMerge(defVal, overVal || {});
+        return acc;
+      }
+
+      acc[key] = Object.prototype.hasOwnProperty.call(overrideObj, key) ? overVal : defVal;
       return acc;
     }, {});
   };
 
-  return deepMerge(defaultCardTemplate, card);
+  const merged = deepMerge(defaultCardTemplate, card);
+
+  const hasName = typeof merged.name === 'string' && merged.name.trim().length > 0;
+  if (!hasName) {
+    const st = (merged.status || '').trim();
+    merged.name = RUS_BY_STATUS[st] || defaultCardTemplate?.name || 'Карта';
+  }
+
+  return merged;
 };

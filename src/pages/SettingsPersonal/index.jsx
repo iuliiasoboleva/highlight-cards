@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import ImageEditorModal from '../../components/ImageEditorModal';
 import LoaderCentered from '../../components/LoaderCentered';
@@ -34,6 +35,7 @@ const SettingsPersonal = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const toast = useToast();
+  const navigate = useNavigate();
 
   const { saving, startProgress, finishProgress, progress, setSaving } = useLinearProgress();
 
@@ -172,7 +174,7 @@ const SettingsPersonal = () => {
       setTimeout(() => {
         dispatch(logout());
         dispatch(authLogout());
-        window.location.href = '/auth';
+        navigate('/auth');
       }, 1200);
     } catch (err) {
       toast.error(typeof err === 'string' ? err : 'Ошибка удаления');

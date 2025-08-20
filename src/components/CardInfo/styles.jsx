@@ -18,6 +18,12 @@ export const CardInfo = styled.div`
   gap: 10px;
   font-size: 10px;
   font-weight: bold;
+
+  @media (max-width: 400px) {
+    max-width: 185px;
+    height: auto;
+    gap: 4px;
+  }
 `;
 
 export const CardInfoHeader = styled.div`

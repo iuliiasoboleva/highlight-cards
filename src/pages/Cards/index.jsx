@@ -1,21 +1,15 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-import { Check, Pin, PinOff } from 'lucide-react';
+import { Check, Pencil } from 'lucide-react';
 
 import moveIcon from '../../assets/move-arrows.png';
 import CardButtons from '../../components/CardButtons';
 import CardInfo from '../../components/CardInfo/CardInfo';
 import LoaderCentered from '../../components/LoaderCentered';
 import TitleWithHelp from '../../components/TitleWithHelp';
-import {
-  fetchCards,
-  renameCardAsync,
-  reorderCards,
-  saveOrder,
-  togglePinAsync,
-} from '../../store/cardsSlice';
+import { fetchCards, renameCardAsync, reorderCards, saveOrder } from '../../store/cardsSlice';
 import {
   CardBottom,
   CardBottomText,
@@ -26,19 +20,20 @@ import {
   CardsGrid,
   DragHandle,
   DraggableInfo,
+  EditableName,
   NameEdit,
   NameInput,
   NameSaveBtn,
   Page,
   PhoneFrame,
   PhoneScreenImg,
-  PinBtn,
   StatusIndicator,
 } from './styles';
 
 const Cards = () => {
   const location = useLocation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [editingId, setEditingId] = React.useState(null);
   const [newName, setNewName] = React.useState('');
@@ -90,7 +85,6 @@ const Cards = () => {
 
       <CardsGrid>
         {cards.map((card, idx) => {
-          const pinned = !!card.isPinned;
           const noHover = isTemplatePage;
 
           return (
@@ -98,23 +92,11 @@ const Cards = () => {
               {!isTemplatePage && (
                 <CardState>
                   <StatusIndicator $active={card.isActive} />
-                  {card.title}
+                  {card.isActive ? 'Активна' : 'Неактивна'}
                 </CardState>
               )}
 
-              <CardImageBlock>
-                {!isTemplatePage && card.id !== 'fixed' && (
-                  <PinBtn
-                    $pinned={pinned}
-                    onClick={(ev) => {
-                      ev.stopPropagation();
-                      dispatch(togglePinAsync(card.id));
-                    }}
-                  >
-                    {pinned ? <PinOff size={18} /> : <Pin size={18} />}
-                  </PinBtn>
-                )}
-
+              <CardImageBlock onClick={() => navigate(`/cards/${card.id}/info`)}>
                 {!isTemplatePage && card.id !== 'fixed' && (
                   <DragHandle src={moveIcon} alt="Переместить" />
                 )}
@@ -180,6 +162,7 @@ const Cards = () => {
                             }
                             setEditingId(null);
                           }
+                          if (e.key === 'Escape') setEditingId(null);
                         }}
                         autoFocus
                       />
@@ -197,15 +180,27 @@ const Cards = () => {
                       </NameSaveBtn>
                     </NameEdit>
                   ) : (
-                    <h3
+                    <EditableName
+                      type="button"
+                      title="Нажмите, чтобы переименовать"
+                      aria-label="Редактировать название карты"
                       onClick={() => {
                         setEditingId(card.id);
                         setNewName(card.name);
                       }}
-                      style={{ cursor: 'pointer' }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setEditingId(card.id);
+                          setNewName(card.name);
+                        }
+                      }}
                     >
-                      {card.name}
-                    </h3>
+                      <span className="text" title={card.name}>
+                        {card.name}
+                      </span>
+                      <Pencil className="pencil" size={16} aria-hidden="true" />
+                    </EditableName>
                   )}
                 </CardBottomText>
 

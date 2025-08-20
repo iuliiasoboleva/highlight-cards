@@ -1,20 +1,24 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Outlet, matchPath, useLocation, useParams } from 'react-router-dom';
+import { Outlet, matchPath, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import SubMenu from './components/SubMenu';
+import CustomModal from './customs/CustomModal';
 import Footer from './pages/Footer';
 import { fetchCards, initializeCards, updateCurrentCardField } from './store/cardsSlice';
 
 const MainLayout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { id } = useParams();
   const dispatch = useDispatch();
-  const subscription = useSelector((state) => state.subscription.info);
 
-  const trialExpired = React.useMemo(() => {
+  const subscription = useSelector((state) => state.subscription.info);
+  const currentCard = useSelector((state) => state.cards.currentCard);
+
+  const trialExpired = useMemo(() => {
     const s = String(subscription?.status || '').toLowerCase();
     const d = Number(subscription?.days_left ?? 0);
     return s === 'trial' && d <= 0;
@@ -34,9 +38,6 @@ const MainLayout = () => {
   const matchClientsReviews = matchPath('/clients/reviews', location.pathname);
   const matchClientsRfm = matchPath('/clients/rfm-segment', location.pathname);
   const matchClientDetails = matchPath('/clients/:id/*', location.pathname);
-
-  const currentCard = useSelector((state) => state.cards.currentCard);
-
   useEffect(() => {
     if (isTemplatePage) {
       dispatch(initializeCards({ useTemplates: true }));
@@ -71,6 +72,71 @@ const MainLayout = () => {
     matchClientsRfm,
     matchClientDetails,
   ]);
+
+  const prevPathRef = useRef(location.pathname);
+  const skipNextGuardRef = useRef(false);
+  const [leaveModalOpen, setLeaveModalOpen] = useState(false);
+  const pendingNextRef = useRef(null);
+
+  const isEditorPath = (p) => p.startsWith('/cards/create') || /^\/cards\/[^/]+\/edit\//.test(p);
+
+  const isCreatePath = (p) => p.startsWith('/cards/create');
+
+  const isCreateIncomplete = !(
+    currentCard?.typeReady &&
+    currentCard?.designReady &&
+    currentCard?.settingsReady
+  );
+
+  useLayoutEffect(() => {
+    const prev = prevPathRef.current;
+    const next = location.pathname;
+
+    if (location.state?.skipLeaveGuard) {
+      prevPathRef.current = next;
+      // Если хочешь очищать флаг, раскомментируй:
+      // navigate(next, { replace: true, state: {} });
+      return;
+    }
+
+    // пропускаем одно срабатывание (после возврата)
+    if (skipNextGuardRef.current) {
+      skipNextGuardRef.current = false;
+      prevPathRef.current = next;
+      return;
+    }
+
+    if (isEditorPath(prev) && !isEditorPath(next)) {
+      const leavingCreate = isCreatePath(prev);
+      const shouldAsk = (leavingCreate && isCreateIncomplete) || !leavingCreate; // из edit — всегда
+
+      if (shouldAsk) {
+        pendingNextRef.current = next;
+        skipNextGuardRef.current = true;
+
+        navigate(prev, { replace: true });
+
+        setLeaveModalOpen(true);
+
+        return;
+      }
+    }
+
+    prevPathRef.current = next;
+  }, [location.pathname, location.state, isCreateIncomplete, navigate]);
+
+  const confirmLeave = () => {
+    const target = pendingNextRef.current || '/cards';
+    pendingNextRef.current = null;
+    setLeaveModalOpen(false);
+    skipNextGuardRef.current = true;
+    navigate(target);
+  };
+
+  const cancelLeave = () => {
+    pendingNextRef.current = null;
+    setLeaveModalOpen(false);
+  };
 
   if (hideLayout) {
     return <Outlet />;
@@ -120,7 +186,6 @@ const MainLayout = () => {
         { to: `/mailings/push`, label: 'Создать push-рассылку' },
         { to: `/mailings/auto-push`, label: 'Автоматизация push' },
         { to: `/mailings/user-push`, label: 'Пользовательские авто-push' },
-        // { to: `/mailings/settings`, label: 'Настройки' },
         { to: `/mailings/archive`, label: 'История рассылок' },
       ];
     }
@@ -136,18 +201,15 @@ const MainLayout = () => {
       return [
         { to: `/clients`, label: 'Клиентская база' },
         { to: `/clients/rfm-segment`, label: 'Сегментация клиентов' },
-        // { to: `/clients/reviews`, label: 'Отзывы' },
       ];
     }
 
     if (matchClientDetails) {
       const base = `/clients/${id}`;
-
       return [
         { to: `${base}`, label: 'Профиль' },
         { to: `${base}/push`, label: 'Отправить push' },
         { to: `${base}/edit`, label: 'Персональная информация' },
-        // { to: `${base}/reviews`, label: 'Отзывы' },
       ];
     }
 
@@ -174,8 +236,8 @@ const MainLayout = () => {
         <div style={lockStyle}>
           <SubMenu
             menuItems={getMenuItems()}
-            showRightActions={matchEdit || matchCreate}
-            showDownloadTable={matchClientsRoot}
+            showRightActions={!!matchEdit || !!matchCreate}
+            showDownloadTable={!!matchClientsRoot}
             showNameInput={!!matchEdit || !!matchCreate}
             initialName={currentCard?.name || ''}
             onNameChange={(newName) => {
@@ -195,7 +257,26 @@ const MainLayout = () => {
           <Footer />
         </div>
       </div>
+
+      <CustomModal
+        open={leaveModalOpen}
+        onClose={cancelLeave}
+        title="Вы ещё не завершили создание"
+        maxWidth={480}
+        closeOnOverlayClick={false}
+        actions={
+          <>
+            <CustomModal.SecondaryButton onClick={cancelLeave}>
+              Вернуться к карте
+            </CustomModal.SecondaryButton>
+            <CustomModal.PrimaryButton onClick={confirmLeave}>Выйти</CustomModal.PrimaryButton>
+          </>
+        }
+      >
+        Хотите продолжить или выйти без сохранения?
+      </CustomModal>
     </div>
   );
 };
+
 export default MainLayout;

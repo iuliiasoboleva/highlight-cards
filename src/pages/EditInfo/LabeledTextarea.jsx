@@ -1,6 +1,9 @@
 import React from 'react';
 
+import CustomTextArea from '../../customs/CustomTextarea';
 import CustomTooltip from '../../customs/CustomTooltip';
+import { BarcodeRadioTitle } from '../EditDesign/styles';
+import { StampSectionLabel, Subtitle } from './styles';
 
 import './styles.css';
 
@@ -15,16 +18,19 @@ const LabeledTextarea = ({
   tooltip,
 }) => (
   <div className="labeled-textarea">
-    <h3 className="barcode-radio-title">{label}</h3>
-    {tooltip && <CustomTooltip id={`tooltip-${label}`} html content={tooltip} />}
-    {subtitle && <p className="labeled-textarea-subtitle">{subtitle}</p>}
+    <StampSectionLabel>
+      {label && <BarcodeRadioTitle>{label}</BarcodeRadioTitle>}
+      {tooltip && <CustomTooltip id={`tooltip-${label}`} html content={tooltip} />}
+    </StampSectionLabel>
+    {subtitle && <Subtitle>{subtitle}</Subtitle>}
+
     <div className="policy-textarea-wrapper">
-      <textarea
-        className="custom-textarea"
+      <CustomTextArea
         data-info-key={dataKey}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
+        required={required}
       />
       {required && <span className="required-asterisk">*</span>}
     </div>
