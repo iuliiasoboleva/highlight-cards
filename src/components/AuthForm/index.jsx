@@ -332,11 +332,15 @@ const AuthForm = () => {
 
   // авто-сабмит после полной длины PIN
   useEffect(() => {
-    if (formData.pin.length === 4 && !submitting && (step === 'pinLogin' || step === 'pin')) {
+    const readyForSubmit =
+      formData.pin.length === 4 &&
+      !submitting &&
+      (step === 'pin' || (step === 'pinLogin' && !!magicToken));
+    if (readyForSubmit) {
       handleSubmit({ preventDefault: () => {} });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData.pin]);
+  }, [formData.pin, submitting, step, magicToken]);
 
   return (
     <>
@@ -394,7 +398,7 @@ const AuthForm = () => {
               submitting={submitting}
               onChangePin={(digits) => setFormData((p) => ({ ...p, pin: digits }))}
               onSendLinkAgain={handleSendLinkAgain}
-              onComplete={() => handleSubmit({ preventDefault: () => {} })}
+              
             />
           )}
 
