@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createBranch, fetchBranches } from './salesPointsSlice';
 
 import axiosInstance from '../axiosInstance';
 import { mockCards } from '../mocks/cardData';
@@ -75,7 +76,7 @@ export const saveCard = createAsyncThunk(
 
 export const createCard = createAsyncThunk(
   'cards/createCard',
-  async (_, { getState, rejectWithValue }) => {
+  async (_, { getState, rejectWithValue, dispatch }) => {
     try {
       const state = getState();
       const { currentCard } = state.cards;
@@ -91,6 +92,24 @@ export const createCard = createAsyncThunk(
       };
 
       const res = await axiosInstance.post('/cards', payload);
+
+      try {
+        const links = currentCard?.infoFields?.activeLinks || [];
+        const addrField = Array.isArray(links) ? links.find((f) => f?.type === 'address' && (f.text || '').trim()) : null;
+        const addr = (addrField?.text || '').trim();
+        const name = (currentCard?.infoFields?.companyName || currentCard?.name || '').trim();
+        if (addr) {
+          await dispatch(
+            createBranch({
+              name: name || addr,
+              address: addr,
+              organization_id: orgId,
+            }),
+          ).unwrap().catch(() => {});
+          await dispatch(fetchBranches(orgId));
+        }
+      } catch (_) {}
+
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
