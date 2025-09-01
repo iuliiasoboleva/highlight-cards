@@ -63,7 +63,7 @@ const EditType = () => {
             tooltipHtml
             tooltipContent="Выберите тип карты для дальнейшей настройки"
           />
-          <StepNote>Шаг 1 из 4</StepNote>
+          <StepNote>Шаг 1 из 5</StepNote>
         </TopRow>
         <Divider />
       </div>

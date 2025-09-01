@@ -85,7 +85,8 @@ const MainLayout = () => {
   const isCreateIncomplete = !(
     currentCard?.typeReady &&
     currentCard?.designReady &&
-    currentCard?.settingsReady
+    currentCard?.settingsReady &&
+    currentCard?.infoReady
   );
 
   useLayoutEffect(() => {
@@ -166,6 +167,12 @@ const MainLayout = () => {
           label: '4. Оборотная сторона карты',
           disabled: !currentCard?.settingsReady,
           tooltip: 'Сначала заполните настройки',
+        },
+        {
+          to: `${base}/integration`,
+          label: '5. Интеграции',
+          disabled: !currentCard?.infoReady,
+          tooltip: 'Сначала заполните оборотную сторону',
         },
       ];
     }

@@ -1,31 +1,37 @@
 import React, { useState } from 'react';
 
 import CustomCheckbox from '../../customs/CustomCheckbox';
+import CustomModal from '../../customs/CustomModal';
+import CustomTextArea from '../../customs/CustomTextarea';
+import { CheckboxRow, Links, ModalContent } from './styles';
 
-import './styles.css';
-
-const AgreementModal = ({ onClose, onConfirm }) => {
+const AgreementModal = ({ open, onClose, onConfirm }) => {
   const [agreed, setAgreed] = useState(false);
 
   return (
-    <div className="modal-backdrop">
-      <div className="agreement-modal">
-        <div className="modal-header">
-          <h3>Договор-оферта</h3>
-          <button className="close-btn" onClick={onClose}>
-            ×
-          </button>
-        </div>
+    <CustomModal
+      open={open}
+      onClose={onClose}
+      title="Договор-оферта"
+      maxWidth={600}
+      actions={
+        <>
+          <CustomModal.SecondaryButton onClick={onClose}>Отмена</CustomModal.SecondaryButton>
+          <CustomModal.PrimaryButton onClick={onConfirm} disabled={!agreed}>
+            Перейти к оплате
+          </CustomModal.PrimaryButton>
+        </>
+      }
+    >
+      <ModalContent>
+        <CustomTextArea readOnly value={termsText} rows={12} />
 
-        <div className="modal-content">
-          <textarea readOnly defaultValue={termsText} />
-        </div>
-        <label className="checkbox-row">
+        <CheckboxRow>
           <CustomCheckbox
             checked={agreed}
-            onChange={() => setAgreed(!agreed)}
+            onChange={() => setAgreed((v) => !v)}
             label={
-              <>
+              <Links>
                 Я принимаю{' '}
                 <a href="https://loyalclub.ru/oferta" target="_blank" rel="noopener noreferrer">
                   условия соглашения
@@ -34,18 +40,12 @@ const AgreementModal = ({ onClose, onConfirm }) => {
                 <a href="https://loyalclub.ru/policy" target="_blank" rel="noopener noreferrer">
                   политику обработки персональных данных
                 </a>
-              </>
+              </Links>
             }
           />
-        </label>
-
-        <div className="modal-actions">
-          <button className="btn-dark" disabled={!agreed} onClick={onConfirm}>
-            Перейти к оплате
-          </button>
-        </div>
-      </div>
-    </div>
+        </CheckboxRow>
+      </ModalContent>
+    </CustomModal>
   );
 };
 

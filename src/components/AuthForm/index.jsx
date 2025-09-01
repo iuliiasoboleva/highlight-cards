@@ -398,7 +398,6 @@ const AuthForm = () => {
               submitting={submitting}
               onChangePin={(digits) => setFormData((p) => ({ ...p, pin: digits }))}
               onSendLinkAgain={handleSendLinkAgain}
-              
             />
           )}
 

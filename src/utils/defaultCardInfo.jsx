@@ -15,6 +15,7 @@ export const defaultCardTemplate = {
   title: 'Сертификат',
   designReady: false,
   settingsReady: false,
+  infoReady: false,
   typeReady: false,
   expirationDate: '00.00.0000',
   firstVisitDiscount: '10',

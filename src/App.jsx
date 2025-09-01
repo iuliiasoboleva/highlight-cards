@@ -27,6 +27,7 @@ import CustomerPage from './pages/CustomerPage';
 import DefaultCardInfo from './pages/DefaultCardInfo';
 import EditDesign from './pages/EditDesign';
 import EditInfo from './pages/EditInfo';
+import EditIntegration from './pages/EditIntegration';
 import EditSettings from './pages/EditSettings';
 import EditType from './pages/EditType';
 import GetPassPage from './pages/GetPassPage';
@@ -103,6 +104,7 @@ const App = () => {
                   <Route path="settings" element={<EditSettings />} />
                   <Route path="design" element={<EditDesign />} />
                   <Route path="info" element={<EditInfo />} />
+                  <Route path="integration" element={<EditIntegration />} />
                 </Route>
 
                 <Route path="/settings" element={<SettingsLayout />}>

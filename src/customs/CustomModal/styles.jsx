@@ -99,7 +99,6 @@ export const PrimaryButton = styled(BaseButton)`
 export const SecondaryButton = styled(BaseButton)`
   background: #f5f5f5;
   color: #2c3e50;
-  border: 1px solid #e7e7e7;
 
   &:hover:not(:disabled) {
     background: #efefef;

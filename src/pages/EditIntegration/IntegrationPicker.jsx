@@ -1,0 +1,54 @@
+import React from 'react';
+
+import oneCIcon from '../../assets/1c.png';
+import iikoIcon from '../../assets/iiko.png';
+import rkeeperIcon from '../../assets/rkeeper.png';
+import yclientsIcon from '../../assets/yclients.png';
+import { Card, Grid, LogoBox, Name, RadioHidden } from './styles';
+
+const INTEGRATIONS = [
+  { key: 'r_keeper', name: 'R_keeper', logo: rkeeperIcon },
+  { key: 'yclients', name: 'YClients', logo: yclientsIcon },
+  { key: '1c', name: '1C', logo: oneCIcon },
+  { key: 'iiko', name: 'iiko', logo: iikoIcon },
+];
+
+const IntegrationPicker = ({ value, onChange, className }) => {
+  return (
+    <Grid className={className} role="radiogroup" aria-label="Выбор интеграции">
+      {INTEGRATIONS.map((item) => {
+        const selected = value === item.key;
+        return (
+          <Card
+            key={item.key}
+            type="button"
+            role="radio"
+            aria-checked={selected}
+            $selected={selected}
+            onClick={() => onChange?.(item.key)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onChange?.(item.key);
+              }
+            }}
+          >
+            <RadioHidden
+              type="radio"
+              checked={selected}
+              onChange={() => onChange?.(item.key)}
+              aria-hidden
+              tabIndex={-1}
+            />
+            <LogoBox>
+              {item.logo ? <img src={item.logo} alt="" /> : <span>{item.name}</span>}
+            </LogoBox>
+            <Name>{item.name}</Name>
+          </Card>
+        );
+      })}
+    </Grid>
+  );
+};
+
+export default IntegrationPicker;

@@ -1,48 +1,50 @@
 import React, { useState } from 'react';
 
 import ConnectModal from '../../components/ConnectModal';
+import GeoBadge from '../../components/GeoBadge';
 import CustomMainButton from '../../customs/CustomMainButton';
 import { mockServices } from '../../mocks/mockServices';
-
-import './styles.css';
+import { Card, CardHeader, Container, Grid, Icon, Instruction, Text, Title } from './styles';
 
 const MailingsSettings = () => {
   const [selectedService, setSelectedService] = useState(null);
 
   return (
-    <div className="mailings-settings-container">
-      <h2>Настройки рассылки</h2>
-      <div className="mailings-grid">
+    <Container>
+      <GeoBadge title="Настройки рассылки" />
+
+      <Grid>
         {mockServices.map((service) => (
-          <div key={service.id} className="mailings-card">
+          <Card key={service.id}>
             <div>
-              <div className="mailings-card-header">
-                <h3>{service.name}</h3>
-                {service.icon && (
-                  <img src={service.icon} alt={service.name} className="mailings-card-icon" />
-                )}
-              </div>
-              <p>{service.description}</p>
+              <CardHeader>
+                <Title>{service.name}</Title>
+                {service.icon && <Icon src={service.icon} alt={service.name} />}
+              </CardHeader>
+
+              <Text>{service.description}</Text>
+
               {service.link && (
-                <p className="mailing-instruction">
+                <Instruction>
                   Инструкция:{' '}
                   <a href={service.link} target="_blank" rel="noreferrer">
                     {service.link}
                   </a>
-                </p>
+                </Instruction>
               )}
             </div>
+
             <CustomMainButton onClick={() => setSelectedService(service)}>
               Подключить аккаунт
             </CustomMainButton>
-          </div>
+          </Card>
         ))}
-      </div>
+      </Grid>
 
       {selectedService && (
         <ConnectModal service={selectedService} onClose={() => setSelectedService(null)} />
       )}
-    </div>
+    </Container>
   );
 };
 

@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { createBranch, fetchBranches } from './salesPointsSlice';
 
 import axiosInstance from '../axiosInstance';
 import { mockCards } from '../mocks/cardData';
 import { mockTemplateCards } from '../mocks/cardTemplatesData';
 import { mergeCardWithDefault } from '../utils/mergeCardWithDefault';
 import { statusConfig } from '../utils/statusConfig';
+import { createBranch, fetchBranches } from './salesPointsSlice';
 
 export const fixedCard = {
   id: 'fixed',
@@ -95,7 +95,9 @@ export const createCard = createAsyncThunk(
 
       try {
         const links = currentCard?.infoFields?.activeLinks || [];
-        const addrField = Array.isArray(links) ? links.find((f) => f?.type === 'address' && (f.text || '').trim()) : null;
+        const addrField = Array.isArray(links)
+          ? links.find((f) => f?.type === 'address' && (f.text || '').trim())
+          : null;
         const addr = (addrField?.text || '').trim();
         const name = (currentCard?.infoFields?.companyName || currentCard?.name || '').trim();
         if (addr) {
@@ -105,7 +107,9 @@ export const createCard = createAsyncThunk(
               address: addr,
               organization_id: orgId,
             }),
-          ).unwrap().catch(() => {});
+          )
+            .unwrap()
+            .catch(() => {});
           await dispatch(fetchBranches(orgId));
         }
       } catch (_) {}

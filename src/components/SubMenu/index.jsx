@@ -62,7 +62,10 @@ const SubMenu = ({
   };
 
   const isDisabled =
-    !currentCard?.settingsReady || !currentCard?.designReady || !currentCard?.typeReady;
+    !currentCard?.settingsReady ||
+    !currentCard?.designReady ||
+    !currentCard?.typeReady ||
+    !currentCard?.infoReady;
 
   return (
     <>

@@ -244,15 +244,14 @@ const Settings = () => {
         </PlanCard>
       </>
 
-      {showModal && (
-        <AgreementModal
-          onClose={() => setShowModal(false)}
-          onConfirm={() => {
-            setShowModal(false);
-            alert('Переход к оплате');
-          }}
-        />
-      )}
+      <AgreementModal
+        open={true}
+        onClose={() => setShowModal(false)}
+        onConfirm={() => {
+          setShowModal(false);
+          alert('Переход к оплате');
+        }}
+      />
 
       <TopUpModal
         isOpen={topUpOpen}

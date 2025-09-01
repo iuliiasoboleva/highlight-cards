@@ -137,7 +137,7 @@ const EditSettings = () => {
             tooltipHtml
             tooltipContent={`Настройки карты и формы установки карты`}
           />
-          <StepNote>Шаг 3 из 4</StepNote>
+          <StepNote>Шаг 3 из 5</StepNote>
         </TopRow>
         <Divider />
       </div>

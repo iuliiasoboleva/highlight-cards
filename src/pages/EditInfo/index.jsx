@@ -1,18 +1,15 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { YMaps } from '@pbe/react-yandex-maps';
 
 import EditLayout from '../../components/EditLayout';
-import QRPopup from '../../components/QRPopup';
 import TitleWithHelp from '../../components/TitleWithHelp';
 import CustomTooltip from '../../customs/CustomTooltip';
 import {
   addCurrentCardArrayItem,
-  createCard,
   removeCurrentCardArrayItem,
-  saveCard,
   updateCurrentCardField,
 } from '../../store/cardsSlice';
 import { BarcodeRadioTitle, CreateButton } from '../EditDesign/styles';
@@ -39,12 +36,9 @@ const EditInfo = () => {
   const dispatch = useDispatch();
 
   const currentCard = useSelector((state) => state.cards.currentCard);
-  const [showQRPopup, setShowQRPopup] = useState(false);
   const formRef = useRef(null);
 
   const user = useSelector((state) => state.user);
-  const cards = useSelector((state) => state.cards.cards);
-  const exists = cards.some((c) => c.id === currentCard?.id && c.id !== 'fixed');
 
   // Prefill issuer fields from organization/user data on first render
   useEffect(() => {
@@ -119,19 +113,9 @@ const EditInfo = () => {
     );
   };
 
-  const handleActivate = async () => {
-    try {
-      if (!exists) {
-        await dispatch(createCard()).unwrap();
-      } else {
-        await dispatch(saveCard()).unwrap();
-      }
-      dispatch(updateCurrentCardField({ path: 'active', value: true }));
-    } catch (e) {
-      console.error('Ошибка при активации карты', e);
-    } finally {
-      navigate('/cards', { state: { skipLeaveGuard: true } });
-    }
+  const handleSave = () => {
+    dispatch(updateCurrentCardField({ path: 'infoReady', value: true }));
+    navigate(`/cards/${id}/edit/integration`);
   };
 
   const infoContent = (
@@ -144,7 +128,7 @@ const EditInfo = () => {
             tooltipHtml
             tooltipContent={`Здесь вы можете описать условия вашей акции или программы лояльности — так, как хотите донести это до клиента. Например: Штампы начисляются при покупке от 300 ₽. Срок действия — 30 дней.`}
           />
-          <StepNote>Шаг 4 из 4</StepNote>
+          <StepNote>Шаг 4 из 5</StepNote>
         </TopRow>
         <Divider />
       </div>
@@ -361,24 +345,11 @@ const EditInfo = () => {
         }
       />
 
-      <CreateButton onClick={() => setShowQRPopup(true)}>Активировать</CreateButton>
+      <CreateButton onClick={handleSave}>Перейти к следующему шагу</CreateButton>
     </SettingsInputsContainer>
   );
 
-  return (
-    <>
-      <EditLayout onFieldClick={flashInput}>{infoContent}</EditLayout>
-      {showQRPopup && (
-        <QRPopup
-          cardId={id}
-          onClose={() => {
-            setShowQRPopup(false);
-          }}
-          activateCard={handleActivate}
-        />
-      )}
-    </>
-  );
+  return <EditLayout onFieldClick={flashInput}>{infoContent}</EditLayout>;
 };
 
 export default EditInfo;

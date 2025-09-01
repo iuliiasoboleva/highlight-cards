@@ -84,7 +84,7 @@ export const Row = styled.div`
   gap: 16px;
   flex-direction: column;
 
-  @media (min-width: 768px) {
+  @media (min-width: 1450px) {
     flex-direction: row;
   }
 `;

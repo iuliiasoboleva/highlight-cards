@@ -412,7 +412,7 @@ export const CardFieldsRow = styled.div`
   gap: 20px;
   grid-template-columns: 1fr 1fr;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1320px) {
     grid-template-columns: 1fr;
   }
 `;

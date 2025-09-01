@@ -1,22 +1,22 @@
 import React from 'react';
 
-import './styles.css';
+import { Container, HighlightCard, Left, Logo, MobileHighlightCard, Right } from './styles';
 
 const AuthLayout = ({ children }) => {
   return (
-    <div className="container">
-      <div className="left">
-        <div className="highlight-card" />
-      </div>
+    <Container>
+      <Left>
+        <HighlightCard />
+      </Left>
 
-      <div className="right">
-        <div className="mobile-highlight-card">
-          <img src="/logoColored.png" alt="Logo" className="logo" />
+      <Right>
+        <MobileHighlightCard>
+          <Logo src="/logoColored.png" alt="Logo" />
           <p>Цифровые карты лояльности для бизнеса Apple Wallet и Google Pay</p>
-        </div>
+        </MobileHighlightCard>
         {children}
-      </div>
-    </div>
+      </Right>
+    </Container>
   );
 };
 
