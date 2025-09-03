@@ -5,6 +5,7 @@ import CustomInput from '../../customs/CustomInput';
 import CustomTextArea from '../../customs/CustomTextarea';
 import ToggleSwitch from '../../customs/CustomToggleSwitch';
 import CustomTooltip from '../../customs/CustomTooltip';
+import { plural } from '../../helpers/pluralize';
 import { updateCurrentCardField } from '../../store/cardsSlice';
 import { BarcodeRadioTitle } from '../EditDesign/styles';
 import {
@@ -16,14 +17,6 @@ import {
   Spacer,
   StampSectionLabel,
 } from './styles';
-
-const plural = (n, forms) => {
-  const n10 = n % 10;
-  const n100 = n % 100;
-  if (n10 === 1 && n100 !== 11) return forms[0];
-  if (n10 >= 2 && n10 <= 4 && (n100 < 10 || n100 >= 20)) return forms[1];
-  return forms[2];
-};
 
 const humanDuration = (value, unit) => {
   if (!value || !unit) return null;

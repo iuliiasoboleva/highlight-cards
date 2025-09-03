@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import AgreementModal from '../../components/AgreementModal';
@@ -6,29 +6,57 @@ import GeoBadge from '../../components/GeoBadge';
 import LoaderCentered from '../../components/LoaderCentered';
 import TopUpModal from '../../components/TopUpModal';
 import CustomMainButton from '../../customs/CustomMainButton';
-import CustomSelect from '../../customs/CustomSelect';
-import { pluralize } from '../../helpers/pluralize';
+import { plural } from '../../helpers/pluralize';
 import { fetchBalance, topUpBalance } from '../../store/balanceSlice';
 import { fetchPayments } from '../../store/paymentsSlice';
 import { fetchSubscription } from '../../store/subscriptionSlice';
 import { fetchTariffs } from '../../store/tariffsSlice';
+import StaticMeter from './StaticMeter';
 import { planFeatures } from './planFeatures';
 import {
+  AsideCard,
+  Benefit,
+  BlockTitle,
+  CalcLine,
+  ConditionsCard,
+  Field,
+  FreeBox,
+  FreeSub,
+  FreeTitle,
+  GhostBtn,
+  Grid,
+  HeaderCard,
+  Label,
+  MetaRow,
+  MutedNote,
   PlanCard,
-  PlanCategory,
-  PlanCategoryLeft,
-  PlanCategoryNumber,
-  PlanCategoryTitle,
-  PlanCheck,
-  PlanFeatureItem,
-  PlanFeatureList,
-  PlanFeatures,
-  PlanMainTitle,
+  PlanDesc,
+  PlanName,
   PlanPrice,
-  PlanPriceValue,
-  PlanStatus,
+  Plans,
+  PopularBadge,
+  PriceRow,
+  PrimaryBtn,
+  Radio,
+  RangeLabels,
+  RangeWrap,
+  RightMeta,
+  Row,
+  SalesBox,
+  SalesBtn,
   SettingsContainer,
+  SmallList,
+  Subtle,
+  Title,
+  Total,
 } from './styles';
+
+const STATIC_LABELS = [
+  'Карты лояльности',
+  'Сотрудники',
+  'Push / SMS-уведомления',
+  'Подарочные сертификаты',
+];
 
 const Settings = () => {
   const dispatch = useDispatch();
@@ -39,6 +67,19 @@ const Settings = () => {
     (state) => state.balance || {},
   );
   const { info: subscription, loading: subLoading } = useSelector((state) => state.subscription);
+
+  const [showModal, setShowModal] = useState(false);
+  const [topUpOpen, setTopUpOpen] = useState(false);
+  const [planKey, setPlanKey] = useState('business');
+  const [points, setPoints] = useState(2);
+  const [months, setMonths] = useState(6);
+
+  const plan = useMemo(() => planFeatures.find((p) => p.key === planKey), [planKey]);
+
+  const handleTopUpConfirm = (amount) => {
+    setTopUpOpen(false);
+    dispatch(topUpBalance({ orgId, amount }));
+  };
 
   useEffect(() => {
     if (!tariffPlans.length) {
@@ -53,132 +94,15 @@ const Settings = () => {
     }
   }, [dispatch, orgId]);
 
-  const [period, setPeriod] = useState({});
+  const isYear = months === 12;
+  const monthlyPrice =
+    plan?.name === 'Сеть'
+      ? (isYear ? plan.yearlyMonthly : plan.monthly) * Math.max(points, 3)
+      : isYear
+        ? plan?.yearlyMonthly
+        : plan?.monthly;
 
-  useEffect(() => {
-    if (tariffPlans.length) {
-      const init = tariffPlans.reduce((acc, plan) => {
-        acc[plan.name] = 'Месяц';
-        return acc;
-      }, {});
-      setPeriod(init);
-    }
-  }, [tariffPlans]);
-
-  const [showModal, setShowModal] = useState(false);
-  const [topUpOpen, setTopUpOpen] = useState(false);
-  const handleTopUpConfirm = (amount) => {
-    setTopUpOpen(false);
-    dispatch(topUpBalance({ orgId, amount }));
-  };
-
-  const isTrial = subscription?.status === 'trial';
-  const remainingDays = subscription?.days_left ?? 0;
-
-  // Подготовка данных для таблицы тарифов
-  const tariffColumns = [
-    {
-      key: 'feature',
-      title: 'ФУНКЦИОНАЛ',
-      className: 'text-left feature-header',
-      cellClassName: 'text-left feature-cell',
-    },
-    ...tariffPlans.map((plan) => ({
-      key: plan.name,
-      title: plan.name,
-      className: 'text-center',
-      cellClassName: 'text-center',
-    })),
-  ];
-
-  const tariffRows = [
-    {
-      feature: (
-        <>
-          <p>Стоимость в месяц</p>
-          <small>
-            при оплате за год
-            <br />/ за месяц
-          </small>
-        </>
-      ),
-      ...Object.fromEntries(
-        tariffPlans.map((plan) => [
-          plan.name,
-          `${Math.round(plan.prices.year / 12)} ₽ / ${plan.prices.month} ₽`,
-        ]),
-      ),
-    },
-    {
-      feature: (
-        <>
-          <p>Интеграции</p>
-          Интеграция с ПО для автоматического начисления
-        </>
-      ),
-      ...Object.fromEntries(
-        tariffPlans.map((plan) => [
-          plan.name,
-          plan.integrations === '—' ? <span className="tariff-red">−</span> : plan.integrations,
-        ]),
-      ),
-    },
-    {
-      feature: (
-        <>
-          <p>Пользовательские поля</p>
-          Добавьте собственное наполнение без шаблона
-        </>
-      ),
-      ...Object.fromEntries(
-        tariffPlans.map((plan) => [
-          plan.name,
-          plan.customFields ? (
-            <span className="tariff-green">+</span>
-          ) : (
-            <span className="tariff-red">−</span>
-          ),
-        ]),
-      ),
-    },
-    {
-      feature: (
-        <>
-          <p>Настройка прав менеджеров</p>
-          Детальный контроль доступа
-        </>
-      ),
-      ...Object.fromEntries(
-        tariffPlans.map((plan) => [
-          plan.name,
-          plan.permissions ? (
-            <span className="tariff-green">+</span>
-          ) : (
-            <span className="tariff-red">−</span>
-          ),
-        ]),
-      ),
-    },
-    {
-      feature: <p>Период оплаты</p>,
-      ...Object.fromEntries(
-        tariffPlans.map((plan) => [
-          plan.name,
-          <div className="tariff-selector">
-            <CustomSelect
-              value={period[plan.name] || 'Месяц'}
-              onChange={(value) => setPeriod((prev) => ({ ...prev, [plan.name]: value }))}
-              options={[
-                { value: 'Год', label: 'Год' },
-                { value: 'Месяц', label: 'Месяц' },
-              ]}
-            />
-            <button className="custom-main-button">Выбрать тариф</button>
-          </div>,
-        ]),
-      ),
-    },
-  ];
+  const total = monthlyPrice * months;
 
   if (loading) {
     return <LoaderCentered />;
@@ -195,57 +119,160 @@ const Settings = () => {
     <SettingsContainer>
       <GeoBadge title="Мой тариф" />
       <>
-        <PlanCard>
-          <PlanMainTitle>Единый тариф — безлимитный функционал</PlanMainTitle>
+        <HeaderCard>
+          <div>
+            <Subtle>Ваш тарифный план</Subtle>
+            <Title>{plan?.name}</Title>
+          </div>
+          <RightMeta>
+            <MetaRow className="duration">
+              <span> Оплачен до:</span>
+              <b> 11.09.2025</b>
+            </MetaRow>
+            <MetaRow>
+              <span>Автопродление:</span>
+              <b> включено</b>
+            </MetaRow>
+          </RightMeta>
+        </HeaderCard>
 
-          {!subLoading && subscription && (
-            <PlanStatus>
-              {subscription.status === 'expired'
-                ? 'Подписка истекла'
-                : subscription.status === 'trial'
-                  ? `Демо, осталось ${remainingDays} ${pluralize(remainingDays, ['день', 'дня', 'дней'])}`
-                  : `Подписка активна, осталось ${remainingDays} ${pluralize(remainingDays, ['день', 'дня', 'дней'])}`}
-            </PlanStatus>
-          )}
+        <Benefit>🎁 Выгода 20% — при оплате любого тарифа на год.</Benefit>
 
-          <PlanFeatures>
-            {planFeatures.map((group, idx) => (
-              <PlanCategory key={group.category}>
-                <PlanCategoryLeft>
-                  <PlanCategoryNumber>{`${idx + 1}`.padStart(2, '0')}</PlanCategoryNumber>
-                  <PlanCategoryTitle>{group.category}</PlanCategoryTitle>
-                </PlanCategoryLeft>
+        <Grid>
+          {/* Левая колонка — планы */}
+          <div>
+            <BlockTitle>Выберите тарифный план</BlockTitle>
+            <Plans>
+              {planFeatures.map((p) => (
+                <PlanCard key={p.key} $active={p.key === planKey} onClick={() => setPlanKey(p.key)}>
+                  {p.popular && <PopularBadge>Популярный</PopularBadge>}
+                  <Row>
+                    <Radio $checked={p.key === planKey} />
+                    <PlanName>{p.name}</PlanName>
+                  </Row>
+                  <PlanDesc>{p.description}</PlanDesc>
 
-                <PlanFeatureList>
-                  {group.items.map((item) => (
-                    <PlanFeatureItem key={item}>
-                      <PlanCheck>✓</PlanCheck>
-                      {item}
-                    </PlanFeatureItem>
-                  ))}
-                </PlanFeatureList>
-              </PlanCategory>
+                  <PriceRow>
+                    {p.monthly === 0 ? (
+                      <PlanPrice>0₽ / мес</PlanPrice>
+                    ) : p.key === 'network' ? (
+                      <PlanPrice>
+                        {p.note || `от ${p.monthly.toLocaleString('ru-RU')}₽ / мес / точка`}
+                      </PlanPrice>
+                    ) : (
+                      <PlanPrice>{p.monthly.toLocaleString('ru-RU')}₽ / мес</PlanPrice>
+                    )}
+                  </PriceRow>
+                </PlanCard>
+              ))}
+            </Plans>
+          </div>
+
+          {/* Средняя колонка — условия */}
+          <ConditionsCard>
+            <BlockTitle>Условия тарифа</BlockTitle>
+
+            <Field>
+              <Label>
+                <span>Количество точек</span>
+                <strong>{points}</strong>
+              </Label>
+              <RangeWrap>
+                <input
+                  type="range"
+                  min={1}
+                  max={2}
+                  step={1}
+                  value={points}
+                  onChange={(e) => setPoints(Number(e.target.value))}
+                  style={{ '--pct': `${((points - 1) / (2 - 1)) * 100}%` }}
+                />
+                <RangeLabels>
+                  <span>1</span>
+                  <span>2</span>
+                </RangeLabels>
+              </RangeWrap>
+            </Field>
+
+            <Field>
+              <Label>
+                <span>Количество оплачиваемых месяцев</span>
+                <strong>{months} мес.</strong>
+              </Label>
+              <RangeWrap>
+                <input
+                  type="range"
+                  min={1}
+                  max={12}
+                  step={1}
+                  value={months}
+                  onChange={(e) => setMonths(Number(e.target.value))}
+                  style={{ '--pct': `${((months - 1) / (12 - 1)) * 100}%` }}
+                />
+                <RangeLabels>
+                  <span>1 мес</span>
+                  <span>12 мес</span>
+                </RangeLabels>
+              </RangeWrap>
+            </Field>
+
+            {STATIC_LABELS.map((t) => (
+              <StaticMeter key={t} label={t} />
             ))}
-          </PlanFeatures>
+          </ConditionsCard>
 
-          <PlanPrice>
-            <PlanPriceValue>6 900 ₽ / месяц</PlanPriceValue>
+          {/* Правая колонка — расчёт */}
+          <AsideCard>
+            <BlockTitle>Расчёт стоимости</BlockTitle>
 
-            {subscription?.status !== 'active' ? (
-              <CustomMainButton $maxWidth={220} $mt={8} onClick={() => setShowModal(true)}>
-                Активировать
-              </CustomMainButton>
+            {planKey === 'free' ? (
+              <FreeBox>
+                <FreeTitle>Бесплатно</FreeTitle>
+                <FreeSub>7 дней полного доступа</FreeSub>
+                <PrimaryBtn /* onClick={...} */>Начать бесплатно</PrimaryBtn>
+                <MutedNote>Без привязки карты • Полный функционал</MutedNote>
+              </FreeBox>
+            ) : planKey === 'network' ? (
+              <SalesBox>
+                <p>
+                  У вас сеть от 10 точек и больше? Мы подготовим для вас индивидуальные условия.
+                </p>
+                <SalesBtn /* onClick={...} */>Связаться с нами</SalesBtn>
+              </SalesBox>
             ) : (
-              <CustomMainButton $maxWidth={200} $mt={8} disabled>
-                Тариф активен
-              </CustomMainButton>
+              <>
+                <CalcLine>
+                  <span>За месяц:</span>
+                  <b>{monthlyPrice?.toLocaleString('ru-RU')} ₽</b>
+                </CalcLine>
+                <CalcLine>
+                  <span>
+                    За {months} {plural(months, ['месяц', 'месяца', 'месяцев'])}:
+                  </span>
+                  <b>{total.toLocaleString('ru-RU')} ₽</b>
+                </CalcLine>
+
+                <Total>
+                  <span>К оплате:</span>
+                  <b>{total.toLocaleString('ru-RU')} ₽</b>
+                </Total>
+
+                <PrimaryBtn>Оплатить картой</PrimaryBtn>
+                <GhostBtn>Выставить счёт</GhostBtn>
+
+                <SmallList>
+                  <li>Все цены указаны с НДС</li>
+                  <li>Автопродление можно отключить в настройках</li>
+                  <li>При смене тарифа производится перерасчёт</li>
+                </SmallList>
+              </>
             )}
-          </PlanPrice>
-        </PlanCard>
+          </AsideCard>
+        </Grid>
       </>
 
       <AgreementModal
-        open={true}
+        open={showModal}
         onClose={() => setShowModal(false)}
         onConfirm={() => {
           setShowModal(false);
