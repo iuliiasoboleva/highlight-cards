@@ -6,6 +6,8 @@ import GeoBadge from '../../components/GeoBadge';
 import LoaderCentered from '../../components/LoaderCentered';
 import TopUpModal from '../../components/TopUpModal';
 import CustomMainButton from '../../customs/CustomMainButton';
+import { formatDateToDDMMYYYY } from '../../helpers/date';
+import { clamp, getPointsBounds } from '../../helpers/getPointsBounds';
 import { plural } from '../../helpers/pluralize';
 import { fetchBalance, topUpBalance } from '../../store/balanceSlice';
 import { fetchPayments } from '../../store/paymentsSlice';
@@ -20,7 +22,6 @@ import {
   CalcLine,
   ConditionsCard,
   Field,
-  FreeBox,
   FreeSub,
   FreeTitle,
   GhostBtn,
@@ -76,6 +77,12 @@ const Settings = () => {
 
   const plan = useMemo(() => planFeatures.find((p) => p.key === planKey), [planKey]);
 
+  const { min: pMin, max: pMax } = getPointsBounds(planKey);
+
+  useEffect(() => {
+    setPoints((v) => clamp(v, pMin, pMax));
+  }, [planKey]);
+
   const handleTopUpConfirm = (amount) => {
     setTopUpOpen(false);
     dispatch(topUpBalance({ orgId, amount }));
@@ -104,6 +111,25 @@ const Settings = () => {
 
   const total = monthlyPrice * months;
 
+  const paidUntilRaw = subscription?.paid_until ?? plan?.paidUntil ?? null;
+
+  const paidUntilStr = paidUntilRaw
+    ? formatDateToDDMMYYYY(
+        typeof paidUntilRaw === 'number'
+          ? String(paidUntilRaw).length === 10
+            ? paidUntilRaw * 1000
+            : paidUntilRaw
+          : paidUntilRaw,
+      )
+    : '—';
+
+  const autoRenew = Boolean(
+    subscription?.auto_renew ??
+      subscription?.autorenew ??
+      subscription?.is_autorenew_enabled ??
+      false,
+  );
+
   if (loading) {
     return <LoaderCentered />;
   }
@@ -126,12 +152,12 @@ const Settings = () => {
           </div>
           <RightMeta>
             <MetaRow className="duration">
-              <span> Оплачен до:</span>
-              <b> 11.09.2025</b>
+              <span>Оплачен до:</span>
+              <b>{paidUntilStr}</b>
             </MetaRow>
             <MetaRow>
               <span>Автопродление:</span>
-              <b> включено</b>
+              <b className={autoRenew ? 'green' : ''}>{autoRenew ? 'включено' : 'выключено'}</b>
             </MetaRow>
           </RightMeta>
         </HeaderCard>
@@ -169,78 +195,83 @@ const Settings = () => {
           </div>
 
           {/* Средняя колонка — условия */}
-          <ConditionsCard>
+          <div>
             <BlockTitle>Условия тарифа</BlockTitle>
+            <ConditionsCard>
+              <Field>
+                <Label>
+                  <span>Количество точек</span>
+                  <strong>{points}</strong>
+                </Label>
+                <RangeWrap>
+                  <input
+                    type="range"
+                    min={pMin}
+                    max={pMax}
+                    step={1}
+                    value={points}
+                    onChange={(e) => setPoints(Number(e.target.value))}
+                    disabled={pMin === pMax}
+                    style={{ '--pct': `${((points - pMin) / (pMax - pMin || 1)) * 100}%` }}
+                  />
+                  <RangeLabels>
+                    <span>{pMin}</span>
+                    <span>{pMax}</span>
+                  </RangeLabels>
+                </RangeWrap>
+              </Field>
 
-            <Field>
-              <Label>
-                <span>Количество точек</span>
-                <strong>{points}</strong>
-              </Label>
-              <RangeWrap>
-                <input
-                  type="range"
-                  min={1}
-                  max={2}
-                  step={1}
-                  value={points}
-                  onChange={(e) => setPoints(Number(e.target.value))}
-                  style={{ '--pct': `${((points - 1) / (2 - 1)) * 100}%` }}
-                />
-                <RangeLabels>
-                  <span>1</span>
-                  <span>2</span>
-                </RangeLabels>
-              </RangeWrap>
-            </Field>
+              <Field>
+                <Label>
+                  <span>Количество оплачиваемых месяцев</span>
+                  <strong>{months} мес.</strong>
+                </Label>
+                <RangeWrap>
+                  <input
+                    type="range"
+                    min={1}
+                    max={12}
+                    step={1}
+                    value={months}
+                    onChange={(e) => setMonths(Number(e.target.value))}
+                    style={{ '--pct': `${((months - 1) / (12 - 1)) * 100}%` }}
+                  />
+                  <RangeLabels>
+                    <span>1 мес</span>
+                    <span>12 мес</span>
+                  </RangeLabels>
+                </RangeWrap>
+              </Field>
 
-            <Field>
-              <Label>
-                <span>Количество оплачиваемых месяцев</span>
-                <strong>{months} мес.</strong>
-              </Label>
-              <RangeWrap>
-                <input
-                  type="range"
-                  min={1}
-                  max={12}
-                  step={1}
-                  value={months}
-                  onChange={(e) => setMonths(Number(e.target.value))}
-                  style={{ '--pct': `${((months - 1) / (12 - 1)) * 100}%` }}
-                />
-                <RangeLabels>
-                  <span>1 мес</span>
-                  <span>12 мес</span>
-                </RangeLabels>
-              </RangeWrap>
-            </Field>
-
-            {STATIC_LABELS.map((t) => (
-              <StaticMeter key={t} label={t} />
-            ))}
-          </ConditionsCard>
-
+              {STATIC_LABELS.map((t) => (
+                <StaticMeter key={t} label={t} />
+              ))}
+            </ConditionsCard>
+          </div>
           {/* Правая колонка — расчёт */}
           <AsideCard>
             <BlockTitle>Расчёт стоимости</BlockTitle>
 
             {planKey === 'free' ? (
-              <FreeBox>
+              <ConditionsCard>
                 <FreeTitle>Бесплатно</FreeTitle>
                 <FreeSub>7 дней полного доступа</FreeSub>
                 <PrimaryBtn /* onClick={...} */>Начать бесплатно</PrimaryBtn>
                 <MutedNote>Без привязки карты • Полный функционал</MutedNote>
-              </FreeBox>
+              </ConditionsCard>
             ) : planKey === 'network' ? (
-              <SalesBox>
-                <p>
-                  У вас сеть от 10 точек и больше? Мы подготовим для вас индивидуальные условия.
-                </p>
-                <SalesBtn /* onClick={...} */>Связаться с нами</SalesBtn>
-              </SalesBox>
+              <ConditionsCard>
+                <SalesBox>
+                  <p>
+                    У вас сеть от 10 точек
+                    <br /> и больше? Мы подготовим для
+                    <br /> вас индивидуальные условия.
+                  </p>
+                  <SalesBtn /* onClick={...} */>Связаться с нами</SalesBtn>
+                </SalesBox>
+              </ConditionsCard>
             ) : (
-              <>
+              <ConditionsCard>
                 <CalcLine>
                   <span>За месяц:</span>
                   <b>{monthlyPrice?.toLocaleString('ru-RU')} ₽</b>
@@ -262,10 +293,12 @@ const Settings = () => {
 
                 <SmallList>
                   <li>Все цены указаны с НДС</li>
-                  <li>Автопродление можно отключить в настройках</li>
+                  <li>
+                    Автопродление можно отключить в<br /> настройках
+                  </li>
                   <li>При смене тарифа производится перерасчёт</li>
                 </SmallList>
-              </>
+              </ConditionsCard>
             )}
           </AsideCard>
         </Grid>

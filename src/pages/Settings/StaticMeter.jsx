@@ -4,68 +4,71 @@ import styled from 'styled-components';
 
 function StaticMeter({ label }) {
   return (
-    <MeterBox>
-      <span className="label">{label}</span>
-      <span className="meter" />
-      <span className="note">Безлимит</span>
-    </MeterBox>
+    <Box>
+      <Header>
+        <span>{label}</span>
+        <sup>∞</sup>
+      </Header>
+      <Bar>
+        <Knob />
+      </Bar>
+      <Note>Безлимит</Note>
+    </Box>
   );
 }
 
-const MeterBox = styled.div`
+export default StaticMeter;
+
+const Box = styled.div`
   display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: auto 10px auto; /* label | bar | note */
+  grid-template-rows: auto auto auto; /* header | bar | note */
   gap: 6px;
   margin: 14px 0;
   font-size: 14px;
+`;
 
-  .label {
-    color: #111827;
-  }
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  color: #000;
+  font-size: 12px;
 
-  .meter {
-    position: relative;
-    height: 10px;
-    border-radius: 999px;
-    background:
-      linear-gradient(#8a92a3 0 0) left/100% 100% no-repeat,
-      #c9d0da;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.6),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.06);
-  }
-
-  .meter::before {
-    content: '∞';
-    position: absolute;
-    right: 26px;
-    top: -14px;
-    font-size: 12px;
-    color: #6b7280;
+  sup {
     line-height: 1;
-  }
-
-  .meter::after {
-    content: '';
-    position: absolute;
-    right: -9px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #f3f5f8;
-    border: 2px solid #c3cad4;
-  }
-
-  .note {
-    justify-self: end;
-    font-size: 12px;
-    color: #9aa3af;
-    white-space: nowrap;
-    margin-top: 2px;
+    font-weight: 600;
+    font-size: 14px;
   }
 `;
 
-export default StaticMeter;
+const Bar = styled.div`
+  position: relative;
+  height: 14px;
+  border-radius: 999px;
+  background:
+    linear-gradient(#99a1af 0 0) left/100% 100% no-repeat,
+    #99a1af;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.06);
+`;
+
+const Knob = styled.div`
+  position: absolute;
+  right: -9px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #99a1af;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+`;
+
+const Note = styled.div`
+  justify-self: end;
+  font-size: 10px;
+  color: gray;
+  white-space: nowrap;
+`;

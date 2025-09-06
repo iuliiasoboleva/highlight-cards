@@ -7,6 +7,11 @@ export const SettingsContainer = styled.div`
   flex-direction: column;
   background: #fff;
   width: 100%;
+  height: 100vh;
+
+  @media (max-width: 1100px) {
+    height: auto;
+  }
 `;
 
 export const HeaderCard = styled.div`
@@ -18,6 +23,7 @@ export const HeaderCard = styled.div`
   border-radius: 14px;
   padding: 18px 20px;
   margin-bottom: 20px;
+  width: 100%;
 
   @media (max-width: 768px) {
     justify-content: flex-start;
@@ -85,6 +91,7 @@ export const Benefit = styled.div`
   font-weight: 500;
   border-radius: 8px;
   padding: 10px 12px;
+  width: 100%;
 `;
 
 export const Grid = styled.div`
@@ -92,10 +99,11 @@ export const Grid = styled.div`
   grid-template-columns: 1.1fr 1.2fr 0.8fr;
   gap: 40px;
   margin-top: 16px;
+  width: 100%;
 
   @media (max-width: 1100px) {
     grid-template-columns: 1fr;
-    gap: 8px;
+    gap: 12px;
   }
 `;
 
@@ -113,24 +121,40 @@ export const BlockTitle = styled.div`
 
 export const Plans = styled.div`
   display: grid;
-  gap: 12px;
+  gap: 24px;
+  margin-top: 30px;
+
+  @media (max-width: 1100px) {
+    margin-top: auto;
+  }
 `;
 
 export const PlanCard = styled.div`
   position: relative;
   border: 1px solid #e6e8ee;
   border-radius: 14px;
-  padding: 14px 14px 12px;
+  padding: 20px;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 150px;
   transition:
     0.2s ease border-color,
     0.2s ease box-shadow;
 
+  &:hover {
+    border-color: gray;
+  }
+
   ${(p) =>
     p.$active &&
     css`
-      border-color: #ef4358;
-      background: #fff5f6;
+      border-color: #c9353f;
+      background: #fdebed;
+      &:hover {
+        border-color: #a82c35;
+      }
     `}
 `;
 
@@ -138,11 +162,12 @@ export const PopularBadge = styled.div`
   position: absolute;
   left: 12px;
   top: -8px;
-  background: #ef4358;
+  background: #c9353f;
   color: #fff;
   font-size: 11px;
   padding: 4px 8px;
-  border-radius: 8px;
+  border-radius: 4px;
+  text-align: center;
 `;
 
 export const Row = styled.div`
@@ -163,34 +188,38 @@ export const Radio = styled.div`
   ${(p) =>
     p.$checked &&
     css`
-      border-color: #ef4358;
+      border-color: #c9353f;
+      background: #c9353f;
       &::after {
         content: '';
         position: absolute;
         inset: 3px;
         border-radius: 50%;
-        background: #ef4358;
+        background: #c9353f;
       }
     `}
 `;
 
 export const PlanName = styled.div`
-  font-weight: 600;
+  font-weight: 700;
 `;
 
 export const PlanDesc = styled.div`
-  color: #6b7280;
-  font-size: 13px;
+  color: #6a7282;
+  font-size: 14px;
   margin: 6px 0 10px;
+  white-space: pre;
 `;
 
 export const PriceRow = styled.div`
   display: flex;
   justify-content: flex-start;
+  margin-top: auto;
 `;
 
 export const PlanPrice = styled.div`
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 14px;
 `;
 
 export const Field = styled.div`
@@ -200,28 +229,34 @@ export const Field = styled.div`
 export const Label = styled.div`
   font-size: 14px;
   margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+
+  span {
+    color: #868083;
+  }
 
   strong {
-    margin-left: 6px;
+    font-weight: 600;
   }
 `;
 
 export const RangeLabels = styled.div`
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 10px;
   color: #8a94a6;
-  margin-top: 6px;
 `;
 
 export const CalcLine = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid #eef0f4;
+  padding: 4px 0;
+  font-size: 12px;
 
   b {
     font-weight: 600;
+    font-size: 14px;
   }
 `;
 
@@ -229,141 +264,214 @@ export const Total = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 14px 0;
-  font-size: 16px;
+  font-size: 14px;
+  padding-top: 12px;
+  margin-top: 8px;
+  border-top: 1px solid #eef0f4;
+  font-weight: 600;
 
   b {
     font-size: 18px;
+    font-weight: 800;
   }
 `;
 
 export const PrimaryBtn = styled.button`
   width: 100%;
   border: none;
-  border-radius: 10px;
-  height: 40px;
+  border-radius: 8px;
+  padding: 8px;
   font-weight: 600;
+  font-size: 12px;
   color: #fff;
-  background: #ef4358;
+  background: #c4343c;
   cursor: pointer;
   margin-bottom: 8px;
+
+  &:hover,
+  &:focus,
+  &:active {
+    background: blue;
+    outline: none;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 `;
 
 export const GhostBtn = styled.button`
   width: 100%;
   border: 1px solid #e6e8ee;
   background: #fff;
-  color: #0b0c10;
-  border-radius: 10px;
-  height: 40px;
-  font-weight: 600;
+  color: #000;
+  border-radius: 8px;
+  padding: 8px;
+  font-weight: 500;
+  font-size: 12px;
   cursor: pointer;
 `;
 
 export const SmallList = styled.ul`
-  margin-top: 12px;
-  color: #8a94a6;
-  font-size: 12px;
+  margin: 16px 0 0 0;
+  padding: 0;
+  list-style: none;
+  color: gray;
+  font-size: 10px;
+  font-weight: 500;
   display: grid;
   gap: 6px;
+
+  li {
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+
+  li::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+    vertical-align: middle;
+    margin-right: 3px;
+  }
 `;
 
-/* карточка */
 export const ConditionsCard = styled.div`
   background: #fff;
   border: 1px solid #e7eaf0;
   border-radius: 16px;
-  padding: 18px 20px;
+  padding: 20px;
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
 `;
-
 export const RangeWrap = styled.div`
-  --track-h: 8px;
-  --thumb: 18px;
-
   input[type='range'] {
     -webkit-appearance: none;
     width: 100%;
     background: transparent;
+    outline: none;
   }
 
-  /* WebKit */
+  input[type='range']:focus {
+    outline: none;
+  }
+  input[type='range']:focus-visible {
+    outline: none;
+  }
+  input[type='range']::-moz-focus-outer {
+    border: 0;
+  }
+  input[type='range']::-moz-focus-inner {
+    border: 0;
+  }
+
   input[type='range']::-webkit-slider-runnable-track {
-    height: var(--track-h);
+    height: 14px;
     border-radius: 999px;
     background:
-      linear-gradient(#0b0c10 0 0) left/var(--pct, 0%) 100% no-repeat,
-      #e6e9ef;
-  }
-  input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: var(--thumb);
-    height: var(--thumb);
-    border-radius: 50%;
-    background: #fff;
-    border: 2px solid #0b0c10;
-    margin-top: calc(var(--track-h) / -2 + var(--thumb) / -2 + var(--track-h) / 2);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+      linear-gradient(#030514 0 0) left/var(--pct, 0%) 100% no-repeat,
+      #edecf0;
   }
 
-  /* Firefox */
-  input[type='range']::-moz-range-track {
-    height: var(--track-h);
-    border-radius: 999px;
-    background: #e6e9ef;
-  }
-  input[type='range']::-moz-range-progress {
-    height: var(--track-h);
-    border-radius: 999px;
-    background: #0b0c10;
-  }
-  input[type='range']::-moz-range-thumb {
-    width: var(--thumb);
-    height: var(--thumb);
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
     background: #fff;
-    border: 2px solid #0b0c10;
+    border: 1px solid #030514;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.2s ease;
+  }
+  input[type='range']:focus::-webkit-slider-thumb {
+    box-shadow: 0 0 0 4px rgba(3, 5, 20, 0.2);
+  }
+
+  input[type='range']::-moz-range-track {
+    height: 14px;
+    border-radius: 999px;
+    background: #edecf0;
+  }
+
+  input[type='range']::-moz-range-progress {
+    height: 14px;
+    border-radius: 999px;
+    background: #030514;
+  }
+
+  input[type='range']::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #030514;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.2s ease;
+  }
+  input[type='range']:focus::-moz-range-thumb {
+    box-shadow: 0 0 0 4px rgba(3, 5, 20, 0.2);
+  }
+
+  input[type='range']:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 `;
 
 export const FreeBox = styled.div`
   text-align: center;
 `;
+
 export const FreeTitle = styled.div`
-  color: #e11d2e;
-  font-weight: 700;
-  font-size: 22px;
+  color: #c31e3c;
+  text-align: center;
+  font-weight: 800;
+  font-size: 20px;
   margin-bottom: 6px;
 `;
+
 export const FreeSub = styled.div`
-  color: #6b7280;
-  font-size: 14px;
+  color: #535252;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
   margin-bottom: 12px;
 `;
+
 export const MutedNote = styled.div`
-  color: #9aa3af;
-  font-size: 12px;
-  margin-top: 10px;
+  color: #535252;
+  font-size: 10px;
+  font-weight: 500;
+  margin-top: 8px;
+  text-align: center;
 `;
 
 export const SalesBox = styled.div`
-  border: 1px solid #f4c6cc;
-  background: #fff5f6;
-  color: #d12d3d;
-  border-radius: 12px;
-  padding: 16px;
+  border: 1px solid #ea3b33;
+  background: #fef2f2;
+  color: oklch(0.505 0.213 27.518);
+  border-radius: 4px;
+  padding: 20px;
+  white-space: pre;
+
   p {
     margin: 0 0 12px;
     line-height: 1.35;
+    font-size: 12px;
+    font-weight: 500;
   }
 `;
 export const SalesBtn = styled.button`
   border: none;
-  background: #ef4358;
+  background: #ea3b33;
   color: #fff;
   font-weight: 600;
-  height: 36px;
-  padding: 0 14px;
-  border-radius: 10px;
+  font-size: 13px;
+  padding: 6px 8px;
+  border-radius: 4px;
   cursor: pointer;
 `;

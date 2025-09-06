@@ -111,6 +111,7 @@ export const BottomNav = styled.nav`
     left: 0;
     width: 100%;
     background: #f8f8f8;
+    height: var(--bottom-nav-height);
     padding: 12px;
     z-index: 10000;
   }

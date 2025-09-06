@@ -1,9 +1,11 @@
 import { createGlobalStyle } from 'styled-components';
 
+import '@fontsource/manrope/300.css';
 import '@fontsource/manrope/400.css';
 import '@fontsource/manrope/500.css';
 import '@fontsource/manrope/600.css';
 import '@fontsource/manrope/700.css';
+import '@fontsource/manrope/800.css';
 
 export const GlobalStyle = createGlobalStyle`
   :root {
@@ -12,7 +14,7 @@ export const GlobalStyle = createGlobalStyle`
     --bar-height: 73px;
     --sidebar-width: 72px;
     --footer-height: 143px;
-    --bottom-nav-height: 58px;
+    --bottom-nav-height: 86px;
   }
 
   * {
