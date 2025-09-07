@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { ArrowDown, ArrowUp, Minus } from 'lucide-react';
 import {
+  Bar,
+  BarChart,
   CartesianGrid,
-  Line,
-  LineChart,
+  Cell,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -29,6 +30,14 @@ import {
   StatisticsLeft,
 } from './styles';
 
+const GRADIENT_MAP = {
+  visits: 'url(#gradGreen)',
+  newClients: 'url(#gradPurpleLight)',
+  repeatClients: 'url(#gradPurpleDark)',
+  cardsIssued: 'url(#gradYellow)',
+  retention: 'url(#gradGreen)',
+};
+
 const ClientsActivityChart = ({
   chartData,
   lineLabels,
@@ -49,6 +58,13 @@ const ClientsActivityChart = ({
   const isPositive = change > 0;
   const isNegative = change < 0;
   const changeType = isPositive ? 'positive' : isNegative ? 'negative' : 'neutral';
+
+  const domainMax = useMemo(() => {
+    const values = (chartData || []).map((d) => Number(d?.[dataKey] ?? 0));
+    return Math.max(1, ...values);
+  }, [chartData, dataKey]);
+
+  const fillForBar = GRADIENT_MAP[dataKey] || 'url(#gradPurpleLight)';
 
   return (
     <StatisticsCard>
@@ -85,13 +101,33 @@ const ClientsActivityChart = ({
           <ChartWrapper>
             <ChartContainer>
               <ResponsiveContainer width="100%" height={200}>
-                <LineChart data={chartData} margin={{ top: 0, right: 25, bottom: 0, left: 10 }}>
-                  <CartesianGrid
-                    vertical={true}
-                    horizontal={false}
-                    stroke="#f0f0f0"
-                    strokeDasharray="0"
-                  />
+                <BarChart
+                  data={chartData}
+                  margin={{ top: 0, right: 25, bottom: 0, left: 10 }}
+                  barCategoryGap="0%"
+                  barGap={0}
+                >
+                  <defs>
+                    <linearGradient id="gradGreen" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#34C759" stopOpacity={0.9} />
+                      <stop offset="100%" stopColor="#34C759" stopOpacity={0.2} />
+                    </linearGradient>
+                    <linearGradient id="gradPurpleLight" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#C7A4FF" stopOpacity={0.9} />
+                      <stop offset="100%" stopColor="#C7A4FF" stopOpacity={0.2} />
+                    </linearGradient>
+                    <linearGradient id="gradPurpleDark" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#6C2BD9" stopOpacity={0.9} />
+                      <stop offset="100%" stopColor="#6C2BD9" stopOpacity={0.2} />
+                    </linearGradient>
+                    <linearGradient id="gradYellow" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#f0bf7c" stopOpacity={0.9} />
+                      <stop offset="100%" stopColor="#f0bf7c" stopOpacity={0.2} />
+                    </linearGradient>
+                  </defs>
+
+                  <CartesianGrid vertical horizontal={false} stroke="#f0f0f0" strokeDasharray="0" />
+
                   <XAxis
                     dataKey="date"
                     interval={0}
@@ -101,24 +137,24 @@ const ClientsActivityChart = ({
                     tickFormatter={(value) => formatChartTick(value, selectedPeriod)}
                   />
                   <YAxis
+                    domain={[0, domainMax]}
                     tick={axisStyle}
                     axisLine={false}
                     tickLine={false}
                     width={28}
-                    padding={{ top: 6, bottom: 4 }}
+                    padding={{ top: 0, bottom: 0 }}
                   />
 
                   <Tooltip
-                    cursor={{ fill: 'rgba(0,0,0,0.05)' }}
+                    cursor={false}
                     content={({ active, payload, label }) => {
                       if (!active || !payload) return null;
-
                       const date = new Date(label).toLocaleDateString('ru-RU', {
                         month: 'long',
                         day: 'numeric',
                         year: 'numeric',
                       });
-
+                      const item = payload[0]?.payload;
                       return (
                         <div
                           style={{
@@ -132,24 +168,20 @@ const ClientsActivityChart = ({
                           }}
                         >
                           <div style={{ marginBottom: 4, fontWeight: 600 }}>{date}</div>
-                          {payload.map((item) => (
-                            <div key={item.name} style={{ color: item.color }}>
-                              {item.name}: {item.value}
-                            </div>
-                          ))}
+                          <div>
+                            {lineLabels?.[dataKey] ?? label}: {item?.[dataKey] ?? 0}
+                          </div>
                         </div>
                       );
                     }}
                   />
 
-                  <Line
-                    type="monotone"
-                    dataKey={dataKey}
-                    stroke="#ffc658"
-                    name={lineLabels?.[dataKey] ?? label}
-                    strokeWidth={2}
-                  />
-                </LineChart>
+                  <Bar dataKey={dataKey} radius={[6, 6, 0, 0]}>
+                    {chartData.map((_, i) => (
+                      <Cell key={`cell-${i}`} fill={fillForBar} />
+                    ))}
+                  </Bar>
+                </BarChart>
               </ResponsiveContainer>
             </ChartContainer>
           </ChartWrapper>

@@ -75,12 +75,17 @@ const Chart = ({
 
   useEffect(() => {
     if (externalData) return;
-    if (selectedPeriod !== 'custom') {
-      const newData = dataMap[selectedPeriod] || [];
-      const sortedData = [...newData].sort((a, b) => new Date(a.date) - new Date(b.date));
-      setChartData(sortedData);
+
+    if (selectedPeriod === 'custom') {
+      return;
     }
-  }, [selectedPeriod]);
+
+    const newData = dataMap[selectedPeriod] || [];
+    const sortedData = [...newData].sort((a, b) => new Date(a.date) - new Date(b.date));
+    setChartData(sortedData);
+    setSelectedRange({ start: null, end: null });
+    setIsCalendarVisible(false);
+  }, [selectedPeriod, externalData]);
 
   useEffect(() => {
     const sorted = [...chartData].sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -99,14 +104,6 @@ const Chart = ({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  useEffect(() => {
-    if (externalData) return;
-    if (selectedPeriod !== 'custom') {
-      setChartData(dataMap[selectedPeriod] || []);
-      setSelectedRange({ start: null, end: null });
-    }
-  }, [selectedPeriod]);
 
   useEffect(() => {
     if (selectedPeriod === 'custom' && periodButtonRef.current) {
@@ -137,11 +134,18 @@ const Chart = ({
     if (start && end) {
       setSelectedRange({ start, end });
       const allData = Object.values(dataMap).flat();
-      const filtered = allData.filter((item) => {
+      const byDate = new Map();
+      for (const item of allData) {
+        byDate.set(item.date, item);
+      }
+
+      const filtered = [...byDate.values()].filter((item) => {
         const itemDate = new Date(item.date);
         return itemDate >= start && itemDate <= end;
       });
-      setChartData(filtered);
+
+      const sortedFiltered = filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
+      setChartData(sortedFiltered);
     }
   };
 
@@ -185,8 +189,6 @@ const Chart = ({
     setSelectedPeriod(key);
     if (key === 'custom') {
       setIsCalendarVisible(true);
-    } else {
-      setIsCalendarVisible(false);
     }
   };
 
