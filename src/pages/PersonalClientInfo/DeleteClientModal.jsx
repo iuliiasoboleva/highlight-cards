@@ -1,29 +1,25 @@
 import React from 'react';
 
-import './styles.css';
+import CustomModal from '../../customs/CustomModal';
 
 const DeleteClientModal = ({ fullName, onConfirm, onCancel }) => {
   return (
-    <div className="client-modal-overlay">
-      <div className="client-modal">
-        <div className="client-modal-header">
-          <h3>Удаление клиента</h3>
-          <span className="client-modal-close" onClick={onCancel}>
-            ×
-          </span>
-        </div>
-        <p className="client-modal-sub">Информация будет удалена безвозвратно</p>
-        <p className="client-modal-question">Удалить клиента {fullName}?</p>
-        <div className="client-modal-actions">
-          <button className="client-personal-btn save" onClick={onConfirm}>
-            Удалить
-          </button>
-          <button className="client-personal-btn delete" onClick={onCancel}>
-            Отменить
-          </button>
-        </div>
-      </div>
-    </div>
+    <CustomModal
+      open
+      onClose={onCancel}
+      title="Удаление клиента"
+      maxWidth={480}
+      closeOnOverlayClick={false}
+      actions={
+        <>
+          <CustomModal.SecondaryButton onClick={onCancel}>Отменить</CustomModal.SecondaryButton>
+          <CustomModal.PrimaryButton onClick={onConfirm}>Удалить</CustomModal.PrimaryButton>
+        </>
+      }
+    >
+      <p style={{ margin: '12px 0', fontWeight: 500 }}>Информация будет удалена безвозвратно</p>
+      <p style={{ margin: '16px 0 0' }}>Удалить клиента {fullName}?</p>
+    </CustomModal>
   );
 };
 

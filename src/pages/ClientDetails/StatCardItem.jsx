@@ -5,7 +5,27 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { ru } from 'date-fns/locale';
 import { ArrowDown, ArrowUp, Copy, Edit, Info, Minus } from 'lucide-react';
 
-import './styles.css';
+import {
+  ClientCardTag,
+  ClientStatDropdownChange,
+  ClientStatDropdownChangeValue,
+  ClientStatDropdownIconCircle,
+  DashboardAction,
+  DashboardActionIcon,
+  DashboardPopupMenu,
+  DashboardPopupMenuItem,
+  DashboardRatingStars,
+  DashboardStatCard,
+  DashboardStatCounter,
+  DashboardStatCounterButton,
+  DashboardStatLabel,
+  DashboardStatRow,
+  DashboardStatValue,
+  DashboardTags,
+  DatepickerWrapper,
+  FormPopupButton,
+  Star,
+} from './styles';
 
 const StatCardItem = ({
   label,
@@ -30,7 +50,6 @@ const StatCardItem = ({
   const [isCalendarOpen, setCalendarOpen] = useState(false);
   const wrapperRef = useRef(null);
   const menuRef = useRef(null);
-  const editIconRef = useRef(null);
   const calendarRef = useRef(null);
   const today = new Date();
 
@@ -55,14 +74,8 @@ const StatCardItem = ({
         setMenuOpen(false);
       }
     };
-
-    if (menuOpen) {
-      document.addEventListener('mousedown', handleClickOutsideMenu);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideMenu);
-    };
+    if (menuOpen) document.addEventListener('mousedown', handleClickOutsideMenu);
+    return () => document.removeEventListener('mousedown', handleClickOutsideMenu);
   }, [menuOpen]);
 
   useEffect(() => {
@@ -71,74 +84,55 @@ const StatCardItem = ({
         setCalendarOpen(false);
       }
     };
-
-    if (isCalendarOpen) {
-      document.addEventListener('mousedown', handleClickOutsideCalendar);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideCalendar);
-    };
+    if (isCalendarOpen) document.addEventListener('mousedown', handleClickOutsideCalendar);
+    return () => document.removeEventListener('mousedown', handleClickOutsideCalendar);
   }, [isCalendarOpen]);
 
   return (
-    <div className="dashboard-stat-card" ref={wrapperRef}>
-      <div className="dashboard-stat-row">
-        <div
-          className="dashboard-stat-value"
-          style={small ? { fontSize: '30px', fontWeight: 500, lineHeight: 1.2 } : {}}
-        >
+    <DashboardStatCard ref={wrapperRef}>
+      <DashboardStatRow>
+        <DashboardStatValue $small={small} style={valueColor ? { color: valueColor } : undefined}>
           {isFormPopup ? (
-            <button className="form-popup-button" onClick={onFormClick}>
-              Посмотреть поля
-            </button>
+            <FormPopupButton onClick={onFormClick}>Посмотреть поля</FormPopupButton>
           ) : (
             <>
               {(onIncrement || onDecrement) && (
-                <span className="dashboard-stat-counter-button">
+                <DashboardStatCounterButton>
                   {onIncrement && (
-                    <div className="dashboard-stat-counter" onClick={onIncrement}>
-                      ＋
-                    </div>
+                    <DashboardStatCounter onClick={onIncrement}>＋</DashboardStatCounter>
                   )}
                   {onDecrement && (
-                    <div className="dashboard-stat-counter" onClick={onDecrement}>
-                      －
-                    </div>
+                    <DashboardStatCounter onClick={onDecrement}>－</DashboardStatCounter>
                   )}
-                </span>
+                </DashboardStatCounterButton>
               )}
 
               {isRating ? (
-                <div className="dashboard-rating-stars">
+                <DashboardRatingStars>
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <span key={i} className={`star ${i < value ? 'filled' : ''}`}>
+                    <Star key={i} data-filled={i < value}>
                       ★
-                    </span>
+                    </Star>
                   ))}
-                </div>
+                </DashboardRatingStars>
               ) : isTag ? (
-                <div className="dashboard-tags">
+                <DashboardTags>
                   {(isArray ? value : [value]).map((item, idx) => (
-                    <span key={idx} className="client-card-tag">
-                      {item}
-                    </span>
+                    <ClientCardTag key={idx}>{item}</ClientCardTag>
                   ))}
-                </div>
+                </DashboardTags>
               ) : !hasData ? (
                 <span className="dashboard-no-data">Нет данных</span>
               ) : isArray ? (
-                <div className="dashboard-tags">
+                <DashboardTags>
                   {value.map((item, idx) => (
-                    <span key={idx} className="client-card-tag">
-                      {item}
-                    </span>
+                    <ClientCardTag key={idx}>{item}</ClientCardTag>
                   ))}
-                </div>
+                </DashboardTags>
               ) : (
-                <span style={valueColor ? { color: valueColor } : {}}>
+                <span>
                   {label === 'LTV'
-                    ? `${value}₽`
+                    ? `${value}`
                     : isDatePicker
                       ? new Date(value).toLocaleDateString('ru-RU')
                       : value}
@@ -146,41 +140,32 @@ const StatCardItem = ({
               )}
             </>
           )}
-        </div>
-        <div className="dashboard-action">
+        </DashboardStatValue>
+
+        <DashboardAction>
           {tooltip && (
-            <div className="dashboard-action-icon" title={tooltip}>
+            <DashboardActionIcon title={tooltip} as="div">
               <Info size={16} />
-            </div>
+            </DashboardActionIcon>
           )}
+
           {copyable && hasData && !isArray && !isRating && !isDatePicker && (
-            <button className="dashboard-action-icon" onClick={handleCopy} title="Скопировать">
+            <DashboardActionIcon onClick={handleCopy} title="Скопировать">
               <Copy size={16} />
-            </button>
+            </DashboardActionIcon>
           )}
+
           {isDatePicker ? (
             <>
-              <button
-                className="dashboard-action-icon"
+              <DashboardActionIcon
                 onClick={() => setCalendarOpen((prev) => !prev)}
                 title="Выбрать дату"
-                ref={editIconRef}
               >
                 <Edit size={16} />
-              </button>
+              </DashboardActionIcon>
 
               {isCalendarOpen && (
-                <div
-                  className="datepicker-wrapper"
-                  ref={calendarRef}
-                  style={{
-                    position: 'absolute',
-                    top: `35px`,
-                    left: `-235px`,
-                    transition: 'opacity 0.2s ease',
-                    zIndex: 10000,
-                  }}
-                >
+                <DatepickerWrapper ref={calendarRef}>
                   <DatePicker
                     selected={value ? new Date(value) : today}
                     onChange={(date) => {
@@ -191,65 +176,61 @@ const StatCardItem = ({
                     locale={ru}
                     minDate={today}
                   />
-                </div>
+                </DatepickerWrapper>
               )}
             </>
           ) : (
             actionMenu && (
               <>
-                <button className="dashboard-action-icon" onClick={() => setMenuOpen((p) => !p)}>
+                <DashboardActionIcon onClick={() => setMenuOpen((p) => !p)}>
                   <Edit size={16} />
-                </button>
+                </DashboardActionIcon>
+
                 {menuOpen && (
-                  <div className="dashboard-popup-menu" ref={menuRef}>
+                  <DashboardPopupMenu ref={menuRef}>
                     {actionMenu.map((item, i) => (
-                      <div
+                      <DashboardPopupMenuItem
                         key={i}
-                        className="dashboard-popup-menu-item"
                         onClick={() => {
                           item.onClick();
                           setMenuOpen(false);
                         }}
                       >
                         {item.label}
-                      </div>
+                      </DashboardPopupMenuItem>
                     ))}
-                  </div>
+                  </DashboardPopupMenu>
                 )}
               </>
             )
           )}
-        </div>
+        </DashboardAction>
 
         {showRightCircle && !isArray && !isRating && !isDatePicker && hasData && (
-          <div className={`client-stat-dropdown-icon-circle ${changeType}`}>
+          <ClientStatDropdownIconCircle $type={changeType}>
             {isPositive ? (
-              <ArrowUp size={14} className={`client-stat-icon ${changeType}`} />
+              <ArrowUp size={14} />
             ) : isNegative ? (
-              <ArrowDown size={14} className={`client-stat-icon ${changeType}`} />
+              <ArrowDown size={14} />
             ) : (
-              <Minus size={14} className={`client-stat-icon ${changeType}`} />
+              <Minus size={14} />
             )}
-          </div>
+          </ClientStatDropdownIconCircle>
         )}
-      </div>
+      </DashboardStatRow>
 
-      <div className="dashboard-stat-row">
-        <div className="dashboard-stat-label">
-          {showRightCircle && !isArray && hasData && !isRating && !isDatePicker && (
-            <span className={`dashboard-stat-dot ${changeType}`}></span>
-          )}
-          {label}
-        </div>
+      <DashboardStatRow style={{ marginTop: 'auto' }}>
+        <DashboardStatLabel>{label}</DashboardStatLabel>
+
         {showRightCircle && !isArray && hasData && !isRating && !isDatePicker && (
-          <div className="client-stat-dropdown-change">
-            <span className={`client-stat-dropdown-change-value ${changeType}`}>
+          <ClientStatDropdownChange>
+            <ClientStatDropdownChangeValue $type={changeType}>
               {isPositive ? `+${change}` : change}
-            </span>
-          </div>
+            </ClientStatDropdownChangeValue>
+          </ClientStatDropdownChange>
         )}
-      </div>
-    </div>
+      </DashboardStatRow>
+    </DashboardStatCard>
   );
 };
 

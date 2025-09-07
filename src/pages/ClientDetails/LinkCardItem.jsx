@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 
-import './styles.css';
+import {
+  DashboardCopyBtn,
+  DashboardCopyBtnWrapper,
+  DashboardLinkCard,
+  DashboardLinkText,
+  DashboardLinkUrl,
+  DashboardStatLabel,
+} from './styles';
 
 const LinkCardItem = ({ url, label }) => {
   const [copied, setCopied] = useState(false);
@@ -12,20 +19,18 @@ const LinkCardItem = ({ url, label }) => {
   };
 
   return (
-    <div className="dashboard-link-card">
-      <div className="dashboard-link-url">
-        <span className="dashboard-link-text" title={url}>
-          {url}
-        </span>
-        <div className="dashboard-copy-btn-wrapper">
-          <button className={`dashboard-copy-btn ${copied ? 'copied' : ''}`} onClick={handleCopy}>
+    <DashboardLinkCard>
+      <DashboardLinkUrl>
+        <DashboardLinkText title={url}>{url}</DashboardLinkText>
+        <DashboardCopyBtnWrapper>
+          <DashboardCopyBtn onClick={handleCopy} data-copied={copied}>
             {copied ? 'Скопировано' : 'Скопировать'}
-          </button>
-        </div>
-      </div>
+          </DashboardCopyBtn>
+        </DashboardCopyBtnWrapper>
+      </DashboardLinkUrl>
 
-      <div className="dashboard-stat-label">{label}</div>
-    </div>
+      <DashboardStatLabel>{label}</DashboardStatLabel>
+    </DashboardLinkCard>
   );
 };
 

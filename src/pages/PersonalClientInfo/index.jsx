@@ -11,10 +11,22 @@ import { Calendar } from 'lucide-react';
 
 import axiosInstance from '../../axiosInstance';
 import LoaderCentered from '../../components/LoaderCentered';
+import CustomInput from '../../customs/CustomInput';
 import { setClients } from '../../store/clientsSlice';
 import DeleteClientModal from './DeleteClientModal';
-
-import './styles.css';
+import {
+  Actions,
+  Container,
+  DateField,
+  FormCard,
+  Group,
+  Label,
+  PhoneWrapper,
+  PrimaryButton,
+  Row,
+  SecondaryButton,
+  Title,
+} from './styles';
 
 const PersonalClientInfo = () => {
   const { id } = useParams();
@@ -63,11 +75,14 @@ const PersonalClientInfo = () => {
     if (clientFromStore) setLoading(false);
   }, [clientFromStore]);
 
-  if (loading) {
-    return <LoaderCentered />;
-  }
+  if (loading) return <LoaderCentered />;
 
-  if (!client) return <p style={{ textAlign: 'center' }}>Клиент не найден</p>;
+  if (!client)
+    return (
+      <Container>
+        <p style={{ textAlign: 'center' }}>Клиент не найден</p>
+      </Container>
+    );
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -88,15 +103,6 @@ const PersonalClientInfo = () => {
       .catch((e) => console.error(e));
   };
 
-  const formatDate = (date) => {
-    if (!date) return '';
-    const d = new Date(date);
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
-
   const handleDelete = () => {
     axiosInstance
       .delete(`/clients/${id}`)
@@ -111,84 +117,85 @@ const PersonalClientInfo = () => {
 
   return (
     <>
-      <div className="client-personal-container">
-        <h2 className="client-personal-title">Персональная информация</h2>
-        <form className="client-personal-form">
-          <div className="client-personal-row">
-            <div className="client-personal-group">
-              <label>Фамилия</label>
-              <input
+      <Container>
+        <Title>Персональная информация</Title>
+
+        <FormCard as="form">
+          <Row>
+            <Group>
+              <Label>Фамилия</Label>
+              <CustomInput
                 type="text"
                 value={formData.surname}
                 onChange={(e) => handleChange('surname', e.target.value)}
-                className="custom-input"
               />
-            </div>
-            <div className="client-personal-group date-picker-wrapper">
-              <label>Дата рождения</label>
-              <div className="client-date-input-wrapper">
+            </Group>
+
+            <Group>
+              <Label>Дата рождения</Label>
+              <DateField>
                 <DatePicker
                   selected={formData.birthdate}
                   onChange={(date) => handleChange('birthdate', date)}
                   dateFormat="dd/MM/yyyy"
+                  className="custom-input"
                   locale={ru}
                   maxDate={new Date()}
                   placeholderText="Выберите дату"
-                  className="custom-input"
                   showYearDropdown
                   scrollableYearDropdown
                   yearDropdownItemNumber={100}
                 />
-                <Calendar className="calendar-icon-overlay" size={18} />
-              </div>
-            </div>
-          </div>
-          <div className="client-personal-row">
-            <div className="client-personal-group">
-              <label>Имя</label>
-              <input
+                <Calendar className="calendar-icon" size={18} />
+              </DateField>
+            </Group>
+          </Row>
+
+          <Row>
+            <Group>
+              <Label>Имя</Label>
+              <CustomInput
                 type="text"
                 value={formData.name}
                 onChange={(e) => handleChange('name', e.target.value)}
-                className="custom-input"
               />
-            </div>
-            <div className="client-personal-group">
-              <label>Email</label>
-              <input
+            </Group>
+
+            <Group>
+              <Label>Email</Label>
+              <CustomInput
                 type="email"
                 value={formData.email}
                 onChange={(e) => handleChange('email', e.target.value)}
-                className="custom-input"
               />
-            </div>
-          </div>
-          <div className="client-personal-row">
-            <div className="client-personal-group">
-              <label>Телефон</label>
-              <PhoneInput
-                country="ru"
-                value={formData.phone}
-                onChange={(phone) => handleChange('phone', '+' + phone)}
-                inputStyle={{ width: '100%' }}
-                inputProps={{ required: true }}
-              />
-            </div>
-          </div>
-          <div className="client-personal-actions">
-            <button type="button" className="client-personal-btn save" onClick={handleSave}>
+            </Group>
+          </Row>
+
+          <Row>
+            <Group>
+              <Label>Телефон</Label>
+              <PhoneWrapper>
+                <PhoneInput
+                  country="ru"
+                  value={formData.phone}
+                  onChange={(phone) => handleChange('phone', '+' + phone)}
+                  inputProps={{ required: true }}
+                />
+              </PhoneWrapper>
+            </Group>
+          </Row>
+
+          <Actions>
+            <PrimaryButton type="button" onClick={handleSave}>
               Сохранить
-            </button>
-            <button
-              type="button"
-              className="client-personal-btn delete"
-              onClick={() => setShowDeleteModal(true)}
-            >
+            </PrimaryButton>
+            <SecondaryButton type="button" onClick={() => setShowDeleteModal(true)}>
               Удалить
-            </button>
-          </div>
-        </form>
-      </div>
+            </SecondaryButton>
+          </Actions>
+        </FormCard>
+      </Container>
+
       {showDeleteModal && (
         <DeleteClientModal
           fullName={`${formData.name} ${formData.surname}`}

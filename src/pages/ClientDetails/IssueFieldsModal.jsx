@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 
-import './styles.css';
+import CustomInput from '../../customs/CustomInput';
+import CustomModal from '../../customs/CustomModal';
+import { Label } from '../EditDesign/styles';
+import { FormWrapper } from './styles';
 
 const IssueFieldsModal = ({ fields = [], onClose, onSave }) => {
-  const [formState, setFormState] = useState(fields.map((field) => ({ ...field })));
+  const [formState, setFormState] = useState(fields?.map((field) => ({ ...field })));
 
   const handleChange = (index, value) => {
     const updated = [...formState];
@@ -12,43 +15,41 @@ const IssueFieldsModal = ({ fields = [], onClose, onSave }) => {
   };
 
   const handleSubmit = () => {
-    if (onSave) onSave(formState);
-    onClose();
+    onSave?.(formState);
+    onClose?.();
   };
 
   return (
-    <div className="issue-fields-overlay">
-      <div className="issue-fields-modal">
-        <div className="issue-fields-header">
-          <h3>Поля</h3>
-          <button className="issue-fields-close" onClick={onClose}>
-            ×
-          </button>
-        </div>
-
-        <div className="issue-fields-body">
-          {formState.map((field, i) => (
-            <div key={i} className="issue-fields-field">
-              <label>{field.label}</label>
-              <input
-                type={field.type === 'date' ? 'date' : 'text'}
-                value={field.value}
-                onChange={(e) => handleChange(i, e.target.value)}
-              />
-            </div>
-          ))}
-        </div>
-
-        <div className="issue-fields-actions">
-          <button className="issue-fields-btn" onClick={handleSubmit}>
+    <CustomModal
+      open
+      onClose={onClose}
+      title="Поля"
+      maxWidth={500}
+      closeOnOverlayClick={false}
+      actions={
+        <>
+          <CustomModal.PrimaryButton type="button" onClick={handleSubmit}>
             Сохранить
-          </button>
-          <button className="issue-fields-btn cancel" onClick={onClose}>
+          </CustomModal.PrimaryButton>
+          <CustomModal.SecondaryButton type="button" onClick={onClose}>
             Закрыть
-          </button>
-        </div>
-      </div>
-    </div>
+          </CustomModal.SecondaryButton>
+        </>
+      }
+    >
+      <FormWrapper>
+        {formState?.map((field, i) => (
+          <div key={i}>
+            <Label>{field.label}</Label>
+            <CustomInput
+              type={field.type === 'date' ? 'date' : 'text'}
+              value={field.value ?? ''}
+              onChange={(e) => handleChange(i, e.target.value)}
+            />
+          </div>
+        ))}
+      </FormWrapper>
+    </CustomModal>
   );
 };
 

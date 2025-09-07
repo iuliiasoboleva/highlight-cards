@@ -32,6 +32,7 @@ const SubMenu = ({
   initialName,
   showRightActions,
   showDownloadTable,
+  allowEditButton,
 }) => {
   const { id } = useParams();
   const location = useLocation();
@@ -128,7 +129,7 @@ const SubMenu = ({
             })}
           </SubmenuCenter>
 
-          {!showRightActions && id && (
+          {!showRightActions && allowEditButton && id && (
             <SubmenuRight>
               <SaveButton
                 onClick={() => {

@@ -6,8 +6,24 @@ import CustomTable from '../../components/CustomTable';
 import LoaderCentered from '../../components/LoaderCentered';
 import { clientHeaders } from '../../mocks/mockClientTable';
 import StatCard from './StatCard';
-
-import './styles.css';
+import './styles.jsx';
+import {
+  AvatarCircle,
+  BoxContent,
+  CardTag,
+  Cards,
+  Container,
+  NoCards,
+  Price,
+  StatGrid,
+  Sub,
+  Subtitle,
+  TableName,
+  TariffBoxLeft,
+  TariffBoxRight,
+  TariffBoxes,
+  Title,
+} from './styles.jsx';
 
 const ClientDetails = () => {
   const { id } = useParams();
@@ -44,61 +60,72 @@ const ClientDetails = () => {
     return <LoaderCentered />;
   }
 
-  if (!client) return <p style={{ textAlign: 'center' }}>Клиент не найден</p>;
+  if (!client)
+    return (
+      <Container>
+        <p style={{ textAlign: 'center' }}>Клиент не найден</p>
+      </Container>
+    );
 
   return (
-    <div className="client-container">
-      <h2 className="client-container-title">Профиль пользователя</h2>
-      <div className="tariff-boxes">
-        <div className="tariff-box tariff-box-left">
-          <div className="avatar-circle">
+    <Container>
+      <Title>Профиль пользователя</Title>
+
+      <TariffBoxes>
+        <TariffBoxLeft>
+          <AvatarCircle>
             {client.name?.[0]?.toUpperCase()}
             {client.surname?.[0]?.toUpperCase()}
-          </div>
-          <div className="tariff-box-content">
-            <div className="tariff-price">
+          </AvatarCircle>
+          <BoxContent>
+            <Price>
               {client.name} {client.surname}
-            </div>
-            <div className="tariff-sub">Имя клиента</div>
-          </div>
-        </div>
-        <div className="tariff-box tariff-box-right">
-          <div className="tariff-box-content">
-            <div className="tariff-price">{client.createdAt}</div>
-            <div className="tariff-sub">Дата регистрации </div>
-          </div>
-        </div>
-      </div>
-      <p className="client-subtitle">Карты клиента</p>
-      <div className="client-cards">
+            </Price>
+            <Sub>Имя клиента</Sub>
+          </BoxContent>
+        </TariffBoxLeft>
+
+        <TariffBoxRight>
+          <BoxContent>
+            <Price>{client.createdAt}</Price>
+            <Sub>Дата регистрации </Sub>
+          </BoxContent>
+        </TariffBoxRight>
+      </TariffBoxes>
+
+      <Subtitle>Карты клиента</Subtitle>
+      <Cards>
         {client.cards?.length > 0 ? (
           client.cards.map((card, index) => (
-            <div className="client-card-tag" key={card.id || index}>
-              {card.name}
+            <React.Fragment key={card.id || index}>
+              <CardTag>{card.name}</CardTag>
+
               {card.id && (
-                <a
+                <CardTag
+                  as="a"
                   href={`${axiosInstance.defaults.baseURL || ''}/passes/${card.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ marginLeft: 8, fontSize: 12 }}
                 >
                   Apple&nbsp;Wallet
-                </a>
+                </CardTag>
               )}
-            </div>
+            </React.Fragment>
           ))
         ) : (
-          <p className="no-cards">Нет привязанных карт</p>
+          <NoCards>Нет привязанных карт</NoCards>
         )}
-      </div>
-      <div className="stat-grid">
+      </Cards>
+
+      <StatGrid>
         <StatCard stats={prepareStats(client)} />
-      </div>
-      <div className="table-wrapper">
-        <h3 className="table-name">Последние транзакции по карте</h3>
+      </StatGrid>
+
+      <div>
+        <TableName>Последние транзакции по карте</TableName>
         <CustomTable columns={clientHeaders} rows={transactions} />
       </div>
-    </div>
+    </Container>
   );
 };
 

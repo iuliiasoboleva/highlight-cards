@@ -1,38 +1,45 @@
 import React from 'react';
 
 import CustomInput from '../../customs/CustomInput';
-
-import './styles.css';
+import CustomModal from '../../customs/CustomModal';
+import CustomTextArea from '../../customs/CustomTextarea';
+import { Label } from '../EditDesign/styles';
 
 const BalanceModal = ({ type, onClose }) => {
-  const title = type === 'increase' ? 'Насколько увеличить баланс?' : 'Насколько уменьшить баланс?';
+  const titleText =
+    type === 'increase' ? 'Насколько увеличить баланс?' : 'Насколько уменьшить баланс?';
+
   return (
-    <div className="client-modal-overlay">
-      <div className="client-modal">
-        <div className="client-modal-header">
-          <h3>Изменение баланса</h3>
-          <button className="client-modal-close" onClick={onClose}>
-            ×
-          </button>
-        </div>
-        <p>{title}</p>
+    <CustomModal
+      open
+      onClose={onClose}
+      title="Изменение баланса"
+      maxWidth={500}
+      closeOnOverlayClick={false}
+      actions={
+        <>
+          <CustomModal.PrimaryButton type="button">Применить</CustomModal.PrimaryButton>
+          <CustomModal.SecondaryButton type="button" onClick={onClose}>
+            Отменить
+          </CustomModal.SecondaryButton>
+        </>
+      }
+    >
+      <p style={{ marginBottom: 12 }}>{titleText}</p>
 
-        <p>
-          Для: <strong></strong>
-        </p>
-        <label>Значение:</label>
-        <CustomInput type="number" placeholder="Введите значение" />
-        <label>Сумма покупки:</label>
-        <CustomInput type="number" placeholder="₽" />
-        <label>Комментарий:</label>
-        <textarea placeholder="Комментарий (необязательно)" />
+      <p style={{ marginBottom: 12 }}>
+        Для: <strong></strong>
+      </p>
 
-        <div className="client-modal-actions">
-          <button className="primary">Применить</button>
-          <button onClick={onClose}>Отменить</button>
-        </div>
-      </div>
-    </div>
+      <Label>Значение:</Label>
+      <CustomInput type="number" placeholder="Введите значение" />
+
+      <Label>Сумма покупки:</Label>
+      <CustomInput type="number" placeholder="₽" />
+
+      <Label>Комментарий:</Label>
+      <CustomTextArea placeholder="Комментарий (необязательно)" />
+    </CustomModal>
   );
 };
 

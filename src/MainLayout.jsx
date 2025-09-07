@@ -250,6 +250,7 @@ const MainLayout = () => {
             onNameChange={(newName) => {
               dispatch(updateCurrentCardField({ path: 'name', value: newName }));
             }}
+            allowEditButton={!!matchCardDetails}
           />
         </div>
       )}

@@ -4,8 +4,7 @@ import BalanceModal from './BalanceModal';
 import IssueFieldsModal from './IssueFieldsModal';
 import LinkCardItem from './LinkCardItem';
 import StatCardItem from './StatCardItem';
-
-import './styles.css';
+import { ClientDashboardStats, ClientDashboardWrapper, ClientLinkWrapper } from './styles';
 
 const linkCards = [
   {
@@ -90,12 +89,7 @@ const defaultStats = [
     label: 'Статус',
     value: 'Установлена',
     valueColor: 'limegreen',
-    actionMenu: [
-      {
-        label: 'Удалить',
-        onClick: () => console.log('Удалить статус'),
-      },
-    ],
+    actionMenu: [{ label: 'Удалить', onClick: () => console.log('Удалить статус') }],
     showRightCircle: false,
   },
   {
@@ -119,13 +113,7 @@ const defaultStats = [
     onDateChange: (date) => console.log(date),
     showRightCircle: false,
   },
-  {
-    key: 'utm',
-    label: 'UTM метка',
-    value: 'qr',
-    isTag: true,
-    showRightCircle: false,
-  },
+  { key: 'utm', label: 'UTM метка', value: 'qr', isTag: true, showRightCircle: false },
   {
     key: 'card_issue_date',
     label: 'Дата выпуска карты',
@@ -158,8 +146,8 @@ const StatCard = ({ stats = null, links = null }) => {
   const linksToRender = links && links.length ? links : linkCards;
 
   return (
-    <div className="client-dashboard-wrapper">
-      <div className="client-dashboard-stats">
+    <ClientDashboardWrapper>
+      <ClientDashboardStats>
         {statsToRender.map((item) => (
           <StatCardItem
             key={item.key}
@@ -181,13 +169,14 @@ const StatCard = ({ stats = null, links = null }) => {
             }}
           />
         )}
-      </div>
-      <div className="client-link-wrapper">
+      </ClientDashboardStats>
+
+      <ClientLinkWrapper>
         {linksToRender.map((item, index) => (
           <LinkCardItem key={index} url={item.url} label={item.label} />
         ))}
-      </div>
-    </div>
+      </ClientLinkWrapper>
+    </ClientDashboardWrapper>
   );
 };
 
