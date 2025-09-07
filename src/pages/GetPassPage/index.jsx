@@ -1,25 +1,37 @@
 import React, { useState } from 'react';
-import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { useSelector } from 'react-redux';
 
 import PwaIcon from '../../assets/icons/pwa.svg';
 import Accordion from '../../components/Accordion';
 import CustomCheckbox from '../../customs/CustomCheckbox';
-
-import './styles.css';
+import CustomInput from '../../customs/CustomInput';
+import {
+  AccordionsWrapper,
+  AuthForm,
+  AuthFormWrapper,
+  CardBlock,
+  Container,
+  Header,
+  HeaderBar,
+  HeaderContent,
+  PwaButton,
+  PwaIconImg,
+  StyledPhoneInput,
+  Title,
+} from './styles';
 
 const GetPassPage = () => {
   const card = useSelector((state) => state.cards.currentCard);
 
   const accordionItems = [
-    { title: 'Информация о компании', content: card.infoFields?.companyName || '...' },
-    { title: 'Информация о карте', content: card.infoFields?.howToGetStamp || '...' },
+    { title: 'Информация о компании', content: card?.infoFields?.companyName || '...' },
+    { title: 'Информация о карте', content: card?.infoFields?.howToGetStamp || '...' },
     {
       title: 'Политика использования персональных данных',
-      content: card.policySettings?.fullPolicyText || '...',
+      content: card?.policySettings?.fullPolicyText || '...',
     },
-    { title: 'Условия использования', content: card.infoFields?.fullPolicyText || '...' },
+    { title: 'Условия использования', content: card?.infoFields?.fullPolicyText || '...' },
   ];
 
   const [formData, setFormData] = useState({});
@@ -55,47 +67,40 @@ const GetPassPage = () => {
   if (!card) return <div>Загрузка...</div>;
 
   return (
-    <div className="getpass-container">
-      <div className="getpass-header">
-        <div className="getpass-header-bar">
-          <div className="getpass-header-content">{card?.title || ''}</div>
-        </div>
-      </div>
+    <Container>
+      <Header>
+        <HeaderBar>
+          <HeaderContent>{card?.title || ''}</HeaderContent>
+        </HeaderBar>
+      </Header>
 
-      <div className="auth-form-wrapper">
-        <h1 className="getpass-title">
-          {card.infoFields?.description || 'Получайте бонусные баллы за каждую покупку.'}
-        </h1>
-        <div className="form-block">
-          <form onSubmit={handleSubmit} className="auth-form">
-            {card.issueFormFields.map((field) => (
+      <AuthFormWrapper>
+        <Title>
+          {card?.infoFields?.description || 'Получайте бонусные баллы за каждую покупку.'}
+        </Title>
+
+        <CardBlock>
+          <AuthForm onSubmit={handleSubmit}>
+            {(card?.issueFormFields || []).map((field) => (
               <div key={field.name}>
                 {field.type === 'phone' ? (
-                  <PhoneInput
-                    country={'ru'}
+                  <StyledPhoneInput
+                    country="ru"
                     value={formData.phone || ''}
                     onChange={handlePhoneChange}
                     inputProps={{
                       name: 'phone',
                       required: field.required,
-                      className: 'custom-input',
                     }}
-                    containerStyle={{ width: '100%' }}
-                    inputStyle={{ width: '100%', paddingLeft: 48 }}
                   />
                 ) : (
-                  <input
+                  <CustomInput
                     name={field.name}
                     placeholder={field.name}
                     value={formData[field.name] || ''}
                     onChange={handleChange}
                     onBlur={() => handleBlur(field.name)}
                     required={field.required}
-                    className={`custom-input ${
-                      touchedFields[field.name] && field.required && !formData[field.name]
-                        ? 'input-error'
-                        : ''
-                    }`}
                     type={
                       field.type === 'email'
                         ? 'email'
@@ -117,7 +122,7 @@ const GetPassPage = () => {
               </div>
             ))}
 
-            {card.policySettings?.policyEnabled && (
+            {card?.policySettings?.policyEnabled && (
               <CustomCheckbox
                 name="terms"
                 checked={consent.terms}
@@ -137,19 +142,20 @@ const GetPassPage = () => {
               required
             />
 
-            <button type="submit" className="getpass-install-pwa">
-              <img src={PwaIcon} alt="PWA" className="getpass-install-icon" />
+            <PwaButton type="submit">
+              <PwaIconImg src={PwaIcon} alt="PWA" />
               <span>Установить на домашний экран</span>
-            </button>
-          </form>
-          <div className="accordions-wrapper">
-            {accordionItems.map((item, index) => (
+            </PwaButton>
+          </AuthForm>
+
+          <AccordionsWrapper>
+            {accordionItems.map((item) => (
               <Accordion key={item.title} title={item.title} content={item.content} />
             ))}
-          </div>
-        </div>
-      </div>
-    </div>
+          </AccordionsWrapper>
+        </CardBlock>
+      </AuthFormWrapper>
+    </Container>
   );
 };
 

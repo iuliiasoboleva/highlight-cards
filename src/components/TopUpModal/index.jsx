@@ -1,55 +1,73 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
-import './styles.css';
+import CustomInput from '../../customs/CustomInput';
+import CustomModal from '../../customs/CustomModal';
+import { ButtonsRow, PresetBtn, PresetGrid } from './styles';
 
 const presetAmounts = [500, 1000, 1500, 2000];
 
-const TopUpModal = ({ isOpen, onClose, onConfirm }) => {
+const TopUpModal = ({ isOpen, open, onClose, onConfirm }) => {
+  const actuallyOpen = open ?? isOpen;
   const [amount, setAmount] = useState('');
 
-  if (!isOpen) return null;
+  const num = useMemo(() => {
+    const n = parseInt(amount, 10);
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  }, [amount]);
+
+  if (!actuallyOpen) return null;
 
   const handleConfirm = () => {
-    const num = parseInt(amount, 10);
-    if (num > 0) {
-      onConfirm(num);
-    }
+    if (num > 0) onConfirm?.(num);
   };
 
+  const onPreset = (a) => setAmount(String(a));
+
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <h3 style={{ margin: 0, marginBottom: 12 }}>Пополнить баланс</h3>
-        <div className="topup-preset-grid">
-          {presetAmounts.map((a) => (
-            <button key={a} className="preset-btn" onClick={() => setAmount(String(a))}>
-              {a.toLocaleString('ru-RU')} ₽
-            </button>
-          ))}
-        </div>
-        <input
-          type="number"
-          className="topup-input"
-          placeholder="Другая сумма"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          min={1}
-        />
-        <div className="modal-buttons">
-          <button
-            className="btn btn-dark"
-            style={{ minWidth: 120 }}
-            onClick={handleConfirm}
-            disabled={!parseInt(amount || 0, 10)}
+    <CustomModal
+      open={actuallyOpen}
+      onClose={onClose}
+      title="Пополнить баланс"
+      maxWidth={420}
+      aria-label="Окно пополнения баланса"
+    >
+      <PresetGrid>
+        {presetAmounts.map((a) => (
+          <PresetBtn
+            key={a}
+            $active={String(a) === String(amount)}
+            type="button"
+            onClick={() => onPreset(a)}
+            aria-pressed={String(a) === String(amount)}
           >
-            Пополнить
-          </button>
-          <button className="btn-light" onClick={onClose}>
-            Отмена
-          </button>
-        </div>
-      </div>
-    </div>
+            {a.toLocaleString('ru-RU')} ₽
+          </PresetBtn>
+        ))}
+      </PresetGrid>
+
+      <CustomInput
+        type="number"
+        placeholder="Другая сумма"
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+        min={1}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') handleConfirm();
+        }}
+      />
+
+      <ButtonsRow>
+        <CustomModal.PrimaryButton
+          onClick={handleConfirm}
+          disabled={!num}
+          style={{ minWidth: 120 }}
+        >
+          Пополнить
+        </CustomModal.PrimaryButton>
+
+        <CustomModal.SecondaryButton onClick={onClose}>Отмена</CustomModal.SecondaryButton>
+      </ButtonsRow>
+    </CustomModal>
   );
 };
 

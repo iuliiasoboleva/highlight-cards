@@ -1,26 +1,28 @@
 import React from 'react';
 
-import './styles.css';
+import { Header, HeaderTitle, Logo, Message, Push, Time, Title, Wrapper } from './styles';
 
-const PushPreview = ({ card, message, scheduledDate }) => {
+const PushPreview = ({ card = {}, message, scheduledDate }) => {
+  const iconSrc = card?.design?.icon || '/push-logotype.svg';
+  const companyName = (card?.infoFields?.companyName || 'Название компании').toUpperCase();
+
   return (
-    <div className="push-preview-wrapper">
-      <div className="push-preview">
-        <div className="push-header">
-          <div className="push-header-title">
-            <img src={card.design.icon || '/push-logotype.svg'} alt="logo" className="push-logo" />
-            <span className="push-title">
-              {(card?.infoFields.companyName || 'Название компании').toUpperCase()}
-            </span>
-          </div>
-          <span className="push-time">{scheduledDate || 'сейчас'}</span>
-        </div>
-        <div className="push-message">
+    <Wrapper>
+      <Push>
+        <Header>
+          <HeaderTitle>
+            <Logo src={iconSrc} alt="logo" />
+            <Title title={companyName}>{companyName}</Title>
+          </HeaderTitle>
+          <Time>{scheduledDate || 'сейчас'}</Time>
+        </Header>
+
+        <Message>
           {message ||
             'Текст push-сообщения в боковом превью сервиса с возможностью использования emojis 👀 🧾 💬 😍'}
-        </div>
-      </div>
-    </div>
+        </Message>
+      </Push>
+    </Wrapper>
   );
 };
 

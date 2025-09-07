@@ -2,39 +2,55 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
+import { useToast } from '../../components/Toast';
+import CustomInput from '../../customs/CustomInput';
+import CustomMainButton from '../../customs/CustomMainButton';
 import { mockClients } from '../../mocks/clientsInfo';
 import { setClients, updateCard } from '../../store/clientsSlice';
-
-import './styles.css';
+import {
+  Actions,
+  Container,
+  CustomerName,
+  Header,
+  Hint,
+  InfoGrid,
+  InfoItem,
+  InfoLabel,
+  InfoValue,
+  Row,
+  RowLabel,
+  RowValue,
+  SectionCard,
+  SectionTitle,
+  StampControls,
+  Title,
+} from './styles';
 
 const CustomerPage = () => {
   const { cardNumber } = useParams();
   const dispatch = useDispatch();
+  const toast = useToast();
+
   const clients = useSelector((state) => state.clients);
 
   const [stampsToAdd, setStampsToAdd] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     dispatch(setClients(mockClients));
   }, [dispatch]);
 
-  const customerWithCard = clients.find((client) =>
-    client.cards.some((card) => card.cardNumber === cardNumber),
+  const customerWithCard = mockClients.find((client) =>
+    client?.cards?.some((card) => card.cardNumber === cardNumber),
   );
 
-  const selectedCard = customerWithCard?.cards.find((card) => card.cardNumber === cardNumber);
-  const selectedCardIndex = customerWithCard?.cards.findIndex(
+  const selectedCard = customerWithCard?.cards?.find((card) => card.cardNumber === cardNumber);
+  const selectedCardIndex = customerWithCard?.cards?.findIndex(
     (card) => card.cardNumber === cardNumber,
   );
 
-  if (clients.length === 0) {
-    return <div>Загрузка...</div>;
-  }
-
   if (!customerWithCard || !selectedCard || selectedCardIndex === -1) {
-    return <div>Карта не найдена</div>;
+    return <Container>Карта не найдена</Container>;
   }
 
   const mockApiCall = (action, data) => {
@@ -47,6 +63,7 @@ const CustomerPage = () => {
             case 'addStamps':
               updates.activeStorage = (selectedCard.activeStorage || 0) + data.amount;
               updates.stamps = (selectedCard.stamps || 0) + data.amount;
+              updates.lastAccrual = new Date().toLocaleDateString();
               break;
 
             case 'addReward':
@@ -55,15 +72,15 @@ const CustomerPage = () => {
               break;
 
             case 'receiveReward':
-              if (selectedCard.availableRewards <= 0) {
+              if ((selectedCard.availableRewards || 0) <= 0) {
                 throw new Error('Нет доступных наград');
               }
-              updates.availableRewards = selectedCard.availableRewards - 1;
+              updates.availableRewards = (selectedCard.availableRewards || 0) - 1;
               updates.lastRewardReceived = new Date().toLocaleDateString();
               updates.activeStorage =
-                selectedCard.activeStorage >= 10
-                  ? selectedCard.activeStorage - 10
-                  : selectedCard.activeStorage;
+                (selectedCard.activeStorage || 0) >= 10
+                  ? (selectedCard.activeStorage || 0) - 10
+                  : selectedCard.activeStorage || 0;
               break;
 
             default:
@@ -83,27 +100,28 @@ const CustomerPage = () => {
     setIsLoading(true);
     try {
       await mockApiCall('receiveReward');
-      showNotification('Награда успешно получена! Спасибо за обслуживание клиента');
+      toast.success('Награда успешно получена! Спасибо за обслуживание клиента');
     } catch (error) {
-      showNotification(error.message);
+      toast.error(error.message || 'Ошибка при получении награды');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleAddStamps = async () => {
-    if (!stampsToAdd || isNaN(stampsToAdd) || stampsToAdd <= 0) {
-      showNotification('Введите корректное количество штампов');
+    const amount = Number(stampsToAdd);
+    if (!amount || Number.isNaN(amount) || amount <= 0) {
+      toast.error('Введите корректное количество штампов');
       return;
     }
 
     setIsLoading(true);
     try {
-      await mockApiCall('addStamps', { amount: parseInt(stampsToAdd) });
+      await mockApiCall('addStamps', { amount: parseInt(amount, 10) });
       setStampsToAdd('');
-      showNotification(`Добавлено ${stampsToAdd} штампов! Спасибо за обслуживание клиента`);
+      toast.success(`Добавлено ${amount} штампов! Спасибо за обслуживание клиента`);
     } catch (error) {
-      showNotification('Ошибка при добавлении штампов');
+      toast.error('Ошибка при добавлении штампов');
     } finally {
       setIsLoading(false);
     }
@@ -113,105 +131,91 @@ const CustomerPage = () => {
     setIsLoading(true);
     try {
       await mockApiCall('addReward');
-      showNotification('Награда добавлена! Спасибо за обслуживание клиента');
+      toast.success('Награда добавлена! Спасибо за обслуживание клиента');
     } catch (error) {
-      showNotification('Ошибка при добавлении награды');
+      toast.error('Ошибка при добавлении награды');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const showNotification = (message) => {
-    setNotification(message);
-    setTimeout(() => setNotification(null), 3000);
-  };
-
   return (
-    <div className="customer-page">
-      {notification && <div className="notification">{notification}</div>}
+    <Container>
+      <Header>
+        <Title>
+          Клиент: <CustomerName>{customerWithCard.name}</CustomerName>
+        </Title>
+      </Header>
 
-      <div className="customer-header">
-        <h1>
-          Клиент: <span className="customer-name">{customerWithCard.name}</span>
-        </h1>
-      </div>
-
-      <div className="customer-actions">
-        <button className="btn btn-dark" onClick={handleAddReward} disabled={isLoading}>
+      <Actions>
+        <CustomMainButton onClick={handleAddReward} disabled={isLoading}>
           {isLoading ? 'Обработка...' : 'Добавить награду'}
-        </button>
-        <button
-          className="btn btn-light"
+        </CustomMainButton>
+
+        <CustomMainButton
           onClick={handleReceiveReward}
-          disabled={isLoading || selectedCard.availableRewards <= 0}
+          disabled={isLoading || (selectedCard.availableRewards || 0) <= 0}
         >
           {isLoading ? 'Обработка...' : 'Получить награду'}
-        </button>
-      </div>
+        </CustomMainButton>
+      </Actions>
 
-      <div className="stamp-section">
-        <h2>Добавить штампы:</h2>
-        <div className="stamp-controls">
-          <input
+      <SectionCard>
+        <SectionTitle>Добавить штампы:</SectionTitle>
+        <StampControls>
+          <CustomInput
             type="number"
             min="1"
             value={stampsToAdd}
             onChange={(e) => setStampsToAdd(e.target.value)}
             placeholder="Количество штампов"
-            className="stamp-input"
             disabled={isLoading}
           />
-          <button
-            className="btn btn-dark"
-            onClick={handleAddStamps}
-            disabled={isLoading || !stampsToAdd}
-          >
+          <CustomMainButton onClick={handleAddStamps} disabled={isLoading || !stampsToAdd}>
             {isLoading ? 'Добавление...' : 'Добавить'}
-          </button>
-        </div>
-      </div>
+          </CustomMainButton>
+        </StampControls>
+      </SectionCard>
 
-      <div className="customer-info-grid">
-        <div className="info-item">
-          <span className="info-label">Текущие баллы:</span>
-          <span className="info-value">{selectedCard.activeStorage}</span>
-        </div>
-        <div className="info-item">
-          <span className="info-label">Доступные награды:</span>
-          <span className="info-value">{selectedCard.availableRewards}</span>
-        </div>
-        <div className="info-item">
-          <span className="info-label">Последняя награда:</span>
-          <span className="info-value">{selectedCard.lastRewardReceived || '—'}</span>
-        </div>
-        <div className="info-item">
-          <span className="info-label">Последнее начисление:</span>
-          <span className="info-value">{selectedCard.lastAccrual || '—'}</span>
-        </div>
-        <div className="info-item">
-          <span className="info-label">Срок действия карты:</span>
-          <span className="info-value">{selectedCard.cardExpirationDate || '—'}</span>
-        </div>
-        <div className="info-item">
-          <span className="info-label">Дата регистрации:</span>
-          <span className="info-value">{selectedCard.cardInstallationDate || '—'}</span>
-        </div>
-      </div>
+      <InfoGrid>
+        <InfoItem>
+          <InfoLabel>Текущие баллы:</InfoLabel>
+          <InfoValue>{selectedCard.activeStorage}</InfoValue>
+        </InfoItem>
+        <InfoItem>
+          <InfoLabel>Доступные награды:</InfoLabel>
+          <InfoValue>{selectedCard.availableRewards}</InfoValue>
+        </InfoItem>
+        <InfoItem>
+          <InfoLabel>Последняя награда:</InfoLabel>
+          <InfoValue>{selectedCard.lastRewardReceived || '—'}</InfoValue>
+        </InfoItem>
+        <InfoItem>
+          <InfoLabel>Последнее начисление:</InfoLabel>
+          <InfoValue>{selectedCard.lastAccrual || '—'}</InfoValue>
+        </InfoItem>
+        <InfoItem>
+          <InfoLabel>Срок действия карты:</InfoLabel>
+          <InfoValue>{selectedCard.cardExpirationDate || '—'}</InfoValue>
+        </InfoItem>
+        <InfoItem>
+          <InfoLabel>Дата регистрации:</InfoLabel>
+          <InfoValue>{selectedCard.cardInstallationDate || '—'}</InfoValue>
+        </InfoItem>
+      </InfoGrid>
 
-      <div className="serial-number">
-        <span className="serial-label">Номер карты:</span>
-        <span className="serial-value">{selectedCard.serialNumber}</span>
-      </div>
+      <Row>
+        <RowLabel>Номер карты:</RowLabel>
+        <RowValue>{selectedCard.serialNumber}</RowValue>
+      </Row>
 
-      <div className="age-info">
-        <span className="age-label">Статус:</span>
-        <span className="age-value">{selectedCard.ageInfo || '—'}</span>
-      </div>
+      <Row>
+        <RowLabel>Статус:</RowLabel>
+        <RowValue>{selectedCard.ageInfo || '—'}</RowValue>
+      </Row>
 
-      <div className="instruction">
-        <p>Введите количество штампов и нажмите "Добавить" для начисления баллов.</p>
-      </div>
-    </div>
+      <Hint>Введите количество штампов и нажмите «Добавить» для начисления баллов.</Hint>
+    </Container>
   );
 };
 

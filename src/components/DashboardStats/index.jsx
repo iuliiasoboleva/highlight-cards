@@ -1,6 +1,17 @@
 import React from 'react';
 
-import './styles.css';
+import {
+  Card,
+  Grid,
+  Row,
+  Stars,
+  StatBlock,
+  StatFooter,
+  StatIcon,
+  StatLabel,
+  StatValue,
+  TooltipIcon,
+} from './styles';
 
 const defaultStats = [
   { label: 'Установленных карт', key: 'installed', value: 0 },
@@ -19,36 +30,36 @@ const DashboardStats = ({ data = null }) => {
   }));
 
   return (
-    <div className="dashboard-stats">
+    <Grid>
       {stats.map((stat, index) => (
-        <div key={index} className="dashboard-stat-card">
-          <div className="dashboard-stat-row">
-            <div className="dashboard-stat-value">{stat.value}</div>
-            <div className="dashboard-stat-icon">−</div>
-          </div>
-          <div className="dashboard-stat-row">
-            <div className="dashboard-stat-label">{stat.label}</div>
-            <div className="dashboard-stat-footer">{stat.value}</div>
-          </div>
-        </div>
+        <Card key={index}>
+          <Row>
+            <StatValue>{stat.value}</StatValue>
+            <StatIcon>−</StatIcon>
+          </Row>
+
+          <Row>
+            <StatLabel>{stat.label}</StatLabel>
+            <StatFooter>{stat.value}</StatFooter>
+          </Row>
+        </Card>
       ))}
-      <div className="dashboard-stat-card">
-        <div className="dashboard-stars">
+
+      <Card>
+        <Stars>
           {Array.from({ length: 5 }).map((_, i) => (
             <span key={i}>☆</span>
           ))}
-        </div>
-        <div className="dashboard-stat-block">
-          <p className="dashboard-stat-label">Уровень лояльности</p>
-          <span
-            className="tooltip-icon"
-            data-tooltip="Показатель активности и вовлеченности клиентов."
-          >
+        </Stars>
+
+        <StatBlock>
+          <StatLabel>Уровень лояльности</StatLabel>
+          <TooltipIcon data-tooltip="Показатель активности и вовлеченности клиентов.">
             ?
-          </span>
-        </div>
-      </div>
-    </div>
+          </TooltipIcon>
+        </StatBlock>
+      </Card>
+    </Grid>
   );
 };
 

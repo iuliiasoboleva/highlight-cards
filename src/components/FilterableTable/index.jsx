@@ -2,8 +2,18 @@ import React, { useMemo, useState } from 'react';
 
 import FilterPanel from './FilterPanel';
 import TableToolbar from './TableToolbar';
-
-import './styles.css';
+import {
+  ClientCardTag,
+  CustomTable,
+  DashboardTags,
+  NoDataRow,
+  TBody,
+  TD,
+  TH,
+  THead,
+  TR,
+  TableWrapper,
+} from './styles';
 
 const FilterableTable = ({ columns, rows, onRowClick, onShowModal }) => {
   const [search, setSearch] = useState('');
@@ -46,57 +56,56 @@ const FilterableTable = ({ columns, rows, onRowClick, onShowModal }) => {
   }, [rows, search, activeTags]);
 
   return (
-    <div className="table-wrapper">
+    <TableWrapper>
       <FilterPanel onFiltersChange={setActiveTags} />
+
       <TableToolbar
-        onSearchChange={(value) => setSearch(value)}
+        onSearchChange={setSearch}
         onAction={(action) => {
-          if (action === 'add') onShowModal(true);
+          if (action === 'add') onShowModal?.(true);
         }}
       />
-      <table className="custom-table">
-        <thead>
-          <tr>
+
+      <CustomTable>
+        <THead>
+          <TR>
             {columns.map((col, i) => (
-              <th key={i}>{col.title}</th>
+              <TH key={i}>{col.title}</TH>
             ))}
-          </tr>
-        </thead>
-        <tbody>
+          </TR>
+        </THead>
+
+        <TBody>
           {filteredRows.length === 0 ? (
-            <tr>
-              <td colSpan={columns.length} className="no-data-row">
-                Нет данных
-              </td>
-            </tr>
+            <TR>
+              <NoDataRow colSpan={columns.length}>Нет данных</NoDataRow>
+            </TR>
           ) : (
             filteredRows.map((row, rowIndex) => (
-              <tr
+              <TR
                 key={rowIndex}
-                className={onRowClick ? 'clickable-row' : ''}
+                $clickable={!!onRowClick}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
               >
                 {columns.map((col, colIndex) => (
-                  <td key={colIndex}>
-                    <div className="dashboard-tags">
+                  <TD key={colIndex}>
+                    <DashboardTags>
                       {col.render
                         ? col.render(row)
                         : col.key === 'segment' && Array.isArray(row[col.key])
                           ? row[col.key].map((val, idx) => (
-                              <div key={idx} className="client-card-tag">
-                                {val}
-                              </div>
+                              <ClientCardTag key={idx}>{val}</ClientCardTag>
                             ))
                           : row[col.key]}
-                    </div>
-                  </td>
+                    </DashboardTags>
+                  </TD>
                 ))}
-              </tr>
+              </TR>
             ))
           )}
-        </tbody>
-      </table>
-    </div>
+        </TBody>
+      </CustomTable>
+    </TableWrapper>
   );
 };
 

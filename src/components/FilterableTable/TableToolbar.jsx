@@ -2,13 +2,20 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { ChevronDown, CreditCard, PlusCircle, Trash2 } from 'lucide-react';
 
-import './styles.css';
+import {
+  Dropdown,
+  DropdownButton,
+  DropdownItem,
+  DropdownMenu,
+  SearchInput,
+  Toolbar,
+} from './styles';
 
 const useOutsideClick = (ref, handler) => {
   useEffect(() => {
     const listener = (event) => {
       if (!ref.current || ref.current.contains(event.target)) return;
-      handler();
+      handler?.();
     };
     document.addEventListener('mousedown', listener);
     return () => document.removeEventListener('mousedown', listener);
@@ -23,41 +30,41 @@ const TableToolbar = ({ onSearchChange, onAction }) => {
   useOutsideClick(menuRef, () => setMenuOpen(false));
 
   return (
-    <div className="ft-toolbar">
-      <div className="ft-dropdown" ref={menuRef}>
-        <button className="ft-dropdown-button" onClick={() => setMenuOpen((prev) => !prev)}>
+    <Toolbar>
+      <Dropdown ref={menuRef}>
+        <DropdownButton type="button" onClick={() => setMenuOpen((p) => !p)}>
           Действия <ChevronDown size={16} />
-        </button>
+        </DropdownButton>
 
         {menuOpen && (
-          <div className="ft-dropdown-menu">
-            <div className="ft-dropdown-item" onClick={() => onAction?.('add')}>
+          <DropdownMenu>
+            <DropdownItem onClick={() => onAction?.('add')}>
               <PlusCircle size={14} style={{ marginRight: 8 }} />
               Добавить клиента
-            </div>
-            <div className="ft-dropdown-item disabled">
+            </DropdownItem>
+            <DropdownItem disabled>
               <Trash2 size={14} style={{ marginRight: 8 }} />
               Удалить клиентов
-            </div>
-            <div className="ft-dropdown-item disabled">
+            </DropdownItem>
+            <DropdownItem disabled>
               <CreditCard size={14} style={{ marginRight: 8 }} />
               Выпустить карты
-            </div>
-          </div>
+            </DropdownItem>
+          </DropdownMenu>
         )}
-      </div>
+      </Dropdown>
 
-      <input
-        className="ft-search-input"
+      <SearchInput
         type="text"
         placeholder="Введите ваш запрос"
         value={searchValue}
         onChange={(e) => {
-          setSearchValue(e.target.value);
-          onSearchChange?.(e.target.value);
+          const v = e.target.value;
+          setSearchValue(v);
+          onSearchChange?.(v);
         }}
       />
-    </div>
+    </Toolbar>
   );
 };
 

@@ -2,7 +2,16 @@ import React, { useState } from 'react';
 
 import { X } from 'lucide-react';
 
-import './styles.css';
+import {
+  FPContainer,
+  FPMainBtn,
+  FPRemoveBtn,
+  FPSelected,
+  FPSelectedTag,
+  FPSubfilters,
+  FPTagBtn,
+  FPTopButtons,
+} from './styles';
 
 const FILTER_GROUPS = {
   Лояльность: [0, 1, 2, 3, 4, 5],
@@ -23,61 +32,61 @@ const FilterPanel = ({ onFiltersChange }) => {
       ? selectedTags.filter((tag) => !(tag.group === group && tag.label === label))
       : [...selectedTags, { group, label }];
     setSelectedTags(newTags);
-    onFiltersChange(newTags);
+    onFiltersChange?.(newTags);
   };
 
   const removeTag = (group, label) => {
     const newTags = selectedTags.filter((tag) => !(tag.group === group && tag.label === label));
     setSelectedTags(newTags);
-    onFiltersChange(newTags);
+    onFiltersChange?.(newTags);
   };
 
   return (
-    <div className="fp-container">
-      <div className="fp-top-buttons">
+    <FPContainer>
+      <FPTopButtons>
         {Object.keys(FILTER_GROUPS).map((group) => (
-          <button
+          <FPMainBtn
             key={group}
-            className={`fp-main-btn ${openedGroup === group ? 'active' : ''}`}
+            $active={openedGroup === group}
             onClick={() => setOpenedGroup(openedGroup === group ? null : group)}
           >
             {group}
-          </button>
+          </FPMainBtn>
         ))}
-      </div>
+      </FPTopButtons>
 
       {openedGroup && (
-        <div className="fp-subfilters">
+        <FPSubfilters>
           {FILTER_GROUPS[openedGroup].map((label) => {
             const isActive = selectedTags.some(
               (tag) => tag.group === openedGroup && tag.label === label,
             );
             return (
-              <button
+              <FPTagBtn
                 key={label}
-                className={`fp-tag-btn ${isActive ? 'active' : ''}`}
+                $active={isActive}
                 onClick={() => toggleTag(openedGroup, label)}
               >
                 {label}
-              </button>
+              </FPTagBtn>
             );
           })}
-        </div>
+        </FPSubfilters>
       )}
 
-      {selectedTags.length > 0 && (
-        <div className="fp-selected">
+      {!!selectedTags.length && (
+        <FPSelected>
           {selectedTags.map((tag) => (
-            <div key={tag.group + tag.label} className="fp-selected-tag">
+            <FPSelectedTag key={tag.group + tag.label}>
               {tag.label}
-              <button onClick={() => removeTag(tag.group, tag.label)} className="fp-remove-btn">
+              <FPRemoveBtn onClick={() => removeTag(tag.group, tag.label)} aria-label="Удалить">
                 <X size={12} />
-              </button>
-            </div>
+              </FPRemoveBtn>
+            </FPSelectedTag>
           ))}
-        </div>
+        </FPSelected>
       )}
-    </div>
+    </FPContainer>
   );
 };
 
