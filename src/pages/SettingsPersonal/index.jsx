@@ -14,6 +14,7 @@ import {
   updateProfile,
   updateUserSettings,
   uploadAvatar,
+  fetchOrganization,
 } from '../../store/userSlice';
 import AvatarBlock from './components/AvatarBlock';
 import DeleteAccountSection from './components/DeleteAccountSection';
@@ -125,12 +126,42 @@ const SettingsPersonal = () => {
     [dispatch],
   );
 
+  useEffect(() => {
+    if (user.organization_id && !user.company) {
+      dispatch(fetchOrganization(user.organization_id));
+    }
+  }, [dispatch, user.organization_id, user.company]);
+
   const countries = useMemo(() => [{ value: 'Russia', label: 'Россия' }], []);
   const languages = useMemo(() => [{ value: 'Russian', label: 'Русский' }], []);
-  const timezones = useMemo(
-    () => [{ value: '(UTC+03:00) Moscow', label: '(UTC+03:00) Москва' }],
-    [],
-  );
+
+  const timezones = useMemo(() => {
+    try {
+      const zones = typeof Intl !== 'undefined' && Intl.supportedValuesOf
+        ? Intl.supportedValuesOf('timeZone')
+        : [];
+      const fmt = new Intl.DateTimeFormat('ru-RU', { timeZoneName: 'shortOffset' });
+      const now = new Date();
+      const pair = (tz) => {
+        try {
+          const parts = fmt.formatToParts(now, { timeZone: tz });
+          const off = parts.find((p) => p.type === 'timeZoneName')?.value || '';
+          return { value: tz, label: `${off} ${tz}` };
+        } catch (e) {
+          return { value: tz, label: tz };
+        }
+      };
+      const options = zones.map(pair);
+      if (options.length > 0) return options;
+    } catch (e) {
+      /* noop */
+    }
+    return [
+      { value: 'Europe/Moscow', label: '(UTC+03:00) Europe/Moscow' },
+      { value: 'Asia/Yekaterinburg', label: '(UTC+05:00) Asia/Yekaterinburg' },
+      { value: 'Asia/Vladivostok', label: '(UTC+10:00) Asia/Vladivostok' },
+    ];
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

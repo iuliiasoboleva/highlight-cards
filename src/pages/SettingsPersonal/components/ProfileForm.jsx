@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import CustomInput from '../../../customs/CustomInput';
+import CitySuggestInput from './CitySuggestInput';
 import CustomPinInput from '../../../customs/CustomPinInput';
 import CustomSelect from '../../../customs/CustomSelect';
 import { changePin } from '../../../store/userSlice';
@@ -126,10 +127,9 @@ const ProfileForm = ({ user, countries, languages, timezones, onFieldChange, sho
       <FormRow>
         <FormGroup $area="city">
           <Label>Город</Label>
-          <CustomInput
-            value={user.city}
-            onChange={(e) => onFieldChange('city', e.target.value)}
-            required
+          <CitySuggestInput
+            value={user.city || ''}
+            onChange={(v) => onFieldChange('city', v)}
           />
         </FormGroup>
 
