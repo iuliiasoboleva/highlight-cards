@@ -94,6 +94,8 @@ export const OptionsList = styled.div`
     0 6px 16px 0 rgba(0, 0, 0, 0.08),
     0 9px 28px 8px rgba(0, 0, 0, 0.05);
   z-index: 10000;
+  max-height: 260px;
+  overflow-y: auto;
   svg {
     width: 20px;
     height: 20px;

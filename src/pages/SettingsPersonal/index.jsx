@@ -136,32 +136,106 @@ const SettingsPersonal = () => {
   const languages = useMemo(() => [{ value: 'Russian', label: 'Русский' }], []);
 
   const timezones = useMemo(() => {
-    try {
-      const zones = typeof Intl !== 'undefined' && Intl.supportedValuesOf
-        ? Intl.supportedValuesOf('timeZone')
-        : [];
-      const fmt = new Intl.DateTimeFormat('ru-RU', { timeZoneName: 'shortOffset' });
-      const now = new Date();
-      const pair = (tz) => {
-        try {
-          const parts = fmt.formatToParts(now, { timeZone: tz });
-          const off = parts.find((p) => p.type === 'timeZoneName')?.value || '';
-          return { value: tz, label: `${off} ${tz}` };
-        } catch (e) {
-          return { value: tz, label: tz };
-        }
-      };
-      const options = zones.map(pair);
-      if (options.length > 0) return options;
-    } catch (e) {
-      /* noop */
-    }
+    const cityRu = {
+      Moscow: 'Москва',
+      Kaliningrad: 'Калининград',
+      Samara: 'Самара',
+      Volgograd: 'Волгоград',
+      Saratov: 'Саратов',
+      Ulyanovsk: 'Ульяновск',
+      Astrakhan: 'Астрахань',
+      Novosibirsk: 'Новосибирск',
+      Omsk: 'Омск',
+      Tomsk: 'Томск',
+      Barnaul: 'Барнаул',
+      Krasnoyarsk: 'Красноярск',
+      Irkutsk: 'Иркутск',
+      Yakutsk: 'Якутск',
+      Vladivostok: 'Владивосток',
+      Magadan: 'Магадан',
+      Kamchatka: 'Камчатка',
+      Chita: 'Чита',
+      Khandyga: 'Хандыга',
+      Yekaterinburg: 'Екатеринбург',
+      Perm: 'Пермь',
+      Kirov: 'Киров',
+      Berlin: 'Берлин',
+      Paris: 'Париж',
+      London: 'Лондон',
+      Rome: 'Рим',
+      Madrid: 'Мадрид',
+      Istanbul: 'Стамбул',
+      Dubai: 'Дубай',
+      Tehran: 'Тегеран',
+      Kabul: 'Кабул',
+      Karachi: 'Карачи',
+      Kolkata: 'Калькутта',
+      Bangkok: 'Бангкок',
+      Shanghai: 'Шанхай',
+      Singapore: 'Сингапур',
+      Tokyo: 'Токио',
+      Seoul: 'Сеул',
+      Sydney: 'Сидней',
+      Auckland: 'Окленд',
+      Kyiv: 'Киев',
+      Minsk: 'Минск',
+      Almaty: 'Алматы',
+      Tashkent: 'Ташкент',
+      Bishkek: 'Бишкек',
+      New_York: 'Нью-Йорк',
+      Chicago: 'Чикаго',
+      Denver: 'Денвер',
+      Los_Angeles: 'Лос-Анджелес',
+      Phoenix: 'Финикс',
+      Mexico_City: 'Мехико',
+      Sao_Paulo: 'Сан-Паулу',
+      Buenos_Aires: 'Буэнос-Айрес',
+    };
+
+    const zones = typeof Intl !== 'undefined' && Intl.supportedValuesOf
+      ? Intl.supportedValuesOf('timeZone')
+      : [];
+
+    const now = new Date();
+    const toOffset = (tz) => {
+      try {
+        const fmt = new Intl.DateTimeFormat('ru-RU', { timeZone: tz, timeZoneName: 'longOffset' });
+        const parts = fmt.formatToParts(now);
+        const raw = parts.find((p) => p.type === 'timeZoneName')?.value || '';
+        const norm = raw.replace('GMT', 'UTC');
+        return norm.startsWith('UTC') ? `(${norm})` : `(UTC${norm.replace(/[^+\-:\d]/g, '')})`;
+      } catch {
+        return '(UTC±00:00)';
+      }
+    };
+
+    const toCity = (tz) => {
+      const last = tz.split('/').pop();
+      return cityRu[last] || last.replaceAll('_', ' ');
+    };
+
+    const options = zones.map((tz) => ({ value: tz, label: `${toOffset(tz)} ${toCity(tz)}` }));
+    const ruOnly = options.filter((o) => /[А-Яа-яЁё]/.test(o.label));
+    if (ruOnly.length > 0) return ruOnly;
+    if (options.length > 0) return options;
+
     return [
-      { value: 'Europe/Moscow', label: '(UTC+03:00) Europe/Moscow' },
-      { value: 'Asia/Yekaterinburg', label: '(UTC+05:00) Asia/Yekaterinburg' },
-      { value: 'Asia/Vladivostok', label: '(UTC+10:00) Asia/Vladivostok' },
+      { value: 'Europe/Moscow', label: '(UTC+03:00) Москва' },
+      { value: 'Asia/Yekaterinburg', label: '(UTC+05:00) Екатеринбург' },
+      { value: 'Asia/Vladivostok', label: '(UTC+10:00) Владивосток' },
     ];
   }, []);
+
+  useEffect(() => {
+    if (!Array.isArray(timezones) || timezones.length === 0) return;
+    const has = timezones.some((o) => o.value === user.timezone);
+    if (!has && typeof user.timezone === 'string') {
+      const tzText = user.timezone.toLowerCase();
+      if (tzText.includes('moscow') || tzText.includes('моск')) {
+        dispatch(updateField({ field: 'timezone', value: 'Europe/Moscow' }));
+      }
+    }
+  }, [dispatch, timezones, user.timezone]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
