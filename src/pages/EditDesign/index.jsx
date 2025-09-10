@@ -36,6 +36,7 @@ const EditDesign = () => {
   const mainImgRef = useRef(null);
 
   const [hoverDesignKey, setHoverDesignKey] = useState(null);
+  const [isDirty, setIsDirty] = useState(false);
 
   const currentCard = useSelector((state) => state.cards.currentCard);
   const fieldsName = useSelector((state) => state.cards.currentCard.fieldsName) || [];
@@ -94,10 +95,12 @@ const EditDesign = () => {
 
   const handleStampIconChange = (path, iconName) => {
     dispatch(updateCurrentCardField({ path, value: iconName }));
+    setIsDirty(true);
   };
 
   const handleImageChangeFromEditor = (croppedImage, field) => {
     dispatch(updateCurrentCardField({ path: `design.${field}`, value: croppedImage }));
+    setIsDirty(true);
   };
 
   const handleSave = async () => {
@@ -130,6 +133,7 @@ const EditDesign = () => {
     }
 
     dispatch(updateCurrentCardField({ path: 'designReady', value: true }));
+    setIsDirty(false);
     navigate(`/cards/${id}/edit/settings`);
   };
 
@@ -147,7 +151,10 @@ const EditDesign = () => {
               key={num}
               $active={num <= stampsQuantity}
               onClick={() =>
-                dispatch(updateCurrentCardField({ path: 'design.stampsQuantity', value: num }))
+                {
+                  dispatch(updateCurrentCardField({ path: 'design.stampsQuantity', value: num }));
+                  setIsDirty(true);
+                }
               }
             >
               {num}
@@ -281,9 +288,10 @@ const EditDesign = () => {
 
       <ColorSettings
         colors={design.colors}
-        handleColorChange={(key, value) =>
-          dispatch(updateCurrentCardField({ path: `design.colors.${key}`, value }))
-        }
+        handleColorChange={(key, value) => {
+          dispatch(updateCurrentCardField({ path: `design.colors.${key}`, value }));
+          setIsDirty(true);
+        }}
         isStampCard={isStampCard}
         onHoverKeyChange={(key) => setHoverDesignKey(key)}
       />
@@ -305,6 +313,17 @@ const EditDesign = () => {
       )}
     </DesignSection>
   );
+
+  useEffect(() => {
+    const onBeforeUnload = (e) => {
+      if (!isDirty) return;
+      e.preventDefault();
+      e.returnValue = 'Последние изменения не сохранены';
+      return 'Последние изменения не сохранены';
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [isDirty]);
 
   return (
     <EditLayout
