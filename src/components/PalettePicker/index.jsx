@@ -147,7 +147,7 @@ const DEFAULT_SWATCHES = [
 export default function PalettePicker({
   value,
   onChange,
-  withAlpha = true,
+  withAlpha = false,
   recentKey = 'palette_recent_colors',
   title = 'Цвета',
   emitAlpha = false,
@@ -213,8 +213,7 @@ export default function PalettePicker({
   }, []);
 
   const emit = (h, a = alpha) => {
-    if (emitAlpha) onChange?.(toRgbaStr(h, a));
-    else onChange?.(h);
+    onChange?.(h);
     onChangeAlpha?.(a);
   };
 

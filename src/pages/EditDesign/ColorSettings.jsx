@@ -71,9 +71,10 @@ const ColorSettings = ({ colors = {}, handleColorChange, isStampCard, onHoverKey
   };
 
   const handleColorPickerChange = (key, value) => {
-    setLocalInputs((prev) => ({ ...prev, [key]: value }));
-    setValidColors((prev) => ({ ...prev, [key]: value }));
-    handleColorChange(key, value);
+    const hex = normalizeColor(value) || '';
+    setLocalInputs((prev) => ({ ...prev, [key]: hex }));
+    setValidColors((prev) => ({ ...prev, [key]: hex }));
+    handleColorChange(key, hex);
   };
 
   const fullColorFields = [
@@ -115,11 +116,7 @@ const ColorSettings = ({ colors = {}, handleColorChange, isStampCard, onHoverKey
             <Label>{label}</Label>
 
             <InputGroup>
-              <PalettePicker
-                value={pickerValue}
-                emitAlpha
-                onChange={(val) => handleColorPickerChange(key, val)}
-              />
+              <PalettePicker value={pickerValue} onChange={(val) => handleColorPickerChange(key, val)} />
 
               <CustomInput
                 value={displayValue}
