@@ -52,7 +52,7 @@ const StampGrid = ({
             currentStamp++;
 
             const highlight = (isActive && hoverActive) || (!isActive && hoverInactive);
-            const noBorder = (isActive && !!activeImage) || (!isActive && !!inactiveImage);
+            const noBorder = isActive ? !!activeImage : false;
 
             return (
               <StampItem
