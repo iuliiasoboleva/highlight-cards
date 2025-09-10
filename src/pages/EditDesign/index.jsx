@@ -300,7 +300,7 @@ const EditDesign = () => {
       {!isCashback && (
         <>
           <StampSectionLabel>
-            <BarcodeRadioTitle>Названия полей</BarcodeRadioTitle>
+            <BarcodeRadioTitle>Названия дополнительных полей</BarcodeRadioTitle>
             <CustomTooltip
               id="color-fields-help"
               html
