@@ -244,6 +244,7 @@ const EditDesign = () => {
             infoText="Рекомендованный размер: 480×150 пикселей (минимальная высота 150). Поддерживаемые форматы: PNG, JPEG. До 3 МБ."
             onSave={(img) => handleImageChangeFromEditor(img, 'logo')}
             aspect={16 / 5}
+            externalImage={design.logo}
           />
         </StampSettingsBlock>
 
@@ -261,6 +262,7 @@ const EditDesign = () => {
             infoText="Рекомендованный размер иконки: 512×512 (квадрат). Поддерживаемые форматы: PNG, JPEG. До 3 МБ."
             onSave={(img) => handleImageChangeFromEditor(img, 'icon')}
             aspect={1}
+            externalImage={design.icon}
           />
         </StampSettingsBlock>
       </StampSettings>
@@ -277,6 +279,7 @@ const EditDesign = () => {
             infoText="Минимальный размер файла 1125×432 пикселя. Поддерживаемые форматы: PNG, JPEG. До 3 МБ."
             onSave={(img) => handleImageChangeFromEditor(img, 'stampBackground')}
             aspect={1125 / 432}
+            externalImage={design.stampBackground}
           />
         </StampSettingsBlock>
 

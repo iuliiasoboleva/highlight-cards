@@ -148,33 +148,42 @@ const MainLayout = () => {
       const base = matchCreate ? '/cards/create' : `/cards/${id}/edit`;
       const firstStepTo = matchCreate ? `${base}` : `${base}/type`;
 
-      return [
-        { to: firstStepTo, label: '1. Тип карты' },
-        {
-          to: `${base}/design`,
-          label: '2. Дизайн карты',
-          disabled: !currentCard?.typeReady,
-          tooltip: 'Сначала выберите тип карты',
-        },
-        {
-          to: `${base}/settings`,
-          label: '3. Настройки карты',
-          disabled: !currentCard?.designReady,
-          tooltip: 'Сначала настройте дизайн',
-        },
-        {
-          to: `${base}/info`,
-          label: '4. Оборотная сторона карты',
-          disabled: !currentCard?.settingsReady,
-          tooltip: 'Сначала заполните настройки',
-        },
-        {
-          to: `${base}/integration`,
-          label: '5. Интеграции',
-          disabled: !currentCard?.infoReady,
-          tooltip: 'Сначала заполните оборотную сторону',
-        },
+      // вычисляем текущий шаг
+      const stepOrder = ['type', 'design', 'settings', 'info', 'integration'];
+      const getCurrentStepIdx = () => {
+        if (matchCreate) {
+          if (location.pathname === base) return 0;
+          const found = stepOrder.findIndex((s) => location.pathname.startsWith(`${base}/${s}`));
+          return found >= 0 ? found : 0;
+        }
+        const found = stepOrder.findIndex((s) => location.pathname.startsWith(`${base}/${s}`));
+        return found >= 0 ? found : 0;
+      };
+      const curIdx = getCurrentStepIdx();
+
+      const readyByStep = {
+        type: true,
+        design: !!currentCard?.typeReady,
+        settings: !!currentCard?.designReady,
+        info: !!currentCard?.settingsReady,
+        integration: !!currentCard?.infoReady,
+      };
+
+      const items = [
+        { to: firstStepTo, label: '1. Тип карты', key: 'type' },
+        { to: `${base}/design`, label: '2. Дизайн карты', key: 'design', tooltip: 'Сначала выберите тип карты' },
+        { to: `${base}/settings`, label: '3. Настройки карты', key: 'settings', tooltip: 'Сначала настройте дизайн' },
+        { to: `${base}/info`, label: '4. Оборотная сторона карты', key: 'info', tooltip: 'Сначала заполните настройки' },
+        { to: `${base}/integration`, label: '5. Интеграции', key: 'integration', tooltip: 'Сначала заполните оборотную сторону' },
       ];
+
+      // блокируем только шаги ВПЕРЁД, если текущий шаг ещё не готов
+      return items.map((it, idx) => ({
+        to: it.to,
+        label: it.label,
+        tooltip: it.tooltip,
+        disabled: idx > curIdx && !readyByStep[it.key],
+      }));
     }
 
     if (matchCardDetails) {
