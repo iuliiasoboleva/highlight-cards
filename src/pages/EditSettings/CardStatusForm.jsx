@@ -14,6 +14,7 @@ import {
   StatusNameCell,
   StatusRequiredCell,
   StatusTypeCell,
+  SpendingLabel,
 } from './styles';
 
 const CardStatusForm = ({ statusFields, onFieldChange, onAddField, onRemoveField }) => {
@@ -38,21 +39,27 @@ const CardStatusForm = ({ statusFields, onFieldChange, onAddField, onRemoveField
           </StatusTypeCell>
 
           <StatusNameCell>
-            <CustomInput
-              type="number"
-              value={field.cost ?? ''}
-              onChange={(e) => onFieldChange(index, 'cost', e.target.value)}
-              placeholder="₽"
-            />
+            <SpendingLabel>
+              <CustomInput
+                type="number"
+                value={field.cost ?? ''}
+                onChange={(e) => onFieldChange(index, 'cost', e.target.value)}
+                placeholder="₽"
+              />
+              <span>руб.</span>
+            </SpendingLabel>
           </StatusNameCell>
 
           <StatusRequiredCell>
-            <CustomInput
-              type="number"
-              value={field.percent ?? ''}
-              onChange={(e) => onFieldChange(index, 'percent', e.target.value)}
-              placeholder="%"
-            />
+            <SpendingLabel>
+              <CustomInput
+                type="number"
+                value={field.percent ?? ''}
+                onChange={(e) => onFieldChange(index, 'percent', e.target.value)}
+                placeholder="%"
+              />
+              <span>%</span>
+            </SpendingLabel>
           </StatusRequiredCell>
 
           <DeleteCell onClick={() => onRemoveField(index)} aria-label="Удалить статус">
