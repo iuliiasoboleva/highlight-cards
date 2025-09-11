@@ -13,6 +13,7 @@ const NAME_RE = /^[A-Za-zА-Яа-яЁё\s-]+$/;
 
 const ManagerModal = ({ isOpen, onClose, onSave, onDelete, initialData = {}, isEdit = false }) => {
   const locations = useSelector((state) => state.locations.list) || [];
+  const allManagers = useSelector((state) => state.managers?.list) || [];
 
   const [manager, setManager] = useState({
     name: '',
@@ -114,9 +115,23 @@ const ManagerModal = ({ isOpen, onClose, onSave, onDelete, initialData = {}, isE
     return e;
   }, [manager, phoneDigits, selectedBranches]);
 
+  const duplicateExists = useMemo(() => {
+    const name = manager.name.trim().toLowerCase();
+    const surname = manager.surname.trim().toLowerCase();
+    if (!name || !surname) return false;
+    const currentId = initialData?.id;
+    return allManagers.some((m) => {
+      const sameId = currentId && m.id === currentId;
+      if (sameId) return false;
+      const mn = String(m.name || '').trim().toLowerCase();
+      const ms = String(m.surname || '').trim().toLowerCase();
+      return mn === name && ms === surname;
+    });
+  }, [allManagers, initialData?.id, manager.name, manager.surname]);
+
   if (!isOpen) return null;
 
-  const isFormValid = Object.keys(errors).length === 0;
+  const isFormValid = Object.keys(errors).length === 0 && !duplicateExists;
 
   const title = confirmOpen
     ? 'Удалить сотрудника без возможности восстановления?'
@@ -225,6 +240,9 @@ const ManagerModal = ({ isOpen, onClose, onSave, onDelete, initialData = {}, isE
                 style={touched.surname && errors.surname ? { borderColor: red } : undefined}
               />
               {touched.surname && errors.surname && <ErrorText>{errors.surname}</ErrorText>}
+              {touched.name && touched.surname && duplicateExists && (
+                <ErrorText>Сотрудник с таким именем уже существует</ErrorText>
+              )}
             </Field>
           </InlineRow>
 
