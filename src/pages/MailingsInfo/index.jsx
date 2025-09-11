@@ -78,6 +78,17 @@ const MailingsInfo = () => {
     columns[recipientsIdx].render = (row) => (row.recipients === 'all' ? 'Всем' : row.recipients);
   }
 
+  // усечённый текст пуша в списке
+  const msgIdx = columns.findIndex((col) => col.key === 'message');
+  if (msgIdx !== -1) {
+    columns[msgIdx].render = (row) => {
+      const t = (row.message || '').trim();
+      if (!t) return '—';
+      const max = 40;
+      return t.length > max ? `${t.slice(0, max)}…` : t;
+    };
+  }
+
   // формат даты по местному часовому поясу пользователя в формате ДЕНЬ-МЕСЯЦ-ГОД ЧАС:МИНУТА
   const rawTz = useSelector((state) => state.user?.timezone || 'Europe/Moscow');
   const normalizeTz = (tz) => {

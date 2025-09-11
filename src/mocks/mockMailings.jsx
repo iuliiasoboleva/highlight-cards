@@ -1,6 +1,7 @@
 export const mailingsHeaders = [
   { key: 'name', label: 'НАЗВАНИЕ' },
   { key: 'dateTime', label: 'ДАТА СОЗДАНИЯ' },
+  { key: 'message', label: 'ТЕКСТ ПУША' },
   { key: 'recipients', label: 'ПОЛУЧАТЕЛИ' },
   { key: 'mailingType', label: 'ТИП РАССЫЛКИ' },
   { key: 'status', label: 'СТАТУС' },
