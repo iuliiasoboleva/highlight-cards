@@ -118,6 +118,17 @@ const EditSettings = () => {
         return;
       }
     }
+
+    const fields = currentCard.issueFormFields || [];
+    const hasRequiredContact = fields.some((f) =>
+      (f.type === 'phone' || f.type === 'email') && !!f.required,
+    );
+    if (!hasRequiredContact) {
+      alert('Добавьте обязательное поле Телефон или Email в анкету клиента');
+      flashInput('issueFormFields');
+      return;
+    }
+
     dispatch(updateCurrentCardField({ path: 'settingsReady', value: true }));
     navigate(`/cards/${id}/edit/info`);
   };

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
@@ -52,6 +52,10 @@ const SubMenu = ({
     setName(newName);
     onNameChange?.(newName);
   };
+
+  useEffect(() => {
+    setName(initialName || '');
+  }, [initialName]);
 
   const handleExportToExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(clients);

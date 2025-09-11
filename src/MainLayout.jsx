@@ -278,7 +278,7 @@ const MainLayout = () => {
       <CustomModal
         open={leaveModalOpen}
         onClose={cancelLeave}
-        title="Вы ещё не завершили создание"
+        title="Вы ещё не завершили редактирование"
         maxWidth={480}
         closeOnOverlayClick={false}
         actions={
