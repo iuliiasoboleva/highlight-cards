@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { IconButton, IconImg, Input, InputWrapper, RequiredMark } from './styles';
+import { IconButton, IconImg, Input, InputWrapper, RequiredMark, Suffix } from './styles';
 
 const CustomInput = ({
   value,
@@ -14,9 +14,11 @@ const CustomInput = ({
   onIconClick,
   iconAriaLabel,
   disabled,
+  suffix,
   ...props
 }) => {
   const hasIcon = Boolean(iconSrc);
+  const hasSuffix = typeof suffix === 'string' && suffix.length > 0;
 
   return (
     <InputWrapper>
@@ -27,6 +29,7 @@ const CustomInput = ({
         type={type}
         required={required}
         $hasIcon={hasIcon}
+        $hasSuffix={hasSuffix}
         disabled={disabled}
         {...props}
       />
@@ -44,6 +47,7 @@ const CustomInput = ({
       )}
 
       {required && <RequiredMark>*</RequiredMark>}
+      {hasSuffix && <Suffix>{suffix}</Suffix>}
     </InputWrapper>
   );
 };

@@ -358,9 +358,9 @@ const EditSettings = () => {
                 const v = isNaN(n) ? 0 : Math.max(0, Math.min(100, n));
                 updateSettingsField('cashbackAccrualPercent', v);
               }}
-              placeholder="Напр.: 5"
+              placeholder="Например: 5"
+              suffix="%"
             />
-            <span>%</span>
           </SpendingLabel>
 
           <FullWidthHr />
@@ -399,9 +399,9 @@ const EditSettings = () => {
                 const v = isNaN(n) ? 5 : Math.max(5, Math.min(50, n));
                 dispatch(updateCurrentCardField({ path: 'maxRedeemPercent', value: v }));
               }}
-              placeholder="Напр.: 30"
+              placeholder="Например: 30"
+              suffix="%"
             />
-            <span>%</span>
           </SpendingLabel>
 
           {redeemWarn && (
@@ -431,9 +431,9 @@ const EditSettings = () => {
                 const v = isNaN(n) ? 0 : Math.max(0, n);
                 updateSettingsField('cashbackLifetimeDays', v);
               }}
-              placeholder="Напр.: 60"
+              placeholder="Например: 60"
+              suffix="дней"
             />
-            <span>дней</span>
           </SpendingLabel>
 
           <FullWidthHr />

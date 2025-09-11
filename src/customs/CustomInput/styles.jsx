@@ -25,6 +25,12 @@ export const Input = styled.input`
       padding-right: 40px;
     `}
 
+  ${({ $hasSuffix }) =>
+    $hasSuffix &&
+    css`
+      padding-right: 44px;
+    `}
+
   &:read-only {
     background-color: #f8f8f8;
     cursor: default;
@@ -95,5 +101,15 @@ export const IconImg = styled.img`
   width: 18px;
   height: 18px;
   object-fit: contain;
+  pointer-events: none;
+`;
+
+export const Suffix = styled.span`
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #8a8a8a;
+  font-size: 14px;
   pointer-events: none;
 `;
