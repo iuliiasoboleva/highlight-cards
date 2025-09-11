@@ -129,9 +129,20 @@ const ManagerModal = ({ isOpen, onClose, onSave, onDelete, initialData = {}, isE
     });
   }, [allManagers, initialData?.id, manager.name, manager.surname]);
 
+  const duplicateEmailExists = useMemo(() => {
+    const email = (manager.email || '').trim().toLowerCase();
+    if (!email) return false;
+    const currentId = initialData?.id;
+    return allManagers.some((m) => {
+      if (currentId && m.id === currentId) return false;
+      const me = String(m.email || '').trim().toLowerCase();
+      return me === email;
+    });
+  }, [allManagers, initialData?.id, manager.email]);
+
   if (!isOpen) return null;
 
-  const isFormValid = Object.keys(errors).length === 0 && !duplicateExists;
+  const isFormValid = Object.keys(errors).length === 0 && !duplicateExists && !duplicateEmailExists;
 
   const title = confirmOpen
     ? 'Удалить сотрудника без возможности восстановления?'
@@ -272,6 +283,9 @@ const ManagerModal = ({ isOpen, onClose, onSave, onDelete, initialData = {}, isE
                 style={touched.email && errors.email ? { borderColor: red } : undefined}
               />
               {touched.email && errors.email && <ErrorText>{errors.email}</ErrorText>}
+              {touched.email && !errors.email && duplicateEmailExists && (
+                <ErrorText>Сотрудник с таким email уже существует</ErrorText>
+              )}
             </Field>
             <Field>
               <Label>Телефон</Label>
