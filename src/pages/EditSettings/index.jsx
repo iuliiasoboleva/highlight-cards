@@ -354,9 +354,19 @@ const EditSettings = () => {
               step="1"
               value={settings.cashbackAccrualPercent ?? ''}
               onChange={(e) => {
-                const n = parseInt(e.target.value || '0', 10);
+                const raw = e.target.value;
+                if (raw === '') {
+                  updateSettingsField('cashbackAccrualPercent', '');
+                  return;
+                }
+                const n = parseInt(raw || '0', 10);
                 const v = isNaN(n) ? 0 : Math.max(0, Math.min(100, n));
                 updateSettingsField('cashbackAccrualPercent', v);
+              }}
+              onBlur={(e) => {
+                if (e.target.value === '' || e.target.value == null) {
+                  updateSettingsField('cashbackAccrualPercent', 0);
+                }
               }}
               placeholder="Например: 5"
               suffix="%"
@@ -384,7 +394,12 @@ const EditSettings = () => {
                   : ''
               }
               onChange={(e) => {
-                const n = parseInt(e.target.value || '0', 10);
+                const raw = e.target.value;
+                if (raw === '') {
+                  dispatch(updateCurrentCardField({ path: 'maxRedeemPercent', value: '' }));
+                  return;
+                }
+                const n = parseInt(raw || '0', 10);
 
                 // показываем предупреждение, если пользователь ввёл > 50
                 if (!isNaN(n) && n > 50) {
@@ -398,6 +413,11 @@ const EditSettings = () => {
                 // сохраняем с жёстким ограничением 5–50
                 const v = isNaN(n) ? 5 : Math.max(5, Math.min(50, n));
                 dispatch(updateCurrentCardField({ path: 'maxRedeemPercent', value: v }));
+              }}
+              onBlur={(e) => {
+                if (e.target.value === '' || e.target.value == null) {
+                  dispatch(updateCurrentCardField({ path: 'maxRedeemPercent', value: 5 }));
+                }
               }}
               placeholder="Например: 30"
               suffix="%"
@@ -427,9 +447,19 @@ const EditSettings = () => {
               step="1"
               value={settings.cashbackLifetimeDays ?? ''}
               onChange={(e) => {
-                const n = parseInt(e.target.value || '0', 10);
+                const raw = e.target.value;
+                if (raw === '') {
+                  updateSettingsField('cashbackLifetimeDays', '');
+                  return;
+                }
+                const n = parseInt(raw || '0', 10);
                 const v = isNaN(n) ? 0 : Math.max(0, n);
                 updateSettingsField('cashbackLifetimeDays', v);
+              }}
+              onBlur={(e) => {
+                if (e.target.value === '' || e.target.value == null) {
+                  updateSettingsField('cashbackLifetimeDays', 0);
+                }
               }}
               placeholder="Например: 60"
               suffix="дней"
