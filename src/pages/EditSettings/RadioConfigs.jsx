@@ -5,7 +5,7 @@ import CustomCheckbox from '../../customs/CustomCheckbox';
 import CustomInput from '../../customs/CustomInput';
 import CustomSelect from '../../customs/CustomSelect';
 import CustomTooltip from '../../customs/CustomTooltip';
-import { formatDateToDDMMYYYY, getMinDate } from '../../helpers/date';
+import { formatDateToDDMMYYYY } from '../../helpers/date';
 import { pluralize } from '../../helpers/pluralize';
 import { updateCurrentCardField } from '../../store/cardsSlice';
 import { BarcodeRadioTitle } from '../EditDesign/styles';
@@ -39,6 +39,48 @@ const RadioConfigs = ({ cardStatus }) => {
     { value: 'years', label: pluralize(count, ['год', 'года', 'лет']) },
   ];
 
+  const MIN_YEAR = 2025;
+  const MAX_YEAR = 2120;
+  const todayLocalISO = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 10);
+  const minAbsoluteISO = '2025-01-01';
+  const minDateISO = todayLocalISO < minAbsoluteISO ? minAbsoluteISO : todayLocalISO;
+
+  const normalizeISODate = (value) => {
+    if (!value) return '';
+    let year;
+    let month;
+    let day;
+    if (value.includes('.')) {
+      const parts = value.split('.');
+      if (parts.length !== 3) return value;
+      day = parseInt(parts[0], 10);
+      month = parseInt(parts[1], 10);
+      year = parseInt(parts[2], 10);
+    } else if (value.includes('-')) {
+      const parts = value.split('-');
+      if (parts.length !== 3) return value;
+      if (parts[0].length === 4) {
+        year = parseInt(parts[0], 10);
+        month = parseInt(parts[1], 10);
+        day = parseInt(parts[2], 10);
+      } else {
+        day = parseInt(parts[0], 10);
+        month = parseInt(parts[1], 10);
+        year = parseInt(parts[2], 10);
+      }
+    } else {
+      return value;
+    }
+    if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) return value;
+    let y = Math.max(MIN_YEAR, Math.min(MAX_YEAR, year));
+    let m = Math.max(1, Math.min(12, month));
+    const daysInMonth = new Date(y, m, 0).getDate();
+    let d = Math.max(1, Math.min(daysInMonth, day));
+    return `${String(y).padStart(4, '0')}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  };
+
   const configs = [];
 
   const isSubscription = cardStatus === 'subscription';
@@ -71,12 +113,18 @@ const RadioConfigs = ({ cardStatus }) => {
           <CustomInput
             type="date"
             value={settings.cardFixedDate || ''}
-            min={getMinDate()}
+            min={minDateISO}
+            max="2120-12-31"
             data-settings-key="cardFixedDate"
             onChange={(e) => {
-              const newDate = e.target.value;
-              const formattedExpiration = formatDateToDDMMYYYY(newDate);
-              updateSettingsField('cardFixedDate', newDate);
+              const raw = e.target.value;
+              updateSettingsField('cardFixedDate', raw);
+            }}
+            onBlur={(e) => {
+              let iso = normalizeISODate(e.target.value);
+              if (iso && iso < minDateISO) iso = minDateISO;
+              updateSettingsField('cardFixedDate', iso);
+              const formattedExpiration = iso ? formatDateToDDMMYYYY(iso) : '';
               dispatch(
                 updateCurrentCardField({ path: 'expirationDate', value: formattedExpiration }),
               );
