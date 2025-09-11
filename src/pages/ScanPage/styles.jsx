@@ -10,44 +10,17 @@ export const Page = styled.div`
 `;
 
 export const Header = styled.header`
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 16px 48px; /* место под кнопку назад */
-  border-bottom: 1px solid #eee;
+  display: none; /* скрываем локальный хедер; используем глобальный SubMenu */
 `;
 
-export const BackBtn = styled(CustomMainButton)`
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-
-  max-width: 120px;
-  width: auto;
-  padding: 8px 14px;
-  margin-top: 0;
-  font-size: 14px;
-  line-height: 18px;
-
-  svg,
-  span {
-    pointer-events: none;
-  }
-`;
+export const BackBtn = styled(CustomMainButton)``;
 
 export const Arrow = styled.span`
   display: inline-block;
   transform: translateY(-1px);
 `;
 
-export const Logo = styled.img`
-  height: 62px;
-  width: auto;
-  object-fit: cover;
-  cursor: pointer;
-`;
+export const Logo = styled.img``;
 
 export const Main = styled.main`
   flex: 1;
@@ -55,7 +28,7 @@ export const Main = styled.main`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 16px 16px 32px;
+  padding: 16px 16px 80px; /* больше отступ снизу, чтобы подсказки были внизу */
   gap: 12px;
 `;
 
@@ -111,7 +84,7 @@ export const QrReaderBox = styled.div.attrs({ id: 'qr-reader' })`
 
 export const DesktopNotice = styled.div`
   max-width: 720px;
-  margin: 8px auto 0;
+  margin: auto auto 0; /* прижимаем к низу на ПК */
   padding: 12px 14px;
   border-radius: 10px;
   background: #f7f7f7;

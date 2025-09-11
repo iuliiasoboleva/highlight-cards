@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { saveAs } from 'file-saver';
 import { ChevronLeft, QrCode } from 'lucide-react';
@@ -177,6 +177,13 @@ const SubMenu = ({
                 <QrCode size={16} color={isDisabled ? 'gray' : 'white'} />
                 Печать QR-кода
               </IconButton>
+            </SubmenuRight>
+          )}
+          {!showRightActions && location.pathname === '/scan' && (
+            <SubmenuRight>
+              <SaveButton as={Link} to="/sales">
+                Перейти к продажам
+              </SaveButton>
             </SubmenuRight>
           )}
           {showDownloadTable && (

@@ -26,7 +26,7 @@ const MainLayout = () => {
 
   const isTemplatePage = location.pathname === '/cards/template';
 
-  const hideLayout = ['/scan', '/auth'].includes(location.pathname);
+  const hideLayout = ['/auth'].includes(location.pathname);
   const matchCreate = matchPath('/cards/create', location.pathname);
   const matchEdit = matchPath('/cards/:id/edit/*', location.pathname);
   const matchCardDetails =
@@ -36,6 +36,7 @@ const MainLayout = () => {
   const matchSettings = matchPath('/settings/*', location.pathname);
   const matchClientsRoot = matchPath({ path: '/clients', end: true }, location.pathname);
   const matchClientsReviews = matchPath('/clients/reviews', location.pathname);
+  const matchScan = matchPath('/scan', location.pathname);
   const matchClientsRfm = matchPath('/clients/rfm-segment', location.pathname);
   const matchClientDetails = matchPath('/clients/:id/*', location.pathname);
   useEffect(() => {
@@ -248,7 +249,8 @@ const MainLayout = () => {
         matchClientsRoot ||
         matchClientDetails ||
         matchClientsRfm ||
-        matchClientsReviews) && (
+        matchClientsReviews ||
+        matchScan) && (
         <div style={lockStyle}>
           <SubMenu
             menuItems={getMenuItems()}

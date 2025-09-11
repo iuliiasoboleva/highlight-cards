@@ -129,12 +129,7 @@ const ScanPage = () => {
 
   return (
     <Page>
-      <Header>
-        <BackBtn onClick={() => navigate(-1)}>
-          <Arrow>←</Arrow> Назад
-        </BackBtn>
-        <Logo src="/logoColored.png" alt="Logo" onClick={() => navigate('/')} />
-      </Header>
+      <Header />
 
       <Main>
         <UserText>
@@ -155,11 +150,9 @@ const ScanPage = () => {
         )}
 
         {status === 'desktop' ? (
-          <>
-            <DesktopNotice>
-              Сканер предназначен для использования на мобильном устройстве (смартфоне/планшете).
-            </DesktopNotice>
-          </>
+          <DesktopNotice>
+            Сканер предназначен для использования на мобильном устройстве (смартфоне/планшете).
+          </DesktopNotice>
         ) : (
           <QrReaderBox />
         )}
