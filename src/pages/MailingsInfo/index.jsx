@@ -78,6 +78,51 @@ const MailingsInfo = () => {
     columns[recipientsIdx].render = (row) => (row.recipients === 'all' ? 'Всем' : row.recipients);
   }
 
+  // формат даты по местному часовому поясу пользователя в формате ДЕНЬ-МЕСЯЦ-ГОД ЧАС:МИНУТА
+  const rawTz = useSelector((state) => state.user?.timezone || 'Europe/Moscow');
+  const normalizeTz = (tz) => {
+    if (!tz) return 'Europe/Moscow';
+    const s = String(tz);
+    if (s === 'Europe/Moscow') return s;
+    try {
+      // проверка валидности зоны
+      // eslint-disable-next-line no-new
+      new Intl.DateTimeFormat('ru-RU', { timeZone: s });
+      return s;
+    } catch (e) {
+      const lower = s.toLowerCase();
+      if (lower.includes('moscow') || lower.includes('моск')) return 'Europe/Moscow';
+      return 'Europe/Moscow';
+    }
+  };
+  const tz = normalizeTz(rawTz);
+  const dateIdx = columns.findIndex((col) => col.key === 'dateTime');
+  if (dateIdx !== -1) {
+    columns[dateIdx].render = (row) => {
+      try {
+        const iso = row.dateTime || '';
+        const fixed = iso.replace(/(\.\d{3})\d+/, '$1');
+        const d = new Date(fixed);
+        const parts = new Intl.DateTimeFormat('ru-RU', {
+          timeZone: tz,
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        })
+          .formatToParts(d)
+          .reduce((acc, p) => ({ ...acc, [p.type]: p.value }), {});
+        return `${parts.day}-${parts.month}-${parts.year} ${parts.hour}:${parts.minute}`;
+      } catch (e) {
+        return row.dateTime;
+      }
+    };
+    columns[dateIdx].className = 'text-center';
+    columns[dateIdx].cellClassName = 'text-center';
+  }
+
   if (loading) return <LoaderCentered />;
 
   const cards = [

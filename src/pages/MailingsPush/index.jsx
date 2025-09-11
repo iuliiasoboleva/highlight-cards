@@ -41,6 +41,7 @@ const MailingsPush = () => {
   const [scheduledDate, setScheduledDate] = useState('');
   const [isScheduled, setIsScheduled] = useState(false);
   const [selectedTab, setSelectedTab] = useState('all');
+  const [selectedSegmentInfo, setSelectedSegmentInfo] = useState(null);
   const [usersCount, setUsersCount] = useState(0);
 
   useEffect(() => {
@@ -137,9 +138,15 @@ const MailingsPush = () => {
     try {
       await axiosInstance.post('/mailings', {
         card_id: currentCard.id,
-        name: `Push по карте ${currentCard.name ?? currentCard.title}`,
+        name:
+          selectedTab === 'segment' && selectedSegmentInfo?.segmentLabel
+            ? `Сегмент: ${selectedSegmentInfo.segmentLabel}`
+            : `Push по карте ${currentCard.name ?? currentCard.title}`,
         date_time: isScheduled ? scheduledDate : new Date().toISOString(),
-        recipients: selectedTab === 'all' ? 'all' : 'segment',
+        recipients:
+          selectedTab === 'all'
+            ? 'all'
+            : selectedSegmentInfo?.segmentLabel || selectedSegmentInfo?.segment || 'segment',
         mailing_type: 'Push',
         status: isScheduled ? 'Запланирована' : 'Отправлена',
         organization_id: user.organization_id,
@@ -178,7 +185,13 @@ const MailingsPush = () => {
           disabled={!hasActiveCards}
         />
 
-        <PushTargetTabs onTabChange={setSelectedTab} onFilteredCountChange={setUsersCount} />
+        <PushTargetTabs
+          onTabChange={(tab, extra) => {
+            setSelectedTab(tab);
+            setSelectedSegmentInfo(extra);
+          }}
+          onFilteredCountChange={setUsersCount}
+        />
 
         <PushRecipientCount>
           <Users size={16} />

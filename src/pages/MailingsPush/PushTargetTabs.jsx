@@ -45,7 +45,12 @@ const PushTargetTabs = ({ onTabChange, onFilteredCountChange }) => {
   const numericDisabled = isDiscreteSegment;
 
   useEffect(() => {
-    onTabChange?.(selectedTab);
+    onTabChange?.(selectedTab, {
+      segment,
+      symbol,
+      filter: filterInput,
+      segmentLabel: segmentOptions.find((o) => o.value === segment)?.label,
+    });
 
     if (selectedTab === 'segment') {
       const filtered = clients.filter((client) => {

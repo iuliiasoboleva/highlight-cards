@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import axiosInstance from '../../axiosInstance';
 import {
@@ -43,6 +44,46 @@ const MailingDetailsModal = ({ isOpen, mailingId, onClose }) => {
     };
   }, [isOpen, mailingId]);
 
+  const rawTz = useSelector((state) => state.user?.timezone || 'Europe/Moscow');
+  const normalizeTz = (tz) => {
+    if (!tz) return 'Europe/Moscow';
+    const s = String(tz);
+    if (s === 'Europe/Moscow') return s;
+    try {
+      // eslint-disable-next-line no-new
+      new Intl.DateTimeFormat('ru-RU', { timeZone: s });
+      return s;
+    } catch (e) {
+      const lower = s.toLowerCase();
+      if (lower.includes('moscow') || lower.includes('моск')) return 'Europe/Moscow';
+      return 'Europe/Moscow';
+    }
+  };
+  const tz = normalizeTz(rawTz);
+
+  const formattedDate = useMemo(() => {
+    if (!data?.dateTime) return '';
+    try {
+      const iso = data.dateTime || '';
+      const fixed = iso.replace(/(\.\d{3})\d+/, '$1');
+      const d = new Date(fixed);
+      const parts = new Intl.DateTimeFormat('ru-RU', {
+        timeZone: tz,
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      })
+        .formatToParts(d)
+        .reduce((acc, p) => ({ ...acc, [p.type]: p.value }), {});
+      return `${parts.day}-${parts.month}-${parts.year} ${parts.hour}:${parts.minute}`;
+    } catch (e) {
+      return data.dateTime;
+    }
+  }, [data?.dateTime, tz]);
+
   if (!isOpen) return null;
 
   return (
@@ -62,7 +103,7 @@ const MailingDetailsModal = ({ isOpen, mailingId, onClose }) => {
             </Header>
 
             <Field>
-              <strong>Дата создания:</strong> {data.dateTime}
+              <strong>Дата создания:</strong> {formattedDate}
             </Field>
             <Field>
               <strong>Получатели:</strong> {data.recipients === 'all' ? 'Всем' : data.recipients}

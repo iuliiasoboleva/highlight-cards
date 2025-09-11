@@ -15,7 +15,7 @@ const initialState = {
   dateFormat: 'DD/MM/YYYY',
   country: 'Russia',
   language: 'Russian',
-  timezone: '(UTC+03:00) Moscow',
+  timezone: 'Europe/Moscow',
   avatar: null,
   role: '',
   organization_id: storedOrg ? Number(storedOrg) : undefined,
