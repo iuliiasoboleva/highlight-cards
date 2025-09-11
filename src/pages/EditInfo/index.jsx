@@ -36,6 +36,7 @@ const EditInfo = () => {
   const dispatch = useDispatch();
 
   const currentCard = useSelector((state) => state.cards.currentCard);
+  const cardStatus = currentCard?.status;
   const formRef = useRef(null);
 
   const user = useSelector((state) => state.user);
@@ -145,18 +146,20 @@ const EditInfo = () => {
         maxLength={300}
         warnAt={20}
       />
-      <LabeledTextarea
-        label="Как клиенту получить штамп"
-        tooltip="Расскажите как использовать карту"
-        value={infoFields.howToGetStamp}
-        onChange={handleFieldChange('howToGetStamp')}
-        placeholder=""
-        required
-        dataKey="howToGetStamp"
-        showCounter
-        maxLength={300}
-        warnAt={20}
-      />
+      {cardStatus === 'stamp' && (
+        <LabeledTextarea
+          label="Как клиенту получить штамп"
+          tooltip="Расскажите как использовать карту"
+          value={infoFields.howToGetStamp}
+          onChange={handleFieldChange('howToGetStamp')}
+          placeholder=""
+          required
+          dataKey="howToGetStamp"
+          showCounter
+          maxLength={300}
+          warnAt={20}
+        />
+      )}
       <LabeledTextarea
         label="Название компании"
         tooltip="Укажите наименование компании"
@@ -181,19 +184,21 @@ const EditInfo = () => {
         maxLength={300}
         warnAt={20}
       />
-      <LabeledTextarea
-        label="Сообщение о начисленном штампе"
-        tooltip="Текст push-сообщения о начисленном штампе"
-        value={infoFields.stampMessage}
-        subtitle={'Тег {#} обязателен для заполнения'}
-        onChange={handleFieldChange('stampMessage')}
-        placeholder=""
-        required
-        dataKey="stampMessage"
-        showCounter
-        maxLength={300}
-        warnAt={20}
-      />
+      {cardStatus === 'stamp' && (
+        <LabeledTextarea
+          label="Сообщение о начисленном штампе"
+          tooltip="Текст push-сообщения о начисленном штампе"
+          value={infoFields.stampMessage}
+          subtitle={'Тег {#} обязателен для заполнения'}
+          onChange={handleFieldChange('stampMessage')}
+          placeholder=""
+          required
+          dataKey="stampMessage"
+          showCounter
+          maxLength={300}
+          warnAt={20}
+        />
+      )}
       <LabeledTextarea
         label="Сообщение о начисленной награде"
         tooltip="Текст push-сообщения о полученной награде"
@@ -207,36 +212,40 @@ const EditInfo = () => {
         warnAt={20}
       />
 
-      <Hr />
+      {cardStatus === 'stamp' && (
+        <>
+          <Hr />
 
-      {/* Если вернёшь поле — оно будет работать как раньше */}
-      {/* <LabeledTextarea
-        label="Мультинаграды"
-        subtitle={
-          'Укажите через запятую, при каких количествах полученных штампов будет начисляться данная награда. Если оставить поле пустым, то награда будет начисляться при достижении максимального количества штампов.'
-        }
-        value={infoFields.multiRewardsInput || ''}
-        onChange={handleMultiRewardsChange}
-        placeholder="Например: 3,5,7"
-      /> */}
+          {/* Если вернёшь поле — оно будет работать как раньше */}
+          {/* <LabeledTextarea
+            label="Мультинаграды"
+            subtitle={
+              'Укажите через запятую, при каких количествах полученных штампов будет начисляться данная награда. Если оставить поле пустым, то награда будет начисляться при достижении максимального количества штампов.'
+            }
+            value={infoFields.multiRewardsInput || ''}
+            onChange={handleMultiRewardsChange}
+            placeholder="Например: 3,5,7"
+          /> */}
 
-      <BarcodeRadio
-        options={[
-          { value: 'true', label: 'Да' },
-          { value: 'false', label: 'Нет' },
-        ]}
-        title="Списывать награду автоматически?"
-        subtitle="После накопления необходимого количества штампов награда будет списана автоматически при очередном визите"
-        selected={String(infoFields.autoRedeem)}
-        onChange={(value) => {
-          dispatch(
-            updateCurrentCardField({ path: 'infoFields.autoRedeem', value: value === 'true' }),
-          );
-        }}
-        name="auto-redeem"
-        dataKey="autoRedeem"
-        additionalContentByValue={{}}
-      />
+          <BarcodeRadio
+            options={[
+              { value: 'true', label: 'Да' },
+              { value: 'false', label: 'Нет' },
+            ]}
+            title="Списывать награду автоматически?"
+            subtitle="После накопления необходимого количества штампов награда будет списана автоматически при очередном визите"
+            selected={String(infoFields.autoRedeem)}
+            onChange={(value) => {
+              dispatch(
+                updateCurrentCardField({ path: 'infoFields.autoRedeem', value: value === 'true' }),
+              );
+            }}
+            name="auto-redeem"
+            dataKey="autoRedeem"
+            additionalContentByValue={{}}
+          />
+        </>
+      )}
 
       <Hr />
 
