@@ -58,7 +58,7 @@ const QRPopup = ({ cardId, onClose, activateCard, open = true }) => {
           </CustomModal.SecondaryButton> */}
 
           <CustomModal.PrimaryButton onClick={activateCard}>
-            {currentCard?.isActive ? 'Деактивировать карту' : 'Активировать карту'}
+            {currentCard?.isActive ? 'Деактивировать карту' : 'Сохранить карту'}
           </CustomModal.PrimaryButton>
         </Actions>
       </Content>
