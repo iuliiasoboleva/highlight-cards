@@ -12,6 +12,8 @@ const CardLimit = ({
   subtitle,
   tooltip,
   placeholder = 'Введите количество',
+  min = 0,
+  step = 1,
 }) => {
   return (
     <>
@@ -24,8 +26,21 @@ const CardLimit = ({
       </div>
       <CustomInput
         type="number"
+        min={min}
+        step={step}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => {
+          const raw = e.target.value;
+          if (raw === '') {
+            onChange('');
+            return;
+          }
+          const n = parseInt(raw, 10);
+          onChange(Number.isNaN(n) ? min : Math.max(min, n));
+        }}
+        onBlur={(e) => {
+          if (e.target.value === '' || e.target.value == null) onChange(min);
+        }}
         placeholder={placeholder}
       />
     </>

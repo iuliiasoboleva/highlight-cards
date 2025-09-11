@@ -469,14 +469,21 @@ const EditSettings = () => {
           min="0"
           step="1"
           value={currentCard?.minCheckForStamps ?? ''}
-          onChange={(e) =>
-            dispatch(
-              updateCurrentCardField({
-                path: 'minCheckForStamps',
-                value: Math.max(0, parseInt(e.target.value || '0', 10)),
-              }),
-            )
-          }
+          onChange={(e) => {
+            const raw = e.target.value;
+            if (raw === '') {
+              dispatch(updateCurrentCardField({ path: 'minCheckForStamps', value: '' }));
+              return;
+            }
+            const n = parseInt(raw, 10);
+            const v = Number.isNaN(n) ? 0 : Math.max(0, n);
+            dispatch(updateCurrentCardField({ path: 'minCheckForStamps', value: v }));
+          }}
+          onBlur={(e) => {
+            if (e.target.value === '' || e.target.value == null) {
+              dispatch(updateCurrentCardField({ path: 'minCheckForStamps', value: 0 }));
+            }
+          }}
           placeholder="Например: 500₽"
         />
       </SpendingLabel>
