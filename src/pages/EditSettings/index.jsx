@@ -5,6 +5,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import EditLayout from '../../components/EditLayout';
 import TitleWithHelp from '../../components/TitleWithHelp';
+import { useToast } from '../../components/Toast';
 import CustomInput from '../../customs/CustomInput';
 import CustomSelect from '../../customs/CustomSelect';
 import ToggleSwitch from '../../customs/CustomToggleSwitch';
@@ -44,6 +45,7 @@ const EditSettings = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
+  const toast = useToast();
   const [redeemWarn, setRedeemWarn] = useState(false);
   const warnTimerRef = useRef(null);
 
@@ -51,6 +53,7 @@ const EditSettings = () => {
   const settings = currentCard.settings || {};
   const policySettings = currentCard.policySettings;
   const cardStatus = currentCard.status;
+  const subscription = useSelector((state) => state.subscription.info);
 
   const isStampCard = cardStatus === 'stamp';
   const locations = settings?.locations && settings.locations.length > 0 ? settings.locations : [];
@@ -60,6 +63,11 @@ const EditSettings = () => {
   const [initialLocation, setInitialLocation] = useState(null);
 
   const handleAddLocation = () => {
+    const isTrial = String(subscription?.status || '').toLowerCase() === 'trial';
+    if (isTrial && locations.length >= 1) {
+      toast.info('На демо-тарифе доступна одна точка продаж');
+      return;
+    }
     setEditingIndex(null);
     setInitialLocation(null);
     setShowLocationModal(true);
