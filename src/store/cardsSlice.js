@@ -61,11 +61,18 @@ export const saveCard = createAsyncThunk(
     try {
       const { currentCard } = getState().cards;
       if (!currentCard?.id || currentCard.id === 'fixed') throw new Error('Нет id карты');
-      const { frameUrl, ...rest } = currentCard;
+      const { frameUrl, infoFields, ...rest } = currentCard;
       const payload = {
         ...rest,
         frame_url: frameUrl || 'phone.svg',
       };
+      if (infoFields) {
+        payload.settings = {
+          ...(payload.settings || {}),
+          infoFields,
+        };
+      }
+      delete payload.infoFields;
       await axiosInstance.put(`/cards/${currentCard.id}`, payload);
       return { id: currentCard.id, changes: { pushNotification: currentCard.pushNotification } };
     } catch (err) {
@@ -83,13 +90,20 @@ export const createCard = createAsyncThunk(
       const orgId = state.user.organization_id;
       if (!orgId) throw new Error('Нет organization_id');
 
-      const { frameUrl, ...rest } = currentCard;
+      const { frameUrl, infoFields, ...rest } = currentCard;
       const payload = {
         ...rest,
         frame_url: frameUrl || 'phone.svg',
         organization_id: orgId,
         is_active: false,
       };
+      if (infoFields) {
+        payload.settings = {
+          ...(payload.settings || {}),
+          infoFields,
+        };
+      }
+      delete payload.infoFields;
 
       const res = await axiosInstance.post('/cards', payload);
 

@@ -93,6 +93,15 @@ export const FrameImg = styled.img`
   }
 `;
 
+export const OverlayWrapper = styled.div`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+`;
+
 export const QrContainer = styled.div`
   ${CardSurface};
   padding: 1.5rem;

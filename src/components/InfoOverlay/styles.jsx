@@ -10,8 +10,7 @@ export const Overlay = styled.div`
   font-size: 14px;
   line-height: 1.4;
   z-index: 5;
-  width: 100%;
-  max-width: 230px;
+  width: 230px;
 
   /* hide scrollbar cross-browser */
   scrollbar-width: none; /* Firefox */

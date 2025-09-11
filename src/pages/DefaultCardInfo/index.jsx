@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import axiosInstance from '../../axiosInstance';
 import CardInfo from '../../components/CardInfo/CardInfo';
+import InfoOverlay from '../../components/InfoOverlay';
 import CustomTable from '../../components/CustomTable';
 import DashboardStats from '../../components/DashboardStats';
 import LoaderCentered from '../../components/LoaderCentered';
@@ -15,6 +16,7 @@ import {
   ImageWrapper,
   InfoBlock,
   PhoneContainer,
+  OverlayWrapper,
   QrContainer,
   QrImage,
   QrLink,
@@ -34,6 +36,7 @@ const DefaultCardInfo = () => {
   const [card, setCard] = useState(cards.find((c) => c.id === +id) || null);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(!card);
+  const [showInfo, setShowInfo] = useState(false);
 
   useEffect(() => {
     if (card) return;
@@ -98,7 +101,16 @@ const DefaultCardInfo = () => {
         <InfoBlock>
           <PhoneContainer>
             <FrameImg src={card.frameUrl} alt={card.name} />
-            <CardInfo card={card} />
+            {showInfo ? (
+              <OverlayWrapper>
+                <InfoOverlay
+                  infoFields={card.infoFields || {}}
+                  onClose={() => setShowInfo(false)}
+                />
+              </OverlayWrapper>
+            ) : (
+              <CardInfo card={card} setShowInfo={setShowInfo} />
+            )}
           </PhoneContainer>
 
           <QrContainer>
