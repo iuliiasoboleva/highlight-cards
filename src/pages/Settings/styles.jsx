@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 
 export const SettingsContainer = styled.div`
   padding: 20px;
@@ -156,6 +156,16 @@ export const PlanCard = styled.div`
         border-color: #a82c35;
       }
     `}
+
+  ${(p) =>
+    p.$current &&
+    css`
+      border-color: #0f7a3b;
+      background: #e9fbef;
+      &:hover {
+        border-color: #0b5c2c;
+      }
+    `}
 `;
 
 export const PopularBadge = styled.div`
@@ -163,6 +173,18 @@ export const PopularBadge = styled.div`
   left: 12px;
   top: -8px;
   background: #c9353f;
+  color: #fff;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-align: center;
+`;
+
+export const CurrentBadge = styled.div`
+  position: absolute;
+  right: 12px;
+  top: -8px;
+  background: #0f7a3b;
   color: #fff;
   font-size: 11px;
   padding: 4px 8px;
@@ -276,6 +298,11 @@ export const Total = styled.div`
   }
 `;
 
+const shine = keyframes`
+  0% { left: -40%; }
+  100% { left: 140%; }
+`;
+
 export const PrimaryBtn = styled.button`
   width: 100%;
   border: none;
@@ -287,12 +314,30 @@ export const PrimaryBtn = styled.button`
   background: #c4343c;
   cursor: pointer;
   margin-bottom: 8px;
+  position: relative;
+  overflow: hidden;
 
   &:hover,
   &:focus,
   &:active {
-    background: blue;
+    background: #c4343c;
     outline: none;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -40%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.35) 50%, rgba(255, 255, 255, 0) 100%);
+    transform: skewX(-20deg);
+    pointer-events: none;
+  }
+
+  &:hover::before {
+    animation: ${shine} 0.9s ease;
   }
 
   &:disabled {

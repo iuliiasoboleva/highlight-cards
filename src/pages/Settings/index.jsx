@@ -5,6 +5,7 @@ import AgreementModal from '../../components/AgreementModal';
 import GeoBadge from '../../components/GeoBadge';
 import LoaderCentered from '../../components/LoaderCentered';
 import TopUpModal from '../../components/TopUpModal';
+import { useToast } from '../../components/Toast';
 import CustomMainButton from '../../customs/CustomMainButton';
 import { formatDateToDDMMYYYY } from '../../helpers/date';
 import { clamp, getPointsBounds } from '../../helpers/getPointsBounds';
@@ -36,6 +37,7 @@ import {
   PlanPrice,
   Plans,
   PopularBadge,
+  CurrentBadge,
   PriceRow,
   PrimaryBtn,
   Radio,
@@ -61,6 +63,7 @@ const STATIC_LABELS = [
 
 const Settings = () => {
   const dispatch = useDispatch();
+  const toast = useToast();
   const { plans: tariffPlans, loading } = useSelector((state) => state.tariffs);
 
   const { organization_id: orgId, id: userId } = useSelector((state) => state.user);
@@ -176,8 +179,16 @@ const Settings = () => {
             <BlockTitle>Выберите тарифный план</BlockTitle>
             <Plans>
               {planFeatures.map((p) => (
-                <PlanCard key={p.key} $active={p.key === planKey} onClick={() => setPlanKey(p.key)}>
+                <PlanCard
+                  key={p.key}
+                  $active={p.key === planKey}
+                  $current={p.key === 'free' && subscription?.status === 'trial'}
+                  onClick={() => setPlanKey(p.key)}
+                >
                   {p.popular && <PopularBadge>Популярный</PopularBadge>}
+                  {p.key === 'free' && subscription?.status === 'trial' && (
+                    <CurrentBadge>Текущий</CurrentBadge>
+                  )}
                   <Row>
                     <Radio $checked={p.key === planKey} />
                     <PlanName>{p.name}</PlanName>
@@ -295,7 +306,7 @@ const Settings = () => {
                 </Total>
 
                 <PrimaryBtn onClick={() => setShowModal(true)}>Оплатить картой</PrimaryBtn>
-                <GhostBtn>Выставить счёт</GhostBtn>
+                <GhostBtn type="button" onClick={() => toast.info('В разработке')}>Выставить счёт</GhostBtn>
 
                 <SmallList>
                   <li>Все цены указаны с НДС</li>
