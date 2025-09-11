@@ -57,12 +57,26 @@ const YandexMapPicker = forwardRef(({ onSelect, initialCoords }, ref) => {
     setCenter: (newCoords) => updateCoords(newCoords),
   }));
 
-  const updateCoords = (newCoords) => {
+  const resolveAddressFromCoords = async (newCoords) => {
+    try {
+      if (!ymapsRef.current) return '';
+      const res = await ymapsRef.current.geocode(newCoords);
+      const firstGeoObject = res.geoObjects.get(0);
+      if (!firstGeoObject) return '';
+      const line = firstGeoObject.getAddressLine?.();
+      return line || '';
+    } catch (e) {
+      return '';
+    }
+  };
+
+  const updateCoords = async (newCoords) => {
     setCoords(newCoords);
     if (mapRef.current) {
       mapRef.current.setCenter(newCoords, 15);
     }
-    onSelect?.({ coords: { lat: newCoords[0], lon: newCoords[1] } });
+    const address = await resolveAddressFromCoords(newCoords);
+    onSelect?.({ coords: { lat: newCoords[0], lon: newCoords[1] }, address });
   };
 
   const searchMultiple = async (query) => {

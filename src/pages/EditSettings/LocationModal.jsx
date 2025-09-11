@@ -22,7 +22,6 @@ import {
   InlineRow,
   Label,
   LimitNote,
-  LocationInfo,
   ModalBody,
   RowBetween,
   SmallGray,
@@ -396,24 +395,7 @@ const LocationModal = ({ isOpen, onClose, onSave, initialData = {}, isEdit = fal
           </AddressWrap>
         </FieldGroup>
 
-        {selectedLocation &&
-          (() => {
-            const { lat, lng } = normalizeCoords(selectedLocation.coords);
-            const hasCoords = lat != null && lng != null;
-            const addr = selectedLocation.address || searchQuery;
-            if (!addr && !hasCoords) return null;
-
-            return (
-              <LocationInfo>
-                {addr && <div>Адрес: {addr}</div>}
-                {hasCoords && (
-                  <div>
-                    Координаты:&nbsp;{lat.toFixed(6)}, {lng.toFixed(6)}
-                  </div>
-                )}
-              </LocationInfo>
-            );
-          })()}
+        {false && selectedLocation && (selectedLocation.address || searchQuery)}
 
         <FieldGroup>
           <YandexMapPicker ref={mapRef} onSelect={handleMapSelect} initialCoords={initialCoords} />

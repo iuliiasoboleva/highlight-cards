@@ -17,6 +17,9 @@ export const Dialog = styled.div`
   border-radius: 12px;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
   overflow: hidden;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 `;
 
 export const Header = styled.div`
@@ -54,6 +57,8 @@ export const CloseBtn = styled.button`
 
 export const Content = styled.div`
   padding: 20px;
+  overflow: auto;
+  flex: 1 1 auto;
 `;
 
 export const Actions = styled.div`
