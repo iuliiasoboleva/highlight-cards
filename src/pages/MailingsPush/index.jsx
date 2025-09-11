@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
@@ -8,6 +8,7 @@ import axiosInstance from '../../axiosInstance';
 import EditLayout from '../../components/EditLayout';
 import GeoBadge from '../../components/GeoBadge';
 import TitleWithHelp from '../../components/TitleWithHelp';
+import { useToast } from '../../components/Toast';
 import CustomCheckbox from '../../customs/CustomCheckbox';
 import CustomSelect from '../../customs/CustomSelect';
 import { getMinDateTime } from '../../helpers/date';
@@ -26,6 +27,7 @@ import {
 
 const MailingsPush = () => {
   const dispatch = useDispatch();
+  const toast = useToast();
   const { id: routeId } = useParams();
 
   const allCards = useSelector((state) => state.cards.cards);
@@ -149,6 +151,11 @@ const MailingsPush = () => {
     }
   };
 
+  const submitLabel = useMemo(() => {
+    if (!pushMessage.trim()) return 'Введите текст сообщения';
+    return isScheduled ? 'Запланировать сообщение' : 'Отправить';
+  }, [isScheduled, pushMessage]);
+
   const leftContent = hasActiveCards ? (
     <>
       <TitleWithHelp
@@ -202,8 +209,15 @@ const MailingsPush = () => {
           placeholder="Введите текст push-уведомления"
         />
 
-        <SubmitButton onClick={handleSavePushSettings} disabled={!pushMessage.trim()}>
-          Отправить
+        <SubmitButton
+          onClick={async () => {
+            await handleSavePushSettings();
+            toast.info(`Push-уведомление ${isScheduled ? 'запланировано' : 'отправлено'}`);
+          }}
+          disabled={!pushMessage.trim()}
+          $full
+        >
+          {submitLabel}
         </SubmitButton>
       </MailingsPushBox>
     </>

@@ -50,6 +50,7 @@ export const SubmitButton = styled.button`
   cursor: pointer;
   margin-top: auto;
   font-weight: 500;
+  width: ${({ $full }) => ($full ? '100%' : 'auto')};
 
   &:disabled {
     background: #ccc;
