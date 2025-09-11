@@ -247,9 +247,7 @@ const EditInfo = () => {
         </>
       )}
 
-      <Hr />
-
-      <ReferralProgramConfig />
+      {cardStatus === 'stamp' && <ReferralProgramConfig />}
 
       <Hr />
 
