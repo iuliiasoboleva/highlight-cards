@@ -27,6 +27,7 @@ import {
 } from '../../store/salesPointsSlice';
 import { CARD_LENGTH, normalizeDigits, validateCard } from '../../utils/cardUtils';
 import { normalizeErr } from '../../utils/normalizeErr';
+import { MAX_LOCATIONS } from '../../utils/locations.jsx';
 import CardsBlock from './components/CardsBlock';
 import TablesBlock from './components/TablesBlock';
 import ManagerModal from './modals/ManagerModal';
@@ -51,6 +52,7 @@ const ManagersPage = () => {
   const { list: locations, loading: lLoading } = useSelector((s) => s.locations);
   const networks = useSelector((s) => s.networks.list);
   const orgId = useSelector((s) => s.user.organization_id);
+  const subscription = useSelector((s) => s.subscription?.info) || null;
 
   const clientsRaw = useSelector((s) => s.clients);
   const clients = Array.isArray(clientsRaw)
@@ -256,6 +258,23 @@ const ManagersPage = () => {
     }
   };
 
+  const maxLocations = (() => {
+    const direct = Number(subscription?.limits?.locations);
+    if (!Number.isNaN(direct) && direct > 0) return direct;
+    if (String(subscription?.status || '').toLowerCase() === 'trial') return 1;
+    return MAX_LOCATIONS;
+  })();
+
+  const canCreateLocation = locations.length < maxLocations;
+
+  const handleOpenLocation = () => {
+    if (!canCreateLocation) {
+      toast.error('Достигнут лимит точек по вашему тарифу');
+      return;
+    }
+    setShowLocationModal(true);
+  };
+
   return (
     <Page>
       <Header>
@@ -276,7 +295,7 @@ const ManagersPage = () => {
           onCardChange={onCardChange}
           handleFindCustomer={handleFindCustomer}
           onOpenAdd={() => setShowAddModal(true)}
-          onOpenLocation={() => setShowLocationModal(true)}
+          onOpenLocation={handleOpenLocation}
           onOpenNetwork={() => setShowNetworkModal(true)}
           onOpenScan={() => navigate('/scan')}
         />
