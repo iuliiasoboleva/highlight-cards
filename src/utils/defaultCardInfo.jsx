@@ -92,8 +92,8 @@ export const defaultCardTemplate = {
   issueFormFields: [
     { type: 'name', name: 'Имя', required: false, unique: false },
     { type: 'surname', name: 'Фамилия', required: false, unique: false },
-    { type: 'phone', name: 'Телефон', required: false, unique: true },
-    { type: 'email', name: 'Email', required: false, unique: true },
+    { type: 'phone', name: 'Телефон', required: true, unique: true },
+    { type: 'email', name: 'Email', required: true, unique: true },
     { type: 'birthday', name: 'Дата рождения', required: false, unique: false },
   ],
   statusFields: [

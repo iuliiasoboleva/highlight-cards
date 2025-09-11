@@ -9,6 +9,8 @@ import TitleWithHelp from '../../components/TitleWithHelp';
 import CustomMainButton from '../../customs/CustomMainButton';
 import { mockClientsHeaders } from '../../mocks/clientsInfo';
 import { fetchClients } from '../../store/clientsSlice';
+import { fetchBranches } from '../../store/salesPointsSlice';
+import { fetchNetworks } from '../../store/networksSlice';
 import AddClientModal from './modals/AddClientModal';
 import ClientAddedModal from './modals/ClientAddedModal';
 import NoBranchModal from './modals/NoBranchModal';
@@ -45,9 +47,15 @@ const Clients = () => {
 
   const [generatedLink, setGeneratedLink] = useState('');
 
+  const orgId = useSelector((s) => s.user.organization_id);
+
   useEffect(() => {
     dispatch(fetchClients());
-  }, [dispatch]);
+    if (orgId) {
+      dispatch(fetchBranches(orgId));
+      dispatch(fetchNetworks(orgId));
+    }
+  }, [dispatch, orgId]);
 
   useEffect(() => {
     const onOpenSmsWallet = () => setShowSmsWalletModal(true);

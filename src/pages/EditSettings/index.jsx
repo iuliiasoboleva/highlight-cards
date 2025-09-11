@@ -16,6 +16,7 @@ import {
   removeCurrentCardArrayItem,
   updateCurrentCardField,
 } from '../../store/cardsSlice';
+import { createBranch, fetchBranches } from '../../store/salesPointsSlice';
 import { BarcodeRadioTitle, CreateButton } from '../EditDesign/styles';
 import CardIssueForm from './CardIssueForm';
 import CardLimit from './CardLimit';
@@ -54,6 +55,8 @@ const EditSettings = () => {
   const policySettings = currentCard.policySettings;
   const cardStatus = currentCard.status;
   const subscription = useSelector((state) => state.subscription.info);
+  const organizationId = useSelector((state) => state.user.organization_id);
+  const orgLocations = useSelector((state) => state.locations.list || []);
 
   const isStampCard = cardStatus === 'stamp';
   const locations = settings?.locations && settings.locations.length > 0 ? settings.locations : [];
@@ -91,6 +94,24 @@ const EditSettings = () => {
     dispatch(updateCurrentCardField({ path: `settings.${field}`, value }));
   };
 
+  useEffect(() => {
+    if (organizationId) {
+      dispatch(fetchBranches(organizationId));
+    }
+  }, [organizationId, dispatch]);
+
+  useEffect(() => {
+    const hasCardLocations = Array.isArray(settings?.locations) && settings.locations.length > 0;
+    if (hasCardLocations) return;
+    if (!orgLocations || orgLocations.length === 0) return;
+    const mapped = orgLocations.map((b) => ({
+      name: b.name || b.address || 'Локация',
+      address: b.address || b.name || '',
+      coords: b.coords || null,
+    }));
+    if (mapped.length > 0) updateSettingsField('locations', mapped);
+  }, [orgLocations, settings?.locations]);
+
   const handleSaveLocation = (loc) => {
     if (editingIndex !== null) {
       const next = locations.map((l, i) => (i === editingIndex ? loc : l));
@@ -101,6 +122,19 @@ const EditSettings = () => {
     setShowLocationModal(false);
     setEditingIndex(null);
     setInitialLocation(null);
+
+    try {
+      const addr = (loc?.address || '').trim();
+      const name = (loc?.name || addr || 'Локация');
+      if (organizationId && addr) {
+        dispatch(
+          createBranch({ name, address: addr, organization_id: organizationId }),
+        )
+          .unwrap()
+          .catch(() => {});
+        dispatch(fetchBranches(organizationId));
+      }
+    } catch (_) {}
   };
 
   const handleRemoveLocation = (index) => {

@@ -61,18 +61,81 @@ export const saveCard = createAsyncThunk(
     try {
       const { currentCard } = getState().cards;
       if (!currentCard?.id || currentCard.id === 'fixed') throw new Error('Нет id карты');
-      const { frameUrl, infoFields, ...rest } = currentCard;
+      const {
+        frameUrl,
+        cardImg,
+        qrImg,
+        urlCopy,
+        isActive,
+        visitsCount,
+        expirationDate,
+        subscribersCount,
+        firstVisitDiscount,
+        cashbackPercent,
+        cashbackStatus,
+        discountPercent,
+        discountStatus,
+        balanceMoney,
+        certificateName,
+        orderIndex,
+        isPinned,
+        pushNotification,
+        infoFields,
+        design,
+        settings,
+        issueFormFields,
+        statusFields,
+        utmLinks,
+        fieldsName,
+        requirePurchaseAmountOnAccrual,
+        initialPointsOnIssue,
+        initialStampsOnIssue,
+        stampDailyLimit,
+        policySettings,
+        issueLimit,
+        ...rest
+      } = currentCard;
+
       const payload = {
         ...rest,
         frame_url: frameUrl || 'phone.svg',
+        card_img: cardImg,
+        qr_img: qrImg,
+        url_copy: urlCopy,
+        is_active: isActive,
+        visits_count: visitsCount,
+        expiration_date: expirationDate,
+        subscribers_count: subscribersCount,
+        first_visit_discount: firstVisitDiscount,
+        cashback_percent: cashbackPercent,
+        cashback_status: cashbackStatus,
+        discount_percent: discountPercent,
+        discount_status: discountStatus,
+        balance_money: balanceMoney,
+        certificate_name: certificateName,
+        order_index: orderIndex,
+        is_pinned: isPinned,
+        push_notification: pushNotification,
+        design,
+        settings,
+        issue_form_fields: issueFormFields,
+        status_fields: statusFields,
+        utm_links: utmLinks,
+        fields_name: fieldsName,
+        require_purchase_amount_on_accrual: requirePurchaseAmountOnAccrual,
+        initial_points_on_issue: initialPointsOnIssue,
+        initial_stamps_on_issue: initialStampsOnIssue,
+        stamp_daily_limit: stampDailyLimit,
+        policy_settings: policySettings,
+        issue_limit: issueLimit,
       };
+
       if (infoFields) {
         payload.settings = {
           ...(payload.settings || {}),
           infoFields,
         };
       }
-      delete payload.infoFields;
       await axiosInstance.put(`/cards/${currentCard.id}`, payload);
       return { id: currentCard.id, changes: { pushNotification: currentCard.pushNotification } };
     } catch (err) {
@@ -90,20 +153,82 @@ export const createCard = createAsyncThunk(
       const orgId = state.user.organization_id;
       if (!orgId) throw new Error('Нет organization_id');
 
-      const { frameUrl, infoFields, ...rest } = currentCard;
+      const {
+        frameUrl,
+        cardImg,
+        qrImg,
+        urlCopy,
+        isActive,
+        visitsCount,
+        expirationDate,
+        subscribersCount,
+        firstVisitDiscount,
+        cashbackPercent,
+        cashbackStatus,
+        discountPercent,
+        discountStatus,
+        balanceMoney,
+        certificateName,
+        orderIndex,
+        isPinned,
+        pushNotification,
+        infoFields,
+        design,
+        settings,
+        issueFormFields,
+        statusFields,
+        utmLinks,
+        fieldsName,
+        requirePurchaseAmountOnAccrual,
+        initialPointsOnIssue,
+        initialStampsOnIssue,
+        stampDailyLimit,
+        policySettings,
+        issueLimit,
+        ...rest
+      } = currentCard;
+
       const payload = {
         ...rest,
         frame_url: frameUrl || 'phone.svg',
+        card_img: cardImg,
+        qr_img: qrImg,
+        url_copy: urlCopy,
+        is_active: isActive ?? false,
         organization_id: orgId,
-        is_active: false,
+        visits_count: visitsCount,
+        expiration_date: expirationDate,
+        subscribers_count: subscribersCount,
+        first_visit_discount: firstVisitDiscount,
+        cashback_percent: cashbackPercent,
+        cashback_status: cashbackStatus,
+        discount_percent: discountPercent,
+        discount_status: discountStatus,
+        balance_money: balanceMoney,
+        certificate_name: certificateName,
+        order_index: orderIndex,
+        is_pinned: isPinned,
+        push_notification: pushNotification,
+        design,
+        settings,
+        issue_form_fields: issueFormFields,
+        status_fields: statusFields,
+        utm_links: utmLinks,
+        fields_name: fieldsName,
+        require_purchase_amount_on_accrual: requirePurchaseAmountOnAccrual,
+        initial_points_on_issue: initialPointsOnIssue,
+        initial_stamps_on_issue: initialStampsOnIssue,
+        stamp_daily_limit: stampDailyLimit,
+        policy_settings: policySettings,
+        issue_limit: issueLimit,
       };
+
       if (infoFields) {
         payload.settings = {
           ...(payload.settings || {}),
           infoFields,
         };
       }
-      delete payload.infoFields;
 
       const res = await axiosInstance.post('/cards', payload);
 
