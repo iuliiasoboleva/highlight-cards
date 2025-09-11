@@ -114,7 +114,7 @@ const EditSettings = () => {
   const handleSave = () => {
     if (policySettings?.policyEnabled) {
       if (!policySettings?.policyText.trim() || !policySettings?.fullPolicyText.trim()) {
-        alert('Заполните все обязательные поля');
+        toast.error('Заполните все обязательные поля');
         return;
       }
     }
@@ -124,7 +124,7 @@ const EditSettings = () => {
       (f.type === 'phone' || f.type === 'email') && !!f.required,
     );
     if (!hasRequiredContact) {
-      alert('Добавьте обязательное поле Телефон или Email в анкету клиента');
+      toast.error('Добавьте обязательное поле Телефон или Email в анкету клиента');
       flashInput('issueFormFields');
       return;
     }
