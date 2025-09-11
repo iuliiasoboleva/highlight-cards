@@ -6,6 +6,7 @@ import GeoBadge from '../../components/GeoBadge';
 import LoaderCentered from '../../components/LoaderCentered';
 import TopUpModal from '../../components/TopUpModal';
 import { useToast } from '../../components/Toast';
+import axiosInstance from '../../axiosInstance';
 import CustomMainButton from '../../customs/CustomMainButton';
 import { formatDateToDDMMYYYY } from '../../helpers/date';
 import { clamp, getPointsBounds } from '../../helpers/getPointsBounds';
@@ -305,7 +306,36 @@ const Settings = () => {
                   <b>{total.toLocaleString('ru-RU')} ₽</b>
                 </Total>
 
-                <PrimaryBtn onClick={() => setShowModal(true)}>Оплатить картой</PrimaryBtn>
+                <PrimaryBtn
+                  onClick={async () => {
+                    try {
+                      const idk = Math.random().toString(36).slice(2) + Date.now();
+                      const res = await axiosInstance.post(
+                        '/payments/yookassa/create',
+                        {
+                          amount: total,
+                          description: `Оплата тарифа ${plan?.name}`,
+                          return_url: window.location.origin + '/settings',
+                          metadata: {
+                            organization_id: orgId,
+                            user_id: userId,
+                            months,
+                            plan: plan?.name,
+                          },
+                        },
+                        { headers: { 'Idempotence-Key': idk } },
+                      );
+                      const data = res.data;
+                      setShowModal(true);
+                      window.open(data.payment_url, '_blank', 'noopener');
+                    } catch (e) {
+                      const message = e.response?.data?.detail || e.message || 'Не удалось создать платёж';
+                      toast.error(message);
+                    }
+                  }}
+                >
+                  Оплатить картой
+                </PrimaryBtn>
                 <GhostBtn type="button" onClick={() => toast.info('В разработке')}>Выставить счёт</GhostBtn>
 
                 <SmallList>
