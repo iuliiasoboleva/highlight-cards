@@ -101,6 +101,12 @@ const Settings = () => {
     }
   }, [dispatch, orgId]);
 
+  useEffect(() => {
+    if (subscription?.status === 'trial') {
+      setPlanKey('free');
+    }
+  }, [subscription?.status]);
+
   const isYear = months === 12;
   const monthlyPrice =
     plan?.name === 'Сеть'
@@ -111,7 +117,7 @@ const Settings = () => {
 
   const total = monthlyPrice * months;
 
-  const paidUntilRaw = subscription?.paid_until ?? plan?.paidUntil ?? null;
+  const paidUntilRaw = subscription?.paid_until ?? subscription?.access_until ?? plan?.paidUntil ?? null;
 
   const paidUntilStr = paidUntilRaw
     ? formatDateToDDMMYYYY(
@@ -256,7 +262,7 @@ const Settings = () => {
               <ConditionsCard>
                 <FreeTitle>Бесплатно</FreeTitle>
                 <FreeSub>7 дней полного доступа</FreeSub>
-                <PrimaryBtn /* onClick={...} */>Начать бесплатно</PrimaryBtn>
+                <PrimaryBtn disabled>Доступно только 1 раз</PrimaryBtn>
                 <MutedNote>Без привязки карты • Полный функционал</MutedNote>
               </ConditionsCard>
             ) : planKey === 'network' ? (
@@ -288,7 +294,7 @@ const Settings = () => {
                   <b>{total.toLocaleString('ru-RU')} ₽</b>
                 </Total>
 
-                <PrimaryBtn>Оплатить картой</PrimaryBtn>
+                <PrimaryBtn onClick={() => setShowModal(true)}>Оплатить картой</PrimaryBtn>
                 <GhostBtn>Выставить счёт</GhostBtn>
 
                 <SmallList>
