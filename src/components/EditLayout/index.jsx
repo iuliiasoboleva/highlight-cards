@@ -55,7 +55,8 @@ const EditLayout = ({
   }, []);
 
   useEffect(() => {
-    if (currentCard.status) {
+    const hasCustom = Array.isArray(currentCard.fieldsName) && currentCard.fieldsName.length > 0;
+    if (currentCard.status && !hasCustom) {
       const defaultFields = (statusConfig[currentCard.status] || []).map((item) => ({
         type: item.valueKey,
         name: item.label,
@@ -68,7 +69,7 @@ const EditLayout = ({
         }),
       );
     }
-  }, [currentCard.status, dispatch]);
+  }, [currentCard.status, currentCard.fieldsName, dispatch]);
 
   useEffect(() => {
     if (location.pathname.includes('/edit/info')) {
