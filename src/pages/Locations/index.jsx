@@ -13,7 +13,7 @@ import CustomInput from '../../customs/CustomInput/index.jsx';
 import CustomSelect from '../../customs/CustomSelect';
 import CustomTextArea from '../../customs/CustomTextarea/index.jsx';
 import ToggleSwitch from '../../customs/CustomToggleSwitch/index.jsx';
-import { normalizeAddr, sameCoords } from '../../helpers/normalizeAddr.jsx';
+import { normalizeAddr, sameCoords, formatAddress } from '../../helpers/normalizeAddr.jsx';
 import { setCurrentCard } from '../../store/cardsSlice';
 import {
   createBranch as createBranchThunk,
@@ -227,7 +227,7 @@ const Locations = () => {
     setShowSuggests(false);
 
     if (!Number.isNaN(lat) && !Number.isNaN(lon)) {
-      const loc = { address: addr, coords: { lat, lon } };
+      const loc = { address: formatAddress(addr), coords: { lat, lon } };
       setSelectedLocation(loc);
       if (mapRef.current?.setCenter) mapRef.current.setCenter([lat, lon]);
       return;
@@ -237,7 +237,7 @@ const Locations = () => {
       const coords = await mapRef.current.search(addr);
       if (Array.isArray(coords) && coords.length === 2) {
         setSelectedLocation({
-          address: addr,
+          address: formatAddress(addr),
           coords: { lat: coords[0], lon: coords[1] },
         });
       }
@@ -279,8 +279,9 @@ const Locations = () => {
     const candidate = organizationResults[0] || selectedLocation || null;
     if (!candidate) return;
 
-    const nextAddressRaw =
-      candidate.name || candidate.address || (debouncedSearchQuery || searchQuery || '').trim();
+    const nextAddressRaw = formatAddress(
+      candidate.name || candidate.address || (debouncedSearchQuery || searchQuery || '').trim(),
+    );
     if (!nextAddressRaw) return;
 
     const nextCoords = {
@@ -351,7 +352,7 @@ const Locations = () => {
 
   // сохранить изменённый адрес для единственной локации
   const saveSingle = async () => {
-    const addr = (singleAddress || '').trim();
+    const addr = formatAddress((singleAddress || '').trim());
     if (!addr) {
       toast.error('Введите адрес');
       return;
