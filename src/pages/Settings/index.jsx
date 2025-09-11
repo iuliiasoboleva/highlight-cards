@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import AgreementModal from '../../components/AgreementModal';
+import PaymentModal from '../../components/PaymentModal';
 import GeoBadge from '../../components/GeoBadge';
 import LoaderCentered from '../../components/LoaderCentered';
 import TopUpModal from '../../components/TopUpModal';
@@ -74,6 +75,8 @@ const Settings = () => {
   const { info: subscription, loading: subLoading } = useSelector((state) => state.subscription);
 
   const [showModal, setShowModal] = useState(false);
+  const [payOpen, setPayOpen] = useState(false);
+  const [confirmationToken, setConfirmationToken] = useState('');
   const [topUpOpen, setTopUpOpen] = useState(false);
   const [planKey, setPlanKey] = useState('business');
   const [points, setPoints] = useState(2);
@@ -113,11 +116,13 @@ const Settings = () => {
 
   const isYear = months === 12;
   const monthlyPrice =
-    plan?.name === 'Сеть'
+    planKey === 'network'
       ? (isYear ? plan.yearlyMonthly : plan.monthly) * Math.max(points, 3)
-      : isYear
-        ? plan?.yearlyMonthly
-        : plan?.monthly;
+      : planKey === 'business'
+        ? (isYear ? plan?.yearlyMonthly : plan?.monthly) * points
+        : isYear
+          ? plan?.yearlyMonthly
+          : plan?.monthly;
 
   const total = monthlyPrice * months;
 
@@ -306,36 +311,7 @@ const Settings = () => {
                   <b>{total.toLocaleString('ru-RU')} ₽</b>
                 </Total>
 
-                <PrimaryBtn
-                  onClick={async () => {
-                    try {
-                      const idk = Math.random().toString(36).slice(2) + Date.now();
-                      const res = await axiosInstance.post(
-                        '/payments/yookassa/create',
-                        {
-                          amount: total,
-                          description: `Оплата тарифа ${plan?.name}`,
-                          return_url: window.location.origin + '/settings',
-                          metadata: {
-                            organization_id: orgId,
-                            user_id: userId,
-                            months,
-                            plan: plan?.name,
-                          },
-                        },
-                        { headers: { 'Idempotence-Key': idk } },
-                      );
-                      const data = res.data;
-                      setShowModal(true);
-                      window.open(data.payment_url, '_blank', 'noopener');
-                    } catch (e) {
-                      const message = e.response?.data?.detail || e.message || 'Не удалось создать платёж';
-                      toast.error(message);
-                    }
-                  }}
-                >
-                  Оплатить картой
-                </PrimaryBtn>
+                <PrimaryBtn onClick={() => setShowModal(true)}>Оплатить картой</PrimaryBtn>
                 <GhostBtn type="button" onClick={() => toast.info('В разработке')}>Выставить счёт</GhostBtn>
 
                 <SmallList>
@@ -354,11 +330,36 @@ const Settings = () => {
       <AgreementModal
         open={showModal}
         onClose={() => setShowModal(false)}
-        onConfirm={() => {
-          setShowModal(false);
-          alert('Переход к оплате');
+        onConfirm={async () => {
+          try {
+            const idk = Math.random().toString(36).slice(2) + Date.now();
+            const res = await axiosInstance.post(
+              '/payments/yookassa/create',
+              {
+                amount: total,
+                description: `Оплата тарифа ${plan?.name}`,
+                return_url: window.location.origin + '/settings',
+                metadata: {
+                  organization_id: orgId,
+                  user_id: userId,
+                  months,
+                  plan: plan?.name,
+                },
+              },
+              { headers: { 'Idempotence-Key': idk } },
+            );
+            const data = res.data;
+            setConfirmationToken(data.confirmation_token || '');
+            setShowModal(false);
+            setPayOpen(true);
+          } catch (e) {
+            const message = e.response?.data?.detail || e.message || 'Не удалось создать платёж';
+            toast.error(message);
+          }
         }}
       />
+
+      <PaymentModal open={payOpen} onClose={() => setPayOpen(false)} confirmationToken={confirmationToken} />
 
       <TopUpModal
         isOpen={topUpOpen}
