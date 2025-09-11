@@ -14,7 +14,7 @@ import {
   SimpleImageUploader,
 } from './styles';
 
-const ImageUploader = ({ inputId, onSave, infoText, externalImage }) => {
+const ImageUploader = ({ inputId, onSave, infoText, externalImage, aspect }) => {
   const [preview, setPreview] = useState(null);
   const [fileName, setFileName] = useState('');
   const [isDragOver, setIsDragOver] = useState(false);
@@ -170,7 +170,7 @@ const ImageUploader = ({ inputId, onSave, infoText, externalImage }) => {
         image={rawImage}
         onClose={() => setEditorOpen(false)}
         onSave={handleEditorSave}
-        initialState={lastCropSettings || {}}
+        initialState={{ ...(lastCropSettings || {}), ...(aspect ? { aspect } : {}) }}
         onStateChange={handleEditorStateChange}
       />
     </>
