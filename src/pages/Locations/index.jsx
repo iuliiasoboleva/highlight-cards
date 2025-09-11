@@ -439,7 +439,7 @@ const Locations = () => {
 
       {isSingleExisting ? (
         <>
-          <LocationsSubtext style={{ marginTop: 8 }}>
+          <LocationsSubtext style={{ marginTop: 8, color: 'red'}}>
             У вас активен тариф с одной точкой продаж. Добавление новых адресов недоступно.
           </LocationsSubtext>
 
@@ -540,23 +540,10 @@ const Locations = () => {
               )}
             </AddressWrap>
 
-            <ActionButton
-              variant="secondary"
-              onClick={handleSearchOrganizations}
-              disabled={!(debouncedSearchQuery || '').trim()}
-            >
-              Найти все
-            </ActionButton>
+            {/* Кнопка "Найти все" скрыта по требованию */}
           </ActionRow>
 
-          {selectedLocation && (
-            <LocationInfo>
-              <p>
-                Координаты: {selectedLocation.coords.lat.toFixed(6)},{' '}
-                {selectedLocation.coords.lon.toFixed(6)}
-              </p>
-            </LocationInfo>
-          )}
+          {/* Блок координат скрыт по требованию */}
 
           {organizationResults.length > 0 && (
             <LocationInfo>
