@@ -160,10 +160,10 @@ export const PlanCard = styled.div`
   ${(p) =>
     p.$current &&
     css`
-      border-color: #0f7a3b;
-      background: #e9fbef;
+      border-color: #c9353f;
+      background: transparent;
       &:hover {
-        border-color: #0b5c2c;
+        border-color: #a82c35;
       }
     `}
 `;
