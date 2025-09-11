@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Pencil } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
@@ -186,7 +187,7 @@ const EditSettings = () => {
                   handleEditLocation(index);
                 }}
               >
-                ✏
+                <Pencil size={16} />
               </TagIconButton>
 
               <TagIconButton
