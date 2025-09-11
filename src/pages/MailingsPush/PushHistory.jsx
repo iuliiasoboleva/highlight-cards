@@ -24,17 +24,57 @@ const PushHistory = () => {
   const currentCard = useSelector((state) => state.cards.currentCard);
   const user = useSelector((state) => state.user);
 
-  const fetchHistory = useCallback(async () => {
-    if (!currentCard) return;
+  const rawTz = useSelector((state) => state.user?.timezone || 'Europe/Moscow');
+  const normalizeTz = (tz) => {
+    if (!tz) return 'Europe/Moscow';
+    const s = String(tz);
+    if (s === 'Europe/Moscow') return s;
     try {
-      const res = await axiosInstance.get('/mailings', {
-        params: { organization_id: user.organization_id, card_id: currentCard.id },
-      });
-      setHistory(res.data.filter((m) => m.mailingType === 'Push'));
+      // eslint-disable-next-line no-new
+      new Intl.DateTimeFormat('ru-RU', { timeZone: s });
+      return s;
+    } catch {
+      const lower = s.toLowerCase();
+      if (lower.includes('moscow') || lower.includes('моск')) return 'Europe/Moscow';
+      return 'Europe/Moscow';
+    }
+  };
+  const tz = normalizeTz(rawTz);
+
+  const fetchHistory = useCallback(async () => {
+    if (!user.organization_id) return;
+    try {
+      const params = { organization_id: user.organization_id };
+      if (currentCard?.id) params.card_id = currentCard.id;
+      const res = await axiosInstance.get('/mailings', { params });
+      const items = (Array.isArray(res.data) ? res.data : [])
+        .filter((m) => m.mailingType === 'Push')
+        .map((m) => {
+          try {
+            const iso = m.dateTime || '';
+            const fixed = iso.replace(/(\.\d{3})\d+/, '$1');
+            const d = new Date(fixed);
+            const parts = new Intl.DateTimeFormat('ru-RU', {
+              timeZone: tz,
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            })
+              .formatToParts(d)
+              .reduce((acc, p) => ({ ...acc, [p.type]: p.value }), {});
+            return { ...m, dateTime: `${parts.day}-${parts.month}-${parts.year} ${parts.hour}:${parts.minute}` };
+          } catch {
+            return m;
+          }
+        });
+      setHistory(items);
     } catch (e) {
       console.error(e);
     }
-  }, [currentCard, user.organization_id]);
+  }, [currentCard?.id, tz, user.organization_id]);
 
   useEffect(() => {
     fetchHistory();
