@@ -106,7 +106,12 @@ const MailingDetailsModal = ({ isOpen, mailingId, onClose }) => {
               <strong>Дата создания:</strong> {formattedDate}
             </Field>
             <Field>
-              <strong>Получатели:</strong> {data.recipients === 'all' ? 'Всем' : data.recipients}
+              <strong>Получатели:</strong>{' '}
+              {/^Сегмент:\s*(.+)$/i.test(data?.name || '')
+                ? `Сегмент: ${(/^Сегмент:\s*(.+)$/i.exec(data?.name || '')?.[1] || '').trim()}`
+                : data.recipients === 'all'
+                  ? 'Всем'
+                  : `Сегмент: ${(data.recipients || '').trim()}`}
             </Field>
             <Field>
               <strong>Тип рассылки:</strong> {data.mailingType}

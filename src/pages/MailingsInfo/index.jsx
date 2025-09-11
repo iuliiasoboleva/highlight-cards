@@ -18,6 +18,7 @@ const MailingsInfo = () => {
 
   const orgId = useSelector((state) => state.user.organization_id);
   const dispatch = useDispatch();
+  const allCards = useSelector((state) => state.cards?.cards || []);
   const { amount: smsBalance = 0, loading: smsLoading } = useSelector(
     (state) => state.balance || {},
   );
@@ -55,6 +56,19 @@ const MailingsInfo = () => {
     cellClassName: 'text-left',
   }));
 
+  const nameIdx = columns.findIndex((col) => col.key === 'name');
+  if (nameIdx !== -1) {
+    columns[nameIdx].render = (row) => {
+      const segment = /^Сегмент:\s*(.+)$/i.exec(row?.name || '');
+      const card = allCards.find((c) => String(c.id) === String(row?.cardId));
+      const cardName = card?.name || card?.title;
+      if (row?.mailingType?.toLowerCase() === 'push' && (cardName || segment)) {
+        return `Push по карте ${cardName || ''}`.trim();
+      }
+      return row.name;
+    };
+  }
+
   // отрисовка статуса как бэйджа
   const statusIdx = columns.findIndex((col) => col.key === 'status');
   if (statusIdx !== -1) {
@@ -75,7 +89,13 @@ const MailingsInfo = () => {
   // человекочитаемые получатели
   const recipientsIdx = columns.findIndex((col) => col.key === 'recipients');
   if (recipientsIdx !== -1) {
-    columns[recipientsIdx].render = (row) => (row.recipients === 'all' ? 'Всем' : row.recipients);
+    columns[recipientsIdx].render = (row) => {
+      const segment = /^Сегмент:\s*(.+)$/i.exec(row?.name || '');
+      if (segment && segment[1]) return `Сегмент: ${segment[1].trim()}`;
+      if (row.recipients === 'all') return 'Всем';
+      const rec = (row.recipients || '').trim();
+      return rec ? `Сегмент: ${rec}` : '—';
+    };
   }
 
   // усечённый текст пуша в списке
