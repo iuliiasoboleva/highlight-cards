@@ -116,7 +116,10 @@ const ColorSettings = ({ colors = {}, handleColorChange, isStampCard, onHoverKey
             <Label>{label}</Label>
 
             <InputGroup>
-              <PalettePicker value={pickerValue} onChange={(val) => handleColorPickerChange(key, val)} />
+              <PalettePicker
+                value={pickerValue}
+                onChange={(val) => handleColorPickerChange(key, val)}
+              />
 
               <CustomInput
                 value={displayValue}

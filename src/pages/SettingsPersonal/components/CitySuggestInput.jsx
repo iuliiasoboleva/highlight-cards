@@ -141,5 +141,3 @@ const CitySuggestInput = ({ value, onChange, className }) => {
 };
 
 export default CitySuggestInput;
-
-

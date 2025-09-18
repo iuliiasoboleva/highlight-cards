@@ -26,8 +26,8 @@ import {
   fetchBranches,
 } from '../../store/salesPointsSlice';
 import { CARD_LENGTH, normalizeDigits, validateCard } from '../../utils/cardUtils';
-import { normalizeErr } from '../../utils/normalizeErr';
 import { MAX_LOCATIONS } from '../../utils/locations.jsx';
+import { normalizeErr } from '../../utils/normalizeErr';
 import CardsBlock from './components/CardsBlock';
 import TablesBlock from './components/TablesBlock';
 import ManagerModal from './modals/ManagerModal';

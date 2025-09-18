@@ -150,12 +150,10 @@ const EditDesign = () => {
             <StampQuantityButton
               key={num}
               $active={num <= stampsQuantity}
-              onClick={() =>
-                {
-                  dispatch(updateCurrentCardField({ path: 'design.stampsQuantity', value: num }));
-                  setIsDirty(true);
-                }
-              }
+              onClick={() => {
+                dispatch(updateCurrentCardField({ path: 'design.stampsQuantity', value: num }));
+                setIsDirty(true);
+              }}
             >
               {num}
             </StampQuantityButton>

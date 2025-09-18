@@ -65,7 +65,10 @@ const PushHistory = () => {
             })
               .formatToParts(d)
               .reduce((acc, p) => ({ ...acc, [p.type]: p.value }), {});
-            return { ...m, dateTime: `${parts.day}-${parts.month}-${parts.year} ${parts.hour}:${parts.minute}` };
+            return {
+              ...m,
+              dateTime: `${parts.day}-${parts.month}-${parts.year} ${parts.hour}:${parts.minute}`,
+            };
           } catch {
             return m;
           }

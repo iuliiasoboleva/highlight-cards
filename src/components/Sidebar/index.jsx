@@ -24,7 +24,11 @@ const Sidebar = () => {
     { icon: <Glyph src={'/icons/people.svg'} />, label: 'Клиенты', path: '/clients' },
     { icon: <Glyph src={'/icons/scanner.svg'} />, label: 'Сканер', path: '/scan' },
     { icon: <Glyph src={'/icons/chat.svg'} />, label: 'Рассылки', path: '/mailings/info' },
-    { icon: <Glyph src={'/icons/location.svg'} />, label: 'Адреса точек продаж', path: '/locations' },
+    {
+      icon: <Glyph src={'/icons/location.svg'} />,
+      label: 'Адреса точек продаж',
+      path: '/locations',
+    },
     { icon: <Glyph src={'/icons/managers.svg'} />, label: 'Менеджеры', path: '/managers' },
     { icon: <Glyph src={'/icons/billing.svg'} />, label: 'Мой тариф', path: '/settings' },
   ];

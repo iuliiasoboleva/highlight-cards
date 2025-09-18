@@ -172,10 +172,30 @@ const MainLayout = () => {
 
       const items = [
         { to: firstStepTo, label: '1. Тип карты', key: 'type' },
-        { to: `${base}/design`, label: '2. Дизайн карты', key: 'design', tooltip: 'Сначала выберите тип карты' },
-        { to: `${base}/settings`, label: '3. Настройки карты', key: 'settings', tooltip: 'Сначала настройте дизайн' },
-        { to: `${base}/info`, label: '4. Оборотная сторона карты', key: 'info', tooltip: 'Сначала заполните настройки' },
-        { to: `${base}/integration`, label: '5. Интеграции', key: 'integration', tooltip: 'Сначала заполните оборотную сторону' },
+        {
+          to: `${base}/design`,
+          label: '2. Дизайн карты',
+          key: 'design',
+          tooltip: 'Сначала выберите тип карты',
+        },
+        {
+          to: `${base}/settings`,
+          label: '3. Настройки карты',
+          key: 'settings',
+          tooltip: 'Сначала настройте дизайн',
+        },
+        {
+          to: `${base}/info`,
+          label: '4. Оборотная сторона карты',
+          key: 'info',
+          tooltip: 'Сначала заполните настройки',
+        },
+        {
+          to: `${base}/integration`,
+          label: '5. Интеграции',
+          key: 'integration',
+          tooltip: 'Сначала заполните оборотную сторону',
+        },
       ];
 
       // блокируем только шаги ВПЕРЁД, если текущий шаг ещё не готов

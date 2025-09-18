@@ -8,13 +8,13 @@ import { useToast } from '../../components/Toast';
 import { logout as authLogout } from '../../store/authSlice';
 import {
   deleteAccount,
+  fetchOrganization,
   logout,
   removeAvatar,
   updateField,
   updateProfile,
   updateUserSettings,
   uploadAvatar,
-  fetchOrganization,
 } from '../../store/userSlice';
 import AvatarBlock from './components/AvatarBlock';
 import DeleteAccountSection from './components/DeleteAccountSection';
@@ -192,9 +192,10 @@ const SettingsPersonal = () => {
       Buenos_Aires: 'Буэнос-Айрес',
     };
 
-    const zones = typeof Intl !== 'undefined' && Intl.supportedValuesOf
-      ? Intl.supportedValuesOf('timeZone')
-      : [];
+    const zones =
+      typeof Intl !== 'undefined' && Intl.supportedValuesOf
+        ? Intl.supportedValuesOf('timeZone')
+        : [];
 
     const now = new Date();
     const toOffset = (tz) => {

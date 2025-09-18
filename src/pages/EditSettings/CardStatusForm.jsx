@@ -9,12 +9,12 @@ import {
   DeleteCell,
   HeaderLabel,
   HeaderLabelTrash,
+  SpendingLabel,
   StatusIssueHeader,
   StatusIssueRow,
   StatusNameCell,
   StatusRequiredCell,
   StatusTypeCell,
-  SpendingLabel,
 } from './styles';
 
 const CardStatusForm = ({ statusFields, onFieldChange, onAddField, onRemoveField }) => {

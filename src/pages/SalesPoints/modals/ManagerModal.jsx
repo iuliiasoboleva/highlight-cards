@@ -123,8 +123,12 @@ const ManagerModal = ({ isOpen, onClose, onSave, onDelete, initialData = {}, isE
     return allManagers.some((m) => {
       const sameId = currentId && m.id === currentId;
       if (sameId) return false;
-      const mn = String(m.name || '').trim().toLowerCase();
-      const ms = String(m.surname || '').trim().toLowerCase();
+      const mn = String(m.name || '')
+        .trim()
+        .toLowerCase();
+      const ms = String(m.surname || '')
+        .trim()
+        .toLowerCase();
       return mn === name && ms === surname;
     });
   }, [allManagers, initialData?.id, manager.name, manager.surname]);
@@ -135,7 +139,9 @@ const ManagerModal = ({ isOpen, onClose, onSave, onDelete, initialData = {}, isE
     const currentId = initialData?.id;
     return allManagers.some((m) => {
       if (currentId && m.id === currentId) return false;
-      const me = String(m.email || '').trim().toLowerCase();
+      const me = String(m.email || '')
+        .trim()
+        .toLowerCase();
       return me === email;
     });
   }, [allManagers, initialData?.id, manager.email]);

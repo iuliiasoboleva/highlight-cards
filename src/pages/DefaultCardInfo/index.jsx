@@ -4,9 +4,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import axiosInstance from '../../axiosInstance';
 import CardInfo from '../../components/CardInfo/CardInfo';
-import InfoOverlay from '../../components/InfoOverlay';
 import CustomTable from '../../components/CustomTable';
 import DashboardStats from '../../components/DashboardStats';
+import InfoOverlay from '../../components/InfoOverlay';
 import LoaderCentered from '../../components/LoaderCentered';
 import { transactionHeaders } from '../../mocks/mockTransactions';
 import {
@@ -15,8 +15,8 @@ import {
   FrameImg,
   ImageWrapper,
   InfoBlock,
-  PhoneContainer,
   OverlayWrapper,
+  PhoneContainer,
   QrContainer,
   QrImage,
   QrLink,

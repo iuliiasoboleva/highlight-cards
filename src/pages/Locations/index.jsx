@@ -13,7 +13,7 @@ import CustomInput from '../../customs/CustomInput/index.jsx';
 import CustomSelect from '../../customs/CustomSelect';
 import CustomTextArea from '../../customs/CustomTextarea/index.jsx';
 import ToggleSwitch from '../../customs/CustomToggleSwitch/index.jsx';
-import { normalizeAddr, sameCoords, formatAddress } from '../../helpers/normalizeAddr.jsx';
+import { formatAddress, normalizeAddr, sameCoords } from '../../helpers/normalizeAddr.jsx';
 import { setCurrentCard } from '../../store/cardsSlice';
 import {
   createBranch as createBranchThunk,
@@ -440,7 +440,7 @@ const Locations = () => {
 
       {isSingleExisting ? (
         <>
-          <LocationsSubtext style={{ marginTop: 8, color: 'red'}}>
+          <LocationsSubtext style={{ marginTop: 8, color: 'red' }}>
             У вас активен тариф с одной точкой продаж. Добавление новых адресов недоступно.
           </LocationsSubtext>
 

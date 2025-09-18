@@ -331,7 +331,12 @@ export const PrimaryBtn = styled.button`
     left: -40%;
     width: 40%;
     height: 100%;
-    background: linear-gradient(120deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.35) 50%, rgba(255, 255, 255, 0) 100%);
+    background: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.35) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
     transform: skewX(-20deg);
     pointer-events: none;
   }

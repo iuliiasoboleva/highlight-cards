@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import axiosInstance from '../../axiosInstance';
 import AgreementModal from '../../components/AgreementModal';
-import PaymentModal from '../../components/PaymentModal';
 import GeoBadge from '../../components/GeoBadge';
 import LoaderCentered from '../../components/LoaderCentered';
-import TopUpModal from '../../components/TopUpModal';
+import PaymentModal from '../../components/PaymentModal';
 import { useToast } from '../../components/Toast';
-import axiosInstance from '../../axiosInstance';
+import TopUpModal from '../../components/TopUpModal';
 import CustomMainButton from '../../customs/CustomMainButton';
 import { formatDateToDDMMYYYY } from '../../helpers/date';
 import { clamp, getPointsBounds } from '../../helpers/getPointsBounds';
@@ -24,6 +24,7 @@ import {
   BlockTitle,
   CalcLine,
   ConditionsCard,
+  CurrentBadge,
   Field,
   FreeSub,
   FreeTitle,
@@ -39,7 +40,6 @@ import {
   PlanPrice,
   Plans,
   PopularBadge,
-  CurrentBadge,
   PriceRow,
   PrimaryBtn,
   Radio,
@@ -126,7 +126,8 @@ const Settings = () => {
 
   const total = monthlyPrice * months;
 
-  const paidUntilRaw = subscription?.paid_until ?? subscription?.access_until ?? plan?.paidUntil ?? null;
+  const paidUntilRaw =
+    subscription?.paid_until ?? subscription?.access_until ?? plan?.paidUntil ?? null;
 
   const paidUntilStr = paidUntilRaw
     ? formatDateToDDMMYYYY(
@@ -312,7 +313,9 @@ const Settings = () => {
                 </Total>
 
                 <PrimaryBtn onClick={() => setShowModal(true)}>Оплатить картой</PrimaryBtn>
-                <GhostBtn type="button" onClick={() => toast.info('В разработке')}>Выставить счёт</GhostBtn>
+                <GhostBtn type="button" onClick={() => toast.info('В разработке')}>
+                  Выставить счёт
+                </GhostBtn>
 
                 <SmallList>
                   <li>Все цены указаны с НДС</li>
@@ -359,7 +362,11 @@ const Settings = () => {
         }}
       />
 
-      <PaymentModal open={payOpen} onClose={() => setPayOpen(false)} confirmationToken={confirmationToken} />
+      <PaymentModal
+        open={payOpen}
+        onClose={() => setPayOpen(false)}
+        confirmationToken={confirmationToken}
+      />
 
       <TopUpModal
         isOpen={topUpOpen}

@@ -2,11 +2,11 @@ import React, { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import CustomInput from '../../../customs/CustomInput';
-import CitySuggestInput from './CitySuggestInput';
 import CustomPinInput from '../../../customs/CustomPinInput';
 import CustomSelect from '../../../customs/CustomSelect';
 import { changePin } from '../../../store/userSlice';
 import { ErrorText, FormGroup, FormRow, Label, PinBlock, SavePinButton } from '../styles';
+import CitySuggestInput from './CitySuggestInput';
 
 const sanitize = (s = '', length = 4) => (s.match(/\d/g) || []).join('').slice(0, length);
 
@@ -127,10 +127,7 @@ const ProfileForm = ({ user, countries, languages, timezones, onFieldChange, sho
       <FormRow>
         <FormGroup $area="city">
           <Label>Город</Label>
-          <CitySuggestInput
-            value={user.city || ''}
-            onChange={(v) => onFieldChange('city', v)}
-          />
+          <CitySuggestInput value={user.city || ''} onChange={(v) => onFieldChange('city', v)} />
         </FormGroup>
 
         <FormGroup $area="pinConfirm">

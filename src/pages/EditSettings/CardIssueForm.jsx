@@ -34,9 +34,7 @@ const ALL_OPTIONS = [...STANDARD_OPTIONS, { value: 'custom', label: 'Касто�
 const isUniqueType = (t) => t === 'phone' || t === 'email';
 
 const CardIssueForm = ({ formFields, onFieldChange, onAddField, onRemoveField }) => {
-  const hasRequiredContact = (formFields || []).some(
-    (f) => isUniqueType(f.type) && !!f.required,
-  );
+  const hasRequiredContact = (formFields || []).some((f) => isUniqueType(f.type) && !!f.required);
 
   const handleTypeChange = (index, value) => {
     const std = STANDARD_OPTIONS.find((opt) => opt.value === value);
@@ -64,8 +62,7 @@ const CardIssueForm = ({ formFields, onFieldChange, onAddField, onRemoveField })
     <Container>
       {!hasRequiredContact && (
         <Warning>
-          Форма должна включать как минимум одно поле Телефон или Email, отмеченное как
-          обязательное
+          Форма должна включать как минимум одно поле Телефон или Email, отмеченное как обязательное
         </Warning>
       )}
 

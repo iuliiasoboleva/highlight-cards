@@ -77,5 +77,3 @@ const PaymentModal = ({ open, onClose, confirmationToken }) => {
 };
 
 export default PaymentModal;
-
-

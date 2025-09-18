@@ -31,6 +31,7 @@ import EditIntegration from './pages/EditIntegration';
 import EditSettings from './pages/EditSettings';
 import EditType from './pages/EditType';
 import GetPassPage from './pages/GetPassPage';
+import GiftCardPage from './pages/GiftCardPage';
 import Home from './pages/Home';
 import Locations from './pages/Locations';
 import LoginVerify from './pages/LoginVerify';
@@ -141,6 +142,7 @@ const App = () => {
 
             <Route path="/customer/card/:cardNumber" element={<CustomerPage />} />
             <Route path="/getpass/:cardId" element={<GetPassPage />} />
+            <Route path="/giftcard/:cardNumber" element={<GiftCardPage />} />
           </Routes>
         </AuthRedirectGuard>
       </Router>

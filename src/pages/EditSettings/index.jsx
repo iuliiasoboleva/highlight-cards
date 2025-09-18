@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Pencil } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+
+import { Pencil } from 'lucide-react';
 
 import EditLayout from '../../components/EditLayout';
 import TitleWithHelp from '../../components/TitleWithHelp';
@@ -125,11 +126,9 @@ const EditSettings = () => {
 
     try {
       const addr = (loc?.address || '').trim();
-      const name = (loc?.name || addr || 'Локация');
+      const name = loc?.name || addr || 'Локация';
       if (organizationId && addr) {
-        dispatch(
-          createBranch({ name, address: addr, organization_id: organizationId }),
-        )
+        dispatch(createBranch({ name, address: addr, organization_id: organizationId }))
           .unwrap()
           .catch(() => {});
         dispatch(fetchBranches(organizationId));
@@ -154,8 +153,8 @@ const EditSettings = () => {
     }
 
     const fields = currentCard.issueFormFields || [];
-    const hasRequiredContact = fields.some((f) =>
-      (f.type === 'phone' || f.type === 'email') && !!f.required,
+    const hasRequiredContact = fields.some(
+      (f) => (f.type === 'phone' || f.type === 'email') && !!f.required,
     );
     if (!hasRequiredContact) {
       toast.error('Добавьте обязательное поле Телефон или Email в анкету клиента');
