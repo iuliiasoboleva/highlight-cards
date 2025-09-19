@@ -1,5 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 
+import giftCardTop from '../../assets/gift-card-top.png';
+import giftCardImg from '../../assets/gift-card.png';
+import logoImg from '../../assets/logo_m8.png';
 import { CTAButton, Certificate, ClosedLayer, HeroContainer, OpenedLayer } from './styles';
 
 const HeroCard = ({
@@ -7,8 +10,6 @@ const HeroCard = ({
   onOpen,
   onClose,
   onCTA,
-  giftCardImg,
-  giftCardTop,
   name,
   text,
   amount,
@@ -16,17 +17,6 @@ const HeroCard = ({
   serial,
 }) => {
   const closedImgRef = useRef(null);
-  const [cardWidth, setCardWidth] = useState(null);
-
-  useEffect(() => {
-    const measure = () => {
-      if (!closedImgRef.current) return;
-      setCardWidth(Math.round(closedImgRef.current.getBoundingClientRect().width));
-    };
-    measure();
-    window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
-  }, []);
 
   return (
     <HeroContainer onClick={() => opened && onClose?.()}>
@@ -42,17 +32,16 @@ const HeroCard = ({
       </ClosedLayer>
 
       {/* Открытый сертификат */}
-      <OpenedLayer $opened={opened} $w={cardWidth} onClick={(e) => e.stopPropagation()}>
-        <Certificate $w={cardWidth}>
-          <div className="logo">PRO M8</div>
-
+      <OpenedLayer $opened={opened} onClick={(e) => e.stopPropagation()}>
+        <Certificate>
+          <img src={logoImg} alt="Лого" className="logo" />
           <h1 className="title">Подарочный сертификат</h1>
           <div className="name">{name}</div>
 
           <p className="text">{text}</p>
 
           <div className="amount">
-            {amount}
+            <span className="sum">{amount}</span>
             <span className="rub">₽</span>
           </div>
 
@@ -62,7 +51,10 @@ const HeroCard = ({
 
           <div className="meta">
             <div>Срок действия: до {expiry}</div>
-            <div>Акции и скидки не применяются к сертификату</div>
+            <div>
+              Акции и скидки не применяются
+              <br /> к подарочному сертификату
+            </div>
             <div className="serial">{serial}</div>
           </div>
         </Certificate>

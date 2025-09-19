@@ -2,23 +2,21 @@ import React, { useRef, useState } from 'react';
 
 import { Clusterer, Map, Placemark, YMaps } from '@pbe/react-yandex-maps';
 
-import giftCardTop from '../../assets/gift-card-top.png';
-import giftCardImg from '../../assets/gift-card.png';
-import iconCalendar from '../../assets/icons/diploma.svg';
-import iconGift from '../../assets/icons/expensive.svg';
-import iconNote from '../../assets/icons/sale.svg';
+import iconDiploma from '../../assets/icons/diploma.svg';
+import iconExpensive from '../../assets/icons/expensive.svg';
+import iconSale from '../../assets/icons/sale.svg';
 import iconServices from '../../assets/icons/services.svg';
 import HeroCard from '../../components/HeroCard';
 import { ADDRESSES, GIFT_CARD_HERO } from '../../mocks/giftCardMocks';
+import Footer from '../Footer';
 import {
   AddressItem,
   Addresses,
-  Badge,
+  BottomBlock,
   CityCol,
   CityTitle,
   ContactRow,
   Container,
-  Footer,
   HowGrid,
   HowItem,
   HowTo,
@@ -26,15 +24,14 @@ import {
 } from './styles';
 
 const HOW_TO = [
-  { id: 1, icon: iconServices, title: 'Выбор услуги', text: 'Доступ к любому филиалу и мастеру' },
-  { id: 2, icon: iconGift, title: 'Указать номер', text: 'Сообщите номер сертификата при записи' },
   {
-    id: 3,
-    icon: iconCalendar,
-    title: 'Подарок частями',
-    text: 'Можно расходовать по необходимости',
+    id: 1,
+    icon: iconDiploma,
+    text: 'Сертификат доступен в любом филиале, выбор услуги и мастера',
   },
-  { id: 4, icon: iconNote, title: 'Без акций', text: 'Акции и скидки не суммируются' },
+  { id: 2, icon: iconServices, text: 'Указать номер сертификата при записи' },
+  { id: 3, icon: iconExpensive, text: 'Можно доплатить, если сумма превышает номинал' },
+  { id: 4, icon: iconSale, text: 'Акции и скидки не действуют на сертификат' },
 ];
 
 const GiftCardPage = () => {
@@ -48,8 +45,6 @@ const GiftCardPage = () => {
         onOpen={() => setOpened(true)}
         onClose={() => setOpened(false)}
         onCTA={() => alert('Здесь будет переход к записи')}
-        giftCardImg={giftCardImg}
-        giftCardTop={giftCardTop}
         name={GIFT_CARD_HERO.name}
         text={GIFT_CARD_HERO.text}
         amount={GIFT_CARD_HERO.amount}
@@ -64,8 +59,9 @@ const GiftCardPage = () => {
         <HowGrid>
           {HOW_TO.map((item) => (
             <HowItem key={item.id}>
-              <img src={item.icon} alt="" />
-              <div className="title">{item.title}</div>
+              <span className="icon">
+                <img src={item.icon} alt="" />
+              </span>
               <div className="text">{item.text}</div>
             </HowItem>
           ))}
@@ -73,16 +69,12 @@ const GiftCardPage = () => {
       </HowTo>
 
       <MapBlock>
-        <h3>Адреса, где можно использовать сертификат</h3>
-
         <YMaps query={{ lang: 'ru_RU' /*, apikey: 'ВАШ_API_KEY'*/ }}>
           <div
             style={{
               height: 360,
               width: '100%',
-              maxWidth: 1080,
-              margin: '0 auto 16px',
-              borderRadius: 12,
+              maxWidth: '100%',
               overflow: 'hidden',
             }}
           >
@@ -133,6 +125,12 @@ const GiftCardPage = () => {
             </Map>
           </div>
         </YMaps>
+      </MapBlock>
+      <BottomBlock>
+        <h3 className="addr-title">
+          <em>Адреса,</em> где можно <br />
+          <span>использовать сертификат</span>
+        </h3>
 
         <Addresses>
           {ADDRESSES.map((group) => (
@@ -140,34 +138,29 @@ const GiftCardPage = () => {
               <CityTitle>{group.city}</CityTitle>
               {group.items.map((a) => (
                 <AddressItem key={a.id}>
-                  <div className="line1">{a.line1}</div>
-                  <div className="line2">{a.line2}</div>
+                  <div className="line1">{a.line}</div>
                 </AddressItem>
               ))}
             </CityCol>
           ))}
         </Addresses>
-      </MapBlock>
 
-      <ContactRow>
-        <div>
-          <Badge>Телефон</Badge>
-          <a href="tel:+74992262931">+7 (499) 226-29-31</a>
-        </div>
-        <div>
-          <Badge>E-mail</Badge>
-          <a href="mailto:boss@feedback-massage.ru">boss@feedback-massage.ru</a>
-        </div>
-      </ContactRow>
-      <Footer>
-        <div className="left">
-          <span>© PRO M8</span> · <a href="#">Оплата</a> · <a href="#">Доставка</a> ·{' '}
-          <a href="#">Скидки</a> · <a href="#">О нас</a>
-        </div>
-        <div className="right">
-          <span>ИП Роман Иванов</span> · <a href="#">Политика конфиденциальности</a>
-        </div>
-      </Footer>
+        <ContactRow>
+          <div className="contact">
+            <div className="label">Колл-центр:</div>
+            <a className="value" href="tel:+74992262931">
+              +7 (499) 226-29-31
+            </a>
+          </div>
+          <div className="contact">
+            <div className="label">E-mail:</div>
+            <a className="value" href="mailto:boss@feedback-massage.ru">
+              boss@feedback-massage.ru
+            </a>
+          </div>
+        </ContactRow>
+      </BottomBlock>
+      <Footer />
     </Container>
   );
 };

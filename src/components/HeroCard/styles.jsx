@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const HERO_HEIGHT = 560;
+const HERO_HEIGHT = 660;
 const LAYER_HEIGHT = 420;
 
 export const HeroContainer = styled.section`
@@ -12,7 +12,27 @@ export const HeroContainer = styled.section`
   border-radius: 0 0 24px 24px;
   overflow: hidden;
 
-  background: radial-gradient(120% 120% at 50% 10%, #2a2a2a 0%, #161616 60%, #0d0d0d 100%);
+  background:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.012) 0 2px, rgba(0, 0, 0, 0) 2px 4px),
+    radial-gradient(
+      140% 170% at 50% 92%,
+      rgba(255, 255, 255, 0.14) 0%,
+      rgba(255, 255, 255, 0.1) 22%,
+      rgba(255, 255, 255, 0.06) 44%,
+      rgba(255, 255, 255, 0.03) 62%,
+      rgba(255, 255, 255, 0) 78%
+    ),
+    linear-gradient(180deg, #1a1a1a 0%, #0b0b0b 100%);
+
+  background-repeat: repeat, no-repeat, no-repeat;
+  background-size:
+    4px 4px,
+    cover,
+    cover;
+  background-position:
+    0 0,
+    center bottom,
+    center;
 
   grid-template-areas: 'stack';
   & > * {
@@ -37,23 +57,29 @@ export const ClosedLayer = styled.div`
   pointer-events: ${(p) => (p.$opened ? 'none' : 'auto')};
 
   img {
-    width: clamp(360px, 38vw, 520px);
+    width: 581px;
     height: auto;
     object-fit: contain;
     align-self: end;
     user-select: none;
     -webkit-user-drag: none;
     cursor: pointer;
+
+     @media (max-width: 520px) {
+width: 100%;
+max-width: 100%;
   }
 `;
 
 export const OpenedLayer = styled.div`
   height: ${LAYER_HEIGHT}px;
-  width: ${(p) => (p.$w ? `${p.$w}px` : 'auto')};
+  max-width: 381px;
+  width: 100%;
   display: grid;
   align-content: end;
   justify-items: center;
   gap: 10px;
+  position: relative;
 
   will-change: transform, opacity;
   transition:
@@ -65,84 +91,80 @@ export const OpenedLayer = styled.div`
   pointer-events: ${(p) => (p.$opened ? 'auto' : 'none')};
 
   .pocket {
+    position: absolute;
     width: 100%;
     align-self: end;
-    margin-top: -8px;
     pointer-events: none;
-    filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.25));
   }
 `;
 
 export const Certificate = styled.div`
-  width: ${(p) => (p.$w ? `${p.$w}px` : 'auto')};
-  max-width: 100%;
-  align-self: end;
+  width: 100%;
+  max-width: 330px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
 
   background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.35);
-  padding: 28px 22px 18px;
+  padding: 40px 20px 55px;
 
   color: #111;
 
   .logo {
-    font:
-      700 14px/1 ui-monospace,
-      SFMono-Regular,
-      Menlo,
-      Consolas,
-      monospace;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    opacity: 0.75;
-    text-align: center;
-    margin-bottom: 8px;
+    width: auto;
+    height: 40px;
+    object-fit: cover;
+    align-self: center;
   }
 
   .title {
     margin: 0;
     text-align: center;
-    font-family: Georgia, 'Times New Roman', serif;
-    font-size: 32px;
-    line-height: 1.15;
-    font-weight: 700;
+    font-family: 'Playfair Display', 'Times New Roman', Georgia, serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 45px;
+    line-height: 1.08;
+    letter-spacing: -0.2px;
   }
 
   .name {
-    margin-top: 8px;
     text-align: center;
-    font-family: Georgia, 'Times New Roman', serif;
+    font-family: 'Playfair Display', 'Times New Roman', Georgia, serif;
     font-style: italic;
+    font-weight: 400;
     font-size: 18px;
     color: #333;
   }
 
   .text {
-    margin: 14px auto 0;
     text-align: center;
-    max-width: 85%;
     color: #343434;
     line-height: 1.4;
   }
 
   .amount {
-    margin: 18px 0 12px;
     text-align: center;
     font-family: Georgia, 'Times New Roman', serif;
+  }
+  .sum {
     font-size: 36px;
     font-weight: 700;
-    .rub {
-      font-size: 0.6em;
-      vertical-align: super;
-      margin-left: 0.15em;
-    }
+    font-style: italic;
+  }
+  .rub {
+    font-size: 18px;
+    font-weight: 500;
+    margin-left: 0.15em;
   }
 
   .cta {
     width: 210px;
     height: 36px;
-    border-radius: 6px;
-    font-size: 14px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 500;
     display: block;
     margin: 0 auto;
   }
@@ -152,13 +174,18 @@ export const Certificate = styled.div`
     gap: 6px;
     margin-top: 12px;
     text-align: center;
-    font-size: 12px;
-    color: #6b6b6b;
+    font-size: 10px;
+    font-weight: 600;
 
     .serial {
-      margin-top: 4px;
-      letter-spacing: 0.35em;
-      color: #9b9b9b;
+      margin-top: 8px;
+      font-size: 8px;
+    }
+  }
+  @media (max-width: 520px) {
+    max-width: 270px;
+    .title {
+      font-size: 38px;
     }
   }
 `;
