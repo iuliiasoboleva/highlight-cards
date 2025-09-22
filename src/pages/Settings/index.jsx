@@ -234,6 +234,7 @@ const Settings = () => {
                     max={pMax}
                     step={1}
                     value={points}
+                    onInput={(e) => setPoints(Number(e.target.value))}
                     onChange={(e) => setPoints(Number(e.target.value))}
                     disabled={pMin === pMax}
                     style={{ '--pct': `${((points - pMin) / (pMax - pMin || 1)) * 100}%` }}
@@ -257,6 +258,7 @@ const Settings = () => {
                     max={12}
                     step={1}
                     value={months}
+                    onInput={(e) => setMonths(Number(e.target.value))}
                     onChange={(e) => setMonths(Number(e.target.value))}
                     style={{ '--pct': `${((months - 1) / (12 - 1)) * 100}%` }}
                   />
