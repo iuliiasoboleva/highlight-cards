@@ -54,7 +54,7 @@ const Workplace = () => {
     );
 
     if (foundClient) {
-      navigate(`/customer/card/${trimmedCard}`);
+      navigate(`/getpass/${trimmedCard}`);
     } else {
       toast.error('Клиент с таким номером карты не найден');
     }

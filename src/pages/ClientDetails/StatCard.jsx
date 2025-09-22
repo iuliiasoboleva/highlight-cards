@@ -9,11 +9,11 @@ import { ClientDashboardStats, ClientDashboardWrapper, ClientLinkWrapper } from 
 const linkCards = [
   {
     label: 'Ссылка для установки / восстановления карты',
-    url: 'https://app.highlightcards.co.uk/getpass/70df4384-5616-49a1-93a1-4be0f1167429',
+    url: 'https://app.loyalclub.ru/getpass/1234560',
   },
   {
     label: 'Реферальная ссылка',
-    url: 'https://app.highlightcards.co.uk/getpass/70df4384-5616-49a1-93a1-4be0f1167429?ref=123',
+    url: 'https://app.loyalclub.ru/getpass/1234560?ref=123',
   },
 ];
 

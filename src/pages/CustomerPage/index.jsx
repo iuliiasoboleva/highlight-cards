@@ -49,7 +49,33 @@ const CustomerPage = () => {
     (card) => card.cardNumber === cardNumber,
   );
 
-  if (!customerWithCard || !selectedCard || selectedCardIndex === -1) {
+  // Если карта не найдена, создаем демо-данные для любой карты
+  const demoCard = {
+    cardNumber: cardNumber,
+    serialNumber: `LC-${cardNumber.slice(-4)}`,
+    activeStorage: 5,
+    stamps: 5,
+    availableRewards: 1,
+    lastRewardReceived: '15.06.2025',
+    lastAccrual: '10.06.2025',
+    cardExpirationDate: '31.12.2025',
+    cardInstallationDate: '01.06.2025',
+    ageInfo: 'Активна',
+  };
+
+  const demoCustomer = {
+    id: 'demo',
+    name: 'Демонстрационный клиент',
+    phone: '+7 900 000-00-00',
+    cards: [demoCard],
+  };
+
+  const isDemoCard = !selectedCard;
+
+  const displayCard = selectedCard || demoCard;
+  const displayCustomer = customerWithCard || demoCustomer;
+
+  if (!displayCustomer || !displayCard) {
     return <Container>Карта не найдена</Container>;
   }
 
@@ -61,33 +87,36 @@ const CustomerPage = () => {
 
           switch (action) {
             case 'addStamps':
-              updates.activeStorage = (selectedCard.activeStorage || 0) + data.amount;
-              updates.stamps = (selectedCard.stamps || 0) + data.amount;
+              updates.activeStorage = (displayCard.activeStorage || 0) + data.amount;
+              updates.stamps = (displayCard.stamps || 0) + data.amount;
               updates.lastAccrual = new Date().toLocaleDateString();
               break;
 
             case 'addReward':
-              updates.availableRewards = (selectedCard.availableRewards || 0) + 1;
+              updates.availableRewards = (displayCard.availableRewards || 0) + 1;
               updates.lastRewardReceived = new Date().toLocaleDateString();
               break;
 
             case 'receiveReward':
-              if ((selectedCard.availableRewards || 0) <= 0) {
+              if ((displayCard.availableRewards || 0) <= 0) {
                 throw new Error('Нет доступных наград');
               }
-              updates.availableRewards = (selectedCard.availableRewards || 0) - 1;
+              updates.availableRewards = (displayCard.availableRewards || 0) - 1;
               updates.lastRewardReceived = new Date().toLocaleDateString();
               updates.activeStorage =
-                (selectedCard.activeStorage || 0) >= 10
-                  ? (selectedCard.activeStorage || 0) - 10
-                  : selectedCard.activeStorage || 0;
+                (displayCard.activeStorage || 0) >= 10
+                  ? (displayCard.activeStorage || 0) - 10
+                  : displayCard.activeStorage || 0;
               break;
 
             default:
               break;
           }
 
-          dispatch(updateCard({ cardNumber, updates }));
+          // Не сохраняем изменения для демо-карт в Redux store
+          if (!isDemoCard) {
+            dispatch(updateCard({ cardNumber, updates }));
+          }
           resolve();
         } catch (error) {
           reject(error);
@@ -143,8 +172,13 @@ const CustomerPage = () => {
     <Container>
       <Header>
         <Title>
-          Клиент: <CustomerName>{customerWithCard.name}</CustomerName>
+          Клиент: <CustomerName>{displayCustomer.name}</CustomerName>
         </Title>
+        {isDemoCard && (
+          <div style={{ color: '#ff6b6b', fontSize: '12px', marginTop: '4px' }}>
+            Демо-версия: данные не сохранены в системе
+          </div>
+        )}
       </Header>
 
       <Actions>
@@ -154,7 +188,7 @@ const CustomerPage = () => {
 
         <CustomMainButton
           onClick={handleReceiveReward}
-          disabled={isLoading || (selectedCard.availableRewards || 0) <= 0}
+          disabled={isLoading || (displayCard.availableRewards || 0) <= 0}
         >
           {isLoading ? 'Обработка...' : 'Получить награду'}
         </CustomMainButton>
@@ -180,38 +214,38 @@ const CustomerPage = () => {
       <InfoGrid>
         <InfoItem>
           <InfoLabel>Текущие баллы:</InfoLabel>
-          <InfoValue>{selectedCard.activeStorage}</InfoValue>
+          <InfoValue>{displayCard.activeStorage}</InfoValue>
         </InfoItem>
         <InfoItem>
           <InfoLabel>Доступные награды:</InfoLabel>
-          <InfoValue>{selectedCard.availableRewards}</InfoValue>
+          <InfoValue>{displayCard.availableRewards}</InfoValue>
         </InfoItem>
         <InfoItem>
           <InfoLabel>Последняя награда:</InfoLabel>
-          <InfoValue>{selectedCard.lastRewardReceived || '—'}</InfoValue>
+          <InfoValue>{displayCard.lastRewardReceived || '—'}</InfoValue>
         </InfoItem>
         <InfoItem>
           <InfoLabel>Последнее начисление:</InfoLabel>
-          <InfoValue>{selectedCard.lastAccrual || '—'}</InfoValue>
+          <InfoValue>{displayCard.lastAccrual || '—'}</InfoValue>
         </InfoItem>
         <InfoItem>
           <InfoLabel>Срок действия карты:</InfoLabel>
-          <InfoValue>{selectedCard.cardExpirationDate || '—'}</InfoValue>
+          <InfoValue>{displayCard.cardExpirationDate || '—'}</InfoValue>
         </InfoItem>
         <InfoItem>
           <InfoLabel>Дата регистрации:</InfoLabel>
-          <InfoValue>{selectedCard.cardInstallationDate || '—'}</InfoValue>
+          <InfoValue>{displayCard.cardInstallationDate || '—'}</InfoValue>
         </InfoItem>
       </InfoGrid>
 
       <Row>
         <RowLabel>Номер карты:</RowLabel>
-        <RowValue>{selectedCard.serialNumber}</RowValue>
+        <RowValue>{displayCard.serialNumber}</RowValue>
       </Row>
 
       <Row>
         <RowLabel>Статус:</RowLabel>
-        <RowValue>{selectedCard.ageInfo || '—'}</RowValue>
+        <RowValue>{displayCard.ageInfo || '—'}</RowValue>
       </Row>
 
       <Hint>Введите количество штампов и нажмите «Добавить» для начисления баллов.</Hint>

@@ -115,7 +115,7 @@ const DefaultCardInfo = () => {
 
           <QrContainer>
             <QrImage src={card.qrImg} alt="QR code" />
-            <QrLink title={card.urlCopy}>{card.urlCopy}</QrLink>
+            <QrLink title="Ссылка регистрации карты">{card.urlCopy}</QrLink>
 
             <ButtonsRow>
               <Button
@@ -123,7 +123,7 @@ const DefaultCardInfo = () => {
                   navigator.clipboard.writeText(card.urlCopy);
                 }}
               >
-                Скопировать ссылку
+                Скопировать ссылку регистрации
               </Button>
               {/* НЕ УДАЛЯТЬ, ПОЯВИТСЯ ПОЗЖЕ */}
               {/* <Button onClick={() => generatePDF(card)}>Скачать PDF</Button> */}

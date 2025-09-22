@@ -145,6 +145,10 @@ export const ButtonsRow = styled.div`
   margin-top: auto;
   flex-wrap: wrap;
   justify-content: center;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+  }
 `;
 
 export const Button = styled.button`
@@ -157,6 +161,7 @@ export const Button = styled.button`
   cursor: pointer;
   transition: background 0.2s;
   width: 100%;
+
   &:hover {
     background: #333;
   }

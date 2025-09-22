@@ -3,7 +3,7 @@ export const defaultCardTemplate = {
   status: 'stamp',
   name: 'Новая карта лояльности',
   isActive: false,
-  urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+  urlCopy: '',
   qrImg: '/qr-code.svg',
   frameUrl: '/phone.svg',
   balanceMoney: 1800,

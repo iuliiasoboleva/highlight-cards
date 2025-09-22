@@ -2,7 +2,7 @@ export const mockTemplateCards = [
   {
     id: 1,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -41,7 +41,7 @@ export const mockTemplateCards = [
   {
     id: 2,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -80,7 +80,7 @@ export const mockTemplateCards = [
   {
     id: 3,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -119,7 +119,7 @@ export const mockTemplateCards = [
   {
     id: 4,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -158,7 +158,7 @@ export const mockTemplateCards = [
   // {
   //   id: 5,
   //   status: 'stamp',
-  //   urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+  //   urlCopy: 'https://app.loyalclub.ru/getpass/1234560',
   //   qrImg: '/qr-code.svg',
   //   title: 'Штампы',
   //   isActive: false,
@@ -197,7 +197,7 @@ export const mockTemplateCards = [
   {
     id: 6,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -236,7 +236,7 @@ export const mockTemplateCards = [
   {
     id: 7,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -275,7 +275,7 @@ export const mockTemplateCards = [
   {
     id: 8,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -314,7 +314,7 @@ export const mockTemplateCards = [
   {
     id: 9,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -353,7 +353,7 @@ export const mockTemplateCards = [
   {
     id: 10,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -392,7 +392,7 @@ export const mockTemplateCards = [
   {
     id: 11,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -431,7 +431,7 @@ export const mockTemplateCards = [
   {
     id: 12,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -470,7 +470,7 @@ export const mockTemplateCards = [
   {
     id: 13,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -509,7 +509,7 @@ export const mockTemplateCards = [
   {
     id: 14,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -548,7 +548,7 @@ export const mockTemplateCards = [
   {
     id: 15,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -587,7 +587,7 @@ export const mockTemplateCards = [
   {
     id: 16,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -626,7 +626,7 @@ export const mockTemplateCards = [
   {
     id: 17,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -665,7 +665,7 @@ export const mockTemplateCards = [
   {
     id: 18,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -704,7 +704,7 @@ export const mockTemplateCards = [
   {
     id: 19,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -743,7 +743,7 @@ export const mockTemplateCards = [
   {
     id: 20,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -782,7 +782,7 @@ export const mockTemplateCards = [
   {
     id: 21,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -821,7 +821,7 @@ export const mockTemplateCards = [
   {
     id: 22,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -860,7 +860,7 @@ export const mockTemplateCards = [
   {
     id: 23,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -899,7 +899,7 @@ export const mockTemplateCards = [
   {
     id: 24,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -938,7 +938,7 @@ export const mockTemplateCards = [
   {
     id: 25,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -977,7 +977,7 @@ export const mockTemplateCards = [
   {
     id: 26,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -1016,7 +1016,7 @@ export const mockTemplateCards = [
   {
     id: 27,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -1055,7 +1055,7 @@ export const mockTemplateCards = [
   {
     id: 28,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -1094,7 +1094,7 @@ export const mockTemplateCards = [
   {
     id: 29,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -1133,7 +1133,7 @@ export const mockTemplateCards = [
   {
     id: 30,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -1172,7 +1172,7 @@ export const mockTemplateCards = [
   {
     id: 31,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -1211,7 +1211,7 @@ export const mockTemplateCards = [
   {
     id: 32,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -1250,7 +1250,7 @@ export const mockTemplateCards = [
   {
     id: 33,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -1289,7 +1289,7 @@ export const mockTemplateCards = [
   {
     id: 34,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -1328,7 +1328,7 @@ export const mockTemplateCards = [
   {
     id: 35,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -1367,7 +1367,7 @@ export const mockTemplateCards = [
   {
     id: 36,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
@@ -1406,7 +1406,7 @@ export const mockTemplateCards = [
   {
     id: 37,
     status: 'stamp',
-    urlCopy: 'http://147.45.229.94:3000/customer/card/1234560',
+    urlCopy: 'https://app.loyalclub.ru/getpass/1',
     qrImg: '/qr-code.svg',
     title: 'Штампы',
     isActive: false,
