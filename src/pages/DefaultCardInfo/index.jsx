@@ -38,6 +38,7 @@ const DefaultCardInfo = () => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(!card);
   const [showInfo, setShowInfo] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     if (card) return;
@@ -125,9 +126,11 @@ const DefaultCardInfo = () => {
               <Button
                 onClick={() => {
                   navigator.clipboard.writeText(card.urlCopy);
+                  setIsCopied(true);
+                  setTimeout(() => setIsCopied(false), 2000);
                 }}
               >
-                Скопировать ссылку регистрации
+                {isCopied ? 'Скопировано!' : 'Скопировать ссылку регистрации'}
               </Button>
             </ButtonsRow>
           </QrContainer>
