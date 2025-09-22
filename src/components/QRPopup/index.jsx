@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import CustomModal from '../../customs/CustomModal';
 import { Actions, Content, QRBlock, QRLink } from './styles';
 
-// import { generatePDF } from '../../utils/pdfGenerator'; // если понадобится — раскомментируй
+import { generatePDF } from '../../utils/pdfGenerator';
 
 const QRPopup = ({ cardId, onClose, activateCard, open = true }) => {
   const currentCard = useSelector((state) => state.cards.currentCard);
@@ -49,13 +49,13 @@ const QRPopup = ({ cardId, onClose, activateCard, open = true }) => {
         </InfoCard> */}
 
         <Actions>
+          <CustomModal.SecondaryButton onClick={() => generatePDF(currentCard)}>
+            Печать QR-кода
+          </CustomModal.SecondaryButton>
+
           <CustomModal.SecondaryButton onClick={copyToClipboard}>
             {isCopied ? 'Скопировано!' : 'Скопировать ссылку'}
           </CustomModal.SecondaryButton>
-
-          {/* <CustomModal.SecondaryButton onClick={() => generatePDF(currentCard)}>
-            Скачать PDF
-          </CustomModal.SecondaryButton> */}
 
           <CustomModal.PrimaryButton onClick={activateCard}>
             {currentCard?.isActive ? 'Деактивировать карту' : 'Сохранить карту'}

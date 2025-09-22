@@ -8,6 +8,7 @@ import CustomTable from '../../components/CustomTable';
 import DashboardStats from '../../components/DashboardStats';
 import InfoOverlay from '../../components/InfoOverlay';
 import LoaderCentered from '../../components/LoaderCentered';
+import { generatePDF } from '../../utils/pdfGenerator';
 import { transactionHeaders } from '../../mocks/mockTransactions';
 import {
   Button,
@@ -118,6 +119,9 @@ const DefaultCardInfo = () => {
             <QrLink title="Ссылка регистрации карты">{card.urlCopy}</QrLink>
 
             <ButtonsRow>
+              <Button onClick={() => generatePDF(card)}>
+                Печать QR-кода
+              </Button>
               <Button
                 onClick={() => {
                   navigator.clipboard.writeText(card.urlCopy);
@@ -125,8 +129,6 @@ const DefaultCardInfo = () => {
               >
                 Скопировать ссылку регистрации
               </Button>
-              {/* НЕ УДАЛЯТЬ, ПОЯВИТСЯ ПОЗЖЕ */}
-              {/* <Button onClick={() => generatePDF(card)}>Скачать PDF</Button> */}
             </ButtonsRow>
           </QrContainer>
         </InfoBlock>
