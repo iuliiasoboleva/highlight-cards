@@ -20,13 +20,7 @@ const QRPopup = ({ cardId, onClose, activateCard, open = true }) => {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  useEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = open ? 'hidden' : prev;
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [open]);
+  // scroll-lock обрабатывается в CustomModal, здесь ничего не меняем
 
   return (
     <CustomModal

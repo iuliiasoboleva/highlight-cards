@@ -18,7 +18,7 @@ const initialState = {
   timezone: 'Europe/Moscow',
   avatar: null,
   role: '',
-  organization_id: storedOrg ? Number(storedOrg) : undefined,
+  organization_id: storedOrg || undefined,
   isLoading: false,
   error: null,
 };
@@ -155,10 +155,10 @@ export const userSlice = createSlice({
       const newState = { ...state, ...data, firstName, lastName, avatar: avatarUrl, contact };
 
       if ('organization_id' in data) {
-        newState.organization_id = data.organization_id ?? undefined;
+        newState.organization_id = data.organization_id ? String(data.organization_id) : undefined;
 
         if (data.organization_id) {
-          localStorage.setItem('orgId', data.organization_id);
+          localStorage.setItem('orgId', String(data.organization_id));
         } else {
           localStorage.removeItem('orgId');
         }
@@ -211,8 +211,8 @@ export const userSlice = createSlice({
 
         Object.assign(state, data, { firstName, lastName, avatar: avatarUrl });
         if (data.organization_id) {
-          state.organization_id = data.organization_id;
-          localStorage.setItem('orgId', data.organization_id);
+          state.organization_id = String(data.organization_id);
+          localStorage.setItem('orgId', String(data.organization_id));
         }
         state.isLoading = false;
       })
