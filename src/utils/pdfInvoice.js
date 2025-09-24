@@ -68,7 +68,7 @@ export async function generateInvoicePdf({ receiver, payer, invoice }) {
         ],
       ]},
 
-      { text: 'Основание', style: 'h2', margin: [0, 12, 0, 6] },
+      { text: 'Назначение платежа', style: 'h2', margin: [0, 12, 0, 6] },
       { text: invoice.purpose || 'Плата за пользование сервисом Loyal Club по тарифу', margin: [0, 0, 0, 8] },
 
       {

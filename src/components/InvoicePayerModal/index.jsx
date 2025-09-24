@@ -16,6 +16,7 @@ const initialState = {
   correspondent_account: '',
   postal_address: '',
   phone: '',
+  signatory: '',
 };
 
 const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
@@ -37,7 +38,7 @@ const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
     const innOk = /^\d{10}|\d{12}$/.test(String(form.inn || ''));
     const bikOk = /^\d{9}$/.test(String(form.bik || ''));
     const rsOk = /^\d{20}$/.test(String(form.checking_account || ''));
-    const requiredFilled = form.name && form.kpp && form.legal_address && form.bank_name && form.correspondent_account && form.postal_address && form.phone;
+    const requiredFilled = form.name && form.kpp && form.legal_address && form.bank_name && form.correspondent_account && form.postal_address && form.phone && form.signatory;
     return !(innOk && bikOk && rsOk && requiredFilled);
   }, [form]);
 
@@ -102,6 +103,10 @@ const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
             }}
             inputClass="custom-input"
           />
+        </div>
+        <div>
+          <div className="label">ФИО для подписи</div>
+          <CustomInput value={form.signatory} onChange={setField('signatory')} className="custom-input" />
         </div>
         <div>
           <div className="label">Название организации</div>

@@ -7,7 +7,7 @@ import GeoBadge from '../../components/GeoBadge';
 import LoaderCentered from '../../components/LoaderCentered';
 import PaymentModal from '../../components/PaymentModal';
 import InvoicePayerModal from '../../components/InvoicePayerModal';
-import { generateInvoicePdf, buildReceiverDefaults } from '../../utils/pdfInvoice';
+import { buildReceiverDefaults } from '../../utils/pdfInvoice';
 import { useToast } from '../../components/Toast';
 import TopUpModal from '../../components/TopUpModal';
 import CustomMainButton from '../../customs/CustomMainButton';
@@ -385,22 +385,21 @@ const Settings = () => {
         organizationId={orgId}
         onSaved={async (payer) => {
           try {
-            const receiver = buildReceiverDefaults();
-            const numberRes = await axiosInstance.post('/billing/invoice/next-number', {}, { params: { organization_id: orgId } });
-            const number = numberRes.data?.number || 1;
-            await generateInvoicePdf({
-              receiver,
-              payer,
-              invoice: {
-                number,
-                date: Date.now(),
-                purpose: `Плата за пользование сервисом Loyal Club по тарифу ${plan?.name}`,
-                items: [
-                  { name: `Плата за пользование сервисом Loyal Club`, qty: months, unit: 'мес', price: monthlyPrice },
-                ],
-                total: total,
-              },
-            });
+            const receiver = buildReceiverDefaults(); // пока не отправляем, сервер знает реквизиты
+            const resp = await axiosInstance.post(
+              '/billing/invoice/create',
+              { plan_key: planKey, months, points, payer },
+              { params: { organization_id: orgId }, responseType: 'blob' },
+            );
+            const blob = new Blob([resp.data], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'invoice.pdf';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
           } catch (e) {
             toast.error('Не удалось создать счёт');
           }
