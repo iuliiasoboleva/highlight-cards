@@ -1,10 +1,5 @@
 import styled from 'styled-components';
 
-export const ModalContent = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
 export const CheckboxRow = styled.label`
   display: flex;
   align-items: center;

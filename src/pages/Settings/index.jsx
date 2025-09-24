@@ -365,6 +365,11 @@ const Settings = () => {
             toast.error(message);
           }
         }}
+        plan={plan}
+        points={points}
+        months={months}
+        total={total}
+        monthlyPrice={monthlyPrice}
       />
 
       <PaymentModal
