@@ -179,6 +179,10 @@ const Cards = () => {
                         <Check size={18} />
                       </NameSaveBtn>
                     </NameEdit>
+                  ) : card.id === 'fixed' ? (
+                    <span className="text" title={card.name}>
+                      {card.name}
+                    </span>
                   ) : (
                     <EditableName
                       type="button"
