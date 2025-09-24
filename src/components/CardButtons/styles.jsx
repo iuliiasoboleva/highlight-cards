@@ -52,7 +52,7 @@ export const IconButtons = styled.div`
   max-width: 268px;
 `;
 
-export const IconBtn = styled.button`
+export const IconBtn = styled.button.attrs({ type: 'button' })`
   background-color: #eaeaed;
   border: none;
   border-radius: 8px;

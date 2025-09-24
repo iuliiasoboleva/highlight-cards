@@ -141,7 +141,7 @@ const App = () => {
             </Route>
 
             <Route path="/customer/card/:cardNumber" element={<CustomerPage />} />
-            <Route path="/getpass/:cardId" element={<GetPassPage />} />
+            <Route path="/getpass/:uuid" element={<GetPassPage />} />
             <Route path="/giftcard/:cardNumber" element={<GiftCardPage />} />
           </Routes>
         </AuthRedirectGuard>

@@ -24,7 +24,7 @@ import {
 import NotFound from '../../components/NotFound';
 
 const GetPassPage = () => {
-  const { cardId } = useParams();
+  const { uuid } = useParams();
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -34,7 +34,7 @@ const GetPassPage = () => {
   useEffect(() => {
     const fetchCard = async () => {
       try {
-        const response = await axios.get(`/cards/${cardId}`);
+        const response = await axios.get(`/cards/${uuid}`);
         setCard(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -44,10 +44,10 @@ const GetPassPage = () => {
       }
     };
 
-    if (cardId) {
+    if (uuid) {
       fetchCard();
     }
-  }, [cardId]);
+  }, [uuid]);
 
   const accordionItems = [
     { title: 'Информация о компании', content: card?.infoFields?.companyName || 'Информация о компании не указана' },
@@ -109,7 +109,7 @@ const GetPassPage = () => {
       }
 
       // Создаем клиента и получаем .pkpass файл
-      const response = await axios.get(`/passes/${cardId}`, {
+      const response = await axios.get(`/passes/${uuid}`, {
         params: clientData,
         responseType: 'blob'
       });
@@ -118,13 +118,11 @@ const GetPassPage = () => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `${cardId}.pkpass`);
+      link.setAttribute('download', `${uuid}.pkpass`);
       document.body.appendChild(link);
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-
-      alert('Карта успешно создана! Файл .pkpass скачан.');
       navigate('/'); // Перенаправляем на главную страницу
     } catch (error) {
       console.error('Ошибка при создании карты:', error);

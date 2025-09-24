@@ -37,7 +37,7 @@ export const Title = styled.h3`
   flex: 1;
 `;
 
-export const CloseBtn = styled.button`
+export const CloseBtn = styled.button.attrs({ type: 'button' })`
   border: none;
   background: transparent;
   padding: 6px;
@@ -71,7 +71,7 @@ export const Actions = styled.div`
   flex-wrap: wrap;
 `;
 
-export const BaseButton = styled.button`
+export const BaseButton = styled.button.attrs({ type: 'button' })`
   appearance: none;
   border: 0;
   border-radius: 8px;
