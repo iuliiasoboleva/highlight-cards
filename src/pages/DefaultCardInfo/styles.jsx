@@ -109,6 +109,8 @@ export const QrContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 8px;
+  max-width: 300px;
+  width: 100%;
 
   button {
     max-width: 100%;
@@ -129,18 +131,19 @@ export const QrImage = styled.img`
   max-height: 200px;
   width: auto;
   height: auto;
-  width: 100%;
 `;
 
 export const QrLink = styled.div`
   ${QrBase};
   padding: 10px 20px;
-  text-align: center;
+  text-align: left;
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   word-break: break-all;
+  max-width: 100%;
+  width: 100%;
 `;
 
 export const ButtonsRow = styled.div`
