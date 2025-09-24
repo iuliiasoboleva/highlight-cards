@@ -14,7 +14,10 @@ const AuthRedirectGuard = ({ children }) => {
 
   const isPublic =
     ['/auth', '/login', '/sms-code', '/set-pin'].includes(location.pathname) ||
-    location.pathname.startsWith('/reset-pin');
+    location.pathname.startsWith('/reset-pin') ||
+    location.pathname.startsWith('/getpass') ||
+    location.pathname.startsWith('/customer/card/') ||
+    location.pathname.startsWith('/giftcard/');
 
   useEffect(() => {
     if (token && !user.email) {
