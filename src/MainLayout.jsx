@@ -94,13 +94,6 @@ const MainLayout = () => {
     const prev = prevPathRef.current;
     const next = location.pathname;
 
-    if (location.state?.skipLeaveGuard) {
-      prevPathRef.current = next;
-      // Если хочешь очищать флаг, раскомментируй:
-      // navigate(next, { replace: true, state: {} });
-      return;
-    }
-
     // пропускаем одно срабатывание (после возврата)
     if (skipNextGuardRef.current) {
       skipNextGuardRef.current = false;
@@ -108,7 +101,15 @@ const MainLayout = () => {
       return;
     }
 
-    if (isEditorPath(prev) && !isEditorPath(next)) {
+    // Проверяем переход между страницами одной карты (info -> edit)
+    const prevCardMatch = prev.match(/^\/cards\/([^/]+)\/info$/);
+    const nextCardMatch = next.match(/^\/cards\/([^/]+)\/edit\//);
+    const isSameCardTransition = prevCardMatch && nextCardMatch && prevCardMatch[1] === nextCardMatch[1];
+
+    // Не показывать leave guard при переходе из edit/integration (завершающий шаг редактирования)
+    const isCompletingEdit = prev.match(/^\/cards\/[^/]+\/edit\/integration$/);
+
+    if (isEditorPath(prev) && !isEditorPath(next) && !isSameCardTransition && !isCompletingEdit) {
       const leavingCreate = isCreatePath(prev);
       const shouldAsk = (leavingCreate && isCreateIncomplete) || !leavingCreate; // из edit — всегда
 
@@ -125,7 +126,7 @@ const MainLayout = () => {
     }
 
     prevPathRef.current = next;
-  }, [location.pathname, location.state, isCreateIncomplete, navigate]);
+  }, [location.pathname, isCreateIncomplete, navigate]);
 
   const confirmLeave = () => {
     const target = pendingNextRef.current || '/cards';

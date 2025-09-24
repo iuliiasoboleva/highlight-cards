@@ -154,15 +154,28 @@ export default App;
 
 const CardEditGuard = () => {
   const params = useParams();
-  const currentId = useSelector((state) => state.cards.currentCard?.id);
+  const currentCard = useSelector((state) => state.cards.currentCard);
+  const cards = useSelector((state) => state.cards.cards);
 
   if (!params.id) {
     return <Navigate to="/cards" replace />;
   }
 
-  if (!currentId || String(currentId) !== params.id) {
-    return <Navigate to="/cards" replace />;
+  // Если currentCard не установлен, попробуем найти карту в списке cards
+  if (!currentCard?.id) {
+    const cardData = cards.find((c) => c.id === params.id);
+    if (cardData) {
+      // Не устанавливаем currentCard здесь, чтобы избежать лишних ререндеров
+      // Вместо этого позволим странице загрузиться и установить currentCard самой
+    }
   }
 
+  // Для существующей логики: если currentCard установлен и id совпадает, разрешаем доступ
+  if (currentCard?.id && String(currentCard.id) === params.id) {
+    return <Outlet />;
+  }
+
+  // Если currentCard не совпадает с params.id, не делаем Navigate сразу,
+  // а позволяем странице самой обработать загрузку
   return <Outlet />;
 };

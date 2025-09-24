@@ -50,13 +50,13 @@ const GetPassPage = () => {
   }, [cardId]);
 
   const accordionItems = [
-    { title: 'Информация о компании', content: card?.infoFields?.companyName || '...' },
-    { title: 'Информация о карте', content: card?.infoFields?.howToGetStamp || '...' },
+    { title: 'Информация о компании', content: card?.infoFields?.companyName || 'Информация о компании не указана' },
+    { title: 'Информация о карте', content: card?.infoFields?.howToGetStamp || 'Информация о карте не указана' },
     {
       title: 'Политика использования персональных данных',
-      content: card?.policySettings?.fullPolicyText || '...',
+      content: card?.policySettings?.fullPolicyText || 'Политика не указана',
     },
-    { title: 'Условия использования', content: card?.infoFields?.fullPolicyText || '...' },
+    { title: 'Условия использования', content: card?.infoFields?.fullPolicyText || 'Условия не указаны' },
   ];
 
   const [formData, setFormData] = useState({});

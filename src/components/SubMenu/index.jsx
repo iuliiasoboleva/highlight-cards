@@ -137,7 +137,7 @@ const SubMenu = ({
             <SubmenuRight>
               <SaveButton
                 onClick={() => {
-                  const cardData = cards.find((c) => c.id === Number(id));
+                  const cardData = cards.find((c) => c.id === id);
                   if (cardData) dispatch(setCurrentCard(cardData));
                   navigate(`/cards/${id}/edit/type`);
                 }}

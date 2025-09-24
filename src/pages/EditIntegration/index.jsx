@@ -40,9 +40,14 @@ const EditIntegration = () => {
         return;
       } else {
         await dispatch(saveCard()).unwrap();
+        // Для сохраненной карты тоже устанавливаем все поля готовности в true
+        dispatch(updateCurrentCardField({ path: 'typeReady', value: true }));
+        dispatch(updateCurrentCardField({ path: 'designReady', value: true }));
+        dispatch(updateCurrentCardField({ path: 'settingsReady', value: true }));
+        dispatch(updateCurrentCardField({ path: 'infoReady', value: true }));
       }
       dispatch(updateCurrentCardField({ path: 'active', value: true }));
-      navigate('/cards', { state: { skipLeaveGuard: true } });
+      navigate(`/cards/${currentCard.id}/info`, { state: { skipLeaveGuard: true } });
     } catch (e) {
       console.error('Ошибка при активации карты', e);
     }

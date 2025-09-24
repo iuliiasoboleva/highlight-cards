@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import axiosInstance from '../../axiosInstance';
 import EditLayout from '../../components/EditLayout';
 import TitleWithHelp from '../../components/TitleWithHelp';
 import { setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
@@ -22,17 +23,42 @@ import {
 const EditType = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { id } = useParams();
   const { currentCard, cards } = useSelector((state) => state.cards);
 
   const [selectedType, setSelectedType] = useState(currentCard.status || 'stamp');
   const selectedTypeName = cardTypes.find((t) => t.id === selectedType)?.name || '';
 
   useEffect(() => {
-    if (!currentCard.id) {
-      const newId = cards?.length > 0 ? Math.max(...cards.map((c) => c.id)) + 1 : 1;
-      dispatch(setCurrentCard({ id: newId, status: 'stamp', name: 'Штамп' }));
-    }
-  }, [dispatch, cards, currentCard.id]);
+    const loadCardData = async () => {
+      if (!currentCard.id) {
+        // Для редактирования существующей карты
+        if (id) {
+          // Сначала проверим в локальном состоянии
+          const existingCard = cards.find((c) => c.id === id);
+          if (existingCard) {
+            dispatch(setCurrentCard(existingCard));
+            return;
+          }
+
+          // Если не нашли в локальном состоянии, загрузим по API
+          try {
+            const response = await axiosInstance.get(`/cards/${id}`);
+            dispatch(setCurrentCard(response.data));
+            return;
+          } catch (error) {
+            console.error('Ошибка загрузки карты:', error);
+          }
+        }
+
+        // Для создания новой карты
+        const newId = cards?.length > 0 ? Math.max(...cards.map((c) => c.id)) + 1 : 1;
+        dispatch(setCurrentCard({ id: newId, status: 'stamp', name: 'Штамп' }));
+      }
+    };
+
+    loadCardData();
+  }, [dispatch, cards, currentCard.id, id]);
 
   useEffect(() => {
     if (currentCard.status) {
