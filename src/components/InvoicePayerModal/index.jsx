@@ -1,0 +1,157 @@
+import React, { useEffect, useMemo, useState } from 'react';
+import CustomModal from '../../customs/CustomModal';
+import CustomInput from '../../customs/CustomInput';
+import CustomMainButton from '../../customs/CustomMainButton';
+import InnSuggestInput from '../InnSuggestInput';
+import axiosInstance from '../../axiosInstance';
+
+const initialState = {
+  inn: '',
+  name: '',
+  kpp: '',
+  legal_address: '',
+  checking_account: '',
+  bik: '',
+  bank_name: '',
+  correspondent_account: '',
+  postal_address: '',
+  phone: '',
+};
+
+const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
+  const [form, setForm] = useState(initialState);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!open || !organizationId) return;
+    setLoading(true);
+    axiosInstance
+      .get('/billing/payer', { params: { organization_id: organizationId } })
+      .then((res) => {
+        if (res.data) setForm((s) => ({ ...s, ...res.data }));
+      })
+      .finally(() => setLoading(false));
+  }, [open, organizationId]);
+
+  const disabled = useMemo(() => {
+    const innOk = /^\d{10}|\d{12}$/.test(String(form.inn || ''));
+    const bikOk = /^\d{9}$/.test(String(form.bik || ''));
+    const rsOk = /^\d{20}$/.test(String(form.checking_account || ''));
+    const requiredFilled = form.name && form.kpp && form.legal_address && form.bank_name && form.correspondent_account && form.postal_address && form.phone;
+    return !(innOk && bikOk && rsOk && requiredFilled);
+  }, [form]);
+
+  const setField = (k) => (v) =>
+    setForm((s) => ({ ...s, [k]: typeof v === 'string' ? v : v?.target?.value || '' }));
+
+  const fetchByInn = async (inn) => {
+    try {
+      const res = await axiosInstance.get('/company', { params: { inn } });
+      const d = res.data || {};
+      setForm((s) => ({
+        ...s,
+        inn: d.inn || inn,
+        name: d.name || s.name,
+        kpp: d.kpp || s.kpp,
+        legal_address: d.address || s.legal_address,
+        postal_address: d.address || s.postal_address,
+      }));
+    } catch {}
+  };
+
+  const fetchBankByBik = async (bik) => {
+    try {
+      const res = await axiosInstance.get('/billing/bank', { params: { bik } });
+      setForm((s) => ({ ...s, bik, bank_name: res.data?.name || s.bank_name, correspondent_account: res.data?.correspondent_account || s.correspondent_account }));
+    } catch {}
+  };
+
+  const handleCreate = async () => {
+    setLoading(true);
+    try {
+      await axiosInstance.post('/billing/payer', form, { params: { organization_id: organizationId } });
+      onSaved?.(form);
+      onClose?.();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <CustomModal
+      open={open}
+      onClose={onClose}
+      title="Данные плательщика"
+      maxWidth={640}
+      actions={
+        <CustomMainButton onClick={handleCreate} disabled={disabled || loading} $maxWidth={200}>
+          Создать счёт
+        </CustomMainButton>
+      }
+    >
+      <div className="grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+        <div>
+          <div className="label">ИНН</div>
+          <InnSuggestInput
+            value={form.inn}
+            onChange={(v) => setField('inn')(v)}
+            onSelect={(item) => {
+              const innVal = item?.data?.inn || '';
+              setForm((s) => ({ ...s, inn: innVal }));
+              fetchByInn(innVal);
+            }}
+            inputClass="custom-input"
+          />
+        </div>
+        <div>
+          <div className="label">Название организации</div>
+          <CustomInput value={form.name} onChange={setField('name')} className="custom-input" />
+        </div>
+        <div>
+          <div className="label">КПП</div>
+          <CustomInput value={form.kpp} onChange={setField('kpp')} className="custom-input" />
+        </div>
+        <div>
+          <div className="label">Юридический адрес</div>
+          <CustomInput value={form.legal_address} onChange={setField('legal_address')} className="custom-input" />
+        </div>
+        <div>
+          <div className="label">р/с</div>
+          <CustomInput value={form.checking_account} onChange={setField('checking_account')} className="custom-input" />
+        </div>
+        <div>
+          <div className="label">БИК</div>
+          <CustomInput
+            value={form.bik}
+            onChange={(e) => {
+              const v = e.target.value;
+              setForm((s) => ({ ...s, bik: v }));
+              if (v && v.length >= 9) fetchBankByBik(v);
+            }}
+            className="custom-input"
+          />
+        </div>
+        <div>
+          <div className="label">Банк</div>
+          <CustomInput value={form.bank_name} onChange={setField('bank_name')} className="custom-input" />
+        </div>
+        <div>
+          <div className="label">к/с</div>
+          <CustomInput value={form.correspondent_account} onChange={setField('correspondent_account')} className="custom-input" />
+        </div>
+        <div>
+          <div className="label">Почтовый адрес</div>
+          <CustomInput value={form.postal_address} onChange={setField('postal_address')} className="custom-input" />
+        </div>
+        <div>
+          <div className="label">Телефон</div>
+          <CustomInput value={form.phone} onChange={setField('phone')} className="custom-input" />
+        </div>
+      </div>
+    </CustomModal>
+  );
+};
+
+export default InvoicePayerModal;
+
+

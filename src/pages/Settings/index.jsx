@@ -6,6 +6,8 @@ import AgreementModal from '../../components/AgreementModal';
 import GeoBadge from '../../components/GeoBadge';
 import LoaderCentered from '../../components/LoaderCentered';
 import PaymentModal from '../../components/PaymentModal';
+import InvoicePayerModal from '../../components/InvoicePayerModal';
+import { generateInvoicePdf, buildReceiverDefaults } from '../../utils/pdfInvoice';
 import { useToast } from '../../components/Toast';
 import TopUpModal from '../../components/TopUpModal';
 import CustomMainButton from '../../customs/CustomMainButton';
@@ -81,6 +83,7 @@ const Settings = () => {
   const [planKey, setPlanKey] = useState('business');
   const [points, setPoints] = useState(2);
   const [months, setMonths] = useState(6);
+  const [invoiceOpen, setInvoiceOpen] = useState(false);
 
   const plan = useMemo(() => planFeatures.find((p) => p.key === planKey), [planKey]);
 
@@ -315,7 +318,7 @@ const Settings = () => {
                 </Total>
 
                 <PrimaryBtn onClick={() => setShowModal(true)}>Оплатить картой</PrimaryBtn>
-                <GhostBtn type="button" onClick={() => toast.info('В разработке')}>
+                <GhostBtn type="button" onClick={() => setInvoiceOpen(true)}>
                   Выставить счёт
                 </GhostBtn>
 
@@ -374,6 +377,34 @@ const Settings = () => {
         isOpen={topUpOpen}
         onClose={() => setTopUpOpen(false)}
         onConfirm={handleTopUpConfirm}
+      />
+
+      <InvoicePayerModal
+        open={invoiceOpen}
+        onClose={() => setInvoiceOpen(false)}
+        organizationId={orgId}
+        onSaved={async (payer) => {
+          try {
+            const receiver = buildReceiverDefaults();
+            const numberRes = await axiosInstance.post('/billing/invoice/next-number', {}, { params: { organization_id: orgId } });
+            const number = numberRes.data?.number || 1;
+            await generateInvoicePdf({
+              receiver,
+              payer,
+              invoice: {
+                number,
+                date: Date.now(),
+                purpose: `Плата за пользование сервисом Loyal Club по тарифу ${plan?.name}`,
+                items: [
+                  { name: `Плата за пользование сервисом Loyal Club`, qty: months, unit: 'мес', price: monthlyPrice },
+                ],
+                total: total,
+              },
+            });
+          } catch (e) {
+            toast.error('Не удалось создать счёт');
+          }
+        }}
       />
     </SettingsContainer>
   );
