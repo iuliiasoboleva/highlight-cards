@@ -16,7 +16,7 @@ const commonFieldOptions = [
   { value: 'birthday', label: 'Дата рождения' },
 ];
 
-const systemTypes = ['balanceMoney', 'credits', 'balance', 'expirationDate'];
+const systemTypes = ['balanceMoney', 'credits', 'balance'];
 
 const StatusFieldConfig = ({ statusType, fields }) => {
   const dispatch = useDispatch();
