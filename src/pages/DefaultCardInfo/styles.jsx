@@ -125,6 +125,11 @@ export const QrBase = `
 export const QrImage = styled.img`
   ${QrBase};
   padding: 10px 20px;
+  max-width: 200px;
+  max-height: 200px;
+  width: auto;
+  height: auto;
+  width: 100%;
 `;
 
 export const QrLink = styled.div`

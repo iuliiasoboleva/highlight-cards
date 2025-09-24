@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import EditLayout from '../../components/EditLayout';
-import QRPopup from '../../components/QRPopup';
 import TitleWithHelp from '../../components/TitleWithHelp';
-import { createCard, saveCard, updateCurrentCardField } from '../../store/cardsSlice';
+import { createCard, saveCard, setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
 import { CreateButton } from '../EditDesign/styles';
 import IntegrationPicker from './IntegrationPicker';
 import { Divider, StepNote, TopRow } from './styles';
@@ -16,7 +15,6 @@ const EditIntegration = () => {
   const dispatch = useDispatch();
 
   const currentCard = useSelector((state) => state.cards.currentCard);
-  const [showQRPopup, setShowQRPopup] = useState(false);
 
   const cards = useSelector((state) => state.cards.cards);
   const exists = cards.some((c) => c.id === currentCard?.id && c.id !== 'fixed');
@@ -29,15 +27,24 @@ const EditIntegration = () => {
   const handleActivate = async () => {
     try {
       if (!exists) {
-        await dispatch(createCard()).unwrap();
+        const createdCard = await dispatch(createCard()).unwrap();
+        // Обновляем currentCard данными созданной карты
+        dispatch(setCurrentCard(createdCard));
+        // Устанавливаем все поля готовности в true, поскольку карта создана
+        dispatch(updateCurrentCardField({ path: 'typeReady', value: true }));
+        dispatch(updateCurrentCardField({ path: 'designReady', value: true }));
+        dispatch(updateCurrentCardField({ path: 'settingsReady', value: true }));
+        dispatch(updateCurrentCardField({ path: 'infoReady', value: true }));
+        // Переходим сразу на страницу info созданной карты
+        navigate(`/cards/${createdCard.id}/info`, { state: { skipLeaveGuard: true } });
+        return;
       } else {
         await dispatch(saveCard()).unwrap();
       }
       dispatch(updateCurrentCardField({ path: 'active', value: true }));
+      navigate('/cards', { state: { skipLeaveGuard: true } });
     } catch (e) {
       console.error('Ошибка при активации карты', e);
-    } finally {
-      navigate('/cards', { state: { skipLeaveGuard: true } });
     }
   };
 
@@ -57,24 +64,11 @@ const EditIntegration = () => {
       </div>
       <IntegrationPicker value={integration} onChange={handlePick} />
 
-      <CreateButton onClick={() => setShowQRPopup(true)}>Продолжить</CreateButton>
+      <CreateButton onClick={handleActivate}>Продолжить</CreateButton>
     </>
   );
 
-  return (
-    <>
-      <EditLayout>{integrationContent}</EditLayout>
-      {showQRPopup && (
-        <QRPopup
-          cardId={id}
-          onClose={() => {
-            setShowQRPopup(false);
-          }}
-          activateCard={handleActivate}
-        />
-      )}
-    </>
-  );
+  return <EditLayout>{integrationContent}</EditLayout>;
 };
 
 export default EditIntegration;

@@ -34,7 +34,8 @@ const PersonalClientInfo = () => {
   const dispatch = useDispatch();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const clients = useSelector((state) => state.clients.list);
+  const clientsRaw = useSelector((state) => state.clients);
+  const clients = Array.isArray(clientsRaw?.list) ? clientsRaw.list : [];
   const clientFromStore = clients.find((c) => String(c.id) === id);
 
   const [client, setClient] = useState(clientFromStore || null);

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'react-phone-input-2/lib/style.css';
-import { useSelector } from 'react-redux';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from '../../axiosInstance';
 
 import PwaIcon from '../../assets/icons/pwa.svg';
 import Accordion from '../../components/Accordion';
@@ -20,9 +21,33 @@ import {
   StyledPhoneInput,
   Title,
 } from './styles';
+import NotFound from '../../components/NotFound';
 
 const GetPassPage = () => {
-  const card = useSelector((state) => state.cards.currentCard);
+  const { cardId } = useParams();
+  const navigate = useNavigate();
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
+  const [card, setCard] = useState(null);
+
+  useEffect(() => {
+    const fetchCard = async () => {
+      try {
+        const response = await axios.get(`/cards/${cardId}`);
+        setCard(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Ошибка при получении карты:', error);
+        setNotFound(true);
+        setIsLoading(false);
+      }
+    };
+
+    if (cardId) {
+      fetchCard();
+    }
+  }, [cardId]);
 
   const accordionItems = [
     { title: 'Информация о компании', content: card?.infoFields?.companyName || '...' },
@@ -59,12 +84,56 @@ const GetPassPage = () => {
     setConsent((prev) => ({ ...prev, [name]: checked }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Submit:', { ...formData, ...consent });
+
+    if (!consent.terms) {
+      alert('Необходимо согласиться с условиями использования');
+      return;
+    }
+
+    if (!consent.marketing) {
+      alert('Необходимо согласиться с обработкой персональных данных');
+      return;
+    }
+
+    try {
+      // Фильтруем только валидные поля формы
+      const clientData = {};
+      if (card?.issueFormFields) {
+        card.issueFormFields.forEach(field => {
+          if (formData[field.name]) {
+            clientData[field.name] = formData[field.name];
+          }
+        });
+      }
+
+      // Создаем клиента и получаем .pkpass файл
+      const response = await axios.get(`/passes/${cardId}`, {
+        params: clientData,
+        responseType: 'blob'
+      });
+
+      // Скачиваем .pkpass файл
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${cardId}.pkpass`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      alert('Карта успешно создана! Файл .pkpass скачан.');
+      navigate('/'); // Перенаправляем на главную страницу
+    } catch (error) {
+      console.error('Ошибка при создании карты:', error);
+      alert('Произошла ошибка при создании карты. Попробуйте еще раз.');
+    }
   };
 
-  if (!card) return <div>Загрузка...</div>;
+  if (isLoading) return <div>Загрузка...</div>;
+  if (notFound) return <NotFound />;
 
   return (
     <Container>
