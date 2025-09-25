@@ -266,8 +266,11 @@ const CardInfo = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef 
       {card.qrImg && <CardInfoQrImg src={card.qrImg} alt="QR код" draggable="false" />}
 
       {(() => {
-        const rawNumber = card.serialNumber || '000001';
-        const formatted = String(rawNumber).replace(/(\d{3})(\d{3})/, '$1 $2');
+        const rawNumber = card.cardNumber || card.serialNumber || '000001';
+        const onlyDigits = String(rawNumber).replace(/\D/g, '');
+        const formatted = onlyDigits.length === 6
+          ? onlyDigits.replace(/(\d{3})(\d{3})/, '$1 $2')
+          : String(rawNumber);
         return <CardNumber>{formatted}</CardNumber>;
       })()}
 

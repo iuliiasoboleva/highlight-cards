@@ -274,8 +274,11 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick, hoverDesignKey, main
       {card.qrImg && <CardInfoQrImg src={card.qrImg} alt="QR код" />}
 
       {(() => {
-        const raw = card.serialNumber || '000001';
-        const formatted = String(raw).replace(/(\d{3})(\d{3})/, '$1 $2');
+        const raw = card.cardNumber || card.serialNumber || '000001';
+        const onlyDigits = String(raw).replace(/\D/g, '');
+        const formatted = onlyDigits.length === 6
+          ? onlyDigits.replace(/(\d{3})(\d{3})/, '$1 $2')
+          : String(raw);
         return <CardNumber>{formatted}</CardNumber>;
       })()}
 

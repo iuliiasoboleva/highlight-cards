@@ -86,8 +86,8 @@ const defaultStats = [
   },
   {
     key: 'card_number',
-    label: 'Серийный номер карты',
-    value: '459036-265-550',
+    label: 'Номер карты',
+    value: '',
     copyable: true,
     showRightCircle: false,
   },

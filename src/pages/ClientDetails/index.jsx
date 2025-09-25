@@ -190,8 +190,15 @@ const prepareLinks = (client) => {
 };
 
 const prepareStats = (client) => {
-  if (!client?.stats) return [];
-  const { stats } = client;
+  // Если статистики нет, отрисуем карточку с базовыми данными
+  const stats = client?.stats || {
+    ltv: client?.LTV || 0,
+    totalStampsReceived: client?.stampQuantity || 0,
+    rewardsIssued: client?.rewardsGiven || 0,
+    rewardsAvailable: client?.availableRewards || 0,
+    visits: client?.totalVisits || 0,
+    currentStamps: client?.currentStamps || 0,
+  };
   const firstCard = client.cards && client.cards.length ? client.cards[0] : null;
   const issueFields = client.issueFields;
 
@@ -284,8 +291,8 @@ const prepareStats = (client) => {
     },
     {
       key: 'card_number',
-      label: 'Серийный номер карты',
-      value: firstCard?.serialNumber || '',
+      label: 'Номер карты',
+      value: firstCard?.cardNumber || '',
       copyable: true,
       showRightCircle: false,
     },
