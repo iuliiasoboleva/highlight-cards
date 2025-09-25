@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import axiosInstance from '../../axiosInstance';
 import CustomTable from '../../components/CustomTable';
+import DeleteClientModal from '../../components/DeleteClientModal';
 import LoaderCentered from '../../components/LoaderCentered';
 import { clientHeaders } from '../../mocks/mockClientTable';
 import StatCard from './StatCard';
@@ -27,9 +28,11 @@ import {
 
 const ClientDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [client, setClient] = useState(null);
   const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -55,6 +58,16 @@ const ClientDetails = () => {
     };
     load();
   }, [id]);
+
+  const handleDeleteClient = async () => {
+    try {
+      await axiosInstance.delete(`/clients/${id}`);
+      navigate('/clients'); // Возвращаемся к списку клиентов
+    } catch (error) {
+      console.error('Ошибка при удалении клиента:', error);
+      // Здесь можно добавить toast уведомление об ошибке
+    }
+  };
 
   if (loading) {
     return <LoaderCentered />;
@@ -125,6 +138,34 @@ const ClientDetails = () => {
         <TableName>Последние транзакции по карте</TableName>
         <CustomTable columns={clientHeaders} rows={transactions} />
       </div>
+
+      <div style={{ marginTop: '32px', textAlign: 'center' }}>
+        <button
+          onClick={() => setShowDeleteModal(true)}
+          style={{
+            background: '#e03131',
+            color: '#fff',
+            border: 'none',
+            padding: '12px 24px',
+            borderRadius: '8px',
+            fontSize: '14px',
+            fontWeight: '600',
+            cursor: 'pointer'
+          }}
+        >
+          Удалить клиента
+        </button>
+      </div>
+
+      <DeleteClientModal
+        open={showDeleteModal}
+        clientName={client ? `${client.name} ${client.surname || ''}`.trim() : ''}
+        onConfirm={() => {
+          setShowDeleteModal(false);
+          handleDeleteClient();
+        }}
+        onCancel={() => setShowDeleteModal(false)}
+      />
     </Container>
   );
 };
@@ -152,6 +193,43 @@ const prepareStats = (client) => {
   if (!client?.stats) return [];
   const { stats } = client;
   const firstCard = client.cards && client.cards.length ? client.cards[0] : null;
+  const issueFields = client.issueFields;
+
+  // Преобразуем issueFields в нужный формат
+  const formatIssueFields = (fields) => {
+    if (!fields || !Array.isArray(fields)) return null;
+
+    return fields.map(field => {
+      let value = '';
+
+      // Заполняем значения из данных клиента
+      switch (field.type) {
+        case 'name':
+          value = client.name || '';
+          break;
+        case 'phone':
+          value = client.phone || '';
+          break;
+        case 'email':
+          value = client.email || '';
+          break;
+        case 'surname':
+          value = client.surname || '';
+          break;
+        case 'birthday':
+          value = client.birthday ? new Date(client.birthday).toISOString().split('T')[0] : '';
+          break;
+        default:
+          value = field.value || '';
+      }
+
+      return {
+        label: field.name || field.label || '',
+        type: field.type === 'birthday' ? 'date' : (field.type === 'email' ? 'email' : 'text'),
+        value: value
+      };
+    });
+  };
   return [
     { key: 'ltv', label: 'LTV', value: stats.ltv, showRightCircle: false },
     {
@@ -237,6 +315,13 @@ const prepareStats = (client) => {
       value: firstCard?.cardCreatedAt || '',
       showRightCircle: false,
     },
+    ...(issueFields ? [{
+      key: 'issue_fields',
+      label: 'Поля формы выдачи',
+      isFormPopup: true,
+      value: formatIssueFields(issueFields),
+      showRightCircle: false,
+    }] : []),
   ];
 };
 
