@@ -113,10 +113,10 @@ const ClientDetails = () => {
             <React.Fragment key={card.id || index}>
               <CardTag>{card.name}</CardTag>
 
-              {card.uuid && (
+              {card.id && (
                 <CardTag
                   as="a"
-                  href={`${(axiosInstance.defaults.baseURL || '').replace(/\/$/, '')}/passes/${card.uuid}`}
+                  href={`${(axiosInstance.defaults.baseURL || '').replace(/\/$/, '')}/passes/${card.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
