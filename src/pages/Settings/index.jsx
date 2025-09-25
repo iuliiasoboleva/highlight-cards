@@ -10,6 +10,7 @@ import InvoicePayerModal from '../../components/InvoicePayerModal';
 import { buildReceiverDefaults } from '../../utils/pdfInvoice';
 import { useToast } from '../../components/Toast';
 import TopUpModal from '../../components/TopUpModal';
+import ContactModal from '../../components/ContactModal';
 import CustomMainButton from '../../customs/CustomMainButton';
 import { formatDateToDDMMYYYY } from '../../helpers/date';
 import { clamp, getPointsBounds } from '../../helpers/getPointsBounds';
@@ -80,6 +81,7 @@ const Settings = () => {
   const [payOpen, setPayOpen] = useState(false);
   const [confirmationToken, setConfirmationToken] = useState('');
   const [topUpOpen, setTopUpOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
   const [planKey, setPlanKey] = useState('business');
   const [points, setPoints] = useState(2);
   const [months, setMonths] = useState(6);
@@ -296,7 +298,7 @@ const Settings = () => {
                     <br /> и больше? Мы подготовим для
                     <br /> вас индивидуальные условия.
                   </p>
-                  <SalesBtn /* onClick={...} */>Связаться с нами</SalesBtn>
+                  <SalesBtn onClick={() => setContactOpen(true)}>Связаться с нами</SalesBtn>
                 </SalesBox>
               </ConditionsCard>
             ) : (
@@ -382,6 +384,11 @@ const Settings = () => {
         isOpen={topUpOpen}
         onClose={() => setTopUpOpen(false)}
         onConfirm={handleTopUpConfirm}
+      />
+
+      <ContactModal
+        isOpen={contactOpen}
+        onClose={() => setContactOpen(false)}
       />
 
       <InvoicePayerModal

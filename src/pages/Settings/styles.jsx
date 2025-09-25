@@ -504,7 +504,7 @@ export const SalesBox = styled.div`
   border: 1px solid #ea3b33;
   background: #fef2f2;
   color: oklch(0.505 0.213 27.518);
-  border-radius: 4px;
+  border-radius: 14px;
   padding: 20px;
   white-space: pre;
 
