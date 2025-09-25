@@ -140,15 +140,18 @@ const StatCard = ({ stats = null, links = null }) => {
   return (
     <ClientDashboardWrapper>
       <ClientDashboardStats>
-        {statsToRender.map((item) => (
-          <StatCardItem
-            key={item.key}
-            {...item}
-            onIncrement={item.hasCounter ? () => handleOpenModal('increase', item.key) : null}
-            onDecrement={item.hasCounter ? () => handleOpenModal('decrease', item.key) : null}
-            onFormClick={item.isFormPopup ? () => setFormFields(item.value) : null}
-          />
-        ))}
+        {statsToRender.map((item) => {
+          const { key, ...rest } = item;
+          return (
+            <StatCardItem
+              key={key}
+              {...rest}
+              onIncrement={item.hasCounter ? () => handleOpenModal('increase', key) : null}
+              onDecrement={item.hasCounter ? () => handleOpenModal('decrease', key) : null}
+              onFormClick={item.isFormPopup ? () => setFormFields(item.value) : null}
+            />
+          );
+        })}
 
         {modalType && <BalanceModal type={modalType} onClose={handleCloseModal} />}
         {formFields && (
