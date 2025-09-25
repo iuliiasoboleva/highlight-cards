@@ -7,6 +7,7 @@ import PwaIcon from '../../assets/icons/pwa.svg';
 import Accordion from '../../components/Accordion';
 import CustomCheckbox from '../../customs/CustomCheckbox';
 import CustomInput from '../../customs/CustomInput';
+import CustomModal from '../../customs/CustomModal';
 import {
   AccordionsWrapper,
   AuthForm,
@@ -65,6 +66,7 @@ const GetPassPage = () => {
     terms: false,
     marketing: false,
   });
+  const [showCardExistsModal, setShowCardExistsModal] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -130,7 +132,13 @@ const GetPassPage = () => {
       navigate('/'); // Перенаправляем на главную страницу
     } catch (error) {
       console.error('Ошибка при создании карты:', error);
-      alert('Произошла ошибка при создании карты. Попробуйте еще раз.');
+
+      // Проверяем, является ли ошибка конфликтом (карта уже зарегистрирована)
+      if (error.response?.status === 409) {
+        setShowCardExistsModal(true);
+      } else {
+        alert('Произошла ошибка при создании карты. Попробуйте еще раз.');
+      }
     }
   };
 
@@ -177,7 +185,7 @@ const GetPassPage = () => {
                         ? 'email'
                         : field.type === 'number'
                           ? 'number'
-                          : field.type === 'date'
+                          : (field.type === 'date' || field.type === 'birthday')
                             ? 'date'
                             : 'text'
                     }
@@ -226,6 +234,46 @@ const GetPassPage = () => {
           </AccordionsWrapper>
         </CardBlock>
       </AuthFormWrapper>
+
+      <CustomModal
+        open={showCardExistsModal}
+        onClose={() => setShowCardExistsModal(false)}
+        title="Карта уже зарегистрирована"
+        maxWidth={420}
+        aria-label="Уведомление о существующей карте"
+      >
+        <div style={{ textAlign: 'center', padding: '20px 0' }}>
+          <div style={{
+            width: '60px',
+            height: '60px',
+            borderRadius: '50%',
+            background: '#f59e0b',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 20px',
+            fontSize: '30px',
+            color: 'white'
+          }}>
+            ⚠️
+          </div>
+          <p style={{ margin: '0 0 16px', fontWeight: '500', fontSize: '16px' }}>
+            Данная карта уже зарегистрирована
+          </p>
+          <p style={{ margin: 0, color: '#666', fontSize: '14px', lineHeight: '1.5' }}>
+            Для восстановления доступа к карте обратитесь к менеджеру точки продаж.
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+          <CustomModal.PrimaryButton
+            onClick={() => setShowCardExistsModal(false)}
+            style={{ minWidth: '120px' }}
+          >
+            Понятно
+          </CustomModal.PrimaryButton>
+        </div>
+      </CustomModal>
     </Container>
   );
 };
