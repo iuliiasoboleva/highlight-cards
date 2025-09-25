@@ -501,7 +501,7 @@ export const MutedNote = styled.div`
 `;
 
 export const SalesBox = styled.div`
-  border: 1px solid #ea3b33;
+  border: 1px solid #c31e3c;
   background: #fef2f2;
   color: oklch(0.505 0.213 27.518);
   border-radius: 14px;
@@ -517,7 +517,7 @@ export const SalesBox = styled.div`
 `;
 export const SalesBtn = styled.button`
   border: none;
-  background: #ea3b33;
+  background: #c31e3c;
   color: #fff;
   font-weight: 600;
   font-size: 13px;

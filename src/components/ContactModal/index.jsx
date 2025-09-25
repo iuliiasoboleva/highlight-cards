@@ -18,6 +18,7 @@ const ContactModal = ({ isOpen, onClose }) => {
     inn: ''
   });
   const [selectedCompany, setSelectedCompany] = useState(null);
+  const [companyName, setCompanyName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -41,6 +42,7 @@ const ContactModal = ({ isOpen, onClose }) => {
 
   const handleCompanySelect = (company) => {
     setSelectedCompany(company);
+    setCompanyName(company.value || company.data?.name || '');
     setFormData(prev => ({
       ...prev,
       inn: company.data.inn
@@ -81,6 +83,7 @@ const ContactModal = ({ isOpen, onClose }) => {
     setIsSuccess(false);
     setFormData({ name: '', phone: '', inn: '' });
     setSelectedCompany(null);
+    setCompanyName('');
     onClose();
   };
 
@@ -100,7 +103,7 @@ const ContactModal = ({ isOpen, onClose }) => {
             width: '60px',
             height: '60px',
             borderRadius: '50%',
-            background: '#ea3b33',
+            background: '#c31e3c',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -172,6 +175,35 @@ const ContactModal = ({ isOpen, onClose }) => {
               onSelect={handleCompanySelect}
             />
           </div>
+
+          {companyName && (
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{
+                display: 'block',
+                marginBottom: '6px',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: '#374151'
+              }}>
+                Наименование организации
+              </label>
+              <input
+                type="text"
+                value={companyName}
+                readOnly
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #d5d5dd',
+                  borderRadius: '6px',
+                  height: '40px',
+                  fontSize: '14px',
+                  backgroundColor: '#f9fafb',
+                  color: '#6b7280'
+                }}
+              />
+            </div>
+          )}
 
           <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
             <CustomModal.SecondaryButton
