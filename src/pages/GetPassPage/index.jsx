@@ -103,7 +103,8 @@ const GetPassPage = () => {
       if (card?.issueFormFields) {
         card.issueFormFields.forEach(field => {
           if (formData[field.name]) {
-            clientData[field.name] = formData[field.name];
+            // Используем field.type как ключ для backend API
+            clientData[field.type] = formData[field.name];
           }
         });
       }
