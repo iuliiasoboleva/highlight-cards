@@ -72,7 +72,10 @@ const GetPassPage = () => {
   };
 
   const handlePhoneChange = (value) => {
-    setFormData((prev) => ({ ...prev, phone: value }));
+    // Находим поле телефона в issueFormFields
+    const phoneField = card?.issueFormFields?.find(field => field.type === 'phone');
+    const key = phoneField ? phoneField.name : 'phone';
+    setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleBlur = (name) => {
@@ -154,7 +157,7 @@ const GetPassPage = () => {
                 {field.type === 'phone' ? (
                   <StyledPhoneInput
                     country="ru"
-                    value={formData.phone || ''}
+                    value={formData[field.name] || ''}
                     onChange={handlePhoneChange}
                     inputProps={{
                       name: 'phone',

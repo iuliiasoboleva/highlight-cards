@@ -6,16 +6,8 @@ import LinkCardItem from './LinkCardItem';
 import StatCardItem from './StatCardItem';
 import { ClientDashboardStats, ClientDashboardWrapper, ClientLinkWrapper } from './styles';
 
-const linkCards = [
-  {
-    label: 'Ссылка для установки / восстановления карты',
-    url: 'https://app.loyalclub.ru/getpass/1234560',
-  },
-  {
-    label: 'Реферальная ссылка',
-    url: 'https://app.loyalclub.ru/getpass/1234560?ref=123',
-  },
-];
+// linkCards теперь передается как prop
+const defaultLinks = [];
 
 const defaultStats = [
   { key: 'ltv', label: 'LTV', value: 7, showRightCircle: false },
@@ -46,7 +38,7 @@ const defaultStats = [
   {
     key: 'last_stamp_received',
     label: 'Последний штамп зачислен',
-    value: '14/06/2025',
+    value: '',
     showRightCircle: false,
   },
   {
@@ -117,7 +109,7 @@ const defaultStats = [
   {
     key: 'card_issue_date',
     label: 'Дата выпуска карты',
-    value: '04/06/2025',
+    value: '',
     showRightCircle: false,
   },
   {
@@ -143,7 +135,7 @@ const StatCard = ({ stats = null, links = null }) => {
   const handleCloseModal = () => setModalType(null);
 
   const statsToRender = stats && stats.length ? stats : defaultStats;
-  const linksToRender = links && links.length ? links : linkCards;
+  const linksToRender = links && links.length ? links : defaultLinks;
 
   return (
     <ClientDashboardWrapper>

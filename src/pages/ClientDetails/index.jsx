@@ -118,7 +118,7 @@ const ClientDetails = () => {
       </Cards>
 
       <StatGrid>
-        <StatCard stats={prepareStats(client)} />
+        <StatCard stats={prepareStats(client)} links={prepareLinks(client)} />
       </StatGrid>
 
       <div>
@@ -127,6 +127,25 @@ const ClientDetails = () => {
       </div>
     </Container>
   );
+};
+
+const prepareLinks = (client) => {
+  const firstCard = client.cards && client.cards.length ? client.cards[0] : null;
+  if (!firstCard) return [];
+
+  // Используем urlCopy из данных карты, если он есть
+  const cardUrl = firstCard.urlCopy || `https://app.loyalclub.ru/getpass/${firstCard.uuid || client.id}`;
+
+  return [
+    {
+      label: 'Ссылка для установки / восстановления карты',
+      url: cardUrl,
+    },
+    {
+      label: 'Реферальная ссылка',
+      url: `${cardUrl}?ref=${client.id}`,
+    },
+  ];
 };
 
 const prepareStats = (client) => {
@@ -215,7 +234,7 @@ const prepareStats = (client) => {
     {
       key: 'card_issue_date',
       label: 'Дата выпуска карты',
-      value: firstCard?.cardInstallationDate || '',
+      value: firstCard?.cardCreatedAt || '',
       showRightCircle: false,
     },
   ];
