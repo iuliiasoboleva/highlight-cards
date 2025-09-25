@@ -4,7 +4,7 @@ import { Camera, PlusCircle, Search } from 'lucide-react';
 
 import CustomInput from '../../../customs/CustomInput';
 import CustomMainButton from '../../../customs/CustomMainButton';
-import { CARD_LENGTH } from '../../../utils/cardUtils';
+import { CARD_LENGTH, CARD_MIN_LENGTH } from '../../../utils/cardUtils';
 import { Card, IconWithTooltip, ScannerIcon, Tooltip } from '../styles';
 
 const CardsBlock = ({
@@ -62,21 +62,21 @@ const CardsBlock = ({
         <ScannerIcon>
           <IconWithTooltip>
             <Search size={18} />
-            <Tooltip> Введите {CARD_LENGTH} цифр и нажмите «Найти клиента»</Tooltip>
+            <Tooltip> Введите от {CARD_MIN_LENGTH} до {CARD_LENGTH} цифр и нажмите «Найти клиента»</Tooltip>
           </IconWithTooltip>
         </ScannerIcon>
 
         <CustomInput
           type="tel"
           inputMode="numeric"
-          placeholder={`Номер карты (${CARD_LENGTH} цифр)`}
+          placeholder={`Номер карты (${CARD_MIN_LENGTH}-${CARD_LENGTH} цифр)`}
           value={cardNumber}
           onChange={onCardChange}
           maxLength={CARD_LENGTH}
         />
         <CustomMainButton
           onClick={handleFindCustomer}
-          disabled={cardNumber.length !== CARD_LENGTH}
+          disabled={cardNumber.length < CARD_MIN_LENGTH || cardNumber.length > CARD_LENGTH}
           $mt={10}
           $maxWidth={268}
         >

@@ -7,7 +7,7 @@ import { BarChart2, Camera, Search, User as UserIcon } from 'lucide-react';
 import { useToast } from '../../components/Toast';
 import CustomInput from '../../customs/CustomInput';
 import CustomMainButton from '../../customs/CustomMainButton';
-import { CARD_LENGTH, normalizeDigits, validateCard } from '../../utils/cardUtils';
+import { CARD_LENGTH, CARD_MIN_LENGTH, normalizeDigits, validateCard } from '../../utils/cardUtils';
 import { Card, Grid, Header, IconWithTooltip, Page, ScannerIcon, Tooltip } from './styles';
 
 const Workplace = () => {
@@ -55,8 +55,8 @@ const Workplace = () => {
 
     if (foundClient) {
       const foundCard = foundClient.cards.find((card) => String(card?.cardNumber ?? '').trim() === trimmedCard);
-      if (foundCard?.card?.uuid) {
-        navigate(`/getpass/${foundCard.card.uuid}`);
+      if (foundCard?.uuid) {
+        navigate(`/getpass/${foundCard.uuid}`);
       } else {
         toast.error('UUID карты не найден');
       }
@@ -136,14 +136,14 @@ const Workplace = () => {
           <ScannerIcon>
             <IconWithTooltip onClick={(e) => e.stopPropagation()}>
               <Search size={18} />
-              <Tooltip>Введите {CARD_LENGTH} цифр и нажмите «Найти клиента»</Tooltip>
+              <Tooltip>Введите от {CARD_MIN_LENGTH} до {CARD_LENGTH} цифр и нажмите «Найти клиента»</Tooltip>
             </IconWithTooltip>
           </ScannerIcon>
 
           <CustomInput
             type="tel"
             inputMode="numeric"
-            placeholder={`Номер карты (${CARD_LENGTH} цифр)`}
+            placeholder={`Номер карты (${CARD_MIN_LENGTH}-${CARD_LENGTH} цифр)`}
             value={cardNumber}
             onChange={onCardChange}
             maxLength={CARD_LENGTH}
@@ -151,7 +151,7 @@ const Workplace = () => {
 
           <CustomMainButton
             onClick={handleFindCustomer}
-            disabled={cardNumber.length !== CARD_LENGTH}
+            disabled={cardNumber.length < CARD_MIN_LENGTH || cardNumber.length > CARD_LENGTH}
             $mt={10}
             $maxWidth={268}
           >

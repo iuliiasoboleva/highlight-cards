@@ -89,8 +89,8 @@ const ManagersPage = () => {
 
     if (foundClient) {
       const foundCard = foundClient.cards.find((card) => String(card?.cardNumber ?? '').trim() === trimmedCard);
-      if (foundCard?.card?.uuid) {
-        navigate(`/getpass/${foundCard.card.uuid}`);
+    if (foundCard?.uuid) {
+      navigate(`/getpass/${foundCard.uuid}`);
       } else {
         toast.error('UUID карты не найден');
       }
