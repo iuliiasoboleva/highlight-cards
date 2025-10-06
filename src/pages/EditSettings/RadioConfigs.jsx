@@ -175,8 +175,8 @@ const RadioConfigs = ({ cardStatus }) => {
   if (isSubscription) {
     configs.push({
       options: [
-        { value: 'withVisits', label: 'Срок + кол-во визитов' },
-        { value: 'unlimited', label: 'Срок без ограничения визитов' },
+        { value: 'withVisits', label: 'Ограниченное количество визитов' },
+        { value: 'unlimited', label: 'Неограниченное количество визитов' },
       ],
       selected: settings.subscriptionVisitPolicy || 'withVisits',
       onChange: (value) => updateSettingsField('subscriptionVisitPolicy', value),

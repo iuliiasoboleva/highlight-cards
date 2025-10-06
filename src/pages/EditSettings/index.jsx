@@ -538,36 +538,40 @@ const EditSettings = () => {
         </>
       )}
 
-      <BarcodeRadioTitle>
-        {isStampCard
-          ? 'Минимальная сумма чека для начисления штампов'
-          : 'Сумма покупки при начислении'}
-      </BarcodeRadioTitle>
+      {cardStatus !== 'subscription' && (
+        <BarcodeRadioTitle>
+          {isStampCard
+            ? 'Минимальная сумма чека для начисления штампов'
+            : 'Сумма покупки при начислении'}
+        </BarcodeRadioTitle>
+      )}
 
-      <SpendingLabel>
-        <CustomInput
-          type="number"
-          min="0"
-          step="1"
-          value={currentCard?.minCheckForStamps ?? ''}
-          onChange={(e) => {
-            const raw = e.target.value;
-            if (raw === '') {
-              dispatch(updateCurrentCardField({ path: 'minCheckForStamps', value: '' }));
-              return;
-            }
-            const n = parseInt(raw, 10);
-            const v = Number.isNaN(n) ? 0 : Math.max(0, n);
-            dispatch(updateCurrentCardField({ path: 'minCheckForStamps', value: v }));
-          }}
-          onBlur={(e) => {
-            if (e.target.value === '' || e.target.value == null) {
-              dispatch(updateCurrentCardField({ path: 'minCheckForStamps', value: 0 }));
-            }
-          }}
-          placeholder="Например: 500₽"
-        />
-      </SpendingLabel>
+      {cardStatus !== 'subscription' && (
+        <SpendingLabel>
+          <CustomInput
+            type="number"
+            min="0"
+            step="1"
+            value={currentCard?.minCheckForStamps ?? ''}
+            onChange={(e) => {
+              const raw = e.target.value;
+              if (raw === '') {
+                dispatch(updateCurrentCardField({ path: 'minCheckForStamps', value: '' }));
+                return;
+              }
+              const n = parseInt(raw, 10);
+              const v = Number.isNaN(n) ? 0 : Math.max(0, n);
+              dispatch(updateCurrentCardField({ path: 'minCheckForStamps', value: v }));
+            }}
+            onBlur={(e) => {
+              if (e.target.value === '' || e.target.value == null) {
+                dispatch(updateCurrentCardField({ path: 'minCheckForStamps', value: 0 }));
+              }
+            }}
+            placeholder="Например: 500₽"
+          />
+        </SpendingLabel>
+      )}
 
       <CreateButton
         onClick={handleSave}

@@ -119,7 +119,10 @@ const InfoOverlay = ({ infoFields, cardStatus, onClose, onFieldClick }) => {
       <Content>
         {FIELDS_ORDER.filter((key) => {
           if (cardStatus !== 'stamp') {
-            return key !== 'howToGetStamp' && key !== 'stampMessage';
+            if (key === 'howToGetStamp' || key === 'stampMessage') return false;
+          }
+          if (cardStatus === 'subscription') {
+            if (key === 'rewardDescription' || key === 'claimRewardMessage') return false;
           }
           return true;
         }).map((key) => {

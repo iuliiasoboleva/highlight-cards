@@ -172,18 +172,20 @@ const EditInfo = () => {
         maxLength={300}
         warnAt={20}
       />
-      <LabeledTextarea
-        label="Описание награды"
-        tooltip="Укажите описание награды, которую получит клиент"
-        value={infoFields.rewardDescription}
-        onChange={handleFieldChange('rewardDescription')}
-        placeholder=""
-        required
-        dataKey="rewardDescription"
-        showCounter
-        maxLength={300}
-        warnAt={20}
-      />
+      {cardStatus !== 'subscription' && (
+        <LabeledTextarea
+          label="Описание награды"
+          tooltip="Укажите описание награды, которую получит клиент"
+          value={infoFields.rewardDescription}
+          onChange={handleFieldChange('rewardDescription')}
+          placeholder=""
+          required
+          dataKey="rewardDescription"
+          showCounter
+          maxLength={300}
+          warnAt={20}
+        />
+      )}
       {cardStatus === 'stamp' && (
         <LabeledTextarea
           label="Сообщение о начисленном штампе"
@@ -199,18 +201,20 @@ const EditInfo = () => {
           warnAt={20}
         />
       )}
-      <LabeledTextarea
-        label="Сообщение о начисленной награде"
-        tooltip="Текст push-сообщения о полученной награде"
-        value={infoFields.claimRewardMessage}
-        onChange={handleFieldChange('claimRewardMessage')}
-        placeholder=""
-        required
-        dataKey="claimRewardMessage"
-        showCounter
-        maxLength={300}
-        warnAt={20}
-      />
+      {cardStatus !== 'subscription' && (
+        <LabeledTextarea
+          label="Сообщение о начисленной награде"
+          tooltip="Текст push-сообщения о полученной награде"
+          value={infoFields.claimRewardMessage}
+          onChange={handleFieldChange('claimRewardMessage')}
+          placeholder=""
+          required
+          dataKey="claimRewardMessage"
+          showCounter
+          maxLength={300}
+          warnAt={20}
+        />
+      )}
 
       {cardStatus === 'stamp' && (
         <>
