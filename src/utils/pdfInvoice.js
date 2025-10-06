@@ -44,11 +44,81 @@ export async function generateInvoicePdf({ receiver, payer, invoice }) {
     { text: toRuble(it.price * it.qty), alignment: 'right' },
   ]);
 
+  // утилита загрузки изображения из public в dataURL для pdfmake
+  const loadImageAsDataURL = async (src) => {
+    if (!src) return null;
+    try {
+      const response = await fetch(src, { cache: 'no-cache' });
+      if (!response.ok) return null;
+      const blob = await response.blob();
+      return await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+      });
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const tryLoadFirstAvailable = async (candidates) => {
+    for (const c of candidates) {
+      // пропускаем пустые
+      if (!c) continue;
+      // абсолютные пути из public
+      const url = c.startsWith('/') ? c : `/${c}`;
+      // eslint-disable-next-line no-await-in-loop
+      const data = await loadImageAsDataURL(url);
+      if (data) return data;
+    }
+    return null;
+  };
+
+  const stampDataUrl = await tryLoadFirstAvailable([
+    'Печать.png',
+    'печать.png',
+    'images/Печать.png',
+    'images/печать.png',
+    'stamp.png',
+    'images/stamp.png',
+  ]);
+  const signatureDataUrl = await tryLoadFirstAvailable([
+    'Подпись.png',
+    'подпись.png',
+    'images/Подпись.png',
+    'images/подпись.png',
+    'signature.png',
+    'images/signature.png',
+  ]);
+
+  const logoDataUrl = await tryLoadFirstAvailable([
+    'logoLight.png',
+    'logoColored.png',
+    'images/logoLight.png',
+    'images/logoColored.png',
+  ]);
+
+  const bottomImagesBlock = [];
+  if (stampDataUrl || signatureDataUrl) {
+    bottomImagesBlock.push({
+      columns: [
+        signatureDataUrl ? { image: signatureDataUrl, width: 160, alignment: 'left' } : {},
+        stampDataUrl ? { image: stampDataUrl, width: 140, alignment: 'right' } : {},
+      ],
+      margin: [0, 24, 0, 8],
+    });
+  }
+
   const docDefinition = {
     pageMargins: [32, 36, 32, 36],
     content: [
+      ...(logoDataUrl
+        ? [
+            { image: logoDataUrl, width: 120, absolutePosition: { x: 0, y: 36 } },
+            { text: `Счёт №${invoice.number} от ${dateStr}`, style: 'h1', alignment: 'right', margin: [0, 0, 0, 16] },
+          ]
+        : [{ text: `Счёт №${invoice.number} от ${dateStr}`, style: 'h1' }]),
       { text: receiver.name, style: 'h1' },
-      { text: `Счёт №${invoice.number} от ${dateStr}`, style: 'h1' },
       { columns: [
         [
           { text: 'Получатель', style: 'h2' },
@@ -97,12 +167,29 @@ export async function generateInvoicePdf({ receiver, payer, invoice }) {
       ]},
 
       { columns: [
-        { text: `Итог к оплате: ${toRuble(invoice.total)}`, style: 'h2', margin: [0, 8, 0, 16] },
+      { text: `Итог к оплате: ${toRuble(invoice.total)}`, style: 'h2', margin: [0, 8, 0, 16] },
         { text: 'Без НДС', alignment: 'right', margin: [0, 8, 0, 16] },
       ]},
 
-      { text: `Получатель: ${receiver.signatory || ''}`, margin: [0, 30, 0, 4] },
-      { text: `Плательщик: ${payer.signatory || ''}` },
+      { columns: [
+        { text: `Получатель:`, margin: [0, 24, 0, 4] },
+        { text: `Плательщик:`, margin: [0, 24, 0, 4] },
+      ]},
+
+      { columns: [
+        [
+          { stack: [
+            { columns: [
+              signatureDataUrl ? { image: signatureDataUrl, width: 170, margin: [0, 6, 12, 0] } : { text: '', margin: [0, 40, 12, 0] },
+              stampDataUrl ? { image: stampDataUrl, width: 140, margin: [0, 0, 0, 0] } : { text: '' },
+            ]},
+            { text: `${receiver.signatory || ''}`, margin: [0, 8, 0, 4] }
+          ]},
+        ],
+        [
+          { text: `${payer.signatory || ''}`, margin: [0, 48, 0, 4], alignment: 'right' }
+        ],
+      ]},
     ],
     styles,
     defaultStyle: { fontSize: 10 },

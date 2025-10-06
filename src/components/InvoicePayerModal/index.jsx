@@ -4,6 +4,7 @@ import CustomInput from '../../customs/CustomInput';
 import CustomMainButton from '../../customs/CustomMainButton';
 import InnSuggestInput from '../InnSuggestInput';
 import axiosInstance from '../../axiosInstance';
+import { formatPhone } from '../../helpers/formatPhone';
 
 const initialState = {
   inn: '',
@@ -29,17 +30,45 @@ const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
     axiosInstance
       .get('/billing/payer', { params: { organization_id: organizationId } })
       .then((res) => {
-        if (res.data) setForm((s) => ({ ...s, ...res.data }));
+        if (res.data) {
+          const next = { ...res.data };
+          if (next.phone) next.phone = formatPhone(String(next.phone));
+          setForm((s) => ({ ...s, ...next }));
+        }
       })
       .finally(() => setLoading(false));
   }, [open, organizationId]);
 
   const disabled = useMemo(() => {
-    const innOk = /^\d{10}|\d{12}$/.test(String(form.inn || ''));
+    const innStr = String(form.inn || '').trim();
+    const innOk = /^(?:\d{10}|\d{12})$/.test(innStr);
+    const isIp = innStr.length === 12; // у ИП КПП отсутствует
     const bikOk = /^\d{9}$/.test(String(form.bik || ''));
     const rsOk = /^\d{20}$/.test(String(form.checking_account || ''));
-    const requiredFilled = form.name && form.kpp && form.legal_address && form.bank_name && form.correspondent_account && form.postal_address && form.phone && form.signatory;
+    const kppOk = isIp ? true : /^\d{9}$/.test(String(form.kpp || ''));
+    const phoneOk = (String(form.phone || '').replace(/\D/g, '') || '').length === 11;
+    const requiredFilled =
+      form.name &&
+      form.legal_address &&
+      form.bank_name &&
+      form.correspondent_account &&
+      form.postal_address &&
+      phoneOk &&
+      form.signatory &&
+      kppOk; // КПП обязателен только для юр. лиц
     return !(innOk && bikOk && rsOk && requiredFilled);
+  }, [form]);
+
+  const { innError, bikError, rsError, kppError, phoneError } = useMemo(() => {
+    const innStr = String(form.inn || '').trim();
+    const isIp = innStr.length === 12;
+    return {
+      innError: !!form.inn && !/^(?:\d{10}|\d{12})$/.test(innStr),
+      bikError: !!form.bik && !/^\d{9}$/.test(String(form.bik || '')),
+      rsError: !!form.checking_account && !/^\d{20}$/.test(String(form.checking_account || '')),
+      kppError: !isIp && !!form.kpp && !/^\d{9}$/.test(String(form.kpp || '')),
+      phoneError: !!form.phone && (String(form.phone).replace(/\D/g, '').length !== 11),
+    };
   }, [form]);
 
   const setField = (k) => (v) =>
@@ -103,6 +132,9 @@ const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
             }}
             inputClass="custom-input"
           />
+          {innError && (
+            <div style={{ color: '#c9353f', fontSize: 12, marginTop: 4 }}>ИНН должен состоять из 10 или 12 цифр</div>
+          )}
         </div>
         <div>
           <div className="label">ФИО для подписи</div>
@@ -114,7 +146,10 @@ const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
         </div>
         <div>
           <div className="label">КПП</div>
-          <CustomInput value={form.kpp} onChange={setField('kpp')} className="custom-input" />
+          <CustomInput value={form.kpp} onChange={setField('kpp')} className="custom-input" placeholder="для ИП можно оставить пусто" maxLength={9} inputMode="numeric" pattern="[0-9]*" />
+          {kppError && (
+            <div style={{ color: '#c9353f', fontSize: 12, marginTop: 4 }}>КПП должен содержать 9 цифр</div>
+          )}
         </div>
         <div>
           <div className="label">Юридический адрес</div>
@@ -122,7 +157,10 @@ const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
         </div>
         <div>
           <div className="label">р/с</div>
-          <CustomInput value={form.checking_account} onChange={setField('checking_account')} className="custom-input" />
+          <CustomInput value={form.checking_account} onChange={setField('checking_account')} className="custom-input" maxLength={20} inputMode="numeric" pattern="[0-9]*" />
+          {rsError && (
+            <div style={{ color: '#c9353f', fontSize: 12, marginTop: 4 }}>р/с должен содержать ровно 20 цифр</div>
+          )}
         </div>
         <div>
           <div className="label">БИК</div>
@@ -134,7 +172,13 @@ const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
               if (v && v.length >= 9) fetchBankByBik(v);
             }}
             className="custom-input"
+            maxLength={9}
+            inputMode="numeric"
+            pattern="[0-9]*"
           />
+          {bikError && (
+            <div style={{ color: '#c9353f', fontSize: 12, marginTop: 4 }}>БИК должен содержать 9 цифр</div>
+          )}
         </div>
         <div>
           <div className="label">Банк</div>
@@ -142,7 +186,7 @@ const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
         </div>
         <div>
           <div className="label">к/с</div>
-          <CustomInput value={form.correspondent_account} onChange={setField('correspondent_account')} className="custom-input" />
+          <CustomInput value={form.correspondent_account} onChange={setField('correspondent_account')} className="custom-input" maxLength={20} inputMode="numeric" pattern="[0-9]*" />
         </div>
         <div>
           <div className="label">Почтовый адрес</div>
@@ -150,7 +194,16 @@ const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
         </div>
         <div>
           <div className="label">Телефон</div>
-          <CustomInput value={form.phone} onChange={setField('phone')} className="custom-input" />
+          <CustomInput
+            value={form.phone}
+            onChange={(e) => setForm((s) => ({ ...s, phone: formatPhone(e.target.value) }))}
+            className="custom-input"
+            placeholder="+7 (___) ___-__-__"
+            inputMode="tel"
+          />
+          {phoneError && (
+            <div style={{ color: '#c9353f', fontSize: 12, marginTop: 4 }}>Введите номер в формате +7 (___) ___-__-__</div>
+          )}
         </div>
       </div>
     </CustomModal>
