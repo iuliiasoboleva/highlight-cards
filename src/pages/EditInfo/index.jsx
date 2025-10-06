@@ -172,7 +172,7 @@ const EditInfo = () => {
         maxLength={300}
         warnAt={20}
       />
-      {cardStatus !== 'subscription' && (
+      {cardStatus !== 'subscription' && cardStatus !== 'certificate' && (
         <LabeledTextarea
           label="Описание награды"
           tooltip="Укажите описание награды, которую получит клиент"
@@ -201,7 +201,7 @@ const EditInfo = () => {
           warnAt={20}
         />
       )}
-      {cardStatus !== 'subscription' && (
+      {cardStatus !== 'subscription' && cardStatus !== 'certificate' && (
         <LabeledTextarea
           label="Сообщение о начисленной награде"
           tooltip="Текст push-сообщения о полученной награде"

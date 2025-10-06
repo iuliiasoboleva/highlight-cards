@@ -340,7 +340,7 @@ const RadioConfigs = ({ cardStatus }) => {
     });
   }
 
-  if (['cashback', 'certificate'].includes(cardStatus)) {
+  if (cardStatus === 'cashback') {
     configs.push({
       options: [
         { value: 'pointsUnlimit', label: 'Неограниченный' },
@@ -400,7 +400,7 @@ const RadioConfigs = ({ cardStatus }) => {
       ],
       selected: settings.redemptionRule,
       onChange: (value) => updateSettingsField('redemptionRule', value),
-      title: 'Правила погашения',
+      title: 'Правила пользования подарочным сертификатом',
       name: 'redemption-rule',
     });
   }

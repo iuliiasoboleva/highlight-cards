@@ -144,8 +144,8 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick, hoverDesignKey, main
 
         <TopFieldsBlock>
           {fields
-            .filter(({ type }) =>
-              [
+            .filter(({ type }) => {
+              const allowed = [
                 'balanceMoney',
                 'credits',
                 'balance',
@@ -153,8 +153,12 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick, hoverDesignKey, main
                 'discountStatus',
                 'restStamps',
                 'score',
-              ].includes(type),
-            )
+              ];
+              if (card.status === 'certificate') {
+                return ['balanceMoney', 'balance'].includes(type);
+              }
+              return allowed.includes(type);
+            })
             .map(({ name, type }) => {
               const value = mergedCard[type];
               const fieldLabel = getFieldLabel(type, name);
@@ -187,20 +191,23 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick, hoverDesignKey, main
   const FooterBlock = (
     <CardInfoFooter>
       {fields
-        .filter(
-          ({ type }) =>
-            type &&
-            ![
-              'balanceMoney',
-              'credits',
-              'balance',
-              'expirationDate',
-              'restStamps',
-              'discountStatus',
-              'discountPercent',
-              'score',
-            ].includes(type),
-        )
+        .filter(({ type }) => {
+          const excluded = [
+            'balanceMoney',
+            'credits',
+            'balance',
+            'expirationDate',
+            'restStamps',
+            'discountStatus',
+            'discountPercent',
+            'score',
+          ];
+          if (card.status === 'certificate') {
+            // для сертификата скрываем блоки про штампы/награды
+            return type && !['balanceMoney', 'balance', 'rewards', 'restStamps'].includes(type);
+          }
+          return type && !excluded.includes(type);
+        })
         .map(({ type, name }) => {
           const value = mergedCard[type];
           const fieldLabel = getFieldLabel(type, name);

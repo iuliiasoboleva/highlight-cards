@@ -538,7 +538,7 @@ const EditSettings = () => {
         </>
       )}
 
-      {cardStatus !== 'subscription' && (
+      {cardStatus !== 'subscription' && cardStatus !== 'certificate' && (
         <BarcodeRadioTitle>
           {isStampCard
             ? 'Минимальная сумма чека для начисления штампов'
@@ -546,7 +546,7 @@ const EditSettings = () => {
         </BarcodeRadioTitle>
       )}
 
-      {cardStatus !== 'subscription' && (
+      {cardStatus !== 'subscription' && cardStatus !== 'certificate' && (
         <SpendingLabel>
           <CustomInput
             type="number"

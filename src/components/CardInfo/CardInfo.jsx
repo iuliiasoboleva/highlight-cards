@@ -150,6 +150,9 @@ const CardInfo = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef 
     topTypes = DEFAULT_TOP_TYPES.filter((t) => t !== 'score');
     if (!topTypes.includes('expirationDate')) topTypes = [...topTypes, 'expirationDate'];
   }
+  if (card.status === 'certificate') {
+    topTypes = topTypes.filter((t) => t !== 'credits' && t !== 'score' && t !== 'restStamps');
+  }
 
   // --- RENDER ---
   const HeaderBlock = (
