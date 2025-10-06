@@ -162,6 +162,7 @@ const EditLayout = ({
                     {platform === 'info' && (
                       <InfoOverlay
                         infoFields={currentCard.infoFields}
+                        cardStatus={currentCard.status}
                         onClose={() => setPlatform(previousPlatform.current)}
                         onFieldClick={onFieldClick}
                       />

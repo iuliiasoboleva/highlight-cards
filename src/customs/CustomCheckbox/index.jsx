@@ -2,7 +2,7 @@ import React from 'react';
 
 import { CheckboxWrapper, HiddenCheckbox, LabelText, StyledCheckbox } from './styles';
 
-const CustomCheckbox = ({ label, checked, onChange, name, required, linkLabel, linkHref }) => {
+const CustomCheckbox = ({ label, checked, onChange, name, required, linkLabel, linkHref, $error }) => {
   return (
     <CheckboxWrapper>
       <HiddenCheckbox
@@ -11,6 +11,7 @@ const CustomCheckbox = ({ label, checked, onChange, name, required, linkLabel, l
         checked={checked}
         onChange={onChange}
         required={required}
+        $error={$error}
       />
       <StyledCheckbox checked={checked} />
       {label && (

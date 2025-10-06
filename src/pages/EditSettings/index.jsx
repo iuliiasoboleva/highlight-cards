@@ -41,6 +41,7 @@ import {
   TopRow,
   Warning,
 } from './styles';
+import { HintDanger } from './styles';
 
 const EditSettings = () => {
   const { id } = useParams();
@@ -354,7 +355,7 @@ const EditSettings = () => {
           onChange={(value) => dispatch(updateCurrentCardField({ path: 'stampDailyLimit', value }))}
           title="Ограничить количество начислений штампов в день"
           subtitle="0 — без ограничений"
-          tooltip="Укажите лимит на количество карт, выпускаемых клиентам в рамках текущей программы. Если без ограничений - напишите 0"
+          tooltip="Укажите максимальное количество штампов, которое можно начислить одному клиенту за день. 0 — без ограничений."
         />
       )}
 
@@ -417,9 +418,17 @@ const EditSettings = () => {
             />
           </SpendingLabel>
 
+          {/* Подсказка к проценту начисления кэшбэка (показываем только при 100%) */}
+          {Number(settings.cashbackAccrualPercent) === 100 && (
+            <HintDanger>
+              Мы не рекомендуем устанавливать 100% начисления кэшбэка. Обычно отлично работают 1–10%:
+              клиент видит ощутимую выгоду, а программа остаётся прибыльной.
+            </HintDanger>
+          )}
+
           <FullWidthHr />
 
-          {/* Процент оплаты кэшбэком (ограничение 5–50%) */}
+          {/* Процент оплаты кэшбэком (разрешаем до 100%, предупреждаем > 50%) */}
           <BarcodeRadioTitle>Процент оплаты кэшбэком</BarcodeRadioTitle>
           <SubTitle>
             Это максимум, который клиент сможет оплатить бонусами за покупку. Например, если вы
@@ -429,8 +438,8 @@ const EditSettings = () => {
           <SpendingLabel style={{ marginTop: 8 }}>
             <CustomInput
               type="number"
-              min="5"
-              max="50"
+              min="0"
+              max="100"
               step="1"
               value={
                 typeof currentCard?.maxRedeemPercent === 'number'
@@ -445,7 +454,6 @@ const EditSettings = () => {
                 }
                 const n = parseInt(raw || '0', 10);
 
-                // показываем предупреждение, если пользователь ввёл > 50
                 if (!isNaN(n) && n > 50) {
                   setRedeemWarn(true);
                   if (warnTimerRef.current) clearTimeout(warnTimerRef.current);
@@ -454,13 +462,12 @@ const EditSettings = () => {
                   setRedeemWarn(false);
                 }
 
-                // сохраняем с жёстким ограничением 5–50
-                const v = isNaN(n) ? 5 : Math.max(5, Math.min(50, n));
+                const v = isNaN(n) ? 0 : Math.max(0, Math.min(100, n));
                 dispatch(updateCurrentCardField({ path: 'maxRedeemPercent', value: v }));
               }}
               onBlur={(e) => {
                 if (e.target.value === '' || e.target.value == null) {
-                  dispatch(updateCurrentCardField({ path: 'maxRedeemPercent', value: 5 }));
+                  dispatch(updateCurrentCardField({ path: 'maxRedeemPercent', value: 0 }));
                 }
               }}
               placeholder="Например: 30"

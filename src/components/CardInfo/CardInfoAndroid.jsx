@@ -107,7 +107,8 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick, hoverDesignKey, main
 
     const wl = card.settings?.walletLabels || {};
     if (type === 'restStamps') {
-      const word = wl.stampsWord || 'штампов';
+      const defaultWord = card.status === 'subscription' ? 'визитов' : 'штампов';
+      const word = wl.stampsWord || defaultWord;
       return `${value} ${word}`;
     }
     if (type === 'rewards') return `${value} наград`;

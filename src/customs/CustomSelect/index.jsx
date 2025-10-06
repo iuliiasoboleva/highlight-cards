@@ -16,6 +16,7 @@ const CustomSelect = ({
   placeholder = '',
   className = '',
   disabled = false,
+  $error = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef(null);
@@ -52,6 +53,7 @@ const CustomSelect = ({
       <HeaderBox
         $opened={isOpen}
         $disabled={disabled}
+        $error={$error}
         onClick={toggleOpen}
         role="button"
         aria-haspopup="listbox"

@@ -55,6 +55,13 @@ export const Input = styled.input`
     css`
       padding-right: 20px;
     `}
+
+  ${({ $error }) =>
+    $error &&
+    css`
+      border-color: #bf4756;
+      box-shadow: 0 0 0 2px rgba(191, 71, 86, 0.1);
+    `}
 `;
 
 export const RequiredMark = styled.span`

@@ -39,6 +39,12 @@ export const HiddenCheckbox = styled.input`
     top: -1px;
     left: 0;
   }
+  ${({ $error }) =>
+    $error &&
+    `
+    border-color: #bf4756;
+    box-shadow: 0 0 0 2px rgba(191, 71, 86, 0.1);
+  `}
 `;
 
 export const StyledCheckbox = styled.span`

@@ -110,7 +110,8 @@ const CardInfo = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef 
     }
 
     if (type === 'restStamps') {
-      const word = wl.stampsWord || 'штампов';
+      const defaultWord = card.status === 'subscription' ? 'визитов' : 'штампов';
+      const word = wl.stampsWord || defaultWord;
       return `${value} ${word}`;
     }
 

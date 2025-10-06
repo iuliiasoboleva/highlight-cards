@@ -15,6 +15,7 @@ const InnSuggestInput = ({
   inputClass = 'custom-input',
   className,
   $error,
+  required,
 }) => {
   const [query, setQuery] = useState(value);
   const [suggestions, setSuggestions] = useState([]);
@@ -103,6 +104,7 @@ const InnSuggestInput = ({
         placeholder={placeholder}
         className={inputClass}
         $error={$error}
+        required={required}
       />
 
       {showDropdown && suggestions.length > 0 && (

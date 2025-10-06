@@ -86,12 +86,18 @@ const EditDesign = () => {
   useEffect(() => {
     if (isStampCard && (!design.stampsQuantity || design.stampsQuantity === 0)) {
       dispatch(updateCurrentCardField({ path: 'design.stampsQuantity', value: 10 }));
+      if (isSubscription) {
+        dispatch(updateCurrentCardField({ path: 'visitsCount', value: 10 }));
+      }
+    }
+    if (isSubscription && design.stampsQuantity && design.stampsQuantity !== currentCard?.visitsCount) {
+      dispatch(updateCurrentCardField({ path: 'visitsCount', value: design.stampsQuantity }));
     }
     if (location.state?.flashKey) {
       handleFieldClick(location.state.flashKey);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isStampCard, location.state, handleFieldClick]);
+  }, [isStampCard, isSubscription, design.stampsQuantity, currentCard?.visitsCount, location.state, handleFieldClick]);
 
   const handleStampIconChange = (path, iconName) => {
     dispatch(updateCurrentCardField({ path, value: iconName }));
@@ -152,6 +158,9 @@ const EditDesign = () => {
               $active={num <= stampsQuantity}
               onClick={() => {
                 dispatch(updateCurrentCardField({ path: 'design.stampsQuantity', value: num }));
+                if (isSubscription) {
+                  dispatch(updateCurrentCardField({ path: 'visitsCount', value: num }));
+                }
                 setIsDirty(true);
               }}
             >
@@ -297,6 +306,7 @@ const EditDesign = () => {
           setIsDirty(true);
         }}
         isStampCard={isStampCard}
+        isSubscription={isSubscription}
         onHoverKeyChange={(key) => setHoverDesignKey(key)}
       />
       <hr />

@@ -305,6 +305,14 @@ export const Warning = styled.div`
   margin-bottom: 20px;
 `;
 
+export const HintDanger = styled.div`
+  background-color: #fff;
+  color: #333;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #e53935;
+`;
+
 export const Header = styled.div`
   display: grid;
   grid-template-columns: 3fr 3fr 1fr 1fr;

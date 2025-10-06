@@ -48,7 +48,9 @@ const RegisterRequest = ({
         value={formData.email}
         onChange={onChange}
         onBlur={() => onBlur('email')}
-        aria-invalid={touchedFields.email && !isEmailValid}
+        required
+        $error={!isEmailValid}
+        aria-invalid={!isEmailValid}
       />
       {touchedFields.email && !isEmailValid && (
         <ErrorMessage>Введите корректный email</ErrorMessage>
@@ -59,6 +61,7 @@ const RegisterRequest = ({
         placeholder="Имя"
         value={formData.firstName}
         onChange={onChange}
+        $error={!formData.firstName}
         required
       />
       <CustomInput
@@ -66,6 +69,7 @@ const RegisterRequest = ({
         placeholder="Фамилия"
         value={formData.lastName}
         onChange={onChange}
+        $error={!formData.lastName}
         required
       />
       <CustomInput
@@ -73,6 +77,7 @@ const RegisterRequest = ({
         placeholder="Телефон"
         value={formData.phone}
         onChange={onChange}
+        $error={formData.phone.replace(/\D/g, '').length !== 11}
         required
       />
 
@@ -88,7 +93,9 @@ const RegisterRequest = ({
               setFormData((prev) => ({ ...prev, inn, companyName }));
             }}
             placeholder="ИНН или название компании"
-            $error={touchedFields.inn && !isInnValid}
+            required
+            $error={!isInnValid}
+            aria-invalid={!isInnValid}
           />
 
           {touchedFields.inn && !isInnValid && (
@@ -113,6 +120,7 @@ const RegisterRequest = ({
         options={REFERRAL_OPTIONS}
         placeholder="Откуда вы о нас узнали?"
         onChange={handleReferralChange}
+        $error={!formData.referral}
       />
 
       {formData.referral === 'Другое' && (
@@ -136,6 +144,8 @@ const RegisterRequest = ({
         name="acceptTerms"
         checked={formData.acceptTerms}
         onChange={onChange}
+        required
+        $error={!formData.acceptTerms}
         label={
           <>
             Я принимаю{' '}
@@ -150,7 +160,16 @@ const RegisterRequest = ({
         }
       />
 
-      <CustomButton type="submit" $loading={submitting} disabled={submitting || !isFormValid}>
+      <CustomButton
+        type="submit"
+        $loading={submitting}
+        $inactive={!isFormValid}
+        disabled={submitting}
+        onClick={() => {
+          onBlur('email');
+          onBlur('inn');
+        }}
+      >
         {submitting ? '' : 'Зарегистрироваться'}
       </CustomButton>
     </>

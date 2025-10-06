@@ -15,6 +15,7 @@ const CustomInput = ({
   iconAriaLabel,
   disabled,
   suffix,
+  $error,
   ...props
 }) => {
   const hasIcon = Boolean(iconSrc);
@@ -31,6 +32,7 @@ const CustomInput = ({
         $hasIcon={hasIcon}
         $hasSuffix={hasSuffix}
         disabled={disabled}
+        $error={$error}
         {...props}
       />
 

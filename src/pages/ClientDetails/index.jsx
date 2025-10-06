@@ -114,14 +114,25 @@ const ClientDetails = () => {
               <CardTag>{card.name}</CardTag>
 
               {card.id && (
-                <CardTag
-                  as="a"
-                  href={`${(axiosInstance.defaults.baseURL || '').replace(/\/$/, '')}/passes/${card.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Apple&nbsp;Wallet
-                </CardTag>
+                <>
+                  <CardTag
+                    as="a"
+                    href={`${(axiosInstance.defaults.baseURL || '').replace(/\/$/, '')}/passes/${card.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Apple\u00A0Wallet
+                  </CardTag>
+                  <CardTag
+                    as="a"
+                    href={`${(axiosInstance.defaults.baseURL || '').replace(/\/$/, '')}/google-wallet/save/${card.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ marginLeft: '8px' }}
+                  >
+                    Google\u00A0Wallet
+                  </CardTag>
+                </>
               )}
             </React.Fragment>
           ))

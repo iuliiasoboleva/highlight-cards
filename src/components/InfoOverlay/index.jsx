@@ -104,7 +104,7 @@ const toDisplay = (key, raw) => {
   return formatted && String(formatted).trim() !== '' ? formatted : 'Нет данных';
 };
 
-const InfoOverlay = ({ infoFields, onClose, onFieldClick }) => {
+const InfoOverlay = ({ infoFields, cardStatus, onClose, onFieldClick }) => {
   if (!infoFields) return null;
 
   return (
@@ -117,7 +117,12 @@ const InfoOverlay = ({ infoFields, onClose, onFieldClick }) => {
       </Header>
 
       <Content>
-        {FIELDS_ORDER.map((key) => {
+        {FIELDS_ORDER.filter((key) => {
+          if (cardStatus !== 'stamp') {
+            return key !== 'howToGetStamp' && key !== 'stampMessage';
+          }
+          return true;
+        }).map((key) => {
           const label = fieldLabels[key] || key;
           const displayValue = toDisplay(key, infoFields[key]);
           const isMultiline = String(displayValue).includes('\n');

@@ -66,6 +66,13 @@ export const CustomButton = styled.button`
     cursor: not-allowed;
   }
 
+  ${({ $inactive }) =>
+    $inactive &&
+    css`
+      background-color: #d3d3d3;
+      color: #999;
+    `}
+
   /* состояние лоадинга (аналог .custom-button.loading) */
   ${({ $loading }) =>
     $loading &&

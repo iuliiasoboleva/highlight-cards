@@ -30,7 +30,7 @@ const normalizeColor = (str) => {
   return h || '';
 };
 
-const ColorSettings = ({ colors = {}, handleColorChange, isStampCard, onHoverKeyChange }) => {
+const ColorSettings = ({ colors = {}, handleColorChange, isStampCard, isSubscription, onHoverKeyChange }) => {
   const [validColors, setValidColors] = useState({});
   const [localInputs, setLocalInputs] = useState({});
 
@@ -80,12 +80,24 @@ const ColorSettings = ({ colors = {}, handleColorChange, isStampCard, onHoverKey
   const fullColorFields = [
     { key: 'cardBackground', label: 'Фон карты' },
     { key: 'stampBackgroundColor', label: 'Цвет фона центральной части' },
-    { key: 'activeStampColor', label: 'Активный штамп' },
-    { key: 'activeStampBgColor', label: 'Фон активного штампа' },
+    {
+      key: 'activeStampColor',
+      label: isSubscription ? 'Активный визит' : 'Активный штамп',
+    },
+    {
+      key: 'activeStampBgColor',
+      label: isSubscription ? 'Фон активного визита' : 'Фон активного штампа',
+    },
     { key: 'textColor', label: 'Цвет текста' },
     { key: 'borderColor', label: 'Цвет обводки' },
-    { key: 'inactiveStampColor', label: 'Неактивный штамп' },
-    { key: 'inactiveStampBgColor', label: 'Фон неактивного штампа' },
+    {
+      key: 'inactiveStampColor',
+      label: isSubscription ? 'Неактивный визит' : 'Неактивный штамп',
+    },
+    {
+      key: 'inactiveStampBgColor',
+      label: isSubscription ? 'Фон неактивного визита' : 'Фон неактивного штампа',
+    },
   ];
 
   const limitedColorFields = [

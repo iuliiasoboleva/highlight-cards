@@ -38,6 +38,13 @@ export const HeaderBox = styled.div`
       border-color: #bf4756;
     `}
 
+  ${({ $error }) =>
+    $error &&
+    css`
+      border-color: #bf4756;
+      box-shadow: 0 0 0 2px rgba(191, 71, 86, 0.1);
+    `}
+
   ${({ $disabled }) =>
     $disabled &&
     css`

@@ -40,6 +40,7 @@ const AuthForm = () => {
     companyName: '',
     firstName: '',
     lastName: '',
+    confirmInn: false,
     acceptTerms: false,
     referral: '',
     otherReferral: '',
@@ -63,6 +64,7 @@ const AuthForm = () => {
       companyName: '',
       firstName: '',
       lastName: '',
+      confirmInn: false,
       acceptTerms: false,
       referral: '',
       otherReferral: '',
@@ -79,7 +81,7 @@ const AuthForm = () => {
 
     if (name === 'inn') {
       const digitsOnly = value.replace(/\D/g, '').slice(0, 12);
-      setFormData((prev) => ({ ...prev, [name]: digitsOnly }));
+      setFormData((prev) => ({ ...prev, [name]: digitsOnly, confirmInn: false }));
 
       clearTimeout(debounceTimeout);
       const trimmedValue = digitsOnly;
@@ -163,6 +165,7 @@ const AuthForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (submitting) return;
+    setTouchedFields({ inn: true, email: true });
     setSubmitting(true);
 
     if (mode === 'login') {
@@ -311,7 +314,7 @@ const AuthForm = () => {
   const isEmailValid = formData.email.includes('@');
   const isInnValid =
     userType === 'employee' || formData.inn.length === 10 || formData.inn.length === 12;
-  const isCompanyLoaded = userType === 'employee' || !!formData.companyName;
+  const isCompanyLoaded = userType === 'employee' || !!formData.companyName || isInnValid;
   const isNameValid = formData.firstName.trim().length > 0;
   const isSurnameValid = formData.lastName.trim().length > 0;
   const isPhoneValid = formData.phone.replace(/\D/g, '').length === 11;
