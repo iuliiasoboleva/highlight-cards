@@ -22,10 +22,18 @@ export const Page = styled.div`
 export const Left = styled.div`
   width: 50%;
   padding: 20px;
+  position: sticky;
+  top: calc(var(--header-height) + var(--bar-height));
+  align-self: flex-start;
+  max-height: calc(100vh - var(--header-height) - var(--bar-height));
+  overflow-y: auto;
 
   @media (max-width: 999px) {
     width: 100%;
     padding: 16px;
+    position: static;
+    max-height: none;
+    overflow: visible;
   }
 `;
 
@@ -37,13 +45,14 @@ export const Right = styled.div`
   position: sticky;
   top: calc(var(--header-height) + var(--bar-height));
   align-self: flex-start;
-  // height: 100vh;
+  max-height: calc(100vh - var(--header-height) - var(--bar-height));
   overflow-y: auto;
 
   @media (max-width: 999px) {
     width: 100%;
     position: static;
-    height: auto;
+    max-height: none;
+    overflow: visible;
     padding: 16px;
     border-left: none;
     border-top: none;
