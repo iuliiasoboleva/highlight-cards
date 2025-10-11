@@ -56,6 +56,13 @@ import SettingsPersonal from './pages/SettingsPersonal';
 import SettingsRFMSegment from './pages/SettingsRFMSegment';
 import SmsLogin from './pages/SmsLogin';
 import { GlobalStyle } from './styles/GlobalStyle';
+import {
+  AdminLogin,
+  AdminDashboard,
+  AdminOrganizations,
+  AdminSupport,
+  AdminFinance,
+} from './pages/Admin';
 
 const App = () => {
   const user = useSelector((state) => state.user);
@@ -143,6 +150,12 @@ const App = () => {
             <Route path="/customer/card/:cardNumber" element={<CustomerPage />} />
             <Route path="/getpass/:uuid" element={<GetPassPage />} />
             <Route path="/giftcard/:cardNumber" element={<GiftCardPage />} />
+            
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/organizations" element={<AdminOrganizations />} />
+            <Route path="/admin/support" element={<AdminSupport />} />
+            <Route path="/admin/finance" element={<AdminFinance />} />
           </Routes>
         </AuthRedirectGuard>
       </Router>

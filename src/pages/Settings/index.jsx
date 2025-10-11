@@ -89,6 +89,24 @@ const Settings = () => {
 
   const plan = useMemo(() => planFeatures.find((p) => p.key === planKey), [planKey]);
 
+  const currentUserPlan = useMemo(() => {
+    if (!subscription) return planFeatures.find((p) => p.key === 'free');
+    
+    if (subscription.status === 'trial') {
+      return planFeatures.find((p) => p.key === 'free');
+    }
+    
+    const planNameLower = (subscription.plan_name || '').toLowerCase();
+    if (planNameLower.includes('бизнес') || planNameLower.includes('business')) {
+      return planFeatures.find((p) => p.key === 'business');
+    }
+    if (planNameLower.includes('сеть') || planNameLower.includes('network')) {
+      return planFeatures.find((p) => p.key === 'network');
+    }
+    
+    return planFeatures.find((p) => p.key === 'free');
+  }, [subscription]);
+
   const { min: pMin, max: pMax } = getPointsBounds(planKey);
 
   useEffect(() => {
@@ -169,7 +187,7 @@ const Settings = () => {
         <HeaderCard>
           <div>
             <Subtle>Ваш тарифный план</Subtle>
-            <Title>{plan?.name}</Title>
+            <Title>{currentUserPlan?.name}</Title>
           </div>
           <RightMeta>
             <MetaRow className="duration">
