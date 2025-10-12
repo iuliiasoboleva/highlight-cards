@@ -104,6 +104,45 @@ export const PwaIconImg = styled.img`
   height: 20px;
 `;
 
+export const WalletButtonsWrapper = styled.div`
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 8px;
+  width: 100%;
+`;
+
+export const WalletButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  background: white;
+  border: 2px solid #000;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #000;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 160px;
+
+  &:hover {
+    background: #f8f9fa;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+`;
+
+export const WalletIcon = styled.span`
+  font-size: 20px;
+  margin-right: 6px;
+`;
+
 export const AccordionsWrapper = styled.div`
   display: flex;
   flex-direction: column;

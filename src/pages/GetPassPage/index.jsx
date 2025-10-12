@@ -3,11 +3,11 @@ import 'react-phone-input-2/lib/style.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from '../../axiosInstance';
 
-import PwaIcon from '../../assets/icons/pwa.svg';
 import Accordion from '../../components/Accordion';
 import CustomCheckbox from '../../customs/CustomCheckbox';
 import CustomInput from '../../customs/CustomInput';
 import CustomModal from '../../customs/CustomModal';
+import { useToast } from '../../components/Toast';
 import {
   AccordionsWrapper,
   AuthForm,
@@ -17,16 +17,18 @@ import {
   Header,
   HeaderBar,
   HeaderContent,
-  PwaButton,
-  PwaIconImg,
   StyledPhoneInput,
   Title,
+  WalletButtonsWrapper,
+  WalletButton,
+  WalletIcon,
 } from './styles';
 import NotFound from '../../components/NotFound';
 
 const GetPassPage = () => {
   const { uuid } = useParams();
   const navigate = useNavigate();
+  const toast = useToast();
 
   const [isLoading, setIsLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -89,16 +91,74 @@ const GetPassPage = () => {
     setConsent((prev) => ({ ...prev, [name]: checked }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleWalletInstall = async (walletType) => {
     if (!consent.terms) {
-      alert('Необходимо согласиться с условиями использования');
+      toast.error('Необходимо согласиться с условиями использования');
       return;
     }
 
     if (!consent.marketing) {
-      alert('Необходимо согласиться с обработкой персональных данных');
+      toast.error('Необходимо согласиться с обработкой персональных данных');
+      return;
+    }
+
+    const missingFields = [];
+    (card?.issueFormFields || []).forEach((field) => {
+      if (field.required && (!formData[field.name] || formData[field.name].trim() === '')) {
+        missingFields.push(field.name);
+      }
+    });
+
+    if (missingFields.length > 0) {
+      toast.error(`Заполните поля: ${missingFields.join(', ')}`);
+      return;
+    }
+
+    try {
+      const clientData = {};
+      (card?.issueFormFields || []).forEach((field) => {
+        if (formData[field.name] && formData[field.name].trim() !== '') {
+          clientData[field.name] = formData[field.name];
+        }
+      });
+
+      const response = await axios.post(`/cards/${uuid}/getpass`, {
+        ...clientData,
+        consent: consent,
+      });
+
+      const identifier = response.data?.identifier;
+      
+      toast.success(`Карта добавляется в ${walletType === 'apple' ? 'Apple Wallet' : 'Google Wallet'}...`);
+      
+      setTimeout(() => {
+        if (walletType === 'apple') {
+          window.location.href = `/pkpass/${identifier}?${new URLSearchParams(clientData).toString()}`;
+        } else if (walletType === 'google') {
+          window.location.href = `/google-wallet/${identifier}?${new URLSearchParams(clientData).toString()}`;
+        }
+      }, 800);
+    } catch (error) {
+      console.error('Ошибка при добавлении в Wallet:', error);
+      
+      if (error.response?.status === 409) {
+        toast.error('Карта уже зарегистрирована');
+      } else {
+        toast.error('Не удалось добавить карту. Попробуйте позже');
+      }
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!consent.terms) {
+      toast.error('Необходимо согласиться с условиями использования');
+      return;
+    }
+
+    if (!consent.marketing) {
+      toast.error('Необходимо согласиться с обработкой персональных данных');
       return;
     }
 
@@ -129,7 +189,9 @@ const GetPassPage = () => {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-      navigate('/'); // Перенаправляем на главную страницу
+      
+      toast.success('Карта успешно создана!');
+      setTimeout(() => navigate('/'), 1500);
     } catch (error) {
       console.error('Ошибка при создании карты:', error);
 
@@ -137,7 +199,7 @@ const GetPassPage = () => {
       if (error.response?.status === 409) {
         setShowCardExistsModal(true);
       } else {
-        alert('Произошла ошибка при создании карты. Попробуйте еще раз.');
+        toast.error('Произошла ошибка при создании карты. Попробуйте еще раз');
       }
     }
   };
@@ -221,10 +283,15 @@ const GetPassPage = () => {
               required
             />
 
-            <PwaButton type="submit">
-              <PwaIconImg src={PwaIcon} alt="PWA" />
-              <span>Установить на домашний экран</span>
-            </PwaButton>
+            <WalletButtonsWrapper>
+              <WalletButton type="button" onClick={() => handleWalletInstall('apple')}>
+                <span>Apple Wallet</span>
+              </WalletButton>
+              
+              <WalletButton type="button" onClick={() => handleWalletInstall('google')}>
+                <span>Google Wallet</span>
+              </WalletButton>
+            </WalletButtonsWrapper>
           </AuthForm>
 
           <AccordionsWrapper>
