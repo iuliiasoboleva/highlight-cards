@@ -1,3 +1,4 @@
+export { default as AdminRedirect } from './AdminRedirect';
 export { default as AdminLogin } from './AdminLogin';
 export { default as AdminDashboard } from './AdminDashboard';
 export { default as AdminAnalytics } from './AdminAnalytics';

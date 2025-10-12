@@ -57,6 +57,7 @@ import SettingsRFMSegment from './pages/SettingsRFMSegment';
 import SmsLogin from './pages/SmsLogin';
 import { GlobalStyle } from './styles/GlobalStyle';
 import {
+  AdminRedirect,
   AdminLogin,
   AdminDashboard,
   AdminAnalytics,
@@ -154,6 +155,7 @@ const App = () => {
             <Route path="/getpass/:uuid" element={<GetPassPage />} />
             <Route path="/giftcard/:cardNumber" element={<GiftCardPage />} />
             
+            <Route path="/admin" element={<AdminRedirect />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
