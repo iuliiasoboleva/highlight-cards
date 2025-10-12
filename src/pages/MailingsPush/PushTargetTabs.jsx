@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 import CustomInput from '../../customs/CustomInput';
@@ -20,6 +20,14 @@ const PushTargetTabs = ({ onTabChange, onFilteredCountChange }) => {
   const [segment, setSegment] = useState('need-attention');
   const [symbol, setSymbol] = useState('equal');
   const [filterInput, setFilterInput] = useState('');
+
+  const onTabChangeRef = useRef(onTabChange);
+  const onFilteredCountChangeRef = useRef(onFilteredCountChange);
+
+  useEffect(() => {
+    onTabChangeRef.current = onTabChange;
+    onFilteredCountChangeRef.current = onFilteredCountChange;
+  }, [onTabChange, onFilteredCountChange]);
 
   const segmentOptions = [
     { label: 'Требуют внимания', value: 'need-attention' },
@@ -44,14 +52,21 @@ const PushTargetTabs = ({ onTabChange, onFilteredCountChange }) => {
   const isDiscreteSegment = DISCRETE_SEGMENTS.includes(segment);
   const numericDisabled = isDiscreteSegment;
 
+  const segmentLabel = useMemo(
+    () => segmentOptions.find((o) => o.value === segment)?.label,
+    [segment]
+  );
+
   useEffect(() => {
-    onTabChange?.(selectedTab, {
+    onTabChangeRef.current?.(selectedTab, {
       segment,
       symbol,
       filter: filterInput,
-      segmentLabel: segmentOptions.find((o) => o.value === segment)?.label,
+      segmentLabel,
     });
+  }, [selectedTab, segment, symbol, filterInput, segmentLabel]);
 
+  useEffect(() => {
     if (selectedTab === 'segment') {
       const filtered = clients.filter((client) => {
         if (
@@ -86,11 +101,11 @@ const PushTargetTabs = ({ onTabChange, onFilteredCountChange }) => {
         return false;
       });
 
-      onFilteredCountChange?.(filtered.length);
+      onFilteredCountChangeRef.current?.(filtered.length);
     } else {
-      onFilteredCountChange?.(clients.length);
+      onFilteredCountChangeRef.current?.(clients.length);
     }
-  }, [selectedTab, segment, symbol, filterInput, clients, onTabChange, onFilteredCountChange]);
+  }, [selectedTab, segment, symbol, filterInput, clients]);
 
   return (
     <PushTabs>
