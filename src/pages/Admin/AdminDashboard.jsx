@@ -316,7 +316,7 @@ const AdminDashboard = () => {
 
           {adminUser?.role === 'super_admin' && (
             <MenuCard to="/admin/managers">
-              <MenuIcon>⚙️</MenuIcon>
+              <MenuIcon>👔</MenuIcon>
               <MenuTitle>Менеджеры</MenuTitle>
               <MenuDescription>
                 Управление командой, журнал входов

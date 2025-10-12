@@ -1,7 +1,9 @@
 export { default as AdminLogin } from './AdminLogin';
 export { default as AdminDashboard } from './AdminDashboard';
+export { default as AdminAnalytics } from './AdminAnalytics';
 export { default as AdminOrganizations } from './AdminOrganizations';
 export { default as AdminOrganizationDetail } from './AdminOrganizationDetail';
+export { default as AdminManagers } from './AdminManagers';
 export { default as AdminSupport } from './AdminSupport';
 export { default as AdminFinance } from './AdminFinance';
 

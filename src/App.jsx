@@ -59,8 +59,10 @@ import { GlobalStyle } from './styles/GlobalStyle';
 import {
   AdminLogin,
   AdminDashboard,
+  AdminAnalytics,
   AdminOrganizations,
   AdminOrganizationDetail,
+  AdminManagers,
   AdminSupport,
   AdminFinance,
 } from './pages/Admin';
@@ -154,8 +156,10 @@ const App = () => {
             
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/analytics" element={<AdminAnalytics />} />
             <Route path="/admin/organizations" element={<AdminOrganizations />} />
             <Route path="/admin/organizations/:id" element={<AdminOrganizationDetail />} />
+            <Route path="/admin/managers" element={<AdminManagers />} />
             <Route path="/admin/support" element={<AdminSupport />} />
             <Route path="/admin/finance" element={<AdminFinance />} />
           </Routes>
