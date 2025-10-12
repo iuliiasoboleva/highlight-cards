@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'react-phone-input-2/lib/style.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from '../../axiosInstance';
+import BASE_URL from '../../config';
 
 import Accordion from '../../components/Accordion';
 import CustomCheckbox from '../../customs/CustomCheckbox';
@@ -118,7 +119,7 @@ const GetPassPage = () => {
       const clientData = {};
       (card?.issueFormFields || []).forEach((field) => {
         if (formData[field.name] && formData[field.name].trim() !== '') {
-          clientData[field.name] = formData[field.name];
+          clientData[field.type] = formData[field.name];
         }
       });
 
@@ -132,10 +133,11 @@ const GetPassPage = () => {
       toast.success(`Карта добавляется в ${walletType === 'apple' ? 'Apple Wallet' : 'Google Wallet'}...`);
       
       setTimeout(() => {
+        const baseUrl = BASE_URL.replace(/\/$/, '');
         if (walletType === 'apple') {
-          window.location.href = `/pkpass/${identifier}?${new URLSearchParams(clientData).toString()}`;
+          window.location.href = `${baseUrl}/pkpass/${identifier}?${new URLSearchParams(clientData).toString()}`;
         } else if (walletType === 'google') {
-          window.location.href = `/google-wallet/${identifier}?${new URLSearchParams(clientData).toString()}`;
+          window.location.href = `${baseUrl}/google-wallet/${identifier}?${new URLSearchParams(clientData).toString()}`;
         }
       }, 800);
     } catch (error) {
