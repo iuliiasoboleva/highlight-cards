@@ -2,12 +2,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { saveAs } from 'file-saver';
 import { ChevronLeft, QrCode } from 'lucide-react';
-import * as XLSX from 'xlsx';
 
 import ImportClientsModal from '../../pages/Clients/modals/ImportClientsModal';
 import { createCard, saveCard, setCurrentCard } from '../../store/cardsSlice';
+import { fetchClients } from '../../store/clientsSlice';
 import { generatePDF } from '../../utils/pdfGenerator';
 import QRPopup from '../QRPopup';
 import {
@@ -57,13 +56,8 @@ const SubMenu = ({
     setName(initialName || '');
   }, [initialName]);
 
-  const handleExportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(clients);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Клиенты');
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const data = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    saveAs(data, 'clients.xlsx');
+  const handleImportSuccess = () => {
+    dispatch(fetchClients());
   };
 
   const isDisabled =
@@ -201,7 +195,7 @@ const SubMenu = ({
         <ImportClientsModal
           open={showImportModal}
           onClose={() => setShowImportModal(false)}
-          handleExportToExcel={handleExportToExcel}
+          onImportSuccess={handleImportSuccess}
         />
       )}
     </>
