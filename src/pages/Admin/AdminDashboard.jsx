@@ -90,7 +90,7 @@ const StatValue = styled.div`
 
 const StatChange = styled.div`
   font-size: 14px;
-  color: ${props => props.positive ? '#10b981' : '#ef4444'};
+  color: ${props => props.$positive ? '#10b981' : '#ef4444'};
   margin-top: 8px;
 `;
 
@@ -270,7 +270,7 @@ const AdminDashboard = () => {
           <StatCard>
             <StatLabel>Новых за неделю</StatLabel>
             <StatValue>{stats?.new_users_week || 0}</StatValue>
-            <StatChange positive>
+            <StatChange $positive>
               +{stats?.new_users_day || 0} за сегодня
             </StatChange>
           </StatCard>

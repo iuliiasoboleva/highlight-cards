@@ -60,6 +60,7 @@ import {
   AdminLogin,
   AdminDashboard,
   AdminOrganizations,
+  AdminOrganizationDetail,
   AdminSupport,
   AdminFinance,
 } from './pages/Admin';
@@ -154,6 +155,7 @@ const App = () => {
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/organizations" element={<AdminOrganizations />} />
+            <Route path="/admin/organizations/:id" element={<AdminOrganizationDetail />} />
             <Route path="/admin/support" element={<AdminSupport />} />
             <Route path="/admin/finance" element={<AdminFinance />} />
           </Routes>
