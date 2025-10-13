@@ -15,6 +15,13 @@ const MailingsInfo = () => {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedId, setSelectedId] = useState(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [search, setSearch] = useState('');
+  const [recipientFilter, setRecipientFilter] = useState('');
+  const [sortOrder, setSortOrder] = useState('desc');
 
   const orgId = useSelector((state) => state.user.organization_id);
   const dispatch = useDispatch();
@@ -33,15 +40,27 @@ const MailingsInfo = () => {
 
     (async () => {
       try {
-        const res = await axiosInstance.get('/mailings', { params: { organization_id: orgId } });
-        setRows(res.data);
+        const params = {
+          organization_id: orgId,
+          page,
+          page_size: pageSize,
+          sort_by: 'date_time',
+          sort_order: sortOrder
+        };
+        if (search) params.search = search;
+        if (recipientFilter) params.recipient_filter = recipientFilter;
+        
+        const res = await axiosInstance.get('/mailings', { params });
+        setRows(res.data?.items || []);
+        setTotal(res.data?.total || 0);
+        setTotalPages(res.data?.total_pages || 0);
       } catch (e) {
         console.error(e);
       } finally {
         setLoading(false);
       }
     })();
-  }, [orgId, dispatch]);
+  }, [orgId, dispatch, page, pageSize, search, recipientFilter, sortOrder]);
 
   const handleTopUpConfirm = (amount) => {
     setTopUpOpen(false);
@@ -154,6 +173,32 @@ const MailingsInfo = () => {
     columns[dateIdx].cellClassName = 'text-center';
   }
 
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    setPage(1);
+  };
+
+  const handleRecipientFilterChange = (e) => {
+    setRecipientFilter(e.target.value);
+    setPage(1);
+  };
+
+  const handlePageSizeChange = (e) => {
+    setPageSize(Number(e.target.value));
+    setPage(1);
+  };
+
+  const handleSortToggle = () => {
+    setSortOrder((prev) => (prev === 'desc' ? 'asc' : 'desc'));
+    setPage(1);
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
   if (loading) return <LoaderCentered />;
 
   const cards = [
@@ -193,6 +238,79 @@ const MailingsInfo = () => {
         })}
       </StatsRow>
 
+      <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <input
+            type="text"
+            placeholder="Поиск по названию или тексту..."
+            value={search}
+            onChange={handleSearchChange}
+            style={{
+              flex: '1',
+              minWidth: '200px',
+              padding: '8px 12px',
+              border: '1px solid #ddd',
+              borderRadius: '8px',
+              fontSize: '14px'
+            }}
+          />
+          <input
+            type="text"
+            placeholder="Фильтр по получателям..."
+            value={recipientFilter}
+            onChange={handleRecipientFilterChange}
+            style={{
+              flex: '1',
+              minWidth: '200px',
+              padding: '8px 12px',
+              border: '1px solid #ddd',
+              borderRadius: '8px',
+              fontSize: '14px'
+            }}
+          />
+        </div>
+
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '14px', color: '#666' }}>Показывать:</span>
+            <select
+              value={pageSize}
+              onChange={handlePageSizeChange}
+              style={{
+                padding: '6px 10px',
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                fontSize: '14px',
+                cursor: 'pointer'
+              }}
+            >
+              <option value={10}>10</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+              <option value={200}>200</option>
+            </select>
+          </div>
+
+          <button
+            onClick={handleSortToggle}
+            style={{
+              padding: '6px 12px',
+              border: '1px solid #ddd',
+              borderRadius: '8px',
+              fontSize: '14px',
+              cursor: 'pointer',
+              backgroundColor: '#fff'
+            }}
+          >
+            Дата: {sortOrder === 'desc' ? '↓ Новые сверху' : '↑ Старые сверху'}
+          </button>
+
+          <span style={{ fontSize: '14px', color: '#666', marginLeft: 'auto' }}>
+            Всего: {total}
+          </span>
+        </div>
+      </div>
+
       <TableWrapper>
         <CustomTable
           columns={columns}
@@ -201,6 +319,127 @@ const MailingsInfo = () => {
           onRowClick={(row) => setSelectedId(row.id)}
         />
       </TableWrapper>
+
+      {totalPages > 1 && (
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          gap: '8px',
+          marginTop: '20px',
+          flexWrap: 'wrap'
+        }}>
+          <button
+            onClick={() => handlePageChange(1)}
+            disabled={page === 1}
+            style={{
+              padding: '6px 12px',
+              border: '1px solid #ddd',
+              borderRadius: '8px',
+              fontSize: '14px',
+              cursor: page === 1 ? 'not-allowed' : 'pointer',
+              backgroundColor: page === 1 ? '#f5f5f5' : '#fff',
+              color: page === 1 ? '#999' : '#333'
+            }}
+          >
+            « Первая
+          </button>
+          
+          <button
+            onClick={() => handlePageChange(page - 1)}
+            disabled={page === 1}
+            style={{
+              padding: '6px 12px',
+              border: '1px solid #ddd',
+              borderRadius: '8px',
+              fontSize: '14px',
+              cursor: page === 1 ? 'not-allowed' : 'pointer',
+              backgroundColor: page === 1 ? '#f5f5f5' : '#fff',
+              color: page === 1 ? '#999' : '#333'
+            }}
+          >
+            ‹ Назад
+          </button>
+
+          <div style={{ 
+            display: 'flex', 
+            gap: '4px',
+            alignItems: 'center'
+          }}>
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              let pageNum;
+              if (totalPages <= 5) {
+                pageNum = i + 1;
+              } else if (page <= 3) {
+                pageNum = i + 1;
+              } else if (page >= totalPages - 2) {
+                pageNum = totalPages - 4 + i;
+              } else {
+                pageNum = page - 2 + i;
+              }
+              
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => handlePageChange(pageNum)}
+                  style={{
+                    padding: '6px 12px',
+                    border: '1px solid #ddd',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    backgroundColor: page === pageNum ? '#007bff' : '#fff',
+                    color: page === pageNum ? '#fff' : '#333',
+                    fontWeight: page === pageNum ? 'bold' : 'normal'
+                  }}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            onClick={() => handlePageChange(page + 1)}
+            disabled={page === totalPages}
+            style={{
+              padding: '6px 12px',
+              border: '1px solid #ddd',
+              borderRadius: '8px',
+              fontSize: '14px',
+              cursor: page === totalPages ? 'not-allowed' : 'pointer',
+              backgroundColor: page === totalPages ? '#f5f5f5' : '#fff',
+              color: page === totalPages ? '#999' : '#333'
+            }}
+          >
+            Вперед ›
+          </button>
+
+          <button
+            onClick={() => handlePageChange(totalPages)}
+            disabled={page === totalPages}
+            style={{
+              padding: '6px 12px',
+              border: '1px solid #ddd',
+              borderRadius: '8px',
+              fontSize: '14px',
+              cursor: page === totalPages ? 'not-allowed' : 'pointer',
+              backgroundColor: page === totalPages ? '#f5f5f5' : '#fff',
+              color: page === totalPages ? '#999' : '#333'
+            }}
+          >
+            Последняя »
+          </button>
+
+          <span style={{ 
+            fontSize: '14px', 
+            color: '#666',
+            marginLeft: '12px'
+          }}>
+            Страница {page} из {totalPages}
+          </span>
+        </div>
+      )}
 
       <MailingDetailsModal
         isOpen={!!selectedId}
