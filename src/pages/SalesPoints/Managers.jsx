@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import LoaderCentered from '../../components/LoaderCentered';
 import TitleWithHelp from '../../components/TitleWithHelp';
 import { useToast } from '../../components/Toast';
+import CustomModal from '../../customs/CustomModal';
 import { managersHeaders } from '../../mocks/managersInfo';
 import { locationsHeaders } from '../../mocks/mockLocations';
 import {
@@ -47,6 +48,7 @@ const ManagersPage = () => {
   const [showNetworkModal, setShowNetworkModal] = useState(false);
   const [editNetworkData, setEditNetworkData] = useState(null);
   const [initialLocationData, setInitialLocationData] = useState(null);
+  const [showNoLocationsWarning, setShowNoLocationsWarning] = useState(false);
 
   const { list: managers, loading: mLoading } = useSelector((s) => s.managers);
   const { list: locations, loading: lLoading } = useSelector((s) => s.locations);
@@ -280,6 +282,19 @@ const ManagersPage = () => {
     setShowLocationModal(true);
   };
 
+  const handleOpenAddEmployee = () => {
+    if (!locations || locations.length === 0) {
+      setShowNoLocationsWarning(true);
+      return;
+    }
+    setShowAddModal(true);
+  };
+
+  const handleCreateLocationFromWarning = () => {
+    setShowNoLocationsWarning(false);
+    handleOpenLocation();
+  };
+
   return (
     <Page>
       <Header>
@@ -299,7 +314,7 @@ const ManagersPage = () => {
           cardNumber={cardNumber}
           onCardChange={onCardChange}
           handleFindCustomer={handleFindCustomer}
-          onOpenAdd={() => setShowAddModal(true)}
+          onOpenAdd={handleOpenAddEmployee}
           onOpenLocation={handleOpenLocation}
           onOpenNetwork={() => setShowNetworkModal(true)}
           onOpenScan={() => navigate('/scan')}
@@ -357,6 +372,27 @@ const ManagersPage = () => {
         initialData={editNetworkData || {}}
         isEdit={!!editNetworkData}
       />
+
+      <CustomModal
+        open={showNoLocationsWarning}
+        onClose={() => setShowNoLocationsWarning(false)}
+        title="Создайте торговую точку"
+        actions={
+          <>
+            <CustomModal.SecondaryButton onClick={() => setShowNoLocationsWarning(false)}>
+              Отмена
+            </CustomModal.SecondaryButton>
+            <CustomModal.PrimaryButton onClick={handleCreateLocationFromWarning}>
+              Создать торговую точку
+            </CustomModal.PrimaryButton>
+          </>
+        }
+      >
+        <div style={{ padding: '16px 0', fontSize: '15px', lineHeight: '1.5' }}>
+          Для добавления сотрудника необходимо сначала создать хотя бы одну торговую точку. 
+          Сотрудники привязываются к торговым точкам для учета продаж и начисления баллов.
+        </div>
+      </CustomModal>
     </Page>
   );
 };
