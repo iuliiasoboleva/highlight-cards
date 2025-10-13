@@ -31,7 +31,7 @@ import {
   TopFieldsBlock,
 } from './styles';
 
-const CardInfoAndroid = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef }) => {
+const CardInfoAndroid = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef, isPreview }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id: urlId } = useParams();
@@ -270,6 +270,7 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick, hoverDesignKey, main
 
   return (
     <CardBox
+      className={isPreview ? 'preview-scaled' : ''}
       style={{
         backgroundColor: mergedCard.cardBackground,
         color: mergedCard.textColor,

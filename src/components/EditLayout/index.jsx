@@ -132,6 +132,7 @@ const EditLayout = ({
                         onFieldClick={onFieldClick}
                         hoverDesignKey={hoverDesignKey}
                         mainImgRef={mainImgRef}
+                        isPreview={true}
                       />
                     )}
 
@@ -142,6 +143,7 @@ const EditLayout = ({
                         onFieldClick={onFieldClick}
                         hoverDesignKey={hoverDesignKey}
                         mainImgRef={mainImgRef}
+                        isPreview={true}
                       />
                     )}
 
@@ -156,6 +158,7 @@ const EditLayout = ({
                         scheduledDate={
                           chatScheduledDate ?? currentCard.pushNotification?.scheduledDate
                         }
+                        isPreview={true}
                       />
                     )}
 

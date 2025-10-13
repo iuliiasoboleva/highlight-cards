@@ -2,13 +2,13 @@ import React from 'react';
 
 import { Header, HeaderTitle, Logo, Message, Push, Time, Title, Wrapper } from './styles';
 
-const PushPreview = ({ card = {}, message, scheduledDate }) => {
+const PushPreview = ({ card = {}, message, scheduledDate, isPreview }) => {
   const iconSrc = card?.design?.icon || '/push-logotype.svg';
   const companyName = (card?.infoFields?.companyName || 'Название компании').toUpperCase();
 
   return (
     <Wrapper>
-      <Push>
+      <Push className={isPreview ? 'preview-scaled' : ''}>
         <Header>
           <HeaderTitle>
             <Logo src={iconSrc} alt="logo" />

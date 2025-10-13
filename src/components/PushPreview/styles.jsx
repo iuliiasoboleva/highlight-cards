@@ -15,6 +15,12 @@ export const Push = styled.div`
   max-width: 240px;
   width: 100%;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+
+  &.preview-scaled {
+    transform: scale(0.9);
+    padding: 10px 14px;
+    max-width: 220px;
+  }
 `;
 
 export const Header = styled.div`

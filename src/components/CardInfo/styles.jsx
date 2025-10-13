@@ -6,18 +6,24 @@ export const CardInfo = styled.div`
   border-radius: 8px;
   color: rgb(31, 30, 31);
   background-color: #fff;
-  padding: 10px 0;
+  padding: 12px 0;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(0.85);
+  transform: translate(-50%, -50%);
   max-width: 230px;
   width: 100%;
   height: 480px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   font-size: 10px;
   font-weight: bold;
+
+  &.preview-scaled {
+    transform: translate(-50%, -50%) scale(0.85);
+    padding: 10px 0;
+    gap: 8px;
+  }
 
   @media (max-width: 400px) {
     max-width: 185px;
