@@ -253,6 +253,16 @@ const GetPassPage = () => {
                             ? 'date'
                             : 'text'
                     }
+                    min={
+                      (field.type === 'date' || field.type === 'birthday')
+                        ? '1900-01-01'
+                        : undefined
+                    }
+                    max={
+                      (field.type === 'date' || field.type === 'birthday')
+                        ? new Date().toISOString().split('T')[0]
+                        : undefined
+                    }
                     pattern={
                       field.type === 'text'
                         ? "^[A-Za-zА-Яа-яЁё\\s'-]{2,}$"
