@@ -49,6 +49,7 @@ const ManagersPage = () => {
   const [editNetworkData, setEditNetworkData] = useState(null);
   const [initialLocationData, setInitialLocationData] = useState(null);
   const [showNoLocationsWarning, setShowNoLocationsWarning] = useState(false);
+  const [showNoNetworkWarning, setShowNoNetworkWarning] = useState(false);
 
   const { list: managers, loading: mLoading } = useSelector((s) => s.managers);
   const { list: locations, loading: lLoading } = useSelector((s) => s.locations);
@@ -295,6 +296,19 @@ const ManagersPage = () => {
     handleOpenLocation();
   };
 
+  const handleOpenAddNetwork = () => {
+    if (!locations || locations.length < 2) {
+      setShowNoNetworkWarning(true);
+      return;
+    }
+    setShowNetworkModal(true);
+  };
+
+  const handleCreateLocationFromNetworkWarning = () => {
+    setShowNoNetworkWarning(false);
+    handleOpenLocation();
+  };
+
   return (
     <Page>
       <Header>
@@ -316,7 +330,7 @@ const ManagersPage = () => {
           handleFindCustomer={handleFindCustomer}
           onOpenAdd={handleOpenAddEmployee}
           onOpenLocation={handleOpenLocation}
-          onOpenNetwork={() => setShowNetworkModal(true)}
+          onOpenNetwork={handleOpenAddNetwork}
           onOpenScan={() => navigate('/scan')}
         />
       </Grid>
@@ -391,6 +405,32 @@ const ManagersPage = () => {
         <div style={{ padding: '16px 0', fontSize: '15px', lineHeight: '1.5' }}>
           Для добавления сотрудника необходимо сначала создать хотя бы одну торговую точку. 
           Сотрудники привязываются к торговым точкам для учета продаж и начисления баллов.
+        </div>
+      </CustomModal>
+
+      <CustomModal
+        open={showNoNetworkWarning}
+        onClose={() => setShowNoNetworkWarning(false)}
+        title="Создайте торговые точки"
+        actions={
+          <>
+            <CustomModal.SecondaryButton onClick={() => setShowNoNetworkWarning(false)}>
+              Отмена
+            </CustomModal.SecondaryButton>
+            <CustomModal.PrimaryButton onClick={handleCreateLocationFromNetworkWarning}>
+              Создать торговую точку
+            </CustomModal.PrimaryButton>
+          </>
+        }
+      >
+        <div style={{ padding: '16px 0', fontSize: '15px', lineHeight: '1.5' }}>
+          Для создания сети необходимо иметь минимум 2 торговые точки. 
+          Сеть объединяет несколько торговых точек для общего учета клиентов.
+          {locations && locations.length === 1 && (
+            <div style={{ marginTop: '12px', fontWeight: '500' }}>
+              У вас сейчас {locations.length} торговая точка. Создайте ещё одну для формирования сети.
+            </div>
+          )}
         </div>
       </CustomModal>
     </Page>
