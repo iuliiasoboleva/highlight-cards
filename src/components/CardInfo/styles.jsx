@@ -6,16 +6,16 @@ export const CardInfo = styled.div`
   border-radius: 8px;
   color: rgb(31, 30, 31);
   background-color: #fff;
-  padding: 12px 0;
+  padding: 10px 0;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(0.85);
   max-width: 230px;
   width: 100%;
   height: 480px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   font-size: 10px;
   font-weight: bold;
 

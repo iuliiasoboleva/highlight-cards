@@ -87,7 +87,7 @@ export const PhoneFrame = styled.div`
 export const PhoneImage = styled.img`
   width: 100%;
   display: block;
-  height: 670px;
+  height: 500px;
 `;
 
 export const PhoneScreen = styled.div`
