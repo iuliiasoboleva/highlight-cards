@@ -22,7 +22,6 @@ import {
   Title,
   WalletButtonsWrapper,
   WalletButton,
-  WalletIcon,
 } from './styles';
 import NotFound from '../../components/NotFound';
 
@@ -64,7 +63,6 @@ const GetPassPage = () => {
   ];
 
   const [formData, setFormData] = useState({});
-  const [touchedFields, setTouchedFields] = useState({});
   const [consent, setConsent] = useState({
     terms: false,
     marketing: false,
@@ -81,10 +79,6 @@ const GetPassPage = () => {
     const phoneField = card?.issueFormFields?.find(field => field.type === 'phone');
     const key = phoneField ? phoneField.name : 'phone';
     setFormData((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const handleBlur = (name) => {
-    setTouchedFields((prev) => ({ ...prev, [name]: true }));
   };
 
   const handleCheckboxChange = (e) => {
@@ -115,6 +109,28 @@ const GetPassPage = () => {
       return;
     }
 
+    const birthdayField = (card?.issueFormFields || []).find(
+      (field) => field.type === 'birthday' || field.type === 'date'
+    );
+    
+    if (birthdayField && formData[birthdayField.name]) {
+      const birthdayValue = formData[birthdayField.name];
+      const birthdayDate = new Date(birthdayValue);
+      const today = new Date();
+      
+      if (birthdayDate > today) {
+        toast.error('Дата рождения не может быть в будущем. Укажите корректную дату');
+        return;
+      }
+      
+      const age = Math.floor((today - birthdayDate) / (365.25 * 24 * 60 * 60 * 1000));
+      
+      if (age < 8) {
+        toast.error('Возраст должен быть не менее 8 лет. Пожалуйста, укажите реальную дату рождения');
+        return;
+      }
+    }
+
     try {
       const clientData = {};
       (card?.issueFormFields || []).forEach((field) => {
@@ -123,6 +139,7 @@ const GetPassPage = () => {
         }
       });
 
+      // Создаем ClientCard
       const response = await axios.post(`/cards/${uuid}/getpass`, {
         ...clientData,
         consent: consent,
@@ -130,23 +147,61 @@ const GetPassPage = () => {
 
       const identifier = response.data?.identifier;
       
-      toast.success(`Карта добавляется в ${walletType === 'apple' ? 'Apple Wallet' : 'Google Wallet'}...`);
+      if (!identifier) {
+        toast.error('Не получен идентификатор карты');
+        return;
+      }
       
-      setTimeout(() => {
-        const baseUrl = BASE_URL.replace(/\/$/, '');
-        if (walletType === 'apple') {
-          window.location.href = `${baseUrl}/pkpass/${identifier}?${new URLSearchParams(clientData).toString()}`;
-        } else if (walletType === 'google') {
-          window.location.href = `${baseUrl}/google-wallet/${identifier}?${new URLSearchParams(clientData).toString()}`;
+      if (walletType === 'apple') {
+        toast.success('Карта создана! Скачивание началось...');
+        
+        try {
+          // Скачиваем .pkpass файл напрямую (используем относительный путь, т.к. axiosInstance уже настроен с baseURL)
+          const pkpassResponse = await axios.get(`/pkpass/${identifier}`, {
+            params: clientData,
+            responseType: 'blob'
+          });
+
+          console.log('PKPass получен, размер:', pkpassResponse.data.size);
+
+          // Создаем ссылку для скачивания
+          const url = window.URL.createObjectURL(new Blob([pkpassResponse.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', `card-${identifier}.pkpass`);
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(url);
+          
+          toast.success('Карта скачана! Откройте файл для добавления в Apple Wallet');
+        } catch (pkpassError) {
+          console.error('Ошибка при скачивании pkpass:', pkpassError);
+          console.error('Статус ошибки:', pkpassError.response?.status);
+          console.error('Данные ошибки:', pkpassError.response?.data);
+          
+          toast.error(`Ошибка при скачивании карты: ${pkpassError.response?.status || 'неизвестная ошибка'}`);
         }
-      }, 800);
+      } else if (walletType === 'google') {
+        toast.success('Переход в Google Wallet...');
+        
+        const googleWalletUrl = BASE_URL === '/' 
+          ? `/google-wallet/${identifier}?${new URLSearchParams(clientData).toString()}`
+          : `${BASE_URL.replace(/\/$/, '')}/google-wallet/${identifier}?${new URLSearchParams(clientData).toString()}`;
+        
+        setTimeout(() => {
+          window.location.href = googleWalletUrl;
+        }, 500);
+      }
     } catch (error) {
-      console.error('Ошибка при добавлении в Wallet:', error);
+      console.error('Ошибка при создании карты:', error);
+      console.error('Статус ошибки:', error.response?.status);
+      console.error('Данные ошибки:', error.response?.data);
       
       if (error.response?.status === 409) {
         toast.error('Карта уже зарегистрирована');
       } else {
-        toast.error('Не удалось добавить карту. Попробуйте позже');
+        toast.error('Не удалось создать карту. Попробуйте позже');
       }
     }
   };
@@ -242,7 +297,6 @@ const GetPassPage = () => {
                     placeholder={field.name}
                     value={formData[field.name] || ''}
                     onChange={handleChange}
-                    onBlur={() => handleBlur(field.name)}
                     required={field.required}
                     type={
                       field.type === 'email'

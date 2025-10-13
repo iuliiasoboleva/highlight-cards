@@ -93,7 +93,7 @@ const SmsLogin = () => {
   return (
     <Wrapper>
       <Logo src="/logoColored.png" alt="Loyal Club" />
-      <Title>Введите код из SMS</Title>
+      <Title>Введите код из SMS или из Telegram</Title>
       <Hint>Отправили на {phone}</Hint>
 
       <CustomPinInput
