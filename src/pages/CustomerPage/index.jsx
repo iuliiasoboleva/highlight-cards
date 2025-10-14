@@ -24,6 +24,9 @@ import {
   SectionTitle,
   StampControls,
   Title,
+  QuickButtons,
+  QuickButton,
+  LimitInfo,
 } from './styles';
 
 const CustomerPage = () => {
@@ -109,10 +112,19 @@ const CustomerPage = () => {
     return <Container>Карта не найдена</Container>;
   }
 
-  const handleAddStamps = async () => {
-    const amount = Number(stampsToAdd);
-    if (!amount || Number.isNaN(amount) || amount <= 0) {
+  const handleAddStamps = async (amount = null) => {
+    const stampsAmount = amount || Number(stampsToAdd);
+    if (!stampsAmount || Number.isNaN(stampsAmount) || stampsAmount <= 0) {
       toast.error('Введите корректное количество штампов');
+      return;
+    }
+
+    // Проверяем лимит на фронтенде
+    const stampDailyLimit = card.stampDailyLimit || 999;
+    const stampsToday = card.stampsToday || 0;
+    
+    if (stampsToday + stampsAmount > stampDailyLimit) {
+      toast.error(`Превышен дневной лимит штампов. Лимит: ${stampDailyLimit}, уже выдано: ${stampsToday}`);
       return;
     }
 
@@ -121,19 +133,24 @@ const CustomerPage = () => {
       await axiosInstance.post('/clients/card-action', {
         card_number: cardNumber,
         updates: {
-          stamps: (card.stamps || 0) + amount,
-          active_storage: (card.activeStorage || 0) + amount,
+          stamps: (card.stamps || 0) + stampsAmount,
+          active_storage: (card.activeStorage || 0) + stampsAmount,
         }
       });
       
       setStampsToAdd('');
-      toast.success(`Добавлено ${amount} штампов! Спасибо за обслуживание клиента`);
+      toast.success(`Добавлено ${stampsAmount} штампов! Спасибо за обслуживание клиента`);
       await reloadClient();
     } catch (error) {
-      toast.error('Ошибка при добавлении штампов');
+      const errorMessage = error.response?.data?.detail || 'Ошибка при добавлении штампов';
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
+  };
+  
+  const handleQuickStamp = (amount) => {
+    setStampsToAdd(amount.toString());
   };
 
   const handleAddReward = async () => {
@@ -210,15 +227,50 @@ const CustomerPage = () => {
       <SectionCard>
         <SectionTitle>Добавить штампы:</SectionTitle>
         <StampControls>
+          {card.stampDailyLimit && card.stampDailyLimit < 999 && (
+            <LimitInfo isLimitReached={(card.stampsToday || 0) >= card.stampDailyLimit}>
+              Лимит в день: {card.stampDailyLimit} | Выдано сегодня: {card.stampsToday || 0}
+              {(card.stampsToday || 0) >= card.stampDailyLimit && ' | Лимит достигнут!'}
+            </LimitInfo>
+          )}
+          
+          <div>
+            <div style={{ fontSize: '14px', color: '#7f8c8d', marginBottom: '8px' }}>
+              Быстрый выбор:
+            </div>
+            <QuickButtons>
+              {[1, 2, 3, 4, 5].map((num) => {
+                const isDisabled = isLoading || (card.stampsToday || 0) + num > (card.stampDailyLimit || 999);
+                return (
+                  <QuickButton
+                    key={num}
+                    onClick={() => handleQuickStamp(num)}
+                    disabled={isDisabled}
+                  >
+                    {num}
+                  </QuickButton>
+                );
+              })}
+            </QuickButtons>
+          </div>
+          
           <CustomInput
             type="number"
             min="1"
             value={stampsToAdd}
             onChange={(e) => setStampsToAdd(e.target.value)}
-            placeholder="Количество штампов"
-            disabled={isLoading}
+            placeholder="Или введите количество штампов"
+            disabled={isLoading || (card.stampsToday || 0) >= (card.stampDailyLimit || 999)}
           />
-          <CustomMainButton onClick={handleAddStamps} disabled={isLoading || !stampsToAdd}>
+          <CustomMainButton 
+            onClick={() => handleAddStamps()} 
+            disabled={
+              isLoading || 
+              !stampsToAdd || 
+              (card.stampsToday || 0) >= (card.stampDailyLimit || 999) ||
+              (card.stampsToday || 0) + Number(stampsToAdd) > (card.stampDailyLimit || 999)
+            }
+          >
             {isLoading ? 'Добавление...' : 'Добавить'}
           </CustomMainButton>
         </StampControls>

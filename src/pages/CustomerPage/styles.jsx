@@ -80,7 +80,46 @@ export const SectionTitle = styled.h2`
 export const StampControls = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 12px;
+`;
+
+export const QuickButtons = styled.div`
+  display: flex;
   gap: 8px;
+  flex-wrap: wrap;
+`;
+
+export const QuickButton = styled.button`
+  flex: 1;
+  min-width: 50px;
+  padding: 10px 15px;
+  background: ${props => props.disabled ? '#e0e0e0' : '#3498db'};
+  color: ${props => props.disabled ? '#999' : '#fff'};
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+  transition: all 0.2s;
+  
+  &:hover {
+    background: ${props => props.disabled ? '#e0e0e0' : '#2980b9'};
+    transform: ${props => props.disabled ? 'none' : 'translateY(-2px)'};
+  }
+  
+  &:active {
+    transform: ${props => props.disabled ? 'none' : 'translateY(0)'};
+  }
+`;
+
+export const LimitInfo = styled.div`
+  padding: 10px;
+  background: ${props => props.isLimitReached ? '#fee' : '#e8f5e9'};
+  border-left: 4px solid ${props => props.isLimitReached ? '#e74c3c' : '#27ae60'};
+  border-radius: 4px;
+  font-size: 14px;
+  color: ${props => props.isLimitReached ? '#c0392b' : '#27ae60'};
+  margin-bottom: 10px;
 `;
 
 export const InfoGrid = styled.div`
