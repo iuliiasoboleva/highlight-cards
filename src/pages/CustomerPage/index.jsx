@@ -93,12 +93,21 @@ const CustomerPage = () => {
 
   const reloadClient = async () => {
     try {
-      const response = await axiosInstance.get(`/clients/card/${cardNumber}`);
+      // Сбрасываем флаг загрузки, чтобы можно было перезагрузить
+      hasLoadedRef.current = false;
+      loadedCardRef.current = null;
+      
+      // Добавляем timestamp для избежания кеша
+      const response = await axiosInstance.get(`/clients/card/${cardNumber}?t=${Date.now()}`);
       const clientData = response.data;
       setClient(clientData);
       
       const foundCard = clientData.cards?.find(c => c.cardNumber === cardNumber);
       setCard(foundCard || null);
+      
+      // Восстанавливаем флаг после успешной загрузки
+      hasLoadedRef.current = true;
+      loadedCardRef.current = cardNumber;
     } catch (error) {
       console.error('Ошибка загрузки клиента:', error);
     }
@@ -267,6 +276,7 @@ const CustomerPage = () => {
             disabled={
               isLoading || 
               !stampsToAdd || 
+              Number(stampsToAdd) <= 0 ||
               (card.stampsToday || 0) >= (card.stampDailyLimit || 999) ||
               (card.stampsToday || 0) + Number(stampsToAdd) > (card.stampDailyLimit || 999)
             }
