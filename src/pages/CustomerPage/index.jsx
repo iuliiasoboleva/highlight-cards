@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -37,12 +37,19 @@ const CustomerPage = () => {
   const [stampsToAdd, setStampsToAdd] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(true);
+  const hasLoadedRef = useRef(false);
+  const loadedCardRef = useRef(null);
 
   useEffect(() => {
     const loadClient = async () => {
       if (!user?.organization_id) {
         toast.error('Необходима авторизация');
         navigate('/login');
+        return;
+      }
+
+      // Если уже загрузили эту карту, не грузим снова
+      if (hasLoadedRef.current && loadedCardRef.current === cardNumber) {
         return;
       }
 
@@ -54,6 +61,8 @@ const CustomerPage = () => {
         
         const foundCard = clientData.cards?.find(c => c.cardNumber === cardNumber);
         setCard(foundCard || null);
+        hasLoadedRef.current = true;
+        loadedCardRef.current = cardNumber;
       } catch (error) {
         if (error.response?.status === 401) {
           toast.error('Необходима авторизация');
@@ -73,10 +82,11 @@ const CustomerPage = () => {
       }
     };
     
-    if (cardNumber) {
+    if (cardNumber && user?.organization_id) {
       loadClient();
     }
-  }, [cardNumber, navigate, toast, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cardNumber]);
 
   const reloadClient = async () => {
     try {
