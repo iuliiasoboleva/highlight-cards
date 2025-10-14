@@ -111,6 +111,15 @@ const ClientDetails = () => {
         {client.cards?.length > 0 ? (
           client.cards.map((card, index) => (
             <React.Fragment key={card.id || index}>
+              {card.cardNumber && (
+                <CardTag
+                  as="button"
+                  onClick={() => navigate(`/customer/card/${card.cardNumber}`)}
+                  style={{ cursor: 'pointer', border: 'none', background: '#228be6' }}
+                >
+                  Управление картой
+                </CardTag>
+              )}
               {card.id && (
                 <>
                   <CardTag

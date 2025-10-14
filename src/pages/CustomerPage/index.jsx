@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
+import axiosInstance from '../../axiosInstance';
+import LoaderCentered from '../../components/LoaderCentered';
 import { useToast } from '../../components/Toast';
 import CustomInput from '../../customs/CustomInput';
 import CustomMainButton from '../../customs/CustomMainButton';
-import { mockClients } from '../../mocks/clientsInfo';
-import { setClients, updateCard } from '../../store/clientsSlice';
 import {
   Actions,
   Container,
@@ -28,114 +28,79 @@ import {
 
 const CustomerPage = () => {
   const { cardNumber } = useParams();
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const toast = useToast();
+  const user = useSelector((state) => state.user);
 
-  const clients = useSelector((state) => state.clients);
-
+  const [client, setClient] = useState(null);
+  const [card, setCard] = useState(null);
   const [stampsToAdd, setStampsToAdd] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    dispatch(setClients(mockClients));
-  }, [dispatch]);
+    const loadClient = async () => {
+      if (!user?.organization_id) {
+        toast.error('Необходима авторизация');
+        navigate('/login');
+        return;
+      }
 
-  const customerWithCard = mockClients.find((client) =>
-    client?.cards?.some((card) => card.cardNumber === cardNumber),
-  );
-
-  const selectedCard = customerWithCard?.cards?.find((card) => card.cardNumber === cardNumber);
-  const selectedCardIndex = customerWithCard?.cards?.findIndex(
-    (card) => card.cardNumber === cardNumber,
-  );
-
-  // Если карта не найдена, создаем демо-данные для любой карты
-  const demoCard = {
-    cardNumber: cardNumber,
-    serialNumber: `LC-${cardNumber.slice(-4)}`,
-    activeStorage: 5,
-    stamps: 5,
-    availableRewards: 1,
-    lastRewardReceived: '15.06.2025',
-    lastAccrual: '10.06.2025',
-    cardExpirationDate: '31.12.2025',
-    cardInstallationDate: '01.06.2025',
-    ageInfo: 'Активна',
-  };
-
-  const demoCustomer = {
-    id: 'demo',
-    name: 'Демонстрационный клиент',
-    phone: '+7 900 000-00-00',
-    cards: [demoCard],
-  };
-
-  const isDemoCard = !selectedCard;
-
-  const displayCard = selectedCard || demoCard;
-  const displayCustomer = customerWithCard || demoCustomer;
-
-  if (!displayCustomer || !displayCard) {
-    return <Container>Карта не найдена</Container>;
-  }
-
-  const mockApiCall = (action, data) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        try {
-          const updates = {};
-
-          switch (action) {
-            case 'addStamps':
-              updates.activeStorage = (displayCard.activeStorage || 0) + data.amount;
-              updates.stamps = (displayCard.stamps || 0) + data.amount;
-              updates.lastAccrual = new Date().toLocaleDateString();
-              break;
-
-            case 'addReward':
-              updates.availableRewards = (displayCard.availableRewards || 0) + 1;
-              updates.lastRewardReceived = new Date().toLocaleDateString();
-              break;
-
-            case 'receiveReward':
-              if ((displayCard.availableRewards || 0) <= 0) {
-                throw new Error('Нет доступных наград');
-              }
-              updates.availableRewards = (displayCard.availableRewards || 0) - 1;
-              updates.lastRewardReceived = new Date().toLocaleDateString();
-              updates.activeStorage =
-                (displayCard.activeStorage || 0) >= 10
-                  ? (displayCard.activeStorage || 0) - 10
-                  : displayCard.activeStorage || 0;
-              break;
-
-            default:
-              break;
-          }
-
-          // Не сохраняем изменения для демо-карт в Redux store
-          if (!isDemoCard) {
-            dispatch(updateCard({ cardNumber, updates }));
-          }
-          resolve();
-        } catch (error) {
-          reject(error);
+      try {
+        const response = await axiosInstance.get(`/clients/card/${cardNumber}`);
+        const clientData = response.data;
+        
+        if (clientData.organization_id !== user.organization_id) {
+          toast.error('Нет доступа к данным этого клиента');
+          navigate('/clients');
+          return;
         }
-      }, 800);
-    });
-  };
+        
+        setClient(clientData);
+        
+        const foundCard = clientData.cards?.find(c => c.cardNumber === cardNumber);
+        setCard(foundCard || null);
+      } catch (error) {
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          toast.error('Нет доступа к данным этого клиента');
+          navigate('/clients');
+        } else if (error.response?.status === 404) {
+          toast.error('Клиент с таким номером карты не найден');
+          navigate('/clients');
+        } else {
+          toast.error('Ошибка при загрузке данных клиента');
+          navigate('/clients');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    if (cardNumber) {
+      loadClient();
+    }
+  }, [cardNumber, navigate, toast, user]);
 
-  const handleReceiveReward = async () => {
-    setIsLoading(true);
+  const reloadClient = async () => {
     try {
-      await mockApiCall('receiveReward');
-      toast.success('Награда успешно получена! Спасибо за обслуживание клиента');
+      const response = await axiosInstance.get(`/clients/card/${cardNumber}`);
+      const clientData = response.data;
+      setClient(clientData);
+      
+      const foundCard = clientData.cards?.find(c => c.cardNumber === cardNumber);
+      setCard(foundCard || null);
     } catch (error) {
-      toast.error(error.message || 'Ошибка при получении награды');
-    } finally {
-      setIsLoading(false);
+      console.error('Ошибка загрузки клиента:', error);
     }
   };
+
+  if (loading) {
+    return <LoaderCentered />;
+  }
+
+  if (!client || !card) {
+    return <Container>Карта не найдена</Container>;
+  }
 
   const handleAddStamps = async () => {
     const amount = Number(stampsToAdd);
@@ -146,9 +111,17 @@ const CustomerPage = () => {
 
     setIsLoading(true);
     try {
-      await mockApiCall('addStamps', { amount: parseInt(amount, 10) });
+      await axiosInstance.post('/clients/card-action', {
+        card_number: cardNumber,
+        updates: {
+          stamps: (card.stamps || 0) + amount,
+          active_storage: (card.activeStorage || 0) + amount,
+        }
+      });
+      
       setStampsToAdd('');
       toast.success(`Добавлено ${amount} штампов! Спасибо за обслуживание клиента`);
+      await reloadClient();
     } catch (error) {
       toast.error('Ошибка при добавлении штампов');
     } finally {
@@ -159,10 +132,41 @@ const CustomerPage = () => {
   const handleAddReward = async () => {
     setIsLoading(true);
     try {
-      await mockApiCall('addReward');
+      await axiosInstance.post('/clients/card-action', {
+        card_number: cardNumber,
+        updates: {
+          available_rewards: (card.availableRewards || 0) + 1,
+        }
+      });
+      
       toast.success('Награда добавлена! Спасибо за обслуживание клиента');
+      await reloadClient();
     } catch (error) {
       toast.error('Ошибка при добавлении награды');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleReceiveReward = async () => {
+    if ((card.availableRewards || 0) <= 0) {
+      toast.error('Нет доступных наград');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await axiosInstance.post('/clients/card-action', {
+        card_number: cardNumber,
+        updates: {
+          available_rewards: (card.availableRewards || 0) - 1,
+        }
+      });
+      
+      toast.success('Награда успешно получена! Спасибо за обслуживание клиента');
+      await reloadClient();
+    } catch (error) {
+      toast.error(error.message || 'Ошибка при получении награды');
     } finally {
       setIsLoading(false);
     }
@@ -172,14 +176,16 @@ const CustomerPage = () => {
     <Container>
       <Header>
         <Title>
-          Клиент: <CustomerName>{displayCustomer.name}</CustomerName>
+          Клиент: <CustomerName>{client.name} {client.surname}</CustomerName>
         </Title>
-        {isDemoCard && (
-          <div style={{ color: '#ff6b6b', fontSize: '12px', marginTop: '4px' }}>
-            Демо-версия: данные не сохранены в системе
-          </div>
-        )}
       </Header>
+
+      <CustomMainButton 
+        onClick={() => navigate(`/clients/${client.id}`)}
+        style={{ width: '100%', marginBottom: '16px' }}
+      >
+        Перейти к профилю клиента
+      </CustomMainButton>
 
       <Actions>
         <CustomMainButton onClick={handleAddReward} disabled={isLoading}>
@@ -188,7 +194,7 @@ const CustomerPage = () => {
 
         <CustomMainButton
           onClick={handleReceiveReward}
-          disabled={isLoading || (displayCard.availableRewards || 0) <= 0}
+          disabled={isLoading || (card.availableRewards || 0) <= 0}
         >
           {isLoading ? 'Обработка...' : 'Получить награду'}
         </CustomMainButton>
@@ -213,39 +219,52 @@ const CustomerPage = () => {
 
       <InfoGrid>
         <InfoItem>
-          <InfoLabel>Текущие баллы:</InfoLabel>
-          <InfoValue>{displayCard.activeStorage}</InfoValue>
+          <InfoLabel>Текущие штампы:</InfoLabel>
+          <InfoValue>{card.stamps || 0}</InfoValue>
+        </InfoItem>
+        <InfoItem>
+          <InfoLabel>Активное хранилище:</InfoLabel>
+          <InfoValue>{card.activeStorage || 0}</InfoValue>
         </InfoItem>
         <InfoItem>
           <InfoLabel>Доступные награды:</InfoLabel>
-          <InfoValue>{displayCard.availableRewards}</InfoValue>
+          <InfoValue>{card.availableRewards || 0}</InfoValue>
         </InfoItem>
         <InfoItem>
           <InfoLabel>Последняя награда:</InfoLabel>
-          <InfoValue>{displayCard.lastRewardReceived || '—'}</InfoValue>
+          <InfoValue>{card.lastRewardReceived || '—'}</InfoValue>
         </InfoItem>
         <InfoItem>
           <InfoLabel>Последнее начисление:</InfoLabel>
-          <InfoValue>{displayCard.lastAccrual || '—'}</InfoValue>
+          <InfoValue>{card.lastAccrual || '—'}</InfoValue>
         </InfoItem>
         <InfoItem>
           <InfoLabel>Срок действия карты:</InfoLabel>
-          <InfoValue>{displayCard.cardExpirationDate || '—'}</InfoValue>
+          <InfoValue>{card.cardExpirationDate || 'Без срока'}</InfoValue>
         </InfoItem>
         <InfoItem>
-          <InfoLabel>Дата регистрации:</InfoLabel>
-          <InfoValue>{displayCard.cardInstallationDate || '—'}</InfoValue>
+          <InfoLabel>Дата выпуска карты:</InfoLabel>
+          <InfoValue>{card.cardCreatedAt || '—'}</InfoValue>
+        </InfoItem>
+        <InfoItem>
+          <InfoLabel>Кешбэк баланс:</InfoLabel>
+          <InfoValue>{card.cashbackBalance || 0}</InfoValue>
         </InfoItem>
       </InfoGrid>
 
       <Row>
         <RowLabel>Номер карты:</RowLabel>
-        <RowValue>{displayCard.serialNumber}</RowValue>
+        <RowValue>{card.cardNumber}</RowValue>
       </Row>
 
       <Row>
-        <RowLabel>Статус:</RowLabel>
-        <RowValue>{displayCard.ageInfo || '—'}</RowValue>
+        <RowLabel>Телефон:</RowLabel>
+        <RowValue>{client.phone || '—'}</RowValue>
+      </Row>
+
+      <Row>
+        <RowLabel>Email:</RowLabel>
+        <RowValue>{client.email || '—'}</RowValue>
       </Row>
 
       <Hint>Введите количество штампов и нажмите «Добавить» для начисления баллов.</Hint>
