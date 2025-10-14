@@ -121,7 +121,7 @@ const ClientDetails = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Apple\u00A0Wallet
+                    Apple Wallet
                   </CardTag>
                   <CardTag
                     as="a"
@@ -130,7 +130,7 @@ const ClientDetails = () => {
                     rel="noopener noreferrer"
                     style={{ marginLeft: '8px' }}
                   >
-                    Google\u00A0Wallet
+                    Google Wallet
                   </CardTag>
                 </>
               )}
@@ -316,7 +316,7 @@ const prepareStats = (client) => {
     {
       key: 'valid_until',
       label: 'Дата окончания действия карты',
-      value: firstCard?.cardExpirationDate || null,
+      value: firstCard?.cardExpirationDate || 'Бессрочно',
       isDatePicker: true,
       showRightCircle: false,
     },

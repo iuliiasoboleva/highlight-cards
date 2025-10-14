@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
+import axiosInstance from '../../axiosInstance';
 import LoaderCentered from '../../components/LoaderCentered';
 import TitleWithHelp from '../../components/TitleWithHelp';
 import { useToast } from '../../components/Toast';
@@ -79,25 +80,24 @@ const ManagersPage = () => {
     setCardNumber(digits);
   };
 
-  const handleFindCustomer = () => {
+  const handleFindCustomer = async () => {
     const trimmedCard = (cardNumber || '').trim();
     const err = validateCard(trimmedCard);
-    if (err) return;
+    if (err) {
+      toast.error(err);
+      return;
+    }
 
-    const foundClient = clients.find(
-      (client) =>
-        Array.isArray(client?.cards) &&
-        client.cards.some((card) => String(card?.cardNumber ?? '').trim() === trimmedCard),
-    );
-
-    if (foundClient) {
-      const foundCard = foundClient.cards.find((card) => String(card?.cardNumber ?? '').trim() === trimmedCard);
-    if (foundCard?.uuid) {
-      navigate(`/getpass/${foundCard.uuid}`);
+    try {
+      const response = await axiosInstance.get(`/clients/card/${trimmedCard}`);
+      const foundClient = response.data;
+      
+      if (foundClient?.id) {
+        navigate(`/clients/${foundClient.id}`);
       } else {
-        toast.error('UUID карты не найден');
+        toast.error('Клиент с таким номером карты не найден');
       }
-    } else {
+    } catch (error) {
       toast.error('Клиент с таким номером карты не найден');
     }
   };

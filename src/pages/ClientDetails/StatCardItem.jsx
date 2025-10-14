@@ -59,9 +59,10 @@ const StatCardItem = ({
 
   const isArray = Array.isArray(value);
   const hasData =
-    value !== null &&
+    (value !== null &&
     value !== undefined &&
-    (isArray ? value.length > 0 : value !== 0 && value !== '');
+    (isArray ? value.length > 0 : value !== 0 && value !== '')) ||
+    value === 'Бессрочно';
 
   const handleCopy = () => {
     if (!copyable || !value || isArray) return;
@@ -134,7 +135,9 @@ const StatCardItem = ({
                   {label === 'LTV'
                     ? `${value}`
                     : isDatePicker
-                      ? new Date(value).toLocaleDateString('ru-RU')
+                      ? value && value !== 'Бессрочно' 
+                        ? new Date(value).toLocaleDateString('ru-RU')
+                        : value || 'Бессрочно'
                       : value}
                 </span>
               )}
@@ -149,13 +152,13 @@ const StatCardItem = ({
             </DashboardActionIcon>
           )}
 
-          {copyable && hasData && !isArray && !isRating && !isDatePicker && (
+          {copyable && hasData && !isArray && !isRating && !isDatePicker && value !== 'Бессрочно' && (
             <DashboardActionIcon onClick={handleCopy} title="Скопировать">
               <Copy size={16} />
             </DashboardActionIcon>
           )}
 
-          {isDatePicker ? (
+          {isDatePicker && value !== 'Бессрочно' ? (
             <>
               <DashboardActionIcon
                 onClick={() => setCalendarOpen((prev) => !prev)}
@@ -167,7 +170,7 @@ const StatCardItem = ({
               {isCalendarOpen && (
                 <DatepickerWrapper ref={calendarRef}>
                   <DatePicker
-                    selected={value ? new Date(value) : today}
+                    selected={value && value !== 'Бессрочно' ? new Date(value) : today}
                     onChange={(date) => {
                       onDateChange?.(date);
                       setCalendarOpen(false);
@@ -179,7 +182,7 @@ const StatCardItem = ({
                 </DatepickerWrapper>
               )}
             </>
-          ) : (
+          ) : isDatePicker ? null : (
             actionMenu && (
               <>
                 <DashboardActionIcon onClick={() => setMenuOpen((p) => !p)}>
@@ -206,7 +209,7 @@ const StatCardItem = ({
           )}
         </DashboardAction>
 
-        {showRightCircle && !isArray && !isRating && !isDatePicker && hasData && (
+        {showRightCircle && !isArray && !isRating && !(isDatePicker && value === 'Бессрочно') && !isDatePicker && hasData && (
           <ClientStatDropdownIconCircle $type={changeType}>
             {isPositive ? (
               <ArrowUp size={14} />
@@ -222,7 +225,7 @@ const StatCardItem = ({
       <DashboardStatRow style={{ marginTop: 'auto' }}>
         <DashboardStatLabel>{label}</DashboardStatLabel>
 
-        {showRightCircle && !isArray && hasData && !isRating && !isDatePicker && (
+        {showRightCircle && !isArray && hasData && !isRating && !(isDatePicker && value === 'Бессрочно') && !isDatePicker && (
           <ClientStatDropdownChange>
             <ClientStatDropdownChangeValue $type={changeType}>
               {isPositive ? `+${change}` : change}

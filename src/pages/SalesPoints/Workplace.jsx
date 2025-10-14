@@ -9,6 +9,7 @@ import CustomInput from '../../customs/CustomInput';
 import CustomMainButton from '../../customs/CustomMainButton';
 import { CARD_LENGTH, CARD_MIN_LENGTH, normalizeDigits, validateCard } from '../../utils/cardUtils';
 import { Card, Grid, Header, IconWithTooltip, Page, ScannerIcon, Tooltip } from './styles';
+import axiosInstance from '../../axiosInstance';
 
 const Workplace = () => {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ const Workplace = () => {
     setCardNumber(digits);
   };
 
-  const handleFindCustomer = () => {
+  const handleFindCustomer = async () => {
     const trimmedCard = (cardNumber || '').trim();
     const err = validateCard(trimmedCard);
     if (err) {
@@ -47,20 +48,16 @@ const Workplace = () => {
       return;
     }
 
-    const foundClient = clients.find(
-      (client) =>
-        Array.isArray(client?.cards) &&
-        client.cards.some((card) => String(card?.cardNumber ?? '').trim() === trimmedCard),
-    );
-
-    if (foundClient) {
-      const foundCard = foundClient.cards.find((card) => String(card?.cardNumber ?? '').trim() === trimmedCard);
-      if (foundCard?.uuid) {
-        navigate(`/getpass/${foundCard.uuid}`);
+    try {
+      const response = await axiosInstance.get(`/clients/card/${trimmedCard}`);
+      const foundClient = response.data;
+      
+      if (foundClient?.id) {
+        navigate(`/clients/${foundClient.id}`);
       } else {
-        toast.error('UUID карты не найден');
+        toast.error('Клиент с таким номером карты не найден');
       }
-    } else {
+    } catch (error) {
       toast.error('Клиент с таким номером карты не найден');
     }
   };
