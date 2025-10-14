@@ -50,18 +50,15 @@ const CustomerPage = () => {
         const response = await axiosInstance.get(`/clients/card/${cardNumber}`);
         const clientData = response.data;
         
-        if (clientData.organization_id !== user.organization_id) {
-          toast.error('Нет доступа к данным этого клиента');
-          navigate('/clients');
-          return;
-        }
-        
         setClient(clientData);
         
         const foundCard = clientData.cards?.find(c => c.cardNumber === cardNumber);
         setCard(foundCard || null);
       } catch (error) {
-        if (error.response?.status === 401 || error.response?.status === 403) {
+        if (error.response?.status === 401) {
+          toast.error('Необходима авторизация');
+          navigate('/login');
+        } else if (error.response?.status === 403) {
           toast.error('Нет доступа к данным этого клиента');
           navigate('/clients');
         } else if (error.response?.status === 404) {
