@@ -15,7 +15,7 @@ const DISCRETE_SEGMENTS = [
   'no-birthday',
 ];
 
-const PushTargetTabs = ({ onTabChange, onFilteredCountChange }) => {
+const PushTargetTabs = ({ selectedCardId, onTabChange, onFilteredCountChange }) => {
   const [selectedTab, setSelectedTab] = useState('all');
   const [segment, setSegment] = useState('need-attention');
   const [symbol, setSymbol] = useState('equal');
@@ -49,6 +49,16 @@ const PushTargetTabs = ({ onTabChange, onFilteredCountChange }) => {
 
   const clients = useSelector((state) => state.clients.list || []);
 
+  // Фильтруем клиентов только тех, у кого есть выбранная карта
+  const clientsWithSelectedCard = useMemo(() => {
+    if (!selectedCardId) return [];
+    
+    return clients.filter((client) => {
+      // Проверяем, есть ли у клиента карта с выбранным ID
+      return client.cards?.some((card) => String(card.id) === String(selectedCardId) || String(card.cardId) === String(selectedCardId));
+    });
+  }, [clients, selectedCardId]);
+
   const isDiscreteSegment = DISCRETE_SEGMENTS.includes(segment);
   const numericDisabled = isDiscreteSegment;
 
@@ -68,7 +78,7 @@ const PushTargetTabs = ({ onTabChange, onFilteredCountChange }) => {
 
   useEffect(() => {
     if (selectedTab === 'segment') {
-      const filtered = clients.filter((client) => {
+      const filtered = clientsWithSelectedCard.filter((client) => {
         if (
           [
             'need-attention',
@@ -103,9 +113,10 @@ const PushTargetTabs = ({ onTabChange, onFilteredCountChange }) => {
 
       onFilteredCountChangeRef.current?.(filtered.length);
     } else {
-      onFilteredCountChangeRef.current?.(clients.length);
+      // Для "Всем клиентам" используем только клиентов с выбранной картой
+      onFilteredCountChangeRef.current?.(clientsWithSelectedCard.length);
     }
-  }, [selectedTab, segment, symbol, filterInput, clients]);
+  }, [selectedTab, segment, symbol, filterInput, clientsWithSelectedCard]);
 
   return (
     <PushTabs>

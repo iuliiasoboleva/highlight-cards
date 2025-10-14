@@ -186,6 +186,7 @@ const MailingsPush = () => {
         />
 
         <PushTargetTabs
+          selectedCardId={currentCard?.id}
           onTabChange={(tab, extra) => {
             setSelectedTab(tab);
             setSelectedSegmentInfo(extra);
