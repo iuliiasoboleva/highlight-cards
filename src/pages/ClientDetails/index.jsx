@@ -111,8 +111,6 @@ const ClientDetails = () => {
         {client.cards?.length > 0 ? (
           client.cards.map((card, index) => (
             <React.Fragment key={card.id || index}>
-              <CardTag>{card.name}</CardTag>
-
               {card.id && (
                 <>
                   <CardTag
@@ -316,7 +314,7 @@ const prepareStats = (client) => {
     {
       key: 'valid_until',
       label: 'Дата окончания действия карты',
-      value: firstCard?.cardExpirationDate || 'Бессрочно',
+      value: firstCard?.cardExpirationDate || 'Без срока',
       isDatePicker: true,
       showRightCircle: false,
     },
