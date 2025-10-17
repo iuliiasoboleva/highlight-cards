@@ -54,8 +54,11 @@ const PushTargetTabs = ({ selectedCardId, onTabChange, onFilteredCountChange }) 
     if (!selectedCardId) return [];
     
     return clients.filter((client) => {
-      // Проверяем, есть ли у клиента карта с выбранным ID
-      return client.cards?.some((card) => String(card.id) === String(selectedCardId) || String(card.cardId) === String(selectedCardId));
+      if (!client.cards || client.cards.length === 0) return false;
+      
+      return client.cards?.some((card) => 
+        String(card.cardUuid) === String(selectedCardId) || String(card.cardId) === String(selectedCardId)
+      );
     });
   }, [clients, selectedCardId]);
 

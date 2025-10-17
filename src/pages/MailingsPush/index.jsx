@@ -14,6 +14,7 @@ import CustomSelect from '../../customs/CustomSelect';
 import { getMinDateTime } from '../../helpers/date';
 import { pluralVerb, pluralize } from '../../helpers/pluralize';
 import { setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
+import { fetchClients } from '../../store/clientsSlice';
 import PushTargetTabs from './PushTargetTabs';
 import {
   MailingsPushBox,
@@ -43,6 +44,11 @@ const MailingsPush = () => {
   const [selectedTab, setSelectedTab] = useState('all');
   const [selectedSegmentInfo, setSelectedSegmentInfo] = useState(null);
   const [usersCount, setUsersCount] = useState(0);
+  const [isSending, setIsSending] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchClients());
+  }, [dispatch]);
 
   useEffect(() => {
     if (!cards.length) return;
@@ -123,8 +129,10 @@ const MailingsPush = () => {
   };
 
   const handleSavePushSettings = async () => {
-    if (!currentCard) return;
+    if (!currentCard || isSending) return;
 
+    setIsSending(true);
+    
     dispatch(
       updateCurrentCardField({
         path: 'pushNotification',
@@ -153,15 +161,20 @@ const MailingsPush = () => {
         author_id: user.id,
         message: pushMessage,
       });
+      toast.info(`Push-уведомление ${isScheduled ? 'запланировано' : 'отправлено'}`);
     } catch (e) {
       console.error(e);
+      toast.error('Ошибка при отправке push-уведомления');
+    } finally {
+      setIsSending(false);
     }
   };
 
   const submitLabel = useMemo(() => {
+    if (isSending) return isScheduled ? 'Планируется...' : 'Отправка...';
     if (!pushMessage.trim()) return 'Введите текст сообщения';
     return isScheduled ? 'Запланировать сообщение' : 'Отправить';
-  }, [isScheduled, pushMessage]);
+  }, [isScheduled, pushMessage, isSending]);
 
   const leftContent = hasActiveCards ? (
     <>
@@ -224,11 +237,8 @@ const MailingsPush = () => {
         />
 
         <SubmitButton
-          onClick={async () => {
-            await handleSavePushSettings();
-            toast.info(`Push-уведомление ${isScheduled ? 'запланировано' : 'отправлено'}`);
-          }}
-          disabled={!pushMessage.trim()}
+          onClick={handleSavePushSettings}
+          disabled={!pushMessage.trim() || isSending}
           $full
         >
           {submitLabel}
