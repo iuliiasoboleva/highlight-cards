@@ -40,4 +40,6 @@ export const Content = styled.div`
   font-size: 14px;
   border-top: 1px solid #dcdcdc;
   background-color: #fff;
+  white-space: pre-line;
+  line-height: 1.6;
 `;

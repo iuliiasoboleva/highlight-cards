@@ -52,8 +52,25 @@ const GetPassPage = () => {
     }
   }, [uuid]);
 
+  const getCompanyInfo = () => {
+    const issuerName = card?.infoFields?.issuerName || card?.infoFields?.companyName;
+    const issuerEmail = card?.infoFields?.issuerEmail;
+    const issuerPhone = card?.infoFields?.issuerPhone;
+    
+    if (!issuerName && !issuerEmail && !issuerPhone) {
+      return 'Информация о компании не указана';
+    }
+    
+    const parts = [];
+    if (issuerName) parts.push(issuerName);
+    if (issuerEmail) parts.push(`Email: ${issuerEmail}`);
+    if (issuerPhone) parts.push(`Телефон: ${issuerPhone}`);
+    
+    return parts.join('\n');
+  };
+
   const accordionItems = [
-    { title: 'Информация о компании', content: card?.infoFields?.companyName || 'Информация о компании не указана' },
+    { title: 'Информация о компании', content: getCompanyInfo() },
     { title: 'Информация о карте', content: card?.infoFields?.howToGetStamp || 'Информация о карте не указана' },
     {
       title: 'Политика использования персональных данных',

@@ -25,6 +25,7 @@ const EditType = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { currentCard, cards } = useSelector((state) => state.cards);
+  const user = useSelector((state) => state.user);
 
   const [selectedType, setSelectedType] = useState(currentCard.status || 'stamp');
   const selectedTypeName = cardTypes.find((t) => t.id === selectedType)?.name || '';
@@ -53,12 +54,21 @@ const EditType = () => {
 
         // Для создания новой карты
         const newId = cards?.length > 0 ? Math.max(...cards.map((c) => c.id)) + 1 : 1;
-        dispatch(setCurrentCard({ id: newId, status: 'stamp', name: 'Штамп' }));
+        dispatch(setCurrentCard({ 
+          id: newId, 
+          status: 'stamp', 
+          name: 'Штамп',
+          infoFields: {
+            issuerName: user.company || '',
+            issuerEmail: user.email || '',
+            issuerPhone: user.phone || '',
+          }
+        }));
       }
     };
 
     loadCardData();
-  }, [dispatch, cards, currentCard.id, id]);
+  }, [dispatch, cards, currentCard.id, id, user.company, user.email, user.phone]);
 
   useEffect(() => {
     if (currentCard.status) {
