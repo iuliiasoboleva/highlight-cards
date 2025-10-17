@@ -1,16 +1,18 @@
 import styled from 'styled-components';
 
 export const Overlay = styled.div`
-  padding: 16px;
+  padding: 14px;
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  max-height: 80%;
+  max-height: 85%;
+  max-width: 85%;
+  width: 220px;
   overflow-y: auto;
+  overflow-x: hidden;
   font-size: 14px;
   line-height: 1.4;
   z-index: 5;
-  width: 230px;
 
   /* hide scrollbar cross-browser */
   scrollbar-width: none; /* Firefox */
@@ -24,11 +26,11 @@ export const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 `;
 
 export const Title = styled.h3`
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   margin: 0;
 `;
@@ -46,12 +48,15 @@ export const CloseButton = styled.button`
 export const Content = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 `;
 
 export const Item = styled.div`
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 `;
 
 export const ItemLabel = styled.strong`
@@ -79,6 +84,7 @@ export const LinkLine = styled.div`
   display: flex;
   gap: 6px;
   align-items: baseline;
+  overflow: hidden;
 `;
 
 export const LinkLabel = styled.span`
@@ -93,4 +99,6 @@ export const LinkValue = styled.div`
   color: #9f9fa7;
   white-space: normal;
   word-break: break-word;
+  overflow-wrap: break-word;
+  overflow: hidden;
 `;
