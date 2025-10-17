@@ -7,7 +7,7 @@ export const defaultCardTemplate = {
   qrImg: '/qr-code.svg',
   frameUrl: '/phone.svg',
   balanceMoney: 1800,
-  stamps: 1,
+  stamps: undefined,
   cardImg: '',
   untilNextReward: 2,
   currentLevel: '',
