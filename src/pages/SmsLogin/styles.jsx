@@ -6,6 +6,7 @@ export const Wrapper = styled.div`
   align-items: center;
   gap: 24px;
   margin-top: 120px;
+  padding: 0 20px;
 `;
 
 export const Logo = styled.img`
@@ -15,11 +16,17 @@ export const Logo = styled.img`
 
 export const Title = styled.h2`
   margin: 0;
+  text-align: center;
+  max-width: 320px;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.3;
 `;
 
 export const Hint = styled.p`
   color: #888;
   margin-top: -12px;
+  text-align: center;
 `;
 
 export const Status = styled.p`

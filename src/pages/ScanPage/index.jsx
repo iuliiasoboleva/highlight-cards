@@ -36,7 +36,8 @@ const ScanPage = () => {
   const [status, setStatus] = useState('initializing'); // initializing | scanning | error | desktop
 
   const handleScanSuccess = (decodedText) => {
-    setMessage(`Найден QR-код: ${decodedText}`);
+    const cardNumber = decodedText.trim();
+    setMessage(`Найдена карта: ${cardNumber}`);
 
     if (isScannerRunning.current && scannerRef.current) {
       scannerRef.current
@@ -45,25 +46,7 @@ const ScanPage = () => {
         .catch(console.warn);
     }
 
-    // В демонстрационных целях перенаправляем всегда на /customers/10
-    // В реальном приложении здесь будет поиск пользователя по QR
-    navigate('/customer/10');
-
-    // Пример реальной реализации:
-    // const user = findUserByQr(decodedText);
-    // if (user) {
-    //   navigate(`/customers/${user.id}`);
-    // } else {
-    //   setMessage('Пользователь не найден');
-    // }
-  };
-
-  const findUserByQr = (qrCode) => {
-    const mockUsers = [
-      { id: 1, qr: '123456' },
-      { id: 2, qr: 'abcdef' },
-    ];
-    return mockUsers.find((u) => u.qr === qrCode);
+    navigate(`/customer/card/${cardNumber}`);
   };
 
   useEffect(() => {
