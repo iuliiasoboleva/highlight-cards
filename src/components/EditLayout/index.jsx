@@ -55,21 +55,25 @@ const EditLayout = ({
   }, []);
 
   useEffect(() => {
+    if (!currentCard.status) return;
+    
     const hasCustom = Array.isArray(currentCard.fieldsName) && currentCard.fieldsName.length > 0;
-    if (currentCard.status && !hasCustom) {
-      const defaultFields = (statusConfig[currentCard.status] || []).map((item) => ({
-        type: item.valueKey,
-        name: item.label,
-      }));
+    if (hasCustom) return;
 
-      dispatch(
-        updateCurrentCardField({
-          path: 'fieldsName',
-          value: defaultFields,
-        }),
-      );
-    }
-  }, [currentCard.status, currentCard.fieldsName, dispatch]);
+    const defaultFields = (statusConfig[currentCard.status] || []).map((item) => ({
+      type: item.valueKey,
+      name: item.label,
+    }));
+
+    if (defaultFields.length === 0) return;
+
+    dispatch(
+      updateCurrentCardField({
+        path: 'fieldsName',
+        value: defaultFields,
+      }),
+    );
+  }, [currentCard.status, dispatch]);
 
   useEffect(() => {
     if (location.pathname.includes('/edit/info')) {
