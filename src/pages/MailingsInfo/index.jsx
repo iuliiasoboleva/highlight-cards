@@ -5,9 +5,9 @@ import axiosInstance from '../../axiosInstance';
 import CustomTable from '../../components/CustomTable';
 import LoaderCentered from '../../components/LoaderCentered';
 import TitleWithHelp from '../../components/TitleWithHelp';
-import TopUpModal from '../../components/TopUpModal';
+// import TopUpModal from '../../components/TopUpModal';
 import { mailingsHeaders } from '../../mocks/mockMailings';
-import { fetchBalance, topUpBalance } from '../../store/balanceSlice';
+import { fetchBalance } from '../../store/balanceSlice';
 import MailingDetailsModal from './MailingDetailsModal';
 import { Badge, Container, Label, StatCard, StatsRow, TableWrapper, Value } from './styles';
 
@@ -30,8 +30,8 @@ const MailingsInfo = () => {
     (state) => state.balance || {},
   );
 
-  const [topUpOpen, setTopUpOpen] = useState(false);
-  const [hoverSms, setHoverSms] = useState(false);
+  // const [topUpOpen, setTopUpOpen] = useState(false);
+  // const [hoverSms, setHoverSms] = useState(false);
 
   useEffect(() => {
     if (!orgId) return;
@@ -62,10 +62,10 @@ const MailingsInfo = () => {
     })();
   }, [orgId, dispatch, page, pageSize, search, recipientFilter, sortOrder]);
 
-  const handleTopUpConfirm = (amount) => {
-    setTopUpOpen(false);
-    dispatch(topUpBalance({ orgId, amount }));
-  };
+  // const handleTopUpConfirm = (amount) => {
+  //   setTopUpOpen(false);
+  //   dispatch(topUpBalance({ orgId, amount }));
+  // };
 
   // колонки таблицы
   const columns = mailingsHeaders.map((header) => ({
@@ -219,20 +219,20 @@ const MailingsInfo = () => {
 
       <StatsRow>
         {cards.map((c, idx) => {
-          const isSms = !!c.sms;
-          const showTopUp = isSms && hoverSms;
+          // const isSms = !!c.sms;
+          // const showTopUp = isSms && hoverSms;
           return (
             <StatCard
               key={idx}
-              $clickable={isSms}
-              onMouseEnter={() => isSms && setHoverSms(true)}
-              onMouseLeave={() => isSms && setHoverSms(false)}
-              onClick={() => isSms && setTopUpOpen(true)}
+              // $clickable={isSms}
+              // onMouseEnter={() => isSms && setHoverSms(true)}
+              // onMouseLeave={() => isSms && setHoverSms(false)}
+              // onClick={() => isSms && setTopUpOpen(true)}
             >
               <Value $highlight={c.highlight} $gray={c.gray}>
-                {showTopUp ? 'Пополнить' : c.value}
+                {c.value}
               </Value>
-              {!showTopUp && <Label>{c.label}</Label>}
+              <Label>{c.label}</Label>
             </StatCard>
           );
         })}
@@ -447,11 +447,11 @@ const MailingsInfo = () => {
         onClose={() => setSelectedId(null)}
       />
 
-      <TopUpModal
+      {/* <TopUpModal
         isOpen={topUpOpen}
         onClose={() => setTopUpOpen(false)}
         onConfirm={handleTopUpConfirm}
-      />
+      /> */}
     </Container>
   );
 };
