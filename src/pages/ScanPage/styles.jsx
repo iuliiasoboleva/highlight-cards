@@ -1,7 +1,5 @@
 import styled, { keyframes } from 'styled-components';
 
-import CustomMainButton from '../../customs/CustomMainButton';
-
 export const Page = styled.div`
   display: flex;
   flex-direction: column;
@@ -10,17 +8,8 @@ export const Page = styled.div`
 `;
 
 export const Header = styled.header`
-  display: none; /* скрываем локальный хедер; используем глобальный SubMenu */
+  display: none;
 `;
-
-export const BackBtn = styled(CustomMainButton)``;
-
-export const Arrow = styled.span`
-  display: inline-block;
-  transform: translateY(-1px);
-`;
-
-export const Logo = styled.img``;
 
 export const Main = styled.main`
   flex: 1;
@@ -66,13 +55,19 @@ export const Message = styled.p`
 `;
 
 export const QrReaderBox = styled.div.attrs({ id: 'qr-reader' })`
-  width: 80%;
+  width: 90%;
   max-width: 500px;
   aspect-ratio: 1 / 1;
   margin: 0 auto;
   overflow: hidden;
   background-color: #000;
   border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+
+  @media (min-width: 1000px) {
+    width: 450px;
+    max-width: 450px;
+  }
 
   & video {
     transform: scaleX(1) rotate(0deg) !important;
@@ -80,16 +75,4 @@ export const QrReaderBox = styled.div.attrs({ id: 'qr-reader' })`
     width: 100%;
     height: 100%;
   }
-`;
-
-export const DesktopNotice = styled.div`
-  max-width: 720px;
-  margin: auto auto 0; /* прижимаем к низу на ПК */
-  padding: 12px 14px;
-  border-radius: 10px;
-  background: #f7f7f7;
-  color: #2c3e50;
-  font-size: 14px;
-  text-align: center;
-  border: 1px solid #ececec;
 `;

@@ -4,12 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { Html5Qrcode } from 'html5-qrcode';
 
 import {
-  Arrow,
-  BackBtn,
-  DesktopNotice,
   Header,
   Loader,
-  Logo,
   Main,
   Message,
   Page,
@@ -51,12 +47,6 @@ const ScanPage = () => {
 
   useEffect(() => {
     const mobile = isProbablyMobile();
-
-    if (!mobile) {
-      setStatus('desktop');
-      return;
-    }
-
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
     const scanner = new Html5Qrcode('qr-reader', false);
@@ -64,7 +54,7 @@ const ScanPage = () => {
 
     const config = {
       fps: 10,
-      qrbox: { width: 250, height: 250 },
+      qrbox: mobile ? { width: 250, height: 250 } : { width: 300, height: 300 },
       aspectRatio: 1.0,
       disableFlip: true,
       experimentalFeatures: {
@@ -77,7 +67,11 @@ const ScanPage = () => {
         const container = document.getElementById('qr-reader');
         if (container) container.innerHTML = '';
 
-        await scanner.start({ facingMode: 'environment' }, config, handleScanSuccess, (err) => {
+        const constraints = mobile 
+          ? { facingMode: 'environment' }
+          : { facingMode: 'user' };
+
+        await scanner.start(constraints, config, handleScanSuccess, (err) => {
           if (err !== 'QR code parse error, ignoring...') {
             console.warn('Ошибка сканирования:', err);
           }
@@ -116,7 +110,7 @@ const ScanPage = () => {
 
       <Main>
         <UserText>
-          <p>Отсканируйте карту, чтобы найти пользователя</p>
+          <p>Отсканируйте QR-код с карты клиента</p>
         </UserText>
 
         {status === 'initializing' && (
@@ -128,19 +122,13 @@ const ScanPage = () => {
 
         {status === 'error' && (
           <Message>
-            ⚠️ Ошибка при запуске камеры. Проверьте разрешения или перезагрузите страницу.
+            ⚠️ Ошибка при запуске камеры. Разрешите доступ к камере в настройках браузера.
           </Message>
         )}
 
-        {status === 'desktop' ? (
-          <DesktopNotice>
-            Сканер предназначен для использования на мобильном устройстве (смартфоне/планшете).
-          </DesktopNotice>
-        ) : (
-          <QrReaderBox />
-        )}
+        <QrReaderBox />
 
-        {status === 'scanning' && <Message>📷 Камера работает. Наведите на QR-код</Message>}
+        {status === 'scanning' && <Message>📷 Наведите камеру на QR-код карты</Message>}
 
         {message && <Message className="result">{message}</Message>}
       </Main>
