@@ -133,12 +133,18 @@ export const TabLink = styled(Link)`
 
 export const TabButton = styled.button`
   ${baseTabStyles}
+  position: relative;
+  
   ${({ $disabled }) =>
     $disabled &&
     css`
       cursor: not-allowed;
-      opacity: 0.6;
-      pointer-events: auto; /* важно, чтобы title работал */
+      opacity: 0.5;
+      pointer-events: auto;
+      
+      &:hover {
+        opacity: 0.6;
+      }
     `}
 `;
 

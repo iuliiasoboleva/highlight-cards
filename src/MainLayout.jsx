@@ -222,8 +222,8 @@ const MainLayout = () => {
       return [
         { to: `/mailings/info`, label: 'Рассылки' },
         { to: `/mailings/push`, label: 'Создать push-рассылку' },
-        { to: `/mailings/auto-push`, label: 'Автоматизация push' },
-        { to: `/mailings/user-push`, label: 'Пользовательские авто-push' },
+        { to: `/mailings/auto-push`, label: 'Автоматизация push', disabled: true, tooltip: 'Скоро будет доступно...' },
+        { to: `/mailings/user-push`, label: 'Пользовательские авто-push', disabled: true, tooltip: 'Скоро будет доступно...' },
         { to: `/mailings/archive`, label: 'История рассылок' },
       ];
     }

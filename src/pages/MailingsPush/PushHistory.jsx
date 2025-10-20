@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import { Copy, Inbox, Trash2 } from 'lucide-react';
 
 import axiosInstance from '../../axiosInstance';
 import TitleWithHelp from '../../components/TitleWithHelp';
+import { setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
 import {
   EmptyMessage,
   EmptyStub,
@@ -27,8 +29,13 @@ const PushHistory = () => {
   const [search, setSearch] = useState('');
   const [recipientFilter, setRecipientFilter] = useState('');
   const [sortOrder, setSortOrder] = useState('desc');
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [mailingToDelete, setMailingToDelete] = useState(null);
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const currentCard = useSelector((state) => state.cards.currentCard);
+  const cards = useSelector((state) => state.cards.cards);
   const user = useSelector((state) => state.user);
 
   const rawTz = useSelector((state) => state.user?.timezone || 'Europe/Moscow');
@@ -102,17 +109,52 @@ const PushHistory = () => {
     fetchHistory();
   }, [fetchHistory]);
 
-  const onDelete = async (id) => {
+  const onDelete = async () => {
+    if (!mailingToDelete) return;
     try {
-      await axiosInstance.delete(`/mailings/${id}`);
+      await axiosInstance.delete(`/mailings/${mailingToDelete}`);
+      setDeleteModalOpen(false);
+      setMailingToDelete(null);
       fetchHistory();
     } catch (e) {
       console.error(e);
+      setDeleteModalOpen(false);
+      setMailingToDelete(null);
     }
   };
 
-  const handleCopy = (message) => {
-    navigator.clipboard.writeText(message || '');
+  const handleCopy = async (mailingItem) => {
+    try {
+      // Получаем полную информацию о рассылке
+      const response = await axiosInstance.get(`/mailings/${mailingItem.id}`);
+      const mailingData = response.data;
+
+      // Находим карту по cardId
+      const card = cards.find((c) => String(c.id) === String(mailingData.cardId));
+      
+      if (card) {
+        // Устанавливаем выбранную карту и заполняем данные
+        dispatch(setCurrentCard({
+          ...card,
+          pushNotification: {
+            message: mailingData.message || '',
+            scheduledDate: '',
+          }
+        }));
+        
+        // Переходим на страницу создания push-рассылки
+        navigate(`/mailings/push`);
+      } else {
+        console.error('Карта не найдена');
+      }
+    } catch (e) {
+      console.error('Ошибка при копировании рассылки:', e);
+    }
+  };
+
+  const openDeleteModal = (id) => {
+    setMailingToDelete(id);
+    setDeleteModalOpen(true);
   };
 
   const handleSearchChange = (e) => {
@@ -166,9 +208,7 @@ const PushHistory = () => {
               fontSize: '14px'
             }}
           />
-          <input
-            type="text"
-            placeholder="Фильтр по получателям..."
+          <select
             value={recipientFilter}
             onChange={handleRecipientFilterChange}
             style={{
@@ -177,9 +217,18 @@ const PushHistory = () => {
               padding: '8px 12px',
               border: '1px solid #ddd',
               borderRadius: '8px',
-              fontSize: '14px'
+              fontSize: '14px',
+              cursor: 'pointer'
             }}
-          />
+          >
+            <option value="">Всем</option>
+            <option value="need-attention">Требуют внимания</option>
+            <option value="loyal-regulars">Лояльные - постоянные</option>
+            <option value="champions">Чемпионы</option>
+            <option value="at-risk">В зоне риска</option>
+            <option value="borderline">Средние (на грани)</option>
+            <option value="growing">Растущие</option>
+          </select>
         </div>
 
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -217,7 +266,7 @@ const PushHistory = () => {
             Дата: {sortOrder === 'desc' ? '↓ Новые сверху' : '↑ Старые сверху'}
           </button>
 
-          <span style={{ fontSize: '14px', color: '#666', marginLeft: 'auto' }}>
+          <span style={{ fontSize: '14px', color: '#666' }}>
             Всего: {total}
           </span>
         </div>
@@ -231,27 +280,27 @@ const PushHistory = () => {
             <p>Отправьте первое push-уведомление — здесь появится запись.</p>
           </EmptyStub>
         ) : (
-          history.map(({ id, dateTime, message, status }) => (
-            <PushHistoryItem key={id}>
+          history.map((item) => (
+            <PushHistoryItem key={item.id}>
               <PushHistoryTop>
-                <PushHistoryDates>{dateTime}</PushHistoryDates>
+                <PushHistoryDates>{item.dateTime}</PushHistoryDates>
 
                 <PushHistoryControls>
-                  <span>{status}</span>
+                  <span>{item.status}</span>
                   <PushHistoryIcon
-                    onClick={() => handleCopy(message)}
-                    title="Скопировать сообщение"
+                    onClick={() => handleCopy(item)}
+                    title="Создать рассылку с этими параметрами"
                   >
                     <Copy size={16} />
                   </PushHistoryIcon>
-                  <PushHistoryIcon className="danger" onClick={() => onDelete(id)} title="Удалить">
+                  <PushHistoryIcon className="danger" onClick={() => openDeleteModal(item.id)} title="Удалить">
                     <Trash2 size={16} />
                   </PushHistoryIcon>
                 </PushHistoryControls>
               </PushHistoryTop>
 
               <PushHistoryMessage>
-                {message?.trim() ? message : <EmptyMessage>Нет текста</EmptyMessage>}
+                {item.message?.trim() ? item.message : <EmptyMessage>Нет текста</EmptyMessage>}
               </PushHistoryMessage>
             </PushHistoryItem>
           ))
@@ -376,6 +425,90 @@ const PushHistory = () => {
           }}>
             Страница {page} из {totalPages}
           </span>
+        </div>
+      )}
+
+      {/* Модалка подтверждения удаления */}
+      {deleteModalOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10000,
+          }}
+          onClick={() => {
+            setDeleteModalOpen(false);
+            setMailingToDelete(null);
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: '#fff',
+              borderRadius: '12px',
+              padding: '24px',
+              maxWidth: '400px',
+              width: '90%',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 style={{ margin: '0 0 12px 0', fontSize: '18px', fontWeight: 600 }}>
+              Удалить рассылку?
+            </h3>
+            <p style={{ margin: '0 0 24px 0', color: '#666', fontSize: '14px' }}>
+              История рассылки будет удалена безвозвратно
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'space-between' }}>
+              <button
+                onClick={onDelete}
+                style={{
+                  flex: 1,
+                  padding: '10px 16px',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  backgroundColor: '#c31e3c',
+                  color: '#fff',
+                  transition: 'background-color 0.2s',
+                }}
+                onMouseEnter={(e) => (e.target.style.backgroundColor = '#a01830')}
+                onMouseLeave={(e) => (e.target.style.backgroundColor = '#c31e3c')}
+              >
+                Удалить
+              </button>
+              <button
+                onClick={() => {
+                  setDeleteModalOpen(false);
+                  setMailingToDelete(null);
+                }}
+                style={{
+                  flex: 1,
+                  padding: '10px 16px',
+                  border: '1px solid #ddd',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  backgroundColor: '#f5f5f5',
+                  color: '#666',
+                  transition: 'background-color 0.2s',
+                }}
+                onMouseEnter={(e) => (e.target.style.backgroundColor = '#e5e5e5')}
+                onMouseLeave={(e) => (e.target.style.backgroundColor = '#f5f5f5')}
+              >
+                Отмена
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </PushHistoryWrapper>
