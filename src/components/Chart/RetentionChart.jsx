@@ -29,7 +29,9 @@ const RetentionChart = ({ title = 'Возвращаемость', externalData =
   const [chartData, setChartData] = useState(externalData || []);
 
   const allPoints = useMemo(() => {
-    if (externalData) return externalData;
+    if (externalData && externalData.length) {
+      return externalData.map((p) => ({ ...p, _date: new Date(p.date) })).filter((p) => !isNaN(p._date));
+    }
     const arrays = Object.values(retentionMockData).filter(Array.isArray);
     const flat = arrays.flat();
     return flat.map((p) => ({ ...p, _date: new Date(p.date) })).filter((p) => !isNaN(p._date));
