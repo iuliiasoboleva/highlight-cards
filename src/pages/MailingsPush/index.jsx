@@ -83,7 +83,7 @@ const MailingsPush = () => {
         }),
       );
     }
-  }, [routeId, cards, currentCard, dispatch]);
+  }, [routeId, cards, dispatch]);
 
   useEffect(() => {
     if (!currentCard) return;

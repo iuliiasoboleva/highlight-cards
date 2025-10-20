@@ -204,7 +204,7 @@ const MailingsInfo = () => {
   const cards = [
     { value: '0', label: 'Клиентов в базе' },
     { value: 'Бесплатно!', label: 'Push и Web-push', highlight: true },
-    { value: smsLoading ? '...' : smsBalance, label: 'Баланс SMS', sms: true },
+    { value: smsBalance, label: 'Баланс SMS', sms: true },
   ];
 
   return (
@@ -254,9 +254,7 @@ const MailingsInfo = () => {
               fontSize: '14px'
             }}
           />
-          <input
-            type="text"
-            placeholder="Фильтр по получателям..."
+          <select
             value={recipientFilter}
             onChange={handleRecipientFilterChange}
             style={{
@@ -265,9 +263,18 @@ const MailingsInfo = () => {
               padding: '8px 12px',
               border: '1px solid #ddd',
               borderRadius: '8px',
-              fontSize: '14px'
+              fontSize: '14px',
+              cursor: 'pointer'
             }}
-          />
+          >
+            <option value="">Всем</option>
+            <option value="need-attention">Требуют внимания</option>
+            <option value="loyal-regulars">Лояльные - постоянные</option>
+            <option value="champions">Чемпионы</option>
+            <option value="at-risk">В зоне риска</option>
+            <option value="borderline">Средние (на грани)</option>
+            <option value="growing">Растущие</option>
+          </select>
         </div>
 
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -291,6 +298,10 @@ const MailingsInfo = () => {
             </select>
           </div>
 
+          <span style={{ fontSize: '14px', color: '#666' }}>
+            Всего: {total}
+          </span>
+
           <button
             onClick={handleSortToggle}
             style={{
@@ -304,10 +315,6 @@ const MailingsInfo = () => {
           >
             Дата: {sortOrder === 'desc' ? '↓ Новые сверху' : '↑ Старые сверху'}
           </button>
-
-          <span style={{ fontSize: '14px', color: '#666', marginLeft: 'auto' }}>
-            Всего: {total}
-          </span>
         </div>
       </div>
 
