@@ -84,7 +84,12 @@ const Home = () => {
       <PortraitChart>
         <ClientPortraitCard
           title="Гендерное соотношение"
-          data={Object.entries(portrait.gender).map(([name, value]) => ({ label: name, value }))}
+          data={Object.entries(portrait.gender)
+            .filter(([name, value]) => name !== 'other' || value > 0)
+            .map(([name, value]) => ({ 
+              label: name === 'male' ? 'Мужской' : name === 'female' ? 'Женский' : name, 
+              value 
+            }))}
         />
         <ClientPortraitCard
           title="Возраст"
