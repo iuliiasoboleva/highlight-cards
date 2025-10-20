@@ -84,11 +84,11 @@ const Home = () => {
       <PortraitChart>
         <ClientPortraitCard
           title="Гендерное соотношение"
-          data={Object.entries(portrait.gender).map(([name, value]) => ({ name, value }))}
+          data={Object.entries(portrait.gender).map(([name, value]) => ({ label: name, value }))}
         />
         <ClientPortraitCard
           title="Возраст"
-          data={Object.entries(portrait.age).map(([name, value]) => ({ name, value }))}
+          data={Object.entries(portrait.age).map(([name, value]) => ({ label: name, value }))}
         />
       </PortraitChart>
     </StatisticsContainer>

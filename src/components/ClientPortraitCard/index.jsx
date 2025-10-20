@@ -81,8 +81,8 @@ const ClientPortraitCard = ({ title, data }) => {
           {/* Компактная легенда для мобильного */}
           {isMobile && (
             <Legend>
-              {legend.map((item) => (
-                <LegendItem key={item.label}>
+              {legend.map((item, index) => (
+                <LegendItem key={`legend-${index}-${item.label}`}>
                   <LegendDot style={{ background: item.gradientCss }} />
                   <LegendText title={item.label}>
                     {item.label}: {item.value}%
