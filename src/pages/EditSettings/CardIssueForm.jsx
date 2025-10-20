@@ -28,6 +28,7 @@ const STANDARD_OPTIONS = [
   { value: 'phone', label: 'Телефон' },
   { value: 'email', label: 'Email' },
   { value: 'birthday', label: 'Дата рождения' },
+  { value: 'gender', label: 'Пол' },
 ];
 
 const ALL_OPTIONS = [...STANDARD_OPTIONS, { value: 'custom', label: 'Кастомное поле' }];

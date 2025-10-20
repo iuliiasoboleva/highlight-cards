@@ -95,6 +95,7 @@ export const defaultCardTemplate = {
     { type: 'phone', name: 'Телефон', required: true, unique: true },
     { type: 'email', name: 'Email', required: true, unique: true },
     { type: 'birthday', name: 'Дата рождения', required: false, unique: false },
+    { type: 'gender', name: 'Пол', required: true, unique: false },
   ],
   statusFields: [
     { name: 'Бронзовый', cost: '0', percent: '1' },

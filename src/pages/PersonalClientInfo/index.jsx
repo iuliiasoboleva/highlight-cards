@@ -152,6 +152,20 @@ const PersonalClientInfo = () => {
             </Group>
           </Row>
 
+          {client.gender && (
+            <Row>
+              <Group>
+                <Label>Пол</Label>
+                <CustomInput
+                  type="text"
+                  value={client.gender === 'male' ? 'Мужской' : client.gender === 'female' ? 'Женский' : client.gender}
+                  disabled
+                  style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed' }}
+                />
+              </Group>
+            </Row>
+          )}
+
           <Row>
             <Group>
               <Label>Имя</Label>

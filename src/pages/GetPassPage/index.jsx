@@ -308,6 +308,27 @@ const GetPassPage = () => {
                       required: field.required,
                     }}
                   />
+                ) : field.type === 'gender' ? (
+                  <select
+                    name={field.name}
+                    value={formData[field.name] || ''}
+                    onChange={handleChange}
+                    required={field.required}
+                    style={{
+                      width: '100%',
+                      padding: '10px 12px',
+                      border: '1px solid #d9d9d9',
+                      borderRadius: '4px',
+                      backgroundColor: '#fff',
+                      fontSize: '16px',
+                      outline: 'none',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <option value="">Выберите пол</option>
+                    <option value="male">Мужской</option>
+                    <option value="female">Женский</option>
+                  </select>
                 ) : (
                   <CustomInput
                     name={field.name}
