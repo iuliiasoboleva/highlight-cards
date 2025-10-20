@@ -22,7 +22,7 @@ export const SidebarNav = styled.nav`
   left: 0;
   width: var(--sidebar-width);
   height: 100vh;
-  padding-top: calc(var(--header-height) + 15px);
+  padding-top: calc(var(--header-height) - 10px);
   background: #fff;
   border-right: 1px solid #ececec;
   z-index: 2000;
