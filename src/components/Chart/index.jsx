@@ -74,15 +74,71 @@ const Chart = ({
   }, [chartData]);
 
   useEffect(() => {
-    if (externalData) return;
+    if (externalData && externalData.length) {
+      const now = new Date();
+      const startDate = new Date(now);
+      startDate.setMonth(now.getMonth() - 1);
+      
+      const filtered = externalData.filter((item) => {
+        const itemDate = new Date(item.date);
+        return itemDate >= startDate && itemDate <= now;
+      });
+      
+      setChartData(filtered.length ? filtered : externalData);
+    }
+  }, [externalData]);
+
+  useEffect(() => {
+    if (!externalData || !externalData.length) {
+      if (selectedPeriod === 'custom') {
+        return;
+      }
+      const newData = dataMap[selectedPeriod] || [];
+      const sortedData = [...newData].sort((a, b) => new Date(a.date) - new Date(b.date));
+      setChartData(sortedData);
+      setSelectedRange({ start: null, end: null });
+      setIsCalendarVisible(false);
+      return;
+    }
 
     if (selectedPeriod === 'custom') {
       return;
     }
 
-    const newData = dataMap[selectedPeriod] || [];
-    const sortedData = [...newData].sort((a, b) => new Date(a.date) - new Date(b.date));
-    setChartData(sortedData);
+    const now = new Date();
+    let startDate;
+
+    switch (selectedPeriod) {
+      case 'day':
+        startDate = new Date(now);
+        startDate.setHours(0, 0, 0, 0);
+        break;
+      case 'week':
+        startDate = new Date(now);
+        startDate.setDate(now.getDate() - 7);
+        break;
+      case 'month':
+        startDate = new Date(now);
+        startDate.setMonth(now.getMonth() - 1);
+        break;
+      case 'year':
+        startDate = new Date(now);
+        startDate.setFullYear(now.getFullYear() - 1);
+        break;
+      case 'allTime':
+        startDate = new Date(0);
+        break;
+      default:
+        startDate = new Date(0);
+    }
+
+    const filtered = externalData.filter((item) => {
+      const itemDate = new Date(item.date);
+      return itemDate >= startDate && itemDate <= now;
+    });
+
+    const sortedFiltered = filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
+    setChartData(sortedFiltered);
     setSelectedRange({ start: null, end: null });
     setIsCalendarVisible(false);
   }, [selectedPeriod, externalData]);
@@ -133,9 +189,10 @@ const Chart = ({
 
     if (start && end) {
       setSelectedRange({ start, end });
-      const allData = Object.values(dataMap).flat();
+      
+      const sourceData = externalData && externalData.length ? externalData : Object.values(dataMap).flat();
       const byDate = new Map();
-      for (const item of allData) {
+      for (const item of sourceData) {
         byDate.set(item.date, item);
       }
 

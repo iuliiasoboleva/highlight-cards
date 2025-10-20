@@ -35,17 +35,79 @@ const ClientsChart = ({ title = 'Клиентская активность', ext
   const clientCalendarRef = useRef(null);
 
   useEffect(() => {
-    if (externalData) return;
-    if (selectedPeriod === 'custom' && customRange.start && customRange.end) {
-      const all = Object.values(clientActivityMockData).flat();
-      const filtered = all.filter((item) => {
-        const date = new Date(item.date);
-        return date >= customRange.start && date <= customRange.end;
+    if (externalData && externalData.length) {
+      const now = new Date();
+      const startDate = new Date(now);
+      startDate.setMonth(now.getMonth() - 1);
+      
+      const filtered = externalData.filter((item) => {
+        const itemDate = new Date(item.date);
+        return itemDate >= startDate && itemDate <= now;
       });
-      setChartData(filtered);
-    } else {
-      setChartData(clientActivityMockData[selectedPeriod] || []);
+      
+      setChartData(filtered.length ? filtered : externalData);
     }
+  }, [externalData]);
+
+  useEffect(() => {
+    if (!externalData || !externalData.length) {
+      if (selectedPeriod === 'custom' && customRange.start && customRange.end) {
+        const all = Object.values(clientActivityMockData).flat();
+        const filtered = all.filter((item) => {
+          const date = new Date(item.date);
+          return date >= customRange.start && date <= customRange.end;
+        });
+        setChartData(filtered);
+      } else {
+        setChartData(clientActivityMockData[selectedPeriod] || []);
+      }
+      return;
+    }
+
+    const now = new Date();
+    let startDate;
+
+    if (selectedPeriod === 'custom') {
+      if (customRange.start && customRange.end) {
+        const filtered = externalData.filter((item) => {
+          const date = new Date(item.date);
+          return date >= customRange.start && date <= customRange.end;
+        });
+        setChartData(filtered);
+      }
+      return;
+    }
+
+    switch (selectedPeriod) {
+      case 'day':
+        startDate = new Date(now);
+        startDate.setHours(0, 0, 0, 0);
+        break;
+      case 'week':
+        startDate = new Date(now);
+        startDate.setDate(now.getDate() - 7);
+        break;
+      case 'month':
+        startDate = new Date(now);
+        startDate.setMonth(now.getMonth() - 1);
+        break;
+      case 'year':
+        startDate = new Date(now);
+        startDate.setFullYear(now.getFullYear() - 1);
+        break;
+      case 'allTime':
+        startDate = new Date(0);
+        break;
+      default:
+        startDate = new Date(0);
+    }
+
+    const filtered = externalData.filter((item) => {
+      const itemDate = new Date(item.date);
+      return itemDate >= startDate && itemDate <= now;
+    });
+
+    setChartData(filtered);
   }, [selectedPeriod, customRange, externalData]);
 
   const sortedChartData = useMemo(() => {

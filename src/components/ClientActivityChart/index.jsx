@@ -130,7 +130,8 @@ const ClientsActivityChart = ({
 
                   <XAxis
                     dataKey="date"
-                    interval={0}
+                    interval="preserveStartEnd"
+                    minTickGap={30}
                     tick={axisStyle}
                     axisLine={false}
                     tickLine={false}
@@ -143,6 +144,7 @@ const ClientsActivityChart = ({
                     tickLine={false}
                     width={28}
                     padding={{ top: 0, bottom: 0 }}
+                    allowDecimals={false}
                   />
 
                   <Tooltip

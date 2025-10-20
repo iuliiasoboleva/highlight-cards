@@ -43,8 +43,6 @@ const RetentionChart = ({ title = 'Возвращаемость', externalData =
   };
 
   useEffect(() => {
-    if (externalData) return;
-
     const now = new Date();
     const end = now;
     let data = [];
@@ -68,7 +66,7 @@ const RetentionChart = ({ title = 'Возвращаемость', externalData =
     }
 
     setChartData(data);
-  }, [selectedPeriod, customRange, allPoints, externalData]);
+  }, [selectedPeriod, customRange, allPoints]);
 
   // клик вне календаря — закрыть
   useEffect(() => {

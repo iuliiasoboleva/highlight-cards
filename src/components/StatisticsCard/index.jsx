@@ -155,7 +155,8 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
 
                   <XAxis
                     dataKey="date"
-                    interval={0}
+                    interval="preserveStartEnd"
+                    minTickGap={30}
                     tick={axisStyle}
                     axisLine={false}
                     tickLine={false}
@@ -168,6 +169,7 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
                     tickLine={false}
                     width={28}
                     padding={{ top: 0, bottom: 0 }}
+                    allowDecimals={false}
                   />
 
                   <Tooltip
