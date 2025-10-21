@@ -36,7 +36,9 @@ const PushHistory = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const toast = useToast();
-  const cards = useSelector((state) => state.cards.cards);
+  const allCards = useSelector((state) => state.cards.cards);
+  // Фильтруем карты, исключая служебную карту 'fixed'
+  const cards = allCards.filter((card) => card.id !== 'fixed');
   const user = useSelector((state) => state.user);
 
   const rawTz = useSelector((state) => state.user?.timezone || 'Europe/Moscow');
@@ -112,10 +114,10 @@ const PushHistory = () => {
 
   useEffect(() => {
     // Загружаем карты при монтировании, если их нет
-    if (!cards || cards.length === 0) {
+    if (!allCards || allCards.length === 0) {
       dispatch(fetchCards());
     }
-  }, [dispatch, cards]);
+  }, [dispatch, allCards]);
 
   const onDelete = async () => {
     if (!mailingToDelete) return;
@@ -135,76 +137,62 @@ const PushHistory = () => {
 
   const handleCopy = async (mailingItem) => {
     try {
-      // Проверяем наличие карт
-      if (!cards || cards.length === 0) {
-        toast.error('Загрузка карт... Попробуйте снова через несколько секунд');
-        dispatch(fetchCards());
-        return;
-      }
-
       // Получаем полную информацию о рассылке
       const response = await axiosInstance.get(`/mailings/${mailingItem.id}`);
       const mailingData = response.data;
 
       console.log('🔍 Поиск карты для рассылки:', {
-        cardId: mailingData.cardId,
-        cardIdType: typeof mailingData.cardId,
-        availableCards: cards.map(c => ({
+        searchCardId: mailingData.cardId,
+        searchCardIdType: typeof mailingData.cardId,
+        totalCardsInStore: cards.length,
+        availableCardsInStore: cards.map(c => ({
           id: c.id,
-          idType: typeof c.id,
-          uuid: c.uuid,
-          uuidType: typeof c.uuid,
-          name: c.name
+          name: c.name,
+          title: c.title
         }))
       });
 
-      // Находим карту по cardId (проверяем все возможные варианты)
+      // Сначала пробуем найти карту в store
       let card = cards.find((c) => {
-        const matches = 
+        return (
           c.id === mailingData.cardId ||
           c.uuid === mailingData.cardId ||
           String(c.id) === String(mailingData.cardId) || 
           String(c.uuid) === String(mailingData.cardId) ||
           Number(c.id) === Number(mailingData.cardId) ||
-          parseInt(c.id) === parseInt(mailingData.cardId);
-        
-        if (matches) {
-          console.log('✅ Карта найдена:', {
-            name: c.name,
-            id: c.id,
-            uuid: c.uuid,
-            matchedWith: mailingData.cardId
-          });
-        }
-        
-        return matches;
+          parseInt(c.id) === parseInt(mailingData.cardId)
+        );
       });
 
-      // Если не найдена, пробуем найти по первой карте как fallback
-      if (!card && cards.length > 0) {
-        console.warn('⚠️ Карта не найдена по ID, используем первую доступную карту');
-        card = cards[0];
-        toast.info(`Исходная карта не найдена, используется: ${card.name || 'карта'}`);
+      // Если карта не найдена в store, запрашиваем напрямую из API
+      if (!card) {
+        console.warn('⚠️ Карта не найдена в store, запрашиваем из API...');
+        try {
+          const cardResponse = await axiosInstance.get(`/cards/${mailingData.cardId}`);
+          card = cardResponse.data;
+          console.log('✅ Карта загружена из API:', card);
+        } catch (apiError) {
+          console.error('❌ Карта не найдена ни в store, ни в API:', mailingData.cardId);
+          toast.error(`Карта не найдена (ID: ${mailingData.cardId}). Возможно, она была удалена.`);
+          return;
+        }
+      } else {
+        console.log('✅ Карта найдена в store:', card.name || card.title);
       }
       
-      if (card) {
-        // Устанавливаем выбранную карту и заполняем данные
-        dispatch(setCurrentCard({
-          ...card,
-          pushNotification: {
-            message: mailingData.message || '',
-            scheduledDate: '',
-          }
-        }));
-        
-        toast.success('Параметры рассылки скопированы');
-        
-        // Переходим на страницу создания push-рассылки
-        setTimeout(() => navigate(`/mailings/push`), 300);
-      } else {
-        console.error('❌ Карта не найдена. cardId:', mailingData.cardId);
-        toast.error('Карта не найдена. Возможно, она была удалена.');
-      }
+      // Устанавливаем выбранную карту и заполняем данные
+      dispatch(setCurrentCard({
+        ...card,
+        pushNotification: {
+          message: mailingData.message || '',
+          scheduledDate: '',
+        }
+      }));
+      
+      toast.success('Параметры рассылки скопированы');
+      
+      // Переходим на страницу создания push-рассылки
+      setTimeout(() => navigate(`/mailings/push`), 300);
     } catch (e) {
       console.error('❌ Ошибка при копировании рассылки:', e);
       toast.error('Ошибка при копировании рассылки');
