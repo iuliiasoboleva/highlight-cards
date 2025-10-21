@@ -161,10 +161,17 @@ const MailingsPush = () => {
         author_id: user.id,
         message: pushMessage,
       });
-      toast.info(`Push-уведомление ${isScheduled ? 'запланировано' : 'отправлено'}`);
+      
+      if (isScheduled) {
+        toast.success('Push-уведомление запланировано');
+      } else {
+        toast.success('Рассылка началась! Push-уведомления отправляются в фоновом режиме');
+      }
+      
     } catch (e) {
       console.error(e);
-      toast.error('Ошибка при отправке push-уведомления');
+      const errorMessage = e.response?.data?.detail || 'Ошибка при отправке push-уведомления';
+      toast.error(errorMessage);
     } finally {
       setIsSending(false);
     }
