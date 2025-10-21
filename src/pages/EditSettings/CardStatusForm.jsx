@@ -51,7 +51,7 @@ const CardStatusForm = ({ statusFields, onFieldChange, onAddField, onRemoveField
                 onFieldChange(index, 'cost', raw);
               }}
               placeholder="0"
-              suffix="руб."
+              suffix="₽"
             />
           </StatusNameCell>
 
