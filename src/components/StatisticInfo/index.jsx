@@ -31,7 +31,6 @@ const StatisticInfo = ({ colorClass = 'repeat', label, value = 0, change = 0 }) 
           <Dot $variant={colorClass} />
           <span>{label}</span>
         </LabelRow>
-        <ChangeValue $type={changeType}>{isPositive ? `+${change}` : change}</ChangeValue>
       </TopRow>
     </Card>
   );
