@@ -267,7 +267,15 @@ const CustomerPage = () => {
             type="number"
             min="1"
             value={stampsToAdd}
-            onChange={(e) => setStampsToAdd(e.target.value)}
+            onChange={(e) => {
+              let raw = e.target.value;
+              // Убираем лидирующие нули
+              if (raw.length > 1 && raw.startsWith('0')) {
+                raw = raw.replace(/^0+/, '') || '1';
+                e.target.value = raw;
+              }
+              setStampsToAdd(raw);
+            }}
             placeholder="Или введите количество штампов"
             disabled={isLoading || (card.stampsToday || 0) >= (card.stampDailyLimit || 999)}
           />

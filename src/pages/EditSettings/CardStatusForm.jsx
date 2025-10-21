@@ -43,7 +43,15 @@ const CardStatusForm = ({ statusFields, onFieldChange, onAddField, onRemoveField
               <CustomInput
                 type="number"
                 value={field.cost ?? ''}
-                onChange={(e) => onFieldChange(index, 'cost', e.target.value)}
+                onChange={(e) => {
+                  let raw = e.target.value;
+                  // Убираем лидирующие нули
+                  if (raw.length > 1 && raw.startsWith('0')) {
+                    raw = raw.replace(/^0+/, '') || '0';
+                    e.target.value = raw;
+                  }
+                  onFieldChange(index, 'cost', raw);
+                }}
                 placeholder="₽"
               />
               <span>руб.</span>
@@ -55,7 +63,15 @@ const CardStatusForm = ({ statusFields, onFieldChange, onAddField, onRemoveField
               <CustomInput
                 type="number"
                 value={field.percent ?? ''}
-                onChange={(e) => onFieldChange(index, 'percent', e.target.value)}
+                onChange={(e) => {
+                  let raw = e.target.value;
+                  // Убираем лидирующие нули
+                  if (raw.length > 1 && raw.startsWith('0')) {
+                    raw = raw.replace(/^0+/, '') || '0';
+                    e.target.value = raw;
+                  }
+                  onFieldChange(index, 'percent', raw);
+                }}
                 placeholder="%"
               />
               <span>%</span>

@@ -49,7 +49,15 @@ const TopUpModal = ({ isOpen, open, onClose, onConfirm }) => {
         type="number"
         placeholder="Другая сумма"
         value={amount}
-        onChange={(e) => setAmount(e.target.value)}
+        onChange={(e) => {
+          let raw = e.target.value;
+          // Убираем лидирующие нули
+          if (raw.length > 1 && raw.startsWith('0')) {
+            raw = raw.replace(/^0+/, '') || '1';
+            e.target.value = raw;
+          }
+          setAmount(raw);
+        }}
         min={1}
         onKeyDown={(e) => {
           if (e.key === 'Enter') handleConfirm();

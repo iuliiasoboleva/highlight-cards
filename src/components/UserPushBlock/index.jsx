@@ -138,7 +138,20 @@ const UserPushBlock = () => {
 
           <CustomInput value={message} onChange={handleMessageChange} placeholder="Введите текст" />
           <Label>Сообщение будет выслано по истечении</Label>
-          <CustomInput type="number" value={delayValue} onChange={handleDelayValueChange} min={0} />
+          <CustomInput 
+            type="number" 
+            value={delayValue} 
+            onChange={(e) => {
+              let raw = e.target.value;
+              // Убираем лидирующие нули
+              if (raw.length > 1 && raw.startsWith('0')) {
+                raw = raw.replace(/^0+/, '') || '0';
+                e.target.value = raw;
+              }
+              handleDelayValueChange({ target: { value: raw } });
+            }} 
+            min={0} 
+          />
           <CustomSelect
             value={delayUnit}
             onChange={handleDelayUnitChange}

@@ -399,10 +399,15 @@ const EditSettings = () => {
               step="1"
               value={settings.cashbackAccrualPercent ?? ''}
               onChange={(e) => {
-                const raw = e.target.value;
+                let raw = e.target.value;
                 if (raw === '') {
                   updateSettingsField('cashbackAccrualPercent', '');
                   return;
+                }
+                // Убираем лидирующие нули
+                if (raw.length > 1 && raw.startsWith('0')) {
+                  raw = raw.replace(/^0+/, '') || '0';
+                  e.target.value = raw;
                 }
                 const n = parseInt(raw || '0', 10);
                 const v = isNaN(n) ? 0 : Math.max(0, Math.min(100, n));
@@ -447,10 +452,15 @@ const EditSettings = () => {
                   : ''
               }
               onChange={(e) => {
-                const raw = e.target.value;
+                let raw = e.target.value;
                 if (raw === '') {
                   dispatch(updateCurrentCardField({ path: 'maxRedeemPercent', value: '' }));
                   return;
+                }
+                // Убираем лидирующие нули
+                if (raw.length > 1 && raw.startsWith('0')) {
+                  raw = raw.replace(/^0+/, '') || '0';
+                  e.target.value = raw;
                 }
                 const n = parseInt(raw || '0', 10);
 
@@ -498,10 +508,15 @@ const EditSettings = () => {
               step="1"
               value={settings.cashbackLifetimeDays ?? ''}
               onChange={(e) => {
-                const raw = e.target.value;
+                let raw = e.target.value;
                 if (raw === '') {
                   updateSettingsField('cashbackLifetimeDays', '');
                   return;
+                }
+                // Убираем лидирующие нули
+                if (raw.length > 1 && raw.startsWith('0')) {
+                  raw = raw.replace(/^0+/, '') || '0';
+                  e.target.value = raw;
                 }
                 const n = parseInt(raw || '0', 10);
                 const v = isNaN(n) ? 0 : Math.max(0, n);
@@ -554,10 +569,15 @@ const EditSettings = () => {
             step="1"
             value={currentCard?.minCheckForStamps ?? ''}
             onChange={(e) => {
-              const raw = e.target.value;
+              let raw = e.target.value;
               if (raw === '') {
                 dispatch(updateCurrentCardField({ path: 'minCheckForStamps', value: '' }));
                 return;
+              }
+              // Убираем лидирующие нули
+              if (raw.length > 1 && raw.startsWith('0')) {
+                raw = raw.replace(/^0+/, '') || '0';
+                e.target.value = raw;
               }
               const n = parseInt(raw, 10);
               const v = Number.isNaN(n) ? 0 : Math.max(0, n);

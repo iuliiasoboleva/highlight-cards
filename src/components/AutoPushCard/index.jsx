@@ -92,7 +92,15 @@ const AutoPushCard = ({
         <CustomInput
           type="number"
           value={delay}
-          onChange={(e) => onChangeDelay(e.target.value)}
+          onChange={(e) => {
+            let raw = e.target.value;
+            // Убираем лидирующие нули
+            if (raw.length > 1 && raw.startsWith('0')) {
+              raw = raw.replace(/^0+/, '') || '0';
+              e.target.value = raw;
+            }
+            onChangeDelay(raw);
+          }}
           min={0}
           style={{
             marginLeft: '15px',

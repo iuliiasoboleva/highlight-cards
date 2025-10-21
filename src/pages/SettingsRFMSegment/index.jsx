@@ -89,7 +89,15 @@ const SettingsRFMSegment = () => {
                 <CustomInput
                   type="number"
                   value={segment.freqFrom}
-                  onChange={(e) => handleChange(index, 'freqFrom', e.target.value)}
+                  onChange={(e) => {
+                    let raw = e.target.value;
+                    // Убираем лидирующие нули
+                    if (raw.length > 1 && raw.startsWith('0')) {
+                      raw = raw.replace(/^0+/, '') || '0';
+                      e.target.value = raw;
+                    }
+                    handleChange(index, 'freqFrom', raw);
+                  }}
                 />
               </Field>
               <Field>
@@ -97,7 +105,15 @@ const SettingsRFMSegment = () => {
                 <CustomInput
                   type="number"
                   value={segment.freqTo}
-                  onChange={(e) => handleChange(index, 'freqTo', e.target.value)}
+                  onChange={(e) => {
+                    let raw = e.target.value;
+                    // Убираем лидирующие нули
+                    if (raw.length > 1 && raw.startsWith('0')) {
+                      raw = raw.replace(/^0+/, '') || '0';
+                      e.target.value = raw;
+                    }
+                    handleChange(index, 'freqTo', raw);
+                  }}
                 />
               </Field>
             </Row>
@@ -108,7 +124,15 @@ const SettingsRFMSegment = () => {
                 <CustomInput
                   type="number"
                   value={segment.recencyFrom}
-                  onChange={(e) => handleChange(index, 'recencyFrom', e.target.value)}
+                  onChange={(e) => {
+                    let raw = e.target.value;
+                    // Убираем лидирующие нули
+                    if (raw.length > 1 && raw.startsWith('0')) {
+                      raw = raw.replace(/^0+/, '') || '0';
+                      e.target.value = raw;
+                    }
+                    handleChange(index, 'recencyFrom', raw);
+                  }}
                 />
               </Field>
               <Field>
@@ -116,7 +140,15 @@ const SettingsRFMSegment = () => {
                 <CustomInput
                   type="number"
                   value={segment.recencyTo}
-                  onChange={(e) => handleChange(index, 'recencyTo', e.target.value)}
+                  onChange={(e) => {
+                    let raw = e.target.value;
+                    // Убираем лидирующие нули
+                    if (raw.length > 1 && raw.startsWith('0')) {
+                      raw = raw.replace(/^0+/, '') || '0';
+                      e.target.value = raw;
+                    }
+                    handleChange(index, 'recencyTo', raw);
+                  }}
                 />
               </Field>
             </Row>

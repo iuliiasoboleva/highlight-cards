@@ -198,12 +198,18 @@ const RadioConfigs = ({ cardStatus }) => {
               type="number"
               min="1"
               value={settings.subscriptionVisitsCount ?? ''}
-              onChange={(e) =>
+              onChange={(e) => {
+                let raw = e.target.value;
+                // Убираем лидирующие нули
+                if (raw.length > 1 && raw.startsWith('0')) {
+                  raw = raw.replace(/^0+/, '') || '1';
+                  e.target.value = raw;
+                }
                 updateSettingsField(
                   'subscriptionVisitsCount',
-                  Math.max(1, parseInt(e.target.value || '0', 10) || 1),
-                )
-              }
+                  Math.max(1, parseInt(raw || '0', 10) || 1),
+                );
+              }}
               placeholder="Например: 8"
             />
           </>
@@ -245,9 +251,15 @@ const RadioConfigs = ({ cardStatus }) => {
                 type="number"
                 min="1"
                 value={settings.spendingAmount || ''}
-                onChange={(e) =>
-                  updateSettingsField('spendingAmount', parseInt(e.target.value, 10) || 0)
-                }
+                onChange={(e) => {
+                  let raw = e.target.value;
+                  // Убираем лидирующие нули
+                  if (raw.length > 1 && raw.startsWith('0')) {
+                    raw = raw.replace(/^0+/, '') || '1';
+                    e.target.value = raw;
+                  }
+                  updateSettingsField('spendingAmount', parseInt(raw, 10) || 0);
+                }}
               />
             </SpendingLabel>
             <Equal>=</Equal>
@@ -256,9 +268,15 @@ const RadioConfigs = ({ cardStatus }) => {
                 type="number"
                 min="1"
                 value={settings.spendingStamps || ''}
-                onChange={(e) =>
-                  updateSettingsField('spendingStamps', parseInt(e.target.value, 10) || 0)
-                }
+                onChange={(e) => {
+                  let raw = e.target.value;
+                  // Убираем лидирующие нули
+                  if (raw.length > 1 && raw.startsWith('0')) {
+                    raw = raw.replace(/^0+/, '') || '1';
+                    e.target.value = raw;
+                  }
+                  updateSettingsField('spendingStamps', parseInt(raw, 10) || 0);
+                }}
               />
               <span>штампов</span>
             </SpendingLabel>
@@ -273,9 +291,15 @@ const RadioConfigs = ({ cardStatus }) => {
                 type="number"
                 min="1"
                 value={settings.visitStamps || ''}
-                onChange={(e) =>
-                  updateSettingsField('visitStamps', parseInt(e.target.value, 10) || 0)
-                }
+                onChange={(e) => {
+                  let raw = e.target.value;
+                  // Убираем лидирующие нули
+                  if (raw.length > 1 && raw.startsWith('0')) {
+                    raw = raw.replace(/^0+/, '') || '1';
+                    e.target.value = raw;
+                  }
+                  updateSettingsField('visitStamps', parseInt(raw, 10) || 0);
+                }}
               />
               <span className="visit-text">штампов</span>
             </VisitLabel>

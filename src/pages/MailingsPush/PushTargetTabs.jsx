@@ -155,7 +155,15 @@ const PushTargetTabs = ({ selectedCardId, onTabChange, onFilteredCountChange }) 
             type="number"
             placeholder="0"
             value={filterInput}
-            onChange={(e) => setFilterInput(e.target.value)}
+            onChange={(e) => {
+              let raw = e.target.value;
+              // Убираем лидирующие нули
+              if (raw.length > 1 && raw.startsWith('0')) {
+                raw = raw.replace(/^0+/, '') || '0';
+                e.target.value = raw;
+              }
+              setFilterInput(raw);
+            }}
             disabled={numericDisabled}
           />
         </PushSegmentControls>
