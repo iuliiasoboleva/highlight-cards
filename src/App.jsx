@@ -12,6 +12,7 @@ import {
 import MainLayout from './MainLayout';
 import PlanGate from './PlanGate';
 import AuthForm from './components/AuthForm';
+import EditGuard from './components/EditGuard';
 import NotFound from './components/NotFound';
 import ScrollToTop from './components/ScrollToTop';
 import { ToastProvider } from './components/Toast';
@@ -98,7 +99,14 @@ const App = () => {
                 <Route path="/scan" element={<ScanPage />} />
                 <Route path="/workplace" element={<Workplace />} />
 
-                <Route path="/cards/create" element={<EditType />} />
+                <Route path="/cards/create" element={<EditGuard><Outlet /></EditGuard>}>
+                  <Route index element={<EditType />} />
+                  <Route path="type" element={<EditType />} />
+                  <Route path="design" element={<EditDesign />} />
+                  <Route path="settings" element={<EditSettings />} />
+                  <Route path="info" element={<EditInfo />} />
+                  <Route path="integration" element={<EditIntegration />} />
+                </Route>
                 <Route path="/cards/template" element={<Cards />} />
                 <Route path="/mailings" element={<Mailings />}>
                   <Route path="info" element={<MailingsInfo />} />
@@ -193,10 +201,18 @@ const CardEditGuard = () => {
 
   // Для существующей логики: если currentCard установлен и id совпадает, разрешаем доступ
   if (currentCard?.id && String(currentCard.id) === params.id) {
-    return <Outlet />;
+    return (
+      <EditGuard>
+        <Outlet />
+      </EditGuard>
+    );
   }
 
   // Если currentCard не совпадает с params.id, не делаем Navigate сразу,
   // а позволяем странице самой обработать загрузку
-  return <Outlet />;
+  return (
+    <EditGuard>
+      <Outlet />
+    </EditGuard>
+  );
 };
