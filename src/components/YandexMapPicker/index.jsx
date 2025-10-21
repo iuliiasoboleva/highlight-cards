@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import {
   FullscreenControl,
@@ -9,18 +9,46 @@ import {
 } from '@pbe/react-yandex-maps';
 
 const YandexMapPicker = forwardRef(({ onSelect, initialCoords }, ref) => {
-  const [coords, setCoords] = useState(initialCoords || [55.751574, 37.573856]);
+  const getInitialCoords = () => {
+    if (!initialCoords) return [55.751574, 37.573856];
+    if (Array.isArray(initialCoords) && initialCoords.length === 2) return initialCoords;
+    if (initialCoords?.lat && initialCoords?.lon) return [initialCoords.lat, initialCoords.lon];
+    return [55.751574, 37.573856];
+  };
+
+  const [coords, setCoords] = useState(getInitialCoords());
   const [isLoaded, setIsLoaded] = useState(false);
   const [foundOrganizations, setFoundOrganizations] = useState([]);
 
   const mapRef = useRef(null);
   const ymapsRef = useRef(null);
 
+  useEffect(() => {
+    if (!isLoaded) return;
+    
+    if (initialCoords && Array.isArray(initialCoords) && initialCoords.length === 2) {
+      setCoords(initialCoords);
+      if (mapRef.current) {
+        setTimeout(() => {
+          mapRef.current.setCenter(initialCoords, 15);
+        }, 100);
+      }
+    } else if (initialCoords?.lat && initialCoords?.lon) {
+      const coordsArray = [initialCoords.lat, initialCoords.lon];
+      setCoords(coordsArray);
+      if (mapRef.current) {
+        setTimeout(() => {
+          mapRef.current.setCenter(coordsArray, 15);
+        }, 100);
+      }
+    }
+  }, [initialCoords, isLoaded]);
+
   useImperativeHandle(ref, () => ({
     search: handleSearch,
     searchMultiple,
     searchOrganizations: async (query) => {
-      if (!ymapsRef.current || !query?.trim()) return [];
+      if (!isLoaded || !ymapsRef.current || !query?.trim()) return [];
 
       try {
         const results = await ymapsRef.current.search(query, {
@@ -43,7 +71,6 @@ const YandexMapPicker = forwardRef(({ onSelect, initialCoords }, ref) => {
 
         setFoundOrganizations(found);
 
-        // Центрируем карту по первой найденной
         if (found.length && mapRef.current) {
           mapRef.current.setCenter(found[0].coords, 14);
         }
@@ -80,18 +107,25 @@ const YandexMapPicker = forwardRef(({ onSelect, initialCoords }, ref) => {
   };
 
   const searchMultiple = async (query) => {
-    const results = await ymapsRef.current.geocode(query, { results: 20 });
-    const found = [];
-    results.geoObjects.each((obj) => {
-      const coords = obj.geometry.getCoordinates();
-      const name = obj.getAddressLine();
-      found.push({ name, coords });
-    });
-    return found;
+    if (!isLoaded || !ymapsRef.current || !query?.trim()) return [];
+    
+    try {
+      const results = await ymapsRef.current.geocode(query, { results: 20 });
+      const found = [];
+      results.geoObjects.each((obj) => {
+        const coords = obj.geometry.getCoordinates();
+        const name = obj.getAddressLine();
+        found.push({ name, coords });
+      });
+      return found;
+    } catch (error) {
+      console.error('Ошибка множественного поиска:', error);
+      return [];
+    }
   };
 
   const handleSearch = async (query) => {
-    if (!ymapsRef.current || !query?.trim()) return null;
+    if (!isLoaded || !ymapsRef.current || !query?.trim()) return null;
 
     try {
       const results = await ymapsRef.current.geocode(query);
@@ -99,7 +133,7 @@ const YandexMapPicker = forwardRef(({ onSelect, initialCoords }, ref) => {
 
       if (firstGeoObject) {
         const newCoords = firstGeoObject.geometry.getCoordinates();
-        updateCoords(newCoords);
+        await updateCoords(newCoords);
         return newCoords;
       }
     } catch (error) {
@@ -148,6 +182,11 @@ const YandexMapPicker = forwardRef(({ onSelect, initialCoords }, ref) => {
           onLoad={(ymaps) => {
             ymapsRef.current = ymaps;
             setIsLoaded(true);
+            if (mapRef.current && coords) {
+              setTimeout(() => {
+                mapRef.current.setCenter(coords, 15);
+              }, 100);
+            }
           }}
           onClick={(e) => updateCoords(e.get('coords'))}
         >
@@ -177,5 +216,7 @@ const YandexMapPicker = forwardRef(({ onSelect, initialCoords }, ref) => {
     </YMaps>
   );
 });
+
+YandexMapPicker.displayName = 'YandexMapPicker';
 
 export default YandexMapPicker;

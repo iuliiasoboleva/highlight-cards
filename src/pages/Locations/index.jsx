@@ -396,24 +396,38 @@ const Locations = () => {
       toast.error('Сначала укажите адрес');
       return;
     }
-    try {
-      if (!singleCoords && mapRef.current) {
-        setIsSearching(true);
-        const coords = await mapRef.current.search(singleAddress.trim());
-        if (Array.isArray(coords) && coords.length === 2) {
-          setSingleCoords({ lat: coords[0], lon: coords[1] });
-        } else {
-          toast.error('Адрес не найден');
-          setIsSearching(false);
-          return;
-        }
-        setIsSearching(false);
-      }
-      setSingleShowMap(true);
+    
+    if (singleShowMap && singleCoords) {
       toast.info('Адрес показан на карте');
-    } catch {
-      setIsSearching(false);
-      toast.error('Не удалось показать адрес на карте');
+      return;
+    }
+
+    setSingleShowMap(true);
+    
+    if (!singleCoords) {
+      setIsSearching(true);
+      
+      setTimeout(async () => {
+        try {
+          if (mapRef.current) {
+            const coords = await mapRef.current.search(singleAddress.trim());
+            if (Array.isArray(coords) && coords.length === 2) {
+              setSingleCoords({ lat: coords[0], lon: coords[1] });
+              toast.info('Адрес показан на карте');
+            } else {
+              toast.error('Адрес не найден');
+            }
+          } else {
+            toast.error('Карта не загружена, повторите попытку');
+          }
+        } catch (err) {
+          toast.error('Не удалось показать адрес на карте');
+        } finally {
+          setIsSearching(false);
+        }
+      }, 500);
+    } else {
+      toast.info('Адрес показан на карте');
     }
   };
 
@@ -484,7 +498,11 @@ const Locations = () => {
             <div style={{ marginTop: 12, marginBottom: 12 }}>
               <YandexMapPicker
                 ref={mapRef}
-                onSelect={() => {}}
+                onSelect={(loc) => {
+                  if (loc?.coords) {
+                    setSingleCoords(loc.coords);
+                  }
+                }}
                 initialCoords={
                   singleCoords ? { lat: singleCoords.lat, lon: singleCoords.lon } : undefined
                 }
