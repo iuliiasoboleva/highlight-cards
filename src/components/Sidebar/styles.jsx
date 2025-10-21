@@ -13,7 +13,8 @@ export const StyledTooltip = styled(Tooltip)`
   padding: 6px 10px !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
   border: 1px solid #e5e5e5 !important;
-  z-index: 9999;
+  z-index: 99999 !important;
+  white-space: nowrap !important;
 `;
 
 export const SidebarNav = styled.nav`
@@ -21,7 +22,7 @@ export const SidebarNav = styled.nav`
   top: var(--header-height);
   left: 0;
   width: var(--sidebar-width);
-  height: 100vh;
+  height: calc(100vh - var(--header-height));
   padding-top: calc(var(--header-height) - 10px);
   background: #fff;
   border-right: 1px solid #ececec;
@@ -30,6 +31,25 @@ export const SidebarNav = styled.nav`
   flex-direction: column;
   align-items: center;
   gap: 24px;
+  overflow-y: auto;
+  overflow-x: visible;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #d0d0d0;
+    border-radius: 2px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #b0b0b0;
+  }
 
   &::after {
     content: '';

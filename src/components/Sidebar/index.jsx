@@ -57,7 +57,7 @@ const Sidebar = () => {
               >
                 {icon}
               </IconButton>
-              <StyledTooltip id={tooltipId} />
+              <StyledTooltip id={tooltipId} offset={10} />
             </React.Fragment>
           );
         })}
