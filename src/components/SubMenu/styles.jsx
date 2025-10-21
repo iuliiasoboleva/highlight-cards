@@ -29,8 +29,8 @@ export const SubmenuWrapper = styled.div`
 export const SubmenuInner = styled.div`
   display: flex;
   align-items: center;
-  gap: 40px;
-  padding: 10px 20px 10px calc(var(--sidebar-width) + 20px);
+  gap: 16px;
+  padding: 10px 20px 10px 20px;
   min-width: max-content;
   height: 100%;
 
@@ -42,14 +42,14 @@ export const SubmenuInner = styled.div`
 export const SubmenuLeft = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   flex-shrink: 0;
 `;
 
 export const SubmenuCenter = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: flex-start;
   gap: 8px;
   min-width: 0;
   ${({ $grow }) =>
