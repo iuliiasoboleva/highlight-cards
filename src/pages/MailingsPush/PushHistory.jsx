@@ -6,6 +6,7 @@ import { Copy, Inbox, Trash2 } from 'lucide-react';
 
 import axiosInstance from '../../axiosInstance';
 import TitleWithHelp from '../../components/TitleWithHelp';
+import { useToast } from '../../components/Toast';
 import { fetchCards, setCurrentCard } from '../../store/cardsSlice';
 import {
   EmptyMessage,
@@ -34,6 +35,7 @@ const PushHistory = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const toast = useToast();
   const cards = useSelector((state) => state.cards.cards);
   const user = useSelector((state) => state.user);
 
@@ -121,9 +123,11 @@ const PushHistory = () => {
       await axiosInstance.delete(`/mailings/${mailingToDelete}`);
       setDeleteModalOpen(false);
       setMailingToDelete(null);
+      toast.success('Рассылка успешно удалена');
       fetchHistory();
     } catch (e) {
       console.error(e);
+      toast.error('Ошибка при удалении рассылки');
       setDeleteModalOpen(false);
       setMailingToDelete(null);
     }
@@ -131,15 +135,57 @@ const PushHistory = () => {
 
   const handleCopy = async (mailingItem) => {
     try {
+      // Проверяем наличие карт
+      if (!cards || cards.length === 0) {
+        toast.error('Загрузка карт... Попробуйте снова через несколько секунд');
+        dispatch(fetchCards());
+        return;
+      }
+
       // Получаем полную информацию о рассылке
       const response = await axiosInstance.get(`/mailings/${mailingItem.id}`);
       const mailingData = response.data;
 
-      // Находим карту по cardId (проверяем и id, и uuid)
-      const card = cards.find((c) => 
-        String(c.id) === String(mailingData.cardId) || 
-        String(c.uuid) === String(mailingData.cardId)
-      );
+      console.log('🔍 Поиск карты для рассылки:', {
+        cardId: mailingData.cardId,
+        cardIdType: typeof mailingData.cardId,
+        availableCards: cards.map(c => ({
+          id: c.id,
+          idType: typeof c.id,
+          uuid: c.uuid,
+          uuidType: typeof c.uuid,
+          name: c.name
+        }))
+      });
+
+      // Находим карту по cardId (проверяем все возможные варианты)
+      let card = cards.find((c) => {
+        const matches = 
+          c.id === mailingData.cardId ||
+          c.uuid === mailingData.cardId ||
+          String(c.id) === String(mailingData.cardId) || 
+          String(c.uuid) === String(mailingData.cardId) ||
+          Number(c.id) === Number(mailingData.cardId) ||
+          parseInt(c.id) === parseInt(mailingData.cardId);
+        
+        if (matches) {
+          console.log('✅ Карта найдена:', {
+            name: c.name,
+            id: c.id,
+            uuid: c.uuid,
+            matchedWith: mailingData.cardId
+          });
+        }
+        
+        return matches;
+      });
+
+      // Если не найдена, пробуем найти по первой карте как fallback
+      if (!card && cards.length > 0) {
+        console.warn('⚠️ Карта не найдена по ID, используем первую доступную карту');
+        card = cards[0];
+        toast.info(`Исходная карта не найдена, используется: ${card.name || 'карта'}`);
+      }
       
       if (card) {
         // Устанавливаем выбранную карту и заполняем данные
@@ -151,15 +197,17 @@ const PushHistory = () => {
           }
         }));
         
+        toast.success('Параметры рассылки скопированы');
+        
         // Переходим на страницу создания push-рассылки
-        navigate(`/mailings/push`);
+        setTimeout(() => navigate(`/mailings/push`), 300);
       } else {
-        console.error('Карта не найдена. cardId:', mailingData.cardId, 'Доступные карты:', cards.map(c => ({ id: c.id, uuid: c.uuid, name: c.name })));
-        alert('Карта не найдена. Возможно, она была удалена.');
+        console.error('❌ Карта не найдена. cardId:', mailingData.cardId);
+        toast.error('Карта не найдена. Возможно, она была удалена.');
       }
     } catch (e) {
-      console.error('Ошибка при копировании рассылки:', e);
-      alert('Ошибка при копировании рассылки');
+      console.error('❌ Ошибка при копировании рассылки:', e);
+      toast.error('Ошибка при копировании рассылки');
     }
   };
 
