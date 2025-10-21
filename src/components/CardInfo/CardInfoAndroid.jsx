@@ -27,6 +27,7 @@ import {
   CardTypeDescription,
   HiZone,
   InfoTextButton,
+  QrBlock,
   StampOverlay,
   TopFieldsBlock,
 } from './styles';
@@ -283,16 +284,18 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick, hoverDesignKey, main
       {HeaderWrapped}
       {FooterWrapped}
 
-      {card.qrImg && <CardInfoQrImg src={card.qrImg} alt="QR код" />}
+      <QrBlock>
+        {card.qrImg && <CardInfoQrImg src={card.qrImg} alt="QR код" />}
 
-      {(() => {
-        const raw = card.cardNumber || card.serialNumber || '000001';
-        const onlyDigits = String(raw).replace(/\D/g, '');
-        const formatted = onlyDigits.length === 6
-          ? onlyDigits.replace(/(\d{3})(\d{3})/, '$1 $2')
-          : String(raw);
-        return <CardNumber>{formatted}</CardNumber>;
-      })()}
+        {(() => {
+          const raw = card.cardNumber || card.serialNumber || '000001';
+          const onlyDigits = String(raw).replace(/\D/g, '');
+          const formatted = onlyDigits.length === 6
+            ? onlyDigits.replace(/(\d{3})(\d{3})/, '$1 $2')
+            : String(raw);
+          return <CardNumber>{formatted}</CardNumber>;
+        })()}
+      </QrBlock>
 
       {MiddleWrapped}
 

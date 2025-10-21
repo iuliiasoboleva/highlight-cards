@@ -25,6 +25,7 @@ import {
   CardNumber,
   HiZone,
   InfoButton,
+  QrBlock,
   StampOverlay,
   TopFieldsBlock,
 } from './styles';
@@ -271,16 +272,18 @@ const CardInfo = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef,
 
       {FooterWrapped}
 
-      {card.qrImg && <CardInfoQrImg src={card.qrImg} alt="QR код" draggable="false" />}
+      <QrBlock>
+        {card.qrImg && <CardInfoQrImg src={card.qrImg} alt="QR код" draggable="false" />}
 
-      {(() => {
-        const rawNumber = card.cardNumber || card.serialNumber || '000001';
-        const onlyDigits = String(rawNumber).replace(/\D/g, '');
-        const formatted = onlyDigits.length === 6
-          ? onlyDigits.replace(/(\d{3})(\d{3})/, '$1 $2')
-          : String(rawNumber);
-        return <CardNumber>{formatted}</CardNumber>;
-      })()}
+        {(() => {
+          const rawNumber = card.cardNumber || card.serialNumber || '000001';
+          const onlyDigits = String(rawNumber).replace(/\D/g, '');
+          const formatted = onlyDigits.length === 6
+            ? onlyDigits.replace(/(\d{3})(\d{3})/, '$1 $2')
+            : String(rawNumber);
+          return <CardNumber>{formatted}</CardNumber>;
+        })()}
+      </QrBlock>
 
       <InfoButton onClick={toggleInfo} aria-label="Сведения">
         <HelpCircle size={20} />

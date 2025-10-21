@@ -84,7 +84,7 @@ export const GlobalStyle = createGlobalStyle`
     margin-top: calc(var(--header-height) + var(--bar-height));
     margin-left: var(--sidebar-width);
     min-width: 0;
-    min-height: 0;
+    min-height: calc(100vh - var(--header-height) - var(--bar-height));
   }
 
   a {

@@ -7,10 +7,10 @@ export const SettingsContainer = styled.div`
   flex-direction: column;
   background: #fff;
   width: 100%;
-  height: 100vh;
+  min-height: calc(100vh - var(--header-height) - var(--bar-height));
 
   @media (max-width: 1100px) {
-    height: auto;
+    min-height: auto;
   }
 `;
 

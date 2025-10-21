@@ -81,6 +81,15 @@ export const CardInfoMainImg = styled.img`
   border-radius: 4px;
 `;
 
+export const QrBlock = styled.div`
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-top: 8px;
+`;
+
 export const CardInfoQrImg = styled.img`
   max-width: 140px;
   width: 100%;
@@ -272,7 +281,6 @@ export const CardNumber = styled.div`
   font-size: 12px;
   font-weight: 700;
   text-align: center;
-  margin-top: 0;
 `;
 
 export const InfoButton = styled.button`
