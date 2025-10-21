@@ -9,7 +9,6 @@ import {
   DeleteCell,
   HeaderLabel,
   HeaderLabelTrash,
-  SpendingLabel,
   StatusIssueHeader,
   StatusIssueRow,
   StatusNameCell,
@@ -39,43 +38,39 @@ const CardStatusForm = ({ statusFields, onFieldChange, onAddField, onRemoveField
           </StatusTypeCell>
 
           <StatusNameCell>
-            <SpendingLabel>
-              <CustomInput
-                type="number"
-                value={field.cost ?? ''}
-                onChange={(e) => {
-                  let raw = e.target.value;
-                  // Убираем лидирующие нули
-                  if (raw.length > 1 && raw.startsWith('0')) {
-                    raw = raw.replace(/^0+/, '') || '0';
-                    e.target.value = raw;
-                  }
-                  onFieldChange(index, 'cost', raw);
-                }}
-                placeholder="₽"
-              />
-              <span>руб.</span>
-            </SpendingLabel>
+            <CustomInput
+              type="number"
+              value={field.cost ?? ''}
+              onChange={(e) => {
+                let raw = e.target.value;
+                // Убираем лидирующие нули
+                if (raw.length > 1 && raw.startsWith('0')) {
+                  raw = raw.replace(/^0+/, '') || '0';
+                  e.target.value = raw;
+                }
+                onFieldChange(index, 'cost', raw);
+              }}
+              placeholder="0"
+              suffix="руб."
+            />
           </StatusNameCell>
 
           <StatusRequiredCell>
-            <SpendingLabel>
-              <CustomInput
-                type="number"
-                value={field.percent ?? ''}
-                onChange={(e) => {
-                  let raw = e.target.value;
-                  // Убираем лидирующие нули
-                  if (raw.length > 1 && raw.startsWith('0')) {
-                    raw = raw.replace(/^0+/, '') || '0';
-                    e.target.value = raw;
-                  }
-                  onFieldChange(index, 'percent', raw);
-                }}
-                placeholder="%"
-              />
-              <span>%</span>
-            </SpendingLabel>
+            <CustomInput
+              type="number"
+              value={field.percent ?? ''}
+              onChange={(e) => {
+                let raw = e.target.value;
+                // Убираем лидирующие нули
+                if (raw.length > 1 && raw.startsWith('0')) {
+                  raw = raw.replace(/^0+/, '') || '0';
+                  e.target.value = raw;
+                }
+                onFieldChange(index, 'percent', raw);
+              }}
+              placeholder="0"
+              suffix="%"
+            />
           </StatusRequiredCell>
 
           <DeleteCell onClick={() => onRemoveField(index)} aria-label="Удалить статус">
