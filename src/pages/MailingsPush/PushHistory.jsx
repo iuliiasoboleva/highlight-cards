@@ -6,7 +6,7 @@ import { Copy, Inbox, Trash2 } from 'lucide-react';
 
 import axiosInstance from '../../axiosInstance';
 import TitleWithHelp from '../../components/TitleWithHelp';
-import { setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
+import { fetchCards, setCurrentCard } from '../../store/cardsSlice';
 import {
   EmptyMessage,
   EmptyStub,
@@ -34,7 +34,6 @@ const PushHistory = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const currentCard = useSelector((state) => state.cards.currentCard);
   const cards = useSelector((state) => state.cards.cards);
   const user = useSelector((state) => state.user);
 
@@ -66,7 +65,7 @@ const PushHistory = () => {
         sort_order: sortOrder,
         mailing_type: 'Push'
       };
-      if (currentCard?.id) params.card_id = currentCard.id;
+      // Не фильтруем по card_id - показываем все рассылки организации
       if (search) params.search = search;
       if (recipientFilter) params.recipient_filter = recipientFilter;
       
@@ -103,11 +102,18 @@ const PushHistory = () => {
     } catch (e) {
       console.error(e);
     }
-  }, [currentCard?.id, tz, user.organization_id, page, pageSize, search, recipientFilter, sortOrder]);
+  }, [tz, user.organization_id, page, pageSize, search, recipientFilter, sortOrder]);
 
   useEffect(() => {
     fetchHistory();
   }, [fetchHistory]);
+
+  useEffect(() => {
+    // Загружаем карты при монтировании, если их нет
+    if (!cards || cards.length === 0) {
+      dispatch(fetchCards());
+    }
+  }, [dispatch, cards]);
 
   const onDelete = async () => {
     if (!mailingToDelete) return;
@@ -129,8 +135,11 @@ const PushHistory = () => {
       const response = await axiosInstance.get(`/mailings/${mailingItem.id}`);
       const mailingData = response.data;
 
-      // Находим карту по cardId
-      const card = cards.find((c) => String(c.id) === String(mailingData.cardId));
+      // Находим карту по cardId (проверяем и id, и uuid)
+      const card = cards.find((c) => 
+        String(c.id) === String(mailingData.cardId) || 
+        String(c.uuid) === String(mailingData.cardId)
+      );
       
       if (card) {
         // Устанавливаем выбранную карту и заполняем данные
@@ -145,10 +154,12 @@ const PushHistory = () => {
         // Переходим на страницу создания push-рассылки
         navigate(`/mailings/push`);
       } else {
-        console.error('Карта не найдена');
+        console.error('Карта не найдена. cardId:', mailingData.cardId, 'Доступные карты:', cards.map(c => ({ id: c.id, uuid: c.uuid, name: c.name })));
+        alert('Карта не найдена. Возможно, она была удалена.');
       }
     } catch (e) {
       console.error('Ошибка при копировании рассылки:', e);
+      alert('Ошибка при копировании рассылки');
     }
   };
 
