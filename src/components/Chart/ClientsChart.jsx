@@ -115,10 +115,78 @@ const ClientsChart = ({ title = 'Клиентская активность', ext
   }, [chartData]);
 
   const calculateChange = (key) => {
-    const mid = Math.floor(sortedChartData.length / 2);
-    const prevSum = sortedChartData.slice(0, mid).reduce((acc, cur) => acc + (cur[key] || 0), 0);
-    const nextSum = sortedChartData.slice(mid).reduce((acc, cur) => acc + (cur[key] || 0), 0);
+    // Определяем период для расчета предыдущих данных
+    let previousData = [];
+    let currentData = sortedChartData;
+    
+    if (externalData && externalData.length && sortedChartData.length) {
+      const now = new Date();
+      let currentPeriodStart, previousPeriodStart, previousPeriodEnd;
+      
+      if (selectedPeriod === 'custom' && customRange.start && customRange.end) {
+        // Для кастомного периода
+        const diffMs = customRange.end - customRange.start;
+        previousPeriodEnd = new Date(customRange.start.getTime() - 1);
+        previousPeriodStart = new Date(previousPeriodEnd.getTime() - diffMs);
+      } else {
+        // Для стандартных периодов
+        switch (selectedPeriod) {
+          case 'day':
+            currentPeriodStart = new Date(now);
+            currentPeriodStart.setHours(0, 0, 0, 0);
+            previousPeriodStart = new Date(currentPeriodStart);
+            previousPeriodStart.setDate(currentPeriodStart.getDate() - 1);
+            previousPeriodEnd = new Date(currentPeriodStart.getTime() - 1);
+            break;
+          case 'week':
+            currentPeriodStart = new Date(now);
+            currentPeriodStart.setDate(now.getDate() - 7);
+            previousPeriodStart = new Date(currentPeriodStart);
+            previousPeriodStart.setDate(currentPeriodStart.getDate() - 7);
+            previousPeriodEnd = new Date(currentPeriodStart.getTime() - 1);
+            break;
+          case 'month':
+            currentPeriodStart = new Date(now);
+            currentPeriodStart.setMonth(now.getMonth() - 1);
+            previousPeriodStart = new Date(currentPeriodStart);
+            previousPeriodStart.setMonth(currentPeriodStart.getMonth() - 1);
+            previousPeriodEnd = new Date(currentPeriodStart.getTime() - 1);
+            break;
+          case 'year':
+            currentPeriodStart = new Date(now);
+            currentPeriodStart.setFullYear(now.getFullYear() - 1);
+            previousPeriodStart = new Date(currentPeriodStart);
+            previousPeriodStart.setFullYear(currentPeriodStart.getFullYear() - 1);
+            previousPeriodEnd = new Date(currentPeriodStart.getTime() - 1);
+            break;
+          case 'allTime':
+            // Для "Все время" используем половину данных как раньше
+            const mid = Math.floor(sortedChartData.length / 2);
+            previousData = sortedChartData.slice(0, mid);
+            break;
+          default:
+            const midDefault = Math.floor(sortedChartData.length / 2);
+            previousData = sortedChartData.slice(0, midDefault);
+        }
+      }
+      
+      // Фильтруем данные для предыдущего периода (кроме 'allTime')
+      if (selectedPeriod !== 'allTime' && previousPeriodStart && previousPeriodEnd) {
+        previousData = externalData.filter((item) => {
+          const itemDate = new Date(item.date);
+          return itemDate >= previousPeriodStart && itemDate <= previousPeriodEnd;
+        });
+      }
+    } else {
+      // Fallback для mock данных
+      const mid = Math.floor(sortedChartData.length / 2);
+      previousData = sortedChartData.slice(0, mid);
+    }
+    
+    const prevSum = previousData.reduce((acc, cur) => acc + (cur[key] || 0), 0);
+    const nextSum = currentData.reduce((acc, cur) => acc + (cur[key] || 0), 0);
     const change = prevSum === 0 ? nextSum : ((nextSum - prevSum) / prevSum) * 100;
+    
     return {
       value: nextSum,
       change: isFinite(change) ? Math.round(change) : 0,
