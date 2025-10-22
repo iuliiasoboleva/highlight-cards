@@ -20,7 +20,7 @@ const OPTIONS = [
   { key: 'new', label: 'Новые клиенты' },
   { key: 'repeat', label: 'Повторные клиенты' },
   { key: 'referral', label: 'Рефералы' },
-  { key: 'lastPeriod', label: 'Прошлый период' },
+  { key: 'lastPeriod', label: 'Прошлый период (всего визитов)' },
   { key: 'visits', label: 'Всего визитов' },
 ];
 

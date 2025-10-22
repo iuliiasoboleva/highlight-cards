@@ -90,9 +90,9 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
               selectable={false}
               initialKey="lastPeriod"
               statsByType={{
-                referral: {
-                  value: overallStats?.referrals?.value ?? 0,
-                  change: overallStats?.referrals?.change ?? 0,
+                lastPeriod: {
+                  value: overallStats?.lastPeriod?.value ?? 0,
+                  change: overallStats?.lastPeriod?.change ?? 0,
                 },
               }}
             />

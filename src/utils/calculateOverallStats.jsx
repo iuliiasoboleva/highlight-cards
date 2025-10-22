@@ -1,11 +1,11 @@
-export const calculateOverallStats = (data, previousData = []) => {
+export const calculateOverallStats = (data, previousData = [], previousPreviousData = []) => {
   const sum = (arr, key) => arr.reduce((acc, item) => acc + (item[key] || 0), 0);
 
   const current = {
     totalVisits: sum(data, 'visits'),
     repeatClients: sum(data, 'repeatClients'),
     newClients: sum(data, 'newClients'),
-    referrals: 0, // если нет поля — оставь 0 или добавь, если появится
+    referrals: 0,
   };
 
   const previous = {
@@ -13,6 +13,10 @@ export const calculateOverallStats = (data, previousData = []) => {
     repeatClients: sum(previousData, 'repeatClients'),
     newClients: sum(previousData, 'newClients'),
     referrals: 0,
+  };
+
+  const previousPrevious = {
+    totalVisits: sum(previousPreviousData, 'visits'),
   };
 
   return {
@@ -34,6 +38,7 @@ export const calculateOverallStats = (data, previousData = []) => {
     },
     lastPeriod: {
       value: previous.totalVisits,
+      change: previous.totalVisits - previousPrevious.totalVisits,
     },
   };
 };

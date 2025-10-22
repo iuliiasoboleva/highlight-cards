@@ -146,74 +146,50 @@ const Chart = ({
   useEffect(() => {
     const sorted = [...chartData].sort((a, b) => new Date(a.date) - new Date(b.date));
     
-    // Определяем период для расчета предыдущих данных
     let previousData = [];
+    let previousPreviousData = [];
     
     if (externalData && externalData.length && sorted.length) {
-      const now = new Date();
-      let currentPeriodStart, previousPeriodStart, previousPeriodEnd;
-      
-      if (selectedPeriod === 'custom' && selectedRange.start && selectedRange.end) {
-        // Для кастомного периода
-        const diffMs = selectedRange.end - selectedRange.start;
-        previousPeriodEnd = new Date(selectedRange.start.getTime() - 1); // За день до начала
-        previousPeriodStart = new Date(previousPeriodEnd.getTime() - diffMs);
-      } else {
-        // Для стандартных периодов
-        switch (selectedPeriod) {
-          case 'day':
-            currentPeriodStart = new Date(now);
-            currentPeriodStart.setHours(0, 0, 0, 0);
-            previousPeriodStart = new Date(currentPeriodStart);
-            previousPeriodStart.setDate(currentPeriodStart.getDate() - 1);
-            previousPeriodEnd = new Date(currentPeriodStart.getTime() - 1);
-            break;
-          case 'week':
-            currentPeriodStart = new Date(now);
-            currentPeriodStart.setDate(now.getDate() - 7);
-            previousPeriodStart = new Date(currentPeriodStart);
-            previousPeriodStart.setDate(currentPeriodStart.getDate() - 7);
-            previousPeriodEnd = new Date(currentPeriodStart.getTime() - 1);
-            break;
-          case 'month':
-            currentPeriodStart = new Date(now);
-            currentPeriodStart.setMonth(now.getMonth() - 1);
-            previousPeriodStart = new Date(currentPeriodStart);
-            previousPeriodStart.setMonth(currentPeriodStart.getMonth() - 1);
-            previousPeriodEnd = new Date(currentPeriodStart.getTime() - 1);
-            break;
-          case 'year':
-            currentPeriodStart = new Date(now);
-            currentPeriodStart.setFullYear(now.getFullYear() - 1);
-            previousPeriodStart = new Date(currentPeriodStart);
-            previousPeriodStart.setFullYear(currentPeriodStart.getFullYear() - 1);
-            previousPeriodEnd = new Date(currentPeriodStart.getTime() - 1);
-            break;
-          case 'allTime':
-            // Для "Все время" используем половину данных как раньше
-            const mid = Math.floor(sorted.length / 2);
-            previousData = sorted.slice(0, mid);
-            break;
-          default:
-            const midDefault = Math.floor(sorted.length / 2);
-            previousData = sorted.slice(0, midDefault);
-        }
+      if (sorted.length === 0) {
+        const stats = calculateOverallStats([], [], []);
+        setOverallStats(stats);
+        return;
       }
+
+      const currentStart = new Date(sorted[0].date);
+      const currentEnd = new Date(sorted[sorted.length - 1].date);
+      const diffMs = currentEnd - currentStart;
       
-      // Фильтруем данные для предыдущего периода (кроме 'allTime')
-      if (selectedPeriod !== 'allTime' && previousPeriodStart && previousPeriodEnd) {
+      if (selectedPeriod === 'allTime') {
+        const mid = Math.floor(sorted.length / 2);
+        const quarter = Math.floor(sorted.length / 4);
+        previousData = sorted.slice(0, mid);
+        previousPreviousData = sorted.slice(0, quarter);
+      } else {
+        const previousEnd = new Date(currentStart.getTime() - 1);
+        const previousStart = new Date(previousEnd.getTime() - diffMs);
+        
         previousData = externalData.filter((item) => {
           const itemDate = new Date(item.date);
-          return itemDate >= previousPeriodStart && itemDate <= previousPeriodEnd;
+          return itemDate >= previousStart && itemDate <= previousEnd;
+        });
+        
+        const previousPreviousEnd = new Date(previousStart.getTime() - 1);
+        const previousPreviousStart = new Date(previousPreviousEnd.getTime() - diffMs);
+        
+        previousPreviousData = externalData.filter((item) => {
+          const itemDate = new Date(item.date);
+          return itemDate >= previousPreviousStart && itemDate <= previousPreviousEnd;
         });
       }
     } else {
-      // Fallback для mock данных
       const mid = Math.floor(sorted.length / 2);
+      const quarter = Math.floor(sorted.length / 4);
       previousData = sorted.slice(0, mid);
+      previousPreviousData = sorted.slice(0, quarter);
     }
     
-    const stats = calculateOverallStats(sorted, previousData);
+    const stats = calculateOverallStats(sorted, previousData, previousPreviousData);
     setOverallStats(stats);
   }, [chartData, selectedPeriod, selectedRange, externalData]);
 
