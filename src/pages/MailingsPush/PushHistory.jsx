@@ -512,23 +512,23 @@ const PushHistory = () => {
             <p style={{ margin: '0 0 24px 0', color: '#666', fontSize: '14px' }}>
               История рассылки будет удалена безвозвратно
             </p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'space-between', flexDirection: 'column' }}>
               <button
                 onClick={onDelete}
                 style={{
-                  flex: 1,
+                  width: '100%',
                   padding: '10px 16px',
-                  border: 'none',
+                  border: '1px solid #ddd',
                   borderRadius: '8px',
                   fontSize: '14px',
                   fontWeight: 600,
                   cursor: 'pointer',
-                  backgroundColor: '#c31e3c',
-                  color: '#fff',
+                  backgroundColor: '#f5f5f5',
+                  color: '#2c3e50',
                   transition: 'background-color 0.2s',
                 }}
-                onMouseEnter={(e) => (e.target.style.backgroundColor = '#a01830')}
-                onMouseLeave={(e) => (e.target.style.backgroundColor = '#c31e3c')}
+                onMouseEnter={(e) => (e.target.style.backgroundColor = '#e5e5e5')}
+                onMouseLeave={(e) => (e.target.style.backgroundColor = '#f5f5f5')}
               >
                 Удалить
               </button>
@@ -538,19 +538,19 @@ const PushHistory = () => {
                   setMailingToDelete(null);
                 }}
                 style={{
-                  flex: 1,
+                  width: '100%',
                   padding: '10px 16px',
-                  border: '1px solid #ddd',
+                  border: 'none',
                   borderRadius: '8px',
                   fontSize: '14px',
                   fontWeight: 600,
                   cursor: 'pointer',
-                  backgroundColor: '#f5f5f5',
-                  color: '#666',
+                  backgroundColor: '#bf4756',
+                  color: '#fff',
                   transition: 'background-color 0.2s',
                 }}
-                onMouseEnter={(e) => (e.target.style.backgroundColor = '#e5e5e5')}
-                onMouseLeave={(e) => (e.target.style.backgroundColor = '#f5f5f5')}
+                onMouseEnter={(e) => (e.target.style.backgroundColor = '#a63d49')}
+                onMouseLeave={(e) => (e.target.style.backgroundColor = '#bf4756')}
               >
                 Отмена
               </button>

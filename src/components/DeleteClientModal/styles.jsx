@@ -17,12 +17,23 @@ export const Question = styled.p`
   font-weight: 500;
 `;
 
-export const DangerButton = styled(CustomModal.PrimaryButton)`
-  background: #e03131;
+export const DangerButton = styled(CustomModal.SecondaryButton)`
+  background: #f5f5f5;
+  color: #2c3e50;
   &:hover {
-    background: #c92a2a;
+    background: #e5e5e5;
   }
   &:active {
-    background: #b02525;
+    background: #d5d5d5;
+  }
+`;
+
+export const CancelButton = styled(CustomModal.PrimaryButton)`
+  background: #bf4756;
+  &:hover {
+    background: #a63d49;
+  }
+  &:active {
+    background: #8d333d;
   }
 `;

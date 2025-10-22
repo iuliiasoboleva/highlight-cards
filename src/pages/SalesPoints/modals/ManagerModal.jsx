@@ -164,13 +164,13 @@ const ManagerModal = ({ isOpen, onClose, onSave, onDelete, initialData = {}, isE
           setConfirmOpen(false);
           onClose?.();
         }}
-        style={{ background: '#e53935', maxWidth: '100%' }}
+        style={{ background: '#f5f5f5', color: '#2c3e50', maxWidth: '100%' }}
       >
         Удалить
       </CustomMainButton>
       <CustomMainButton
         onClick={() => setConfirmOpen(false)}
-        style={{ background: '#f5f5f5', color: '#2c3e50', maxWidth: '100%' }}
+        style={{ background: '#bf4756', maxWidth: '100%' }}
       >
         Отмена
       </CustomMainButton>
@@ -180,7 +180,7 @@ const ManagerModal = ({ isOpen, onClose, onSave, onDelete, initialData = {}, isE
       {isEdit && (
         <CustomMainButton
           onClick={() => setConfirmOpen(true)}
-          style={{ background: '#e53935', maxWidth: '100%' }}
+          style={{ background: '#bf4756', maxWidth: '100%' }}
         >
           Удалить
         </CustomMainButton>

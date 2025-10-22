@@ -1,7 +1,7 @@
 import React from 'react';
 
 import CustomModal from '../../customs/CustomModal';
-import { DangerButton, Question, Subtitle } from './styles';
+import { CancelButton, DangerButton, Question, Subtitle } from './styles';
 
 const DeleteCardModal = ({ open = true, cardName, onConfirm, onCancel }) => {
   return (
@@ -12,7 +12,7 @@ const DeleteCardModal = ({ open = true, cardName, onConfirm, onCancel }) => {
       actions={
         <>
           <DangerButton onClick={onConfirm}>Удалить</DangerButton>
-          <CustomModal.SecondaryButton onClick={onCancel}>Отменить</CustomModal.SecondaryButton>
+          <CancelButton onClick={onCancel}>Отменить</CancelButton>
         </>
       }
     >

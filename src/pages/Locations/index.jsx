@@ -680,14 +680,17 @@ const Locations = () => {
         closeOnOverlayClick={false}
         actions={
           <>
-            <CustomModal.SecondaryButton onClick={handleCancelDelete}>
-              Отмена
-            </CustomModal.SecondaryButton>
-            <CustomModal.PrimaryButton 
+            <CustomModal.SecondaryButton 
               onClick={handleConfirmDelete}
-              style={{ background: '#e53935' }}
+              style={{ background: '#f5f5f5', color: '#2c3e50' }}
             >
               Удалить
+            </CustomModal.SecondaryButton>
+            <CustomModal.PrimaryButton 
+              onClick={handleCancelDelete}
+              style={{ background: '#bf4756' }}
+            >
+              Отмена
             </CustomModal.PrimaryButton>
           </>
         }

@@ -12,8 +12,18 @@ const DeleteClientModal = ({ fullName, onConfirm, onCancel }) => {
       closeOnOverlayClick={false}
       actions={
         <>
-          <CustomModal.SecondaryButton onClick={onCancel}>Отменить</CustomModal.SecondaryButton>
-          <CustomModal.PrimaryButton onClick={onConfirm}>Удалить</CustomModal.PrimaryButton>
+          <CustomModal.SecondaryButton 
+            onClick={onConfirm}
+            style={{ background: '#f5f5f5', color: '#2c3e50' }}
+          >
+            Удалить
+          </CustomModal.SecondaryButton>
+          <CustomModal.PrimaryButton 
+            onClick={onCancel}
+            style={{ background: '#bf4756' }}
+          >
+            Отменить
+          </CustomModal.PrimaryButton>
         </>
       }
     >

@@ -73,7 +73,7 @@ const NetworkModal = ({
       {isEdit && (
         <CustomMainButton
           onClick={() => setConfirmingDelete(true)}
-          style={{ background: '#e53935', maxWidth: '100%' }}
+          style={{ background: '#bf4756', maxWidth: '100%' }}
         >
           Удалить
         </CustomMainButton>
@@ -92,13 +92,13 @@ const NetworkModal = ({
           setConfirmingDelete(false);
           onClose?.();
         }}
-        style={{ background: '#e53935', maxWidth: '100%' }}
+        style={{ background: '#f5f5f5', color: '#2c3e50', maxWidth: '100%' }}
       >
         Удалить
       </CustomMainButton>
       <CustomMainButton
         onClick={() => setConfirmingDelete(false)}
-        style={{ background: '#f5f5f5', color: '#2c3e50', maxWidth: '100%' }}
+        style={{ background: '#bf4756', maxWidth: '100%' }}
       >
         Отмена
       </CustomMainButton>
