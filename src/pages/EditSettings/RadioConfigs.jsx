@@ -368,7 +368,7 @@ const RadioConfigs = ({ cardStatus }) => {
     configs.push({
       options: [
         { value: 'pointsUnlimit', label: 'Неограниченный' },
-        { value: 'pointsFixedLater', label: 'Фиксированный срок после получения бонусов' },
+        { value: 'pointsFixedLater', label: 'Фиксированный срок после получения баллов' },
       ],
       selected: settings.pointsLimit,
       onChange: (value) => updateSettingsField('pointsLimit', value),
