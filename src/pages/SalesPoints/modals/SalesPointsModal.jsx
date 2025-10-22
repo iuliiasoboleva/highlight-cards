@@ -344,6 +344,14 @@ const SalesPointsModalWithMap = ({
       <CustomMainButton
         onClick={() => setConfirmOpen(false)}
         style={{ background: '#bf4756', maxWidth: '100%' }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = '#a63d49';
+          e.currentTarget.style.color = '#fff';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = '#bf4756';
+          e.currentTarget.style.color = '';
+        }}
       >
         Отмена
       </CustomMainButton>
@@ -354,13 +362,43 @@ const SalesPointsModalWithMap = ({
         <CustomMainButton
           onClick={() => setConfirmOpen(true)}
           disabled={!isDeletable}
-          style={{ background: '#bf4756', maxWidth: '100%' }}
+          style={{ 
+            background: '#2c3e50', 
+            color: '#fff',
+            maxWidth: '100%',
+            '&:hover': {
+              background: '#1a252f',
+              color: '#fff'
+            }
+          }}
+          onMouseEnter={(e) => {
+            if (!isDeletable) return;
+            e.currentTarget.style.background = '#1a252f';
+            e.currentTarget.style.color = '#fff';
+          }}
+          onMouseLeave={(e) => {
+            if (!isDeletable) return;
+            e.currentTarget.style.background = '#2c3e50';
+            e.currentTarget.style.color = '#fff';
+          }}
         >
           Удалить
         </CustomMainButton>
       )}
       <Spacer />
-      <CustomMainButton onClick={handleSave} style={{ maxWidth: '100%' }}>
+      <CustomMainButton 
+        onClick={handleSave} 
+        style={{ 
+          background: '#bf4756',
+          maxWidth: '100%'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = '#a63d49';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = '#bf4756';
+        }}
+      >
         Сохранить
       </CustomMainButton>
     </>

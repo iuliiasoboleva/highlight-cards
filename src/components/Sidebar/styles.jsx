@@ -13,8 +13,10 @@ export const StyledTooltip = styled(Tooltip)`
   padding: 6px 10px !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
   border: 1px solid #e5e5e5 !important;
-  z-index: 99999 !important;
+  z-index: 999999 !important;
   white-space: nowrap !important;
+  position: fixed !important;
+  pointer-events: none !important;
 `;
 
 export const SidebarNav = styled.nav`
@@ -26,7 +28,7 @@ export const SidebarNav = styled.nav`
   padding-top: calc(var(--header-height) - 10px);
   background: #fff;
   border-right: 1px solid #ececec;
-  z-index: 2000;
+  z-index: 10000;
   display: flex;
   flex-direction: column;
   align-items: center;

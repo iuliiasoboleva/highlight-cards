@@ -689,6 +689,14 @@ const Locations = () => {
             <CustomModal.PrimaryButton 
               onClick={handleCancelDelete}
               style={{ background: '#bf4756' }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#a63d49';
+                e.currentTarget.style.color = '#fff';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#bf4756';
+                e.currentTarget.style.color = '';
+              }}
             >
               Отмена
             </CustomModal.PrimaryButton>

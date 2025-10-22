@@ -32,8 +32,10 @@ export const CancelButton = styled(CustomModal.PrimaryButton)`
   background: #bf4756;
   &:hover {
     background: #a63d49;
+    color: #fff;
   }
   &:active {
     background: #8d333d;
+    color: #fff;
   }
 `;

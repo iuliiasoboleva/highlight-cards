@@ -21,6 +21,14 @@ const DeleteClientModal = ({ fullName, onConfirm, onCancel }) => {
           <CustomModal.PrimaryButton 
             onClick={onCancel}
             style={{ background: '#bf4756' }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#a63d49';
+              e.currentTarget.style.color = '#fff';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#bf4756';
+              e.currentTarget.style.color = '';
+            }}
           >
             Отменить
           </CustomModal.PrimaryButton>

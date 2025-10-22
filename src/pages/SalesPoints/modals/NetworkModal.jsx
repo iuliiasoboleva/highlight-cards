@@ -73,12 +73,41 @@ const NetworkModal = ({
       {isEdit && (
         <CustomMainButton
           onClick={() => setConfirmingDelete(true)}
-          style={{ background: '#bf4756', maxWidth: '100%' }}
+          style={{ 
+            background: '#2c3e50',
+            color: '#fff',
+            maxWidth: '100%'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#1a252f';
+            e.currentTarget.style.color = '#fff';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = '#2c3e50';
+            e.currentTarget.style.color = '#fff';
+          }}
         >
           Удалить
         </CustomMainButton>
       )}
-      <CustomMainButton onClick={handleSave} disabled={!name.trim()} style={{ maxWidth: '100%' }}>
+      <CustomMainButton 
+        onClick={handleSave} 
+        disabled={!name.trim()} 
+        style={{ 
+          background: '#bf4756',
+          maxWidth: '100%'
+        }}
+        onMouseEnter={(e) => {
+          if (name.trim()) {
+            e.currentTarget.style.background = '#a63d49';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (name.trim()) {
+            e.currentTarget.style.background = '#bf4756';
+          }
+        }}
+      >
         Сохранить
       </CustomMainButton>
     </>
@@ -99,6 +128,14 @@ const NetworkModal = ({
       <CustomMainButton
         onClick={() => setConfirmingDelete(false)}
         style={{ background: '#bf4756', maxWidth: '100%' }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = '#a63d49';
+          e.currentTarget.style.color = '#fff';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = '#bf4756';
+          e.currentTarget.style.color = '';
+        }}
       >
         Отмена
       </CustomMainButton>
