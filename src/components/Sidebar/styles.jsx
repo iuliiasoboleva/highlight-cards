@@ -131,10 +131,14 @@ export const BottomNav = styled.nav`
     position: fixed;
     bottom: 0;
     left: 0;
+    right: 0;
     width: 100%;
     background: #f8f8f8;
     height: var(--bottom-nav-height);
     padding: 12px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
     z-index: 10000;
+    border-top: 1px solid #e0e0e0;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
   }
 `;

@@ -193,6 +193,7 @@ export const GlobalStyle = createGlobalStyle`
       margin-left: 0;
       min-height: 100%;
       margin-top: auto;
+      padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
     }
   }
 `;
