@@ -293,7 +293,9 @@ const MainLayout = () => {
         </div>
 
         <div className="page-content">
-          <Outlet />
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <Outlet />
+          </div>
           <Footer />
         </div>
       </div>

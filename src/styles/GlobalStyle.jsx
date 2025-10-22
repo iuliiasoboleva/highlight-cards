@@ -191,9 +191,9 @@ export const GlobalStyle = createGlobalStyle`
   @media (max-width: 999px) {
     .page-content {
       margin-left: 0;
-      min-height: 100%;
-      margin-top: auto;
-      padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
+      min-height: calc(100vh - var(--header-mobile-height));
+      margin-top: var(--header-mobile-height);
+      padding-bottom: var(--bottom-nav-height);
     }
   }
 `;

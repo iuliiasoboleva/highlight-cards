@@ -17,7 +17,6 @@ export const FooterWrap = styled.footer`
     flex-direction: column;
     gap: 8px;
     text-align: center;
-    margin-bottom: var(--bottom-nav-height);
   }
 `;
 
@@ -26,20 +25,39 @@ export const FooterCol = styled.div`
   align-items: center;
   flex-wrap: wrap;
   gap: 4px;
+  justify-content: center;
+
+  @media (max-width: 999px) {
+    &:last-child {
+      flex-wrap: nowrap;
+      font-size: 12px;
+      gap: 2px;
+    }
+  }
 `;
 
 export const FooterLink = styled.a`
   color: inherit;
   text-decoration: none;
   margin: 0 4px;
+  white-space: nowrap;
 
   &:hover {
     text-decoration: underline;
+  }
+
+  @media (max-width: 999px) {
+    margin: 0 2px;
+    font-size: 11px;
   }
 `;
 
 export const Separator = styled.span`
   margin: 0 4px;
+
+  @media (max-width: 999px) {
+    margin: 0 2px;
+  }
 `;
 
 export const Company = styled.p`
