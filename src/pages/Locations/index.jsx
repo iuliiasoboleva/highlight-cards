@@ -10,6 +10,7 @@ import LoaderCentered from '../../components/LoaderCentered';
 import { useToast } from '../../components/Toast';
 import YandexMapPicker from '../../components/YandexMapPicker';
 import CustomInput from '../../customs/CustomInput/index.jsx';
+import CustomModal from '../../customs/CustomModal';
 import CustomSelect from '../../customs/CustomSelect';
 import CustomTextArea from '../../customs/CustomTextarea/index.jsx';
 import ToggleSwitch from '../../customs/CustomToggleSwitch/index.jsx';
@@ -74,6 +75,8 @@ const Locations = () => {
   const [singleAddress, setSingleAddress] = useState('');
   const [singleCoords, setSingleCoords] = useState(null);
   const [singleShowMap, setSingleShowMap] = useState(false);
+
+  const [locationToDelete, setLocationToDelete] = useState(null);
 
   // подтягиваем список точек
   useEffect(() => {
@@ -211,11 +214,27 @@ const Locations = () => {
     }
   };
 
-  const removeLocation = (id) => {
-    dispatch(deleteBranchThunk(id))
+  const handleDeleteClick = (location) => {
+    setLocationToDelete(location);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!locationToDelete) return;
+    
+    dispatch(deleteBranchThunk(locationToDelete.id))
       .unwrap()
-      .then(() => toast.success('Локация удалена'))
-      .catch(() => toast.error('Не удалось удалить локацию'));
+      .then(() => {
+        toast.success('Локация удалена');
+        setLocationToDelete(null);
+      })
+      .catch(() => {
+        toast.error('Не удалось удалить локацию');
+        setLocationToDelete(null);
+      });
+  };
+
+  const handleCancelDelete = () => {
+    setLocationToDelete(null);
   };
 
   const applySuggest = async (s) => {
@@ -620,7 +639,7 @@ const Locations = () => {
             <LocationActions>
               <ToggleSwitch checked={loc.active !== undefined ? loc.active : true} onChange={() => toggleGeo(loc)} />
               <DeleteLocationBtn
-                onClick={() => removeLocation(loc.id)}
+                onClick={() => handleDeleteClick(loc)}
                 aria-label="Удалить локацию"
               >
                 <Trash2 size={20} />
@@ -648,9 +667,41 @@ const Locations = () => {
     );
 
   return (
-    <EditLayout defaultPlatform="chat" chatMessage={pushMessage}>
-      {leftContent}
-    </EditLayout>
+    <>
+      <EditLayout defaultPlatform="chat" chatMessage={pushMessage}>
+        {leftContent}
+      </EditLayout>
+
+      <CustomModal
+        open={!!locationToDelete}
+        onClose={handleCancelDelete}
+        title="Удалить адрес точки продаж?"
+        maxWidth={480}
+        closeOnOverlayClick={false}
+        actions={
+          <>
+            <CustomModal.SecondaryButton onClick={handleCancelDelete}>
+              Отмена
+            </CustomModal.SecondaryButton>
+            <CustomModal.PrimaryButton 
+              onClick={handleConfirmDelete}
+              style={{ background: '#e53935' }}
+            >
+              Удалить
+            </CustomModal.PrimaryButton>
+          </>
+        }
+      >
+        <p style={{ margin: '12px 0', fontWeight: 500, color: '#2c3e50' }}>
+          Адрес будет удален из системы без возможности восстановления
+        </p>
+        {locationToDelete && (
+          <p style={{ margin: '16px 0 0', color: '#2c3e50' }}>
+            Удалить адрес: <strong>{locationToDelete.name || locationToDelete.address}</strong>?
+          </p>
+        )}
+      </CustomModal>
+    </>
   );
 };
 
