@@ -113,7 +113,7 @@ const DefaultCardInfo = () => {
               </OverlayWrapper>
             ) : (
               <CardWrapper>
-                <CardInfo card={card} setShowInfo={setShowInfo} />
+                <CardInfo card={card} setShowInfo={setShowInfo} previewType="list" />
               </CardWrapper>
             )}
           </PhoneContainer>

@@ -137,7 +137,7 @@ const Cards = () => {
                       setDragIndex(null);
                     }}
                   >
-                    <CardInfo card={card} />
+                    <CardInfo card={card} isPreview={true} previewType="list" />
                   </DraggableInfo>
                 )}
               </CardImageBlock>

@@ -31,7 +31,7 @@ import {
   TopFieldsBlock,
 } from './styles';
 
-const CardInfo = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef, isPreview }) => {
+const CardInfo = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef, isPreview, previewType }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id: urlId } = useParams();
@@ -258,9 +258,15 @@ const CardInfo = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef,
     MiddleImgBlock
   );
 
+  const getClassName = () => {
+    if (previewType === 'list') return 'preview-list';
+    if (isPreview) return 'preview-scaled';
+    return '';
+  };
+
   return (
     <CardBox
-      className={isPreview ? 'preview-scaled' : ''}
+      className={getClassName()}
       style={{
         backgroundColor: mergedCard.cardBackground,
         color: mergedCard.textColor,

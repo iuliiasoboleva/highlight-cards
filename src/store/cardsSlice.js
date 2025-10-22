@@ -34,6 +34,17 @@ const getAllCards = (useTemplates = false) => {
   return [fixedCard, ...sortedCards];
 };
 
+const mapCardFromAPI = (card) => ({
+  ...card,
+  frameUrl: card.frame_url || card.frameUrl,
+  qrImg: card.qr_img || card.qrImg,
+  urlCopy: card.url_copy || card.urlCopy,
+  isActive: card.is_active !== undefined ? card.is_active : card.isActive,
+  initialStampsOnIssue: card.initial_stamps_on_issue !== undefined ? card.initial_stamps_on_issue : card.initialStampsOnIssue,
+  initialPointsOnIssue: card.initial_points_on_issue !== undefined ? card.initial_points_on_issue : card.initialPointsOnIssue,
+  isPinned: card.is_pinned !== undefined ? card.is_pinned : card.isPinned,
+});
+
 const initialState = {
   cards: [],
   loading: true,
@@ -478,7 +489,8 @@ export const cardsSlice = createSlice({
         state.cards = [fixedCard];
       })
       .addCase(fetchCards.fulfilled, (state, action) => {
-        const rawCards = [fixedCard, ...action.payload];
+        const mappedCards = action.payload.map(mapCardFromAPI);
+        const rawCards = [fixedCard, ...mappedCards];
 
         const fixed = rawCards[0];
         const others = rawCards.slice(1);
@@ -508,13 +520,7 @@ export const cardsSlice = createSlice({
       })
       .addCase(createCard.fulfilled, (state, action) => {
         state.loading = false;
-        const rawCard = action.payload;
-        const newCard = {
-          ...rawCard,
-          frameUrl: rawCard.frame_url || rawCard.frameUrl || '/frame-empty.svg',
-          qrImg: rawCard.qr_img || rawCard.qrImg,
-          urlCopy: rawCard.url_copy || rawCard.urlCopy,
-        };
+        const newCard = mapCardFromAPI(action.payload);
         const rest = state.cards.slice(1).filter((c) => c.id !== newCard.id);
         state.cards = [state.cards[0], ...rest, newCard];
         state.currentCard = mergeCardWithDefault(newCard);
@@ -527,7 +533,7 @@ export const cardsSlice = createSlice({
         state.cards = state.cards.filter((c) => c.id !== action.payload);
       })
       .addCase(copyCardAsync.fulfilled, (state, action) => {
-        const newCard = { ...action.payload, frameUrl: action.payload.frameUrl || 'phone.svg' };
+        const newCard = mapCardFromAPI(action.payload);
         state.cards.push(newCard);
       })
       .addCase(renameCardAsync.fulfilled, (state, action) => {
