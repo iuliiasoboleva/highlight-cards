@@ -227,8 +227,9 @@ const Locations = () => {
         toast.success('Локация удалена');
         setLocationToDelete(null);
       })
-      .catch(() => {
-        toast.error('Не удалось удалить локацию');
+      .catch((error) => {
+        const errorMessage = error?.detail || error?.message || 'Не удалось удалить локацию';
+        toast.error(errorMessage);
         setLocationToDelete(null);
       });
   };
