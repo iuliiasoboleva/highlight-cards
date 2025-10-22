@@ -26,6 +26,7 @@ import {
   HiZone,
   InfoButton,
   QrBlock,
+  Spacer,
   StampOverlay,
   TopFieldsBlock,
 } from './styles';
@@ -271,6 +272,8 @@ const CardInfo = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef,
       {MiddleWrapped}
 
       {FooterWrapped}
+
+      <Spacer />
 
       <QrBlock>
         {card.qrImg && <CardInfoQrImg src={card.qrImg} alt="QR код" draggable="false" />}

@@ -6,7 +6,7 @@ export const CardInfo = styled.div`
   border-radius: 8px;
   color: rgb(31, 30, 31);
   background-color: #fff;
-  padding: 12px 0;
+  padding: 12px 0 8px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -15,7 +15,7 @@ export const CardInfo = styled.div`
   height: 460px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
   font-size: 10px;
   font-weight: bold;
 
@@ -82,12 +82,12 @@ export const CardInfoMainImg = styled.img`
 `;
 
 export const QrBlock = styled.div`
-  margin-top: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding-top: 8px;
+  gap: 6px;
+  padding-top: 12px;
+  padding-bottom: 2px;
 `;
 
 export const CardInfoQrImg = styled.img`
@@ -284,12 +284,17 @@ export const CardNumber = styled.div`
 `;
 
 export const InfoButton = styled.button`
-  margin-top: auto;
   cursor: pointer;
   margin-right: 12px;
+  margin-top: auto;
   align-self: flex-end;
   background: none;
   border: none;
+`;
+
+export const Spacer = styled.div`
+  flex: 1;
+  min-height: 20px;
 `;
 
 export const HiZone = styled.div`
