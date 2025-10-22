@@ -90,7 +90,6 @@ const salesPointsSlice = createSlice({
       .addCase(fetchBranches.fulfilled, (state, action) => {
         state.loading = false;
         state.list = action.payload;
-        console.log('fetchBranches loaded:', action.payload.map(b => ({ id: b.id, uuid: b.uuid, name: b.name })));
       })
       .addCase(fetchBranches.rejected, (state, action) => {
         state.loading = false;
@@ -100,20 +99,14 @@ const salesPointsSlice = createSlice({
         state.list.push(action.payload);
       })
       .addCase(editBranch.fulfilled, (state, action) => {
-        const idx = state.list.findIndex((b) => 
-          b.id === action.payload.id || 
-          b.uuid === action.payload.id || 
-          b.id === action.payload.uuid ||
-          b.uuid === action.payload.uuid ||
-          String(b.id) === String(action.payload.id) ||
-          String(b.id) === String(action.payload.uuid)
-        );
+        const payloadId = action.payload.uuid || action.payload.id;
+        const idx = state.list.findIndex((b) => {
+          const branchId = b.uuid || b.id;
+          return branchId === payloadId || String(branchId) === String(payloadId);
+        });
+        
         if (idx !== -1) {
           state.list[idx] = action.payload;
-          console.log('Branch updated successfully:', action.payload.id, '→ active:', action.payload.active);
-        } else {
-          console.warn('Branch not found for update. Looking for:', action.payload.id, action.payload.uuid);
-          console.warn('Available in list:', state.list.map(b => ({ id: b.id, uuid: b.uuid })));
         }
       })
       .addCase(deleteBranch.fulfilled, (state, action) => {

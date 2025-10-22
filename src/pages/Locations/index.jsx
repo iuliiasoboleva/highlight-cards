@@ -339,13 +339,8 @@ const Locations = () => {
   };
 
   const toggleGeo = (loc) => {
-    const newState = !loc.active;
-    console.log('toggleGeo called:', {
-      id: loc.id,
-      currentActive: loc.active,
-      newActive: newState,
-      location: loc
-    });
+    const currentState = loc.active !== undefined ? loc.active : true;
+    const newState = !currentState;
     
     dispatch(
       editBranch({
@@ -354,12 +349,10 @@ const Locations = () => {
       }),
     )
       .unwrap()
-      .then((result) => {
-        console.log('toggleGeo success:', result);
+      .then(() => {
         toast.info(`Geo-push ${newState ? 'включён' : 'выключен'}`);
       })
-      .catch((error) => {
-        console.error('toggleGeo error:', error);
+      .catch(() => {
         toast.error('Не удалось переключить Geo-push');
       });
   };
@@ -625,7 +618,7 @@ const Locations = () => {
             </LocationInfo>
 
             <LocationActions>
-              <ToggleSwitch checked={!!loc.active} onChange={() => toggleGeo(loc)} />
+              <ToggleSwitch checked={loc.active !== undefined ? loc.active : true} onChange={() => toggleGeo(loc)} />
               <DeleteLocationBtn
                 onClick={() => removeLocation(loc.id)}
                 aria-label="Удалить локацию"
