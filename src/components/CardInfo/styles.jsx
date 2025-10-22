@@ -10,9 +10,9 @@ export const CardInfo = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  max-width: 230px;
+  max-width: 220px;
   width: 100%;
-  height: 480px;
+  height: 460px;
   display: flex;
   flex-direction: column;
   gap: 10px;

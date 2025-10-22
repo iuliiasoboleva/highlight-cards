@@ -13,6 +13,7 @@ import { transactionHeaders } from '../../mocks/mockTransactions';
 import {
   Button,
   ButtonsRow,
+  CardWrapper,
   FrameImg,
   ImageWrapper,
   InfoBlock,
@@ -111,7 +112,9 @@ const DefaultCardInfo = () => {
                 />
               </OverlayWrapper>
             ) : (
-              <CardInfo card={card} setShowInfo={setShowInfo} />
+              <CardWrapper>
+                <CardInfo card={card} setShowInfo={setShowInfo} />
+              </CardWrapper>
             )}
           </PhoneContainer>
 

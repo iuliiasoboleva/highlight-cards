@@ -100,7 +100,7 @@ export const PhoneContainer = styled.div`
 `;
 
 export const FrameImg = styled.img`
-  width: 290px;
+  width: 280px;
   height: auto;
   object-fit: cover;
 
@@ -118,6 +118,14 @@ export const OverlayWrapper = styled.div`
   align-items: center;
   justify-content: center;
   pointer-events: auto;
+`;
+
+export const CardWrapper = styled.div`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const QrContainer = styled.div`

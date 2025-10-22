@@ -5,8 +5,8 @@ export const Overlay = styled.div`
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  max-height: 85%;
-  max-width: 85%;
+  max-height: 77%;
+  max-width: 83%;
   width: 220px;
   overflow-y: auto;
   overflow-x: hidden;
