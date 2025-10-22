@@ -491,7 +491,7 @@ const Locations = () => {
               onChange={(e) => setSingleAddress(e.target.value)}
               placeholder="Адрес точки продаж"
               disabled={!singleEditMode}
-              style={{ minWidth: 320 }}
+              style={{ width: '100%', flex: 1 }}
             />
             <ActionButton
               variant="secondary"

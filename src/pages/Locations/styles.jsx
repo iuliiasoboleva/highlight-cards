@@ -106,7 +106,12 @@ export const ActionRow = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    width: 100%;
+  }
 `;
 
 export const ActionButton = styled.button`
@@ -118,12 +123,14 @@ export const ActionButton = styled.button`
   line-height: 40px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   cursor: pointer;
   transition: 0.15s ease;
   border: 1px solid transparent;
   user-select: none;
   white-space: nowrap;
+  flex-shrink: 0;
 
   .icon {
     flex: 0 0 auto;
@@ -159,11 +166,16 @@ export const ActionButton = styled.button`
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
+    justify-content: center;
   }
 `;
 
 export const AddressWrap = styled.div`
   position: relative;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 export const SuggestList = styled.ul`
