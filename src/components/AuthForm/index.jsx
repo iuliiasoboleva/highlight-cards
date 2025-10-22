@@ -215,7 +215,7 @@ const AuthForm = () => {
         }
       }
 
-      // Нет quickjwt → работаем по SMS
+      // Нет quickjwt → работаем по SMS или PIN
       try {
         const digits = formData.phone.replace(/\D/g, '');
         if (digits.length !== 11) {
@@ -223,8 +223,17 @@ const AuthForm = () => {
           setSubmitting(false);
           return;
         }
-        await dispatch(requestSmsCode({ phone: digits })).unwrap();
+        
+        const smsResult = await dispatch(requestSmsCode({ phone: digits })).unwrap();
         setApiError('');
+        
+        if (smsResult.has_pin && smsResult.token) {
+          setMagicToken(smsResult.token);
+          setStep('pinLogin');
+          setSubmitting(false);
+          return;
+        }
+        
         navigate('/sms-code', { state: { phone: '+' + digits } });
       } catch (err) {
         setApiError(extractError(err));
