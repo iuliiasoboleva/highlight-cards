@@ -98,6 +98,17 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
             />
 
             <ClientStatDropdownCard
+              selectable={false}
+              initialKey="visits"
+              statsByType={{
+                visits: {
+                  value: overallStats?.totalVisits?.value ?? 0,
+                  change: overallStats?.totalVisits?.change ?? 0,
+                },
+              }}
+            />
+
+            <ClientStatDropdownCard
               selectable
               statsByType={{
                 new: {
@@ -111,17 +122,6 @@ const StatisticsCard = ({ chartData, overallStats, lineLabels, selectedPeriod, g
                 referral: {
                   value: overallStats?.referrals?.value ?? 0,
                   change: overallStats?.referrals?.change ?? 0,
-                },
-              }}
-            />
-
-            <ClientStatDropdownCard
-              selectable={false}
-              initialKey="visits"
-              statsByType={{
-                visits: {
-                  value: overallStats?.totalVisits?.value ?? 0,
-                  change: overallStats?.totalVisits?.change ?? 0,
                 },
               }}
             />
