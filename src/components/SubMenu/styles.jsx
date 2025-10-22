@@ -11,7 +11,7 @@ export const SubmenuWrapper = styled.div`
   background-color: #2e2e2e;
   border-bottom: 1px solid #333;
   padding: 0;
-  z-index: 9999;
+  z-index: 900;
   overflow-x: auto;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;

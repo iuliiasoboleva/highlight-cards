@@ -28,7 +28,7 @@ export const SidebarNav = styled.nav`
   padding-top: calc(var(--header-height) - 10px);
   background: #fff;
   border-right: 1px solid #ececec;
-  z-index: 10000;
+  z-index: 800;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -137,7 +137,7 @@ export const BottomNav = styled.nav`
     height: var(--bottom-nav-height);
     padding: 12px;
     padding-bottom: max(12px, env(safe-area-inset-bottom));
-    z-index: 10000;
+    z-index: 800;
     border-top: 1px solid #e0e0e0;
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
   }

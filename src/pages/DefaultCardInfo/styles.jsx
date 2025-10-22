@@ -5,24 +5,31 @@ export const Wrapper = styled.div`
   flex-direction: column;
   gap: 24px;
   padding: 20px;
+
+  @media (max-width: 768px) {
+    padding: 12px 16px;
+    gap: 16px;
+  }
 `;
 
 export const TitleRow = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 
   h1 {
     font-size: 24px;
     margin-right: 8px;
+    flex: 1 1 100%;
   }
 
   @media (max-width: 768px) {
     h1 {
       font-size: 18px;
+      margin-bottom: 4px;
     }
-    flex-direction: column;
-    align-items: flex-start;
+    gap: 6px;
   }
 `;
 
@@ -35,6 +42,12 @@ export const StateTag = styled.div`
   border-radius: 6px;
   background: #e9eaef;
   color: #333;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+    padding: 4px 6px;
+    gap: 4px;
+  }
 `;
 
 export const StatusIndicator = styled.span`
@@ -43,6 +56,11 @@ export const StatusIndicator = styled.span`
   border-radius: 50%;
   display: inline-block;
   background: ${(p) => (p.$active ? '#2ecc71' : '#e74c3c')};
+
+  @media (max-width: 768px) {
+    width: 6px;
+    height: 6px;
+  }
 `;
 
 export const ImageWrapper = styled.div`
@@ -113,6 +131,10 @@ export const QrContainer = styled.div`
   width: 100%;
 
   button {
+    max-width: 100%;
+  }
+
+  @media (max-width: 768px) {
     max-width: 100%;
   }
 `;
