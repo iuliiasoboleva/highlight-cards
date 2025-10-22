@@ -339,15 +339,29 @@ const Locations = () => {
   };
 
   const toggleGeo = (loc) => {
+    const newState = !loc.active;
+    console.log('toggleGeo called:', {
+      id: loc.id,
+      currentActive: loc.active,
+      newActive: newState,
+      location: loc
+    });
+    
     dispatch(
       editBranch({
         id: loc.id,
-        geo_active: !loc.active,
+        geo_active: newState,
       }),
     )
       .unwrap()
-      .then(() => toast.info(`Geo-push ${loc.active ? 'выключен' : 'включён'}`))
-      .catch(() => toast.error('Не удалось переключить Geo-push'));
+      .then((result) => {
+        console.log('toggleGeo success:', result);
+        toast.info(`Geo-push ${newState ? 'включён' : 'выключен'}`);
+      })
+      .catch((error) => {
+        console.error('toggleGeo error:', error);
+        toast.error('Не удалось переключить Geo-push');
+      });
   };
 
   // сохранить изменённый адрес для единственной локации
