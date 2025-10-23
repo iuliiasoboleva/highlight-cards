@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import axiosInstance from '../../axiosInstance';
 import CustomTable from '../../components/CustomTable';
 import LoaderCentered from '../../components/LoaderCentered';
+import Pagination from '../../components/Pagination';
 import TitleWithHelp from '../../components/TitleWithHelp';
 // import TopUpModal from '../../components/TopUpModal';
 import { mailingsHeaders } from '../../mocks/mockMailings';
@@ -327,126 +328,11 @@ const MailingsInfo = () => {
         />
       </TableWrapper>
 
-      {totalPages > 1 && (
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          gap: '8px',
-          marginTop: '20px',
-          flexWrap: 'wrap'
-        }}>
-          <button
-            onClick={() => handlePageChange(1)}
-            disabled={page === 1}
-            style={{
-              padding: '6px 12px',
-              border: '1px solid #ddd',
-              borderRadius: '8px',
-              fontSize: '14px',
-              cursor: page === 1 ? 'not-allowed' : 'pointer',
-              backgroundColor: page === 1 ? '#f5f5f5' : '#fff',
-              color: page === 1 ? '#999' : '#333'
-            }}
-          >
-            « Первая
-          </button>
-          
-          <button
-            onClick={() => handlePageChange(page - 1)}
-            disabled={page === 1}
-            style={{
-              padding: '6px 12px',
-              border: '1px solid #ddd',
-              borderRadius: '8px',
-              fontSize: '14px',
-              cursor: page === 1 ? 'not-allowed' : 'pointer',
-              backgroundColor: page === 1 ? '#f5f5f5' : '#fff',
-              color: page === 1 ? '#999' : '#333'
-            }}
-          >
-            ‹ Назад
-          </button>
-
-          <div style={{ 
-            display: 'flex', 
-            gap: '4px',
-            alignItems: 'center'
-          }}>
-            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-              let pageNum;
-              if (totalPages <= 5) {
-                pageNum = i + 1;
-              } else if (page <= 3) {
-                pageNum = i + 1;
-              } else if (page >= totalPages - 2) {
-                pageNum = totalPages - 4 + i;
-              } else {
-                pageNum = page - 2 + i;
-              }
-              
-              return (
-                <button
-                  key={pageNum}
-                  onClick={() => handlePageChange(pageNum)}
-                  style={{
-                    padding: '6px 12px',
-                    border: '1px solid #ddd',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                    backgroundColor: page === pageNum ? '#007bff' : '#fff',
-                    color: page === pageNum ? '#fff' : '#333',
-                    fontWeight: page === pageNum ? 'bold' : 'normal'
-                  }}
-                >
-                  {pageNum}
-                </button>
-              );
-            })}
-          </div>
-
-          <button
-            onClick={() => handlePageChange(page + 1)}
-            disabled={page === totalPages}
-            style={{
-              padding: '6px 12px',
-              border: '1px solid #ddd',
-              borderRadius: '8px',
-              fontSize: '14px',
-              cursor: page === totalPages ? 'not-allowed' : 'pointer',
-              backgroundColor: page === totalPages ? '#f5f5f5' : '#fff',
-              color: page === totalPages ? '#999' : '#333'
-            }}
-          >
-            Вперед ›
-          </button>
-
-          <button
-            onClick={() => handlePageChange(totalPages)}
-            disabled={page === totalPages}
-            style={{
-              padding: '6px 12px',
-              border: '1px solid #ddd',
-              borderRadius: '8px',
-              fontSize: '14px',
-              cursor: page === totalPages ? 'not-allowed' : 'pointer',
-              backgroundColor: page === totalPages ? '#f5f5f5' : '#fff',
-              color: page === totalPages ? '#999' : '#333'
-            }}
-          >
-            Последняя »
-          </button>
-
-          <span style={{ 
-            fontSize: '14px', 
-            color: '#666',
-            marginLeft: '12px'
-          }}>
-            Страница {page} из {totalPages}
-          </span>
-        </div>
-      )}
+      <Pagination 
+        page={page} 
+        totalPages={totalPages} 
+        onPageChange={handlePageChange}
+      />
 
       <MailingDetailsModal
         isOpen={!!selectedId}
