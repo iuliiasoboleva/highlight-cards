@@ -40,15 +40,19 @@ const Cards = () => {
   const [dragIndex, setDragIndex] = React.useState(null);
 
   const cardsState = useSelector((state) => state.cards);
-  const { cards, loading } = cardsState;
+  const { cards, loading, fetching } = cardsState;
   const isTemplatePage = location.pathname === '/cards/template';
 
   const cardsRef = React.useRef(cards);
+  const saveOrderTimerRef = React.useRef(null);
+  
   React.useEffect(() => {
     cardsRef.current = cards;
   }, [cards]);
 
   React.useEffect(() => {
+    if (cards.length <= 1) return;
+    
     const savedOrder = JSON.parse(localStorage.getItem('cards_order') || '[]');
     if (savedOrder.length) {
       const ordered = [
@@ -62,14 +66,22 @@ const Cards = () => {
         dispatch(reorderCards([cards[0], ...ordered]));
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch]);
+  }, [dispatch, cards]);
 
   React.useEffect(() => {
     if (!isTemplatePage) {
       dispatch(fetchCards());
     }
   }, [dispatch, isTemplatePage]);
+
+  const debouncedSaveOrder = React.useCallback((ids) => {
+    if (saveOrderTimerRef.current) {
+      clearTimeout(saveOrderTimerRef.current);
+    }
+    saveOrderTimerRef.current = setTimeout(() => {
+      dispatch(saveOrder(ids));
+    }, 500);
+  }, [dispatch]);
 
   if (loading) return <LoaderCentered />;
 
@@ -82,6 +94,12 @@ const Cards = () => {
         tooltipContent={`Выберите тип карты, который лучше всего подходит вашему бизнесу и настройте её за несколько минут. 
 После выбора вы сможете настроить логотип, цвета и правила начисления баллов.`}
       />
+
+      {fetching && (
+        <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 9999, background: 'rgba(255, 255, 255, 0.9)', padding: '20px', borderRadius: '8px' }}>
+          <LoaderCentered />
+        </div>
+      )}
 
       <CardsGrid>
         {cards.map((card, idx) => {
@@ -133,7 +151,7 @@ const Cards = () => {
                     onDrop={() => {
                       const ids = cardsRef.current.slice(1).map((c) => c.id);
                       localStorage.setItem('cards_order', JSON.stringify(ids));
-                      dispatch(saveOrder(ids));
+                      debouncedSaveOrder(ids);
                       setDragIndex(null);
                     }}
                   >

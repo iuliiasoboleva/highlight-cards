@@ -48,16 +48,23 @@ const mapCardFromAPI = (card) => ({
 const initialState = {
   cards: [],
   loading: true,
+  fetching: false,
   error: null,
   currentCard: mergeCardWithDefault({}),
 };
 
 export const fetchCards = createAsyncThunk(
   'cards/fetchCards',
-  async (_, { getState, rejectWithValue }) => {
+  async (forceRefresh = false, { getState, rejectWithValue }) => {
     try {
-      const orgId = getState().user.organization_id;
+      const state = getState();
+      const orgId = state.user.organization_id;
       if (!orgId) return [];
+      
+      if (!forceRefresh && state.cards.cards.length > 1 && !state.cards.loading) {
+        return null;
+      }
+      
       const res = await axiosInstance.get('/cards', { params: { organization_id: orgId } });
       return res.data;
     } catch (err) {
@@ -484,11 +491,20 @@ export const cardsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchCards.pending, (state) => {
-        state.loading = true;
+        if (state.cards.length <= 1) {
+          state.loading = true;
+        } else {
+          state.fetching = true;
+        }
         state.error = null;
-        state.cards = [fixedCard];
       })
       .addCase(fetchCards.fulfilled, (state, action) => {
+        if (action.payload === null) {
+          state.loading = false;
+          state.fetching = false;
+          return;
+        }
+        
         const mappedCards = action.payload.map(mapCardFromAPI);
         const rawCards = [fixedCard, ...mappedCards];
 
@@ -498,11 +514,15 @@ export const cardsSlice = createSlice({
         const rest = others.filter((c) => !c.isPinned);
         state.cards = [fixed, ...pinned, ...rest];
         state.loading = false;
+        state.fetching = false;
       })
       .addCase(fetchCards.rejected, (state, action) => {
         state.loading = false;
+        state.fetching = false;
         state.error = action.payload;
-        state.cards = [fixedCard];
+        if (state.cards.length === 0) {
+          state.cards = [fixedCard];
+        }
       })
       .addCase(saveCard.rejected, (state, action) => {
         state.error = action.payload;
