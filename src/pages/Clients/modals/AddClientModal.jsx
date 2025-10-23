@@ -32,6 +32,7 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
   const [mode, setMode] = useState('branches');
   const [selectedBranches, setSelectedBranches] = useState([]);
   const [selectedNetwork, setSelectedNetwork] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [touched, setTouched] = useState({
     surname: false,
     name: false,
@@ -89,6 +90,8 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
       return;
     }
 
+    setLoading(true);
+
     const payload = {
       surname: form.surname.trim() || null,
       name: form.name.trim() || null,
@@ -134,6 +137,8 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
       const msg =
         typeof err === 'string' ? err : err?.message || err?.error || 'Не удалось создать клиента';
       toast.error(msg);
+    } finally {
+      setLoading(false);
     }
   }, [
     dispatch,
@@ -160,10 +165,10 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
       title="Добавить клиента"
       actions={
         <>
-          <CustomModal.PrimaryButton onClick={handleAddClient} disabled={!isValid}>
-            Добавить клиента
+          <CustomModal.PrimaryButton onClick={handleAddClient} disabled={loading || !isValid}>
+            {loading ? 'Добавляю...' : 'Добавить клиента'}
           </CustomModal.PrimaryButton>
-          <CustomModal.SecondaryButton onClick={onClose}>Отменить</CustomModal.SecondaryButton>
+          <CustomModal.SecondaryButton onClick={onClose} disabled={loading}>Отменить</CustomModal.SecondaryButton>
         </>
       }
     >
