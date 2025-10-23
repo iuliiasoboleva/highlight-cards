@@ -85,9 +85,9 @@ const Home = () => {
         <ClientPortraitCard
           title="Гендерное соотношение"
           data={Object.entries(portrait.gender)
-            .filter(([name, value]) => name !== 'other' || value > 0)
+            .filter(([name, value]) => value > 0)
             .map(([name, value]) => ({ 
-              label: name === 'male' ? 'Мужской' : name === 'female' ? 'Женский' : name, 
+              label: name === 'male' ? 'Мужской' : name === 'female' ? 'Женский' : 'Не указан', 
               value 
             }))}
         />

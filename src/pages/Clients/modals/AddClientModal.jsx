@@ -27,6 +27,7 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
     phone: '',
     email: '',
     birthday: '',
+    gender: '',
   });
   const [mode, setMode] = useState('branches');
   const [selectedBranches, setSelectedBranches] = useState([]);
@@ -95,6 +96,12 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
       payload.birthday = form.birthday;
     }
 
+    if (form.gender) {
+      payload.gender = form.gender;
+    } else {
+      payload.gender = 'Не указан';
+    }
+
     if (mode === 'branches' && selectedBranches.length > 0) {
       payload.branch_ids = selectedBranches;
     } else if (mode === 'network' && selectedNetwork) {
@@ -111,8 +118,7 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
       await dispatch(fetchClients());
       onClose?.();
 
-      // reset
-      setForm({ surname: '', name: '', phone: '', email: '', birthday: '' });
+      setForm({ surname: '', name: '', phone: '', email: '', birthday: '', gender: '' });
       setSelectedBranches([]);
       setSelectedNetwork(null);
       setMode('branches');
@@ -209,6 +215,19 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
           type="date"
           value={form.birthday}
           onChange={(e) => setForm((p) => ({ ...p, birthday: e.target.value }))}
+        />
+      </ClientsModalFormGroup>
+
+      <ClientsModalFormGroup>
+        <Label>Пол</Label>
+        <CustomRadioGroup
+          name="gender"
+          selected={form.gender}
+          onChange={(val) => setForm((p) => ({ ...p, gender: val }))}
+          options={[
+            { value: 'male', label: 'М' },
+            { value: 'female', label: 'Ж' },
+          ]}
         />
       </ClientsModalFormGroup>
 
