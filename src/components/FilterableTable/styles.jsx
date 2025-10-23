@@ -230,3 +230,71 @@ export const ClientCardTag = styled.div`
   font-size: 12px;
   line-height: 1;
 `;
+
+export const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-top: 1px solid #eee;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+`;
+
+export const PaginationButton = styled.button`
+  background: ${({ $active }) => ($active ? '#c14857' : '#fff')};
+  color: ${({ $active }) => ($active ? '#fff' : '#333')};
+  border: 1px solid ${({ $active }) => ($active ? '#c14857' : '#ddd')};
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: ${({ $active }) => ($active ? '600' : '400')};
+  transition: all 0.2s;
+  min-width: 40px;
+
+  &:hover:not(:disabled) {
+    background: ${({ $active }) => ($active ? '#a03947' : '#f5f5f5')};
+    border-color: ${({ $active }) => ($active ? '#a03947' : '#999')};
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+`;
+
+export const PaginationInfo = styled.span`
+  font-size: 14px;
+  color: #666;
+  white-space: nowrap;
+`;
+
+export const PaginationSelect = styled.select`
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s;
+
+  &:hover {
+    border-color: #999;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #c14857;
+  }
+`;

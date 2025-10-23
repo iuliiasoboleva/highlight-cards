@@ -106,7 +106,7 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
 
       const newId = safeGetId(res);
       toast.success('Клиент добавлен');
-      onCreated?.(newId);
+      onCreated?.(res);
 
       await dispatch(fetchClients());
       onClose?.();
