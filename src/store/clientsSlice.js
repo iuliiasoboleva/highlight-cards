@@ -14,7 +14,7 @@ export const fetchClients = createAsyncThunk(
     try {
       const orgId = getState().user.organization_id;
       if (!orgId) return [];
-      const res = await axiosInstance.get('/clients', { params: { organization_id: orgId } });
+      const res = await axiosInstance.get('/clients/', { params: { organization_id: orgId } });
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
@@ -26,7 +26,7 @@ export const createClient = createAsyncThunk(
   'clients/create',
   async (payload, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.post('/clients', payload);
+      const res = await axiosInstance.post('/clients/', payload);
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);

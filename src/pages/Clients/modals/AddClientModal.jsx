@@ -82,12 +82,24 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
     }
 
     const payload = {
-      ...form,
-      phone: phoneDigits,
-      organization_id: orgId,
-      branch_ids: mode === 'branches' ? selectedBranches : undefined,
-      network_id: mode === 'network' ? selectedNetwork : undefined,
+      surname: form.surname.trim() || null,
+      name: form.name.trim() || null,
+      phone: phoneDigits || null,
+      email: form.email.trim() || null,
+      organization_id: String(orgId),
+      loyalty: 0,
+      segment: [],
     };
+
+    if (form.birthday) {
+      payload.birthday = form.birthday;
+    }
+
+    if (mode === 'branches' && selectedBranches.length > 0) {
+      payload.branch_ids = selectedBranches;
+    } else if (mode === 'network' && selectedNetwork) {
+      payload.network_id = selectedNetwork;
+    }
 
     try {
       const res = await dispatch(createClient(payload)).unwrap();
