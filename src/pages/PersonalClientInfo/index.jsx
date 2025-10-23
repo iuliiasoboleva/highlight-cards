@@ -1,23 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { ru } from 'date-fns/locale';
-import { Calendar } from 'lucide-react';
-
 import axiosInstance from '../../axiosInstance';
 import LoaderCentered from '../../components/LoaderCentered';
 import CustomInput from '../../customs/CustomInput';
+import CustomDatePicker from '../../customs/CustomDatePicker';
 import { setClients } from '../../store/clientsSlice';
 import DeleteClientModal from './DeleteClientModal';
 import {
   Actions,
   Container,
-  DateField,
   FormCard,
   Group,
   Label,
@@ -41,12 +36,20 @@ const PersonalClientInfo = () => {
   const [client, setClient] = useState(clientFromStore || null);
   const [loading, setLoading] = useState(!clientFromStore);
 
+  const convertDDMMYYYYtoISO = (dateStr) => {
+    if (!dateStr) return '';
+    const parts = dateStr.split('/');
+    if (parts.length !== 3) return '';
+    const [day, month, year] = parts;
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  };
+
   const [formData, setFormData] = useState({
     name: client?.name || '',
     surname: client?.surname || '',
     email: client?.email || '',
     phone: client?.phone || '',
-    birthdate: client?.birthdate ? new Date(client.birthdate.split('/').reverse().join('-')) : null,
+    birthdate: client?.birthdate ? convertDDMMYYYYtoISO(client.birthdate) : '',
   });
 
   useEffect(() => {
@@ -60,9 +63,7 @@ const PersonalClientInfo = () => {
           surname: res.data.surname || '',
           email: res.data.email || '',
           phone: res.data.phone || '',
-          birthdate: res.data.birthdate
-            ? new Date(res.data.birthdate.split('/').reverse().join('-'))
-            : null,
+          birthdate: res.data.birthdate ? convertDDMMYYYYtoISO(res.data.birthdate) : '',
         });
       } catch (e) {
         console.error(e);
@@ -92,7 +93,7 @@ const PersonalClientInfo = () => {
   const handleSave = () => {
     const payload = {
       ...formData,
-      birthdate: formData.birthdate ? formData.birthdate.toISOString() : null,
+      birthdate: formData.birthdate ? new Date(formData.birthdate).toISOString() : null,
     };
 
     axiosInstance
@@ -134,21 +135,11 @@ const PersonalClientInfo = () => {
 
             <Group>
               <Label>Дата рождения</Label>
-              <DateField>
-                <DatePicker
-                  selected={formData.birthdate}
-                  onChange={(date) => handleChange('birthdate', date)}
-                  dateFormat="dd/MM/yyyy"
-                  className="custom-input"
-                  locale={ru}
-                  maxDate={new Date()}
-                  placeholderText="Выберите дату"
-                  showYearDropdown
-                  scrollableYearDropdown
-                  yearDropdownItemNumber={100}
-                />
-                <Calendar className="calendar-icon" size={18} />
-              </DateField>
+              <CustomDatePicker
+                value={formData.birthdate}
+                onChange={(value) => handleChange('birthdate', value)}
+                placeholder="Выберите дату"
+              />
             </Group>
           </Row>
 

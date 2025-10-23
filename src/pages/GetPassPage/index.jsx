@@ -7,6 +7,7 @@ import BASE_URL from '../../config';
 import Accordion from '../../components/Accordion';
 import CustomCheckbox from '../../customs/CustomCheckbox';
 import CustomInput from '../../customs/CustomInput';
+import CustomDatePicker from '../../customs/CustomDatePicker';
 import CustomModal from '../../customs/CustomModal';
 import { useToast } from '../../components/Toast';
 import {
@@ -329,6 +330,12 @@ const GetPassPage = () => {
                     <option value="male">Мужской</option>
                     <option value="female">Женский</option>
                   </select>
+                ) : (field.type === 'date' || field.type === 'birthday') ? (
+                  <CustomDatePicker
+                    value={formData[field.name] || ''}
+                    onChange={(value) => setFormData((prev) => ({ ...prev, [field.name]: value }))}
+                    placeholder={field.name}
+                  />
                 ) : (
                   <CustomInput
                     name={field.name}
@@ -341,19 +348,7 @@ const GetPassPage = () => {
                         ? 'email'
                         : field.type === 'number'
                           ? 'number'
-                          : (field.type === 'date' || field.type === 'birthday')
-                            ? 'date'
-                            : 'text'
-                    }
-                    min={
-                      (field.type === 'date' || field.type === 'birthday')
-                        ? '1900-01-01'
-                        : undefined
-                    }
-                    max={
-                      (field.type === 'date' || field.type === 'birthday')
-                        ? new Date().toISOString().split('T')[0]
-                        : undefined
+                          : 'text'
                     }
                     pattern={
                       field.type === 'text'

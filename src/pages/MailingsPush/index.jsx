@@ -11,6 +11,7 @@ import TitleWithHelp from '../../components/TitleWithHelp';
 import { useToast } from '../../components/Toast';
 import CustomCheckbox from '../../customs/CustomCheckbox';
 import CustomSelect from '../../customs/CustomSelect';
+import CustomDateTimePicker from '../../customs/CustomDateTimePicker';
 import { getMinDateTime } from '../../helpers/date';
 import { pluralVerb, pluralize } from '../../helpers/pluralize';
 import { setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
@@ -19,7 +20,6 @@ import PushTargetTabs from './PushTargetTabs';
 import {
   MailingsPushBox,
   NoActiveCardsText,
-  PushDate,
   PushRecipientCount,
   PushSchedule,
   PushTextarea,
@@ -228,11 +228,11 @@ const MailingsPush = () => {
           />
 
           {isScheduled && (
-            <PushDate
-              type="datetime-local"
+            <CustomDateTimePicker
               value={scheduledDate}
               min={getMinDateTime()}
-              onChange={(e) => setScheduledDate(e.target.value)}
+              onChange={(value) => setScheduledDate(value)}
+              placeholder="Выберите дату и время"
             />
           )}
         </PushSchedule>

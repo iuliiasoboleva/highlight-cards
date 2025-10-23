@@ -5,6 +5,7 @@ import CustomCheckbox from '../../customs/CustomCheckbox';
 import CustomInput from '../../customs/CustomInput';
 import CustomSelect from '../../customs/CustomSelect';
 import CustomTooltip from '../../customs/CustomTooltip';
+import CustomDatePicker from '../../customs/CustomDatePicker';
 import { formatDateToDDMMYYYY } from '../../helpers/date';
 import { pluralize } from '../../helpers/pluralize';
 import { updateCurrentCardField } from '../../store/cardsSlice';
@@ -110,18 +111,10 @@ const RadioConfigs = ({ cardStatus }) => {
               }
             />
           </StampSectionLabel>
-          <CustomInput
-            type="date"
+          <CustomDatePicker
             value={settings.cardFixedDate || ''}
-            min={minDateISO}
-            max="2120-12-31"
-            data-settings-key="cardFixedDate"
-            onChange={(e) => {
-              const raw = e.target.value;
-              updateSettingsField('cardFixedDate', raw);
-            }}
-            onBlur={(e) => {
-              let iso = normalizeISODate(e.target.value);
+            onChange={(value) => {
+              let iso = normalizeISODate(value);
               if (iso && iso < minDateISO) iso = minDateISO;
               updateSettingsField('cardFixedDate', iso);
               const formattedExpiration = iso ? formatDateToDDMMYYYY(iso) : '';
@@ -129,6 +122,7 @@ const RadioConfigs = ({ cardStatus }) => {
                 updateCurrentCardField({ path: 'expirationDate', value: formattedExpiration }),
               );
             }}
+            placeholder="Выберите дату"
           />
         </>
       ),

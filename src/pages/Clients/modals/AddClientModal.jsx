@@ -7,6 +7,7 @@ import CustomInput from '../../../customs/CustomInput';
 import CustomModal from '../../../customs/CustomModal';
 import { CustomRadioGroup } from '../../../customs/CustomRadio';
 import CustomSelect from '../../../customs/CustomSelect';
+import CustomDatePicker from '../../../customs/CustomDatePicker';
 import { formatPhone } from '../../../helpers/formatPhone';
 import { createClient, fetchClients } from '../../../store/clientsSlice';
 import { ClientsModalFormGroup, ErrorText, Label } from '../styles';
@@ -223,10 +224,10 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
 
       <ClientsModalFormGroup>
         <Label>Дата рождения</Label>
-        <CustomInput
-          type="date"
+        <CustomDatePicker
           value={form.birthday}
-          onChange={(e) => setForm((p) => ({ ...p, birthday: e.target.value }))}
+          onChange={(value) => setForm((p) => ({ ...p, birthday: value }))}
+          placeholder="Выберите дату рождения"
         />
       </ClientsModalFormGroup>
 
