@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import axiosInstance from '../../axiosInstance';
@@ -15,12 +15,14 @@ import { Badge, Container, Label, StatCard, StatsRow, TableWrapper, Value } from
 const MailingsInfo = () => {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [fetching, setFetching] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [recipientFilter, setRecipientFilter] = useState('');
   const [sortOrder, setSortOrder] = useState('desc');
 
@@ -31,37 +33,49 @@ const MailingsInfo = () => {
     (state) => state.balance || {},
   );
 
-  // const [topUpOpen, setTopUpOpen] = useState(false);
-  // const [hoverSms, setHoverSms] = useState(false);
-
   useEffect(() => {
     if (!orgId) return;
-
     dispatch(fetchBalance(orgId));
+  }, [orgId, dispatch]);
 
-    (async () => {
-      try {
-        const params = {
-          organization_id: orgId,
-          page,
-          page_size: pageSize,
-          sort_by: 'date_time',
-          sort_order: sortOrder
-        };
-        if (search) params.search = search;
-        if (recipientFilter) params.recipient_filter = recipientFilter;
-        
-        const res = await axiosInstance.get('/mailings', { params });
-        setRows(res.data?.items || []);
-        setTotal(res.data?.total || 0);
-        setTotalPages(res.data?.total_pages || 0);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [orgId, dispatch, page, pageSize, search, recipientFilter, sortOrder]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const fetchMailings = useCallback(async () => {
+    if (!orgId) return;
+
+    try {
+      setFetching(true);
+      const params = {
+        organization_id: orgId,
+        page,
+        page_size: pageSize,
+        sort_by: 'date_time',
+        sort_order: sortOrder
+      };
+      if (debouncedSearch) params.search = debouncedSearch;
+      if (recipientFilter) params.recipient_filter = recipientFilter;
+      
+      const res = await axiosInstance.get('/mailings', { params });
+      setRows(res.data?.items || []);
+      setTotal(res.data?.total || 0);
+      setTotalPages(res.data?.total_pages || 0);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+      setFetching(false);
+    }
+  }, [orgId, page, pageSize, debouncedSearch, recipientFilter, sortOrder]);
+
+  useEffect(() => {
+    fetchMailings();
+  }, [fetchMailings]);
 
   // const handleTopUpConfirm = (amount) => {
   //   setTopUpOpen(false);
@@ -319,7 +333,23 @@ const MailingsInfo = () => {
         </div>
       </div>
 
-      <TableWrapper>
+      <TableWrapper style={{ position: 'relative', minHeight: '400px' }}>
+        {fetching && !loading && (
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(255, 255, 255, 0.8)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10
+          }}>
+            <LoaderCentered />
+          </div>
+        )}
         <CustomTable
           columns={columns}
           rows={rows}

@@ -29,10 +29,12 @@ const PushHistory = () => {
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [recipientFilter, setRecipientFilter] = useState('');
   const [sortOrder, setSortOrder] = useState('desc');
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [mailingToDelete, setMailingToDelete] = useState(null);
+  const [fetching, setFetching] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -59,9 +61,18 @@ const PushHistory = () => {
   };
   const tz = normalizeTz(rawTz);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
   const fetchHistory = useCallback(async () => {
     if (!user.organization_id) return;
     try {
+      setFetching(true);
       const params = { 
         organization_id: user.organization_id,
         page,
@@ -70,8 +81,7 @@ const PushHistory = () => {
         sort_order: sortOrder,
         mailing_type: 'Push'
       };
-      // Не фильтруем по card_id - показываем все рассылки организации
-      if (search) params.search = search;
+      if (debouncedSearch) params.search = debouncedSearch;
       if (recipientFilter) params.recipient_filter = recipientFilter;
       
       const res = await axiosInstance.get('/mailings', { params });
@@ -106,8 +116,10 @@ const PushHistory = () => {
       setTotalPages(data.total_pages || 0);
     } catch (e) {
       console.error(e);
+    } finally {
+      setFetching(false);
     }
-  }, [tz, user.organization_id, page, pageSize, search, recipientFilter, sortOrder]);
+  }, [tz, user.organization_id, page, pageSize, debouncedSearch, recipientFilter, sortOrder]);
 
   useEffect(() => {
     fetchHistory();
@@ -138,64 +150,36 @@ const PushHistory = () => {
 
   const handleCopy = async (mailingItem) => {
     try {
-      // Получаем полную информацию о рассылке
-      const response = await axiosInstance.get(`/mailings/${mailingItem.id}`);
-      const mailingData = response.data;
-
-      console.log('🔍 Поиск карты для рассылки:', {
-        searchCardId: mailingData.cardId,
-        searchCardIdType: typeof mailingData.cardId,
-        totalCardsInStore: cards.length,
-        availableCardsInStore: cards.map(c => ({
-          id: c.id,
-          name: c.name,
-          title: c.title
-        }))
-      });
-
-      // Сначала пробуем найти карту в store
       let card = cards.find((c) => {
         return (
-          c.id === mailingData.cardId ||
-          c.uuid === mailingData.cardId ||
-          String(c.id) === String(mailingData.cardId) || 
-          String(c.uuid) === String(mailingData.cardId) ||
-          Number(c.id) === Number(mailingData.cardId) ||
-          parseInt(c.id) === parseInt(mailingData.cardId)
+          c.id === mailingItem.cardId ||
+          c.uuid === mailingItem.cardId ||
+          String(c.id) === String(mailingItem.cardId) || 
+          String(c.uuid) === String(mailingItem.cardId)
         );
       });
 
-      // Если карта не найдена в store, запрашиваем напрямую из API
       if (!card) {
-        console.warn('⚠️ Карта не найдена в store, запрашиваем из API...');
         try {
-          const cardResponse = await axiosInstance.get(`/cards/${mailingData.cardId}`);
+          const cardResponse = await axiosInstance.get(`/cards/${mailingItem.cardId}`);
           card = cardResponse.data;
-          console.log('✅ Карта загружена из API:', card);
         } catch (apiError) {
-          console.error('❌ Карта не найдена ни в store, ни в API:', mailingData.cardId);
-          toast.error(`Карта не найдена (ID: ${mailingData.cardId}). Возможно, она была удалена.`);
+          toast.error(`Карта не найдена (ID: ${mailingItem.cardId}). Возможно, она была удалена.`);
           return;
         }
-      } else {
-        console.log('✅ Карта найдена в store:', card.name || card.title);
       }
       
-      // Устанавливаем выбранную карту и заполняем данные
       dispatch(setCurrentCard({
         ...card,
         pushNotification: {
-          message: mailingData.message || '',
+          message: mailingItem.message || '',
           scheduledDate: '',
         }
       }));
       
       toast.success('Параметры рассылки скопированы');
-      
-      // Переходим на страницу создания push-рассылки
       setTimeout(() => navigate(`/mailings/push`), 300);
     } catch (e) {
-      console.error('❌ Ошибка при копировании рассылки:', e);
       toast.error('Ошибка при копировании рассылки');
     }
   };
@@ -320,40 +304,58 @@ const PushHistory = () => {
         </div>
       </div>
 
-      <PushHistoryList>
-        {history.length === 0 ? (
-          <EmptyStub>
-            <Inbox size={22} />
-            <div>История пустая</div>
-            <p>Отправьте первое push-уведомление — здесь появится запись.</p>
-          </EmptyStub>
-        ) : (
-          history.map((item) => (
-            <PushHistoryItem key={item.id}>
-              <PushHistoryTop>
-                <PushHistoryDates>{item.dateTime}</PushHistoryDates>
-
-                <PushHistoryControls>
-                  <span>{item.status}</span>
-                  <PushHistoryIcon
-                    onClick={() => handleCopy(item)}
-                    title="Создать рассылку с этими параметрами"
-                  >
-                    <Copy size={16} />
-                  </PushHistoryIcon>
-                  <PushHistoryIcon className="danger" onClick={() => openDeleteModal(item.id)} title="Удалить">
-                    <Trash2 size={16} />
-                  </PushHistoryIcon>
-                </PushHistoryControls>
-              </PushHistoryTop>
-
-              <PushHistoryMessage>
-                {item.message?.trim() ? item.message : <EmptyMessage>Нет текста</EmptyMessage>}
-              </PushHistoryMessage>
-            </PushHistoryItem>
-          ))
+      <div style={{ position: 'relative', minHeight: '300px' }}>
+        {fetching && (
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(255, 255, 255, 0.8)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10
+          }}>
+            <div style={{ fontSize: '14px', color: '#666' }}>Загрузка...</div>
+          </div>
         )}
-      </PushHistoryList>
+        <PushHistoryList>
+          {history.length === 0 ? (
+            <EmptyStub>
+              <Inbox size={22} />
+              <div>История пустая</div>
+              <p>Отправьте первое push-уведомление — здесь появится запись.</p>
+            </EmptyStub>
+          ) : (
+            history.map((item) => (
+              <PushHistoryItem key={item.id}>
+                <PushHistoryTop>
+                  <PushHistoryDates>{item.dateTime}</PushHistoryDates>
+
+                  <PushHistoryControls>
+                    <span>{item.status}</span>
+                    <PushHistoryIcon
+                      onClick={() => handleCopy(item)}
+                      title="Создать рассылку с этими параметрами"
+                    >
+                      <Copy size={16} />
+                    </PushHistoryIcon>
+                    <PushHistoryIcon className="danger" onClick={() => openDeleteModal(item.id)} title="Удалить">
+                      <Trash2 size={16} />
+                    </PushHistoryIcon>
+                  </PushHistoryControls>
+                </PushHistoryTop>
+
+                <PushHistoryMessage>
+                  {item.message?.trim() ? item.message : <EmptyMessage>Нет текста</EmptyMessage>}
+                </PushHistoryMessage>
+              </PushHistoryItem>
+            ))
+          )}
+        </PushHistoryList>
+      </div>
 
       <Pagination 
         page={page} 
