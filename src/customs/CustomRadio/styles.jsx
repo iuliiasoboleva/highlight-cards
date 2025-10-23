@@ -2,8 +2,8 @@ import styled from 'styled-components';
 
 export const RadioGroup = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex-direction: ${props => props.$inline ? 'row' : 'column'};
+  gap: ${props => props.$inline ? '24px' : '12px'};
   margin-top: 12px;
 `;
 

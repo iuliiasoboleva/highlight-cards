@@ -40,6 +40,13 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
     scope: false,
   });
 
+  React.useEffect(() => {
+    if (networks.length === 0 && mode === 'network') {
+      setMode('branches');
+      setSelectedNetwork(null);
+    }
+  }, [networks.length, mode]);
+
   const phoneDigits = useMemo(() => form.phone.replace(/\D/g, ''), [form.phone]);
 
   const errors = useMemo(() => {
@@ -224,6 +231,7 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
           name="gender"
           selected={form.gender}
           onChange={(val) => setForm((p) => ({ ...p, gender: val }))}
+          inline
           options={[
             { value: 'male', label: 'М' },
             { value: 'female', label: 'Ж' },
@@ -246,7 +254,7 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
           }}
           options={[
             { value: 'branches', label: 'По точкам' },
-            { value: 'network', label: 'По сети' },
+            ...(networks.length > 0 ? [{ value: 'network', label: 'По сети' }] : []),
           ]}
         />
       </ClientsModalFormGroup>

@@ -19,8 +19,8 @@ const CustomRadio = ({ name, value, checked, onChange, label, labelSub }) => (
   </RadioOption>
 );
 
-export const CustomRadioGroup = ({ name, options, selected, onChange }) => (
-  <RadioGroup>
+export const CustomRadioGroup = ({ name, options, selected, onChange, inline }) => (
+  <RadioGroup $inline={inline}>
     {options.map((option) => (
       <CustomRadio
         key={option.value}
