@@ -110,12 +110,13 @@ const ImportClientsModal = ({ open, onClose, onImportSuccess }) => {
         },
       });
 
-      setImportResults(response.data);
-      
-      if (response.data.imported > 0) {
-        toast.success(`Успешно импортировано ${response.data.imported} клиентов`);
+      if (response.data.ok) {
+        toast.success(response.data.message || 'Файл получен. Клиенты импортируются в фоновом режиме.');
+        setImportResults({ imported: '?' });
         if (onImportSuccess) {
-          onImportSuccess();
+          setTimeout(() => {
+            onImportSuccess();
+          }, 2000);
         }
       } else {
         toast.error('Не удалось импортировать клиентов');
@@ -178,22 +179,10 @@ const ImportClientsModal = ({ open, onClose, onImportSuccess }) => {
       </FileUploadArea>
 
       {importResults && (
-        <ResultsBox $success={importResults.imported > 0}>
-          <ResultText $success={importResults.imported > 0}>
-            ✓ Импортировано: {importResults.imported} клиентов
+        <ResultsBox $success={true}>
+          <ResultText $success={true}>
+            ✓ Файл отправлен на импорт. Клиенты появятся в системе в течение нескольких минут.
           </ResultText>
-          {importResults.errors && importResults.errors.length > 0 && (
-            <>
-              <div style={{ fontSize: '13px', color: '#e53935', marginTop: '8px' }}>
-                ⚠️ Ошибки: {importResults.errors.length}
-              </div>
-              <ErrorList>
-                {importResults.errors.map((error, idx) => (
-                  <li key={idx}>{error}</li>
-                ))}
-              </ErrorList>
-            </>
-          )}
         </ResultsBox>
       )}
     </CustomModal>
