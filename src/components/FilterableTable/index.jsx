@@ -65,8 +65,20 @@ const FilterableTable = ({ columns, rows, onRowClick, onShowModal }) => {
     });
 
     return filtered.sort((a, b) => {
-      const dateA = new Date(a.createdAt || 0);
-      const dateB = new Date(b.createdAt || 0);
+      const parseDate = (dateStr) => {
+        if (!dateStr) return 0;
+        const parts = dateStr.split(' ');
+        if (parts.length === 2) {
+          const [datePart, timePart] = parts;
+          const [day, month, year] = datePart.split('/');
+          const [hours, minutes] = timePart.split(':');
+          return new Date(year, month - 1, day, hours, minutes).getTime();
+        }
+        return 0;
+      };
+      
+      const dateA = parseDate(a.createdAt);
+      const dateB = parseDate(b.createdAt);
       return dateB - dateA;
     });
   }, [rows, search, activeTags]);
