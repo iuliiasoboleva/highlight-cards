@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const CheckboxWrapper = styled.label`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 2px;
   font-size: 14px;
   cursor: pointer;
@@ -10,8 +10,11 @@ export const CheckboxWrapper = styled.label`
 
 export const HiddenCheckbox = styled.input`
   appearance: none;
-  width: 24px;
+  width: 20px;
   height: 20px;
+  min-width: 20px;
+  min-height: 20px;
+  flex-shrink: 0;
   background-color: #f5f5f5;
   border: 2px solid #dcdcdc;
   border-radius: 0;
