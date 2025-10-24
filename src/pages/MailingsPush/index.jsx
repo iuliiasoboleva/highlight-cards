@@ -12,6 +12,7 @@ import { useToast } from '../../components/Toast';
 import CustomCheckbox from '../../customs/CustomCheckbox';
 import CustomSelect from '../../customs/CustomSelect';
 import CustomDateTimePicker from '../../customs/CustomDateTimePicker';
+import CustomTooltip from '../../customs/CustomTooltip';
 import { getMinDateTime } from '../../helpers/date';
 import { pluralVerb, pluralize } from '../../helpers/pluralize';
 import { setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
@@ -221,11 +222,18 @@ const MailingsPush = () => {
         </PushRecipientCount>
 
         <PushSchedule>
-          <CustomCheckbox
-            label="Запланировать"
-            checked={isScheduled}
-            onChange={handleScheduleToggle}
-          />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.5, cursor: 'not-allowed' }}>
+            <CustomCheckbox
+              label="Запланировать"
+              checked={false}
+              onChange={() => {}}
+              disabled
+            />
+            <CustomTooltip
+              id="schedule-disabled-tooltip"
+              content="Скоро будет доступно"
+            />
+          </div>
 
           {isScheduled && (
             <CustomDateTimePicker
