@@ -171,35 +171,15 @@ const GetPassPage = () => {
       }
       
       if (walletType === 'apple') {
-        toast.success('Карта создана! Скачивание началось...');
+        toast.success('Переход в Apple Wallet...');
         
-        try {
-          // Скачиваем .pkpass файл напрямую (используем относительный путь, т.к. axiosInstance уже настроен с baseURL)
-          const pkpassResponse = await axios.get(`/pkpass/${identifier}`, {
-            params: clientData,
-            responseType: 'blob'
-          });
-
-          console.log('PKPass получен, размер:', pkpassResponse.data.size);
-
-          // Создаем ссылку для скачивания
-          const url = window.URL.createObjectURL(new Blob([pkpassResponse.data]));
-          const link = document.createElement('a');
-          link.href = url;
-          link.setAttribute('download', `card-${identifier}.pkpass`);
-          document.body.appendChild(link);
-          link.click();
-          link.remove();
-          window.URL.revokeObjectURL(url);
-          
-          toast.success('Карта скачана! Откройте файл для добавления в Apple Wallet');
-        } catch (pkpassError) {
-          console.error('Ошибка при скачивании pkpass:', pkpassError);
-          console.error('Статус ошибки:', pkpassError.response?.status);
-          console.error('Данные ошибки:', pkpassError.response?.data);
-          
-          toast.error(`Ошибка при скачивании карты: ${pkpassError.response?.status || 'неизвестная ошибка'}`);
-        }
+        const pkpassUrl = BASE_URL === '/' 
+          ? `/pkpass/${identifier}`
+          : `${BASE_URL.replace(/\/$/, '')}/pkpass/${identifier}`;
+        
+        setTimeout(() => {
+          window.location.href = pkpassUrl;
+        }, 500);
       } else if (walletType === 'google') {
         toast.success('Переход в Google Wallet...');
         
