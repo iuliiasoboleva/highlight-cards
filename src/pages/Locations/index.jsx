@@ -80,7 +80,7 @@ const Locations = () => {
 
   // подтягиваем список точек
   useEffect(() => {
-    if (orgId) dispatch(fetchBranches(orgId));
+    if (orgId) dispatch(fetchBranches());
   }, [orgId, dispatch]);
 
   // если карточка не выбрана — выберем первую

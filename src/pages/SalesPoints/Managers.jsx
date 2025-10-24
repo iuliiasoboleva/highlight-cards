@@ -52,9 +52,9 @@ const ManagersPage = () => {
   const [showNoLocationsWarning, setShowNoLocationsWarning] = useState(false);
   const [showNoNetworkWarning, setShowNoNetworkWarning] = useState(false);
 
-  const { list: managers, loading: mLoading } = useSelector((s) => s.managers);
-  const { list: locations, loading: lLoading } = useSelector((s) => s.locations);
-  const networks = useSelector((s) => s.networks.list);
+  const { list: managers, loading: mLoading, fetching: mFetching } = useSelector((s) => s.managers);
+  const { list: locations, loading: lLoading, fetching: lFetching } = useSelector((s) => s.locations);
+  const { list: networks, fetching: nFetching } = useSelector((s) => s.networks);
   const orgId = useSelector((s) => s.user.organization_id);
   const subscription = useSelector((s) => s.subscription?.info) || null;
 
@@ -65,11 +65,13 @@ const ManagersPage = () => {
       ? clientsRaw.list
       : [];
 
+  const isFetching = mFetching || lFetching || nFetching;
+
   useEffect(() => {
     if (orgId) {
-      dispatch(fetchManagers(orgId));
-      dispatch(fetchBranches(orgId));
-      dispatch(fetchNetworks(orgId));
+      dispatch(fetchManagers());
+      dispatch(fetchBranches());
+      dispatch(fetchNetworks());
     }
   }, [dispatch, orgId]);
 
@@ -129,7 +131,12 @@ const ManagersPage = () => {
 
     dispatch(action)
       .unwrap()
-      .then(() => dispatch(fetchManagers(orgId)))
+      .then(() => {
+        toast.success('Сотрудник сохранен');
+      })
+      .catch((e) => {
+        toast.error(normalizeErr(e));
+      })
       .finally(() => {
         setEditModalData(null);
         setShowAddModal(false);
@@ -139,7 +146,12 @@ const ManagersPage = () => {
   const handleDeleteManager = (id) => {
     dispatch(deleteManager(id))
       .unwrap()
-      .then(() => dispatch(fetchManagers(orgId)))
+      .then(() => {
+        toast.success('Сотрудник удален');
+      })
+      .catch((e) => {
+        toast.error(normalizeErr(e));
+      })
       .finally(() => setEditModalData(null));
   };
 
@@ -195,16 +207,11 @@ const ManagersPage = () => {
       });
 
       await Promise.all(updates);
-      await Promise.all([
-        dispatch(fetchBranches(orgId)).unwrap(),
-        dispatch(fetchNetworks(orgId)).unwrap(),
-      ]);
 
       toast.success('Сеть сохранена');
       setShowNetworkModal(false);
       setEditNetworkData(null);
     } catch (e) {
-      console.error('handleSaveNetwork error:', e);
       toast.error(normalizeErr(e));
     }
   };
@@ -212,11 +219,9 @@ const ManagersPage = () => {
   const handleDeleteNetwork = async (id) => {
     try {
       await dispatch(deleteNetwork(id)).unwrap();
-      await dispatch(fetchNetworks(orgId)).unwrap();
       toast.success('Сеть удалена');
       setEditNetworkData(null);
     } catch (e) {
-      console.error('deleteNetwork error:', e);
       toast.error(normalizeErr(e));
     }
   };
@@ -240,12 +245,10 @@ const ManagersPage = () => {
 
     try {
       await dispatch(action).unwrap();
-      await dispatch(fetchBranches(orgId)).unwrap();
       toast.success('Точка продаж сохранена');
       setShowLocationModal(false);
       setInitialLocationData(null);
     } catch (e) {
-      console.error('save branch error:', e);
       toast.error(normalizeErr(e));
     }
   };
@@ -256,12 +259,10 @@ const ManagersPage = () => {
 
     try {
       await dispatch(deleteBranch(idNum)).unwrap();
-      await dispatch(fetchBranches(orgId)).unwrap();
       toast.success('Точка продаж удалена');
       setShowLocationModal(false);
       setInitialLocationData(null);
     } catch (e) {
-      console.error('delete branch error:', e);
       toast.error(normalizeErr(e));
     }
   };
@@ -321,6 +322,12 @@ const ManagersPage = () => {
 чтобы упростить процесс обслуживания на местах.`}
         />
       </Header>
+
+      {isFetching && (
+        <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 9999, background: 'rgba(255, 255, 255, 0.9)', padding: '20px', borderRadius: '8px' }}>
+          <LoaderCentered />
+        </div>
+      )}
 
       {/* Карточки */}
       <Grid>

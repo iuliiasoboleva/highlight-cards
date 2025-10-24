@@ -4,8 +4,17 @@ import axiosInstance from '../axiosInstance';
 
 export const fetchManagers = createAsyncThunk(
   'managers/fetchManagers',
-  async (orgId, { rejectWithValue }) => {
+  async (forceRefresh = false, { getState, rejectWithValue }) => {
     try {
+      const state = getState();
+      const orgId = typeof forceRefresh === 'object' ? forceRefresh.orgId : state.user.organization_id;
+      
+      if (!orgId) return [];
+      
+      if (!forceRefresh && state.managers.list.length > 0 && !state.managers.loading) {
+        return null;
+      }
+      
       const res = await axiosInstance.get('/managers', { params: { organization_id: orgId } });
       return res.data;
     } catch (err) {
@@ -56,6 +65,7 @@ const managersSlice = createSlice({
   initialState: {
     list: [],
     loading: false,
+    fetching: false,
     error: null,
   },
   reducers: {
@@ -81,35 +91,60 @@ const managersSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchManagers.pending, (state) => {
-        state.loading = true;
+        if (state.list.length === 0) {
+          state.loading = true;
+        } else {
+          state.fetching = true;
+        }
         state.error = null;
       })
       .addCase(fetchManagers.fulfilled, (state, action) => {
+        if (action.payload === null) {
+          state.loading = false;
+          state.fetching = false;
+          return;
+        }
         state.loading = false;
+        state.fetching = false;
         state.list = action.payload;
       })
       .addCase(fetchManagers.rejected, (state, action) => {
         state.loading = false;
+        state.fetching = false;
         state.error = action.payload;
       })
       .addCase(createManager.pending, (state) => {
-        state.loading = true;
+        state.fetching = true;
         state.error = null;
       })
       .addCase(createManager.fulfilled, (state, action) => {
-        state.loading = false;
+        state.fetching = false;
         state.list.push(action.payload);
       })
       .addCase(createManager.rejected, (state, action) => {
-        state.loading = false;
+        state.fetching = false;
         state.error = action.payload;
       })
+      .addCase(deleteManager.pending, (state) => {
+        state.fetching = true;
+      })
       .addCase(deleteManager.fulfilled, (state, action) => {
+        state.fetching = false;
         state.list = state.list.filter((m) => m.id !== action.payload);
       })
+      .addCase(deleteManager.rejected, (state) => {
+        state.fetching = false;
+      })
+      .addCase(editManager.pending, (state) => {
+        state.fetching = true;
+      })
       .addCase(editManager.fulfilled, (state, action) => {
+        state.fetching = false;
         const idx = state.list.findIndex((m) => m.id === action.payload.id);
         if (idx !== -1) state.list[idx] = action.payload;
+      })
+      .addCase(editManager.rejected, (state) => {
+        state.fetching = false;
       });
   },
 });

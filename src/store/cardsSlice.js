@@ -267,7 +267,6 @@ export const createCard = createAsyncThunk(
           )
             .unwrap()
             .catch(() => {});
-          await dispatch(fetchBranches(orgId));
         }
       } catch (_) {}
 

@@ -52,8 +52,8 @@ const Clients = () => {
   useEffect(() => {
     dispatch(fetchClients());
     if (orgId) {
-      dispatch(fetchBranches(orgId));
-      dispatch(fetchNetworks(orgId));
+      dispatch(fetchBranches());
+      dispatch(fetchNetworks());
     }
   }, [dispatch, orgId]);
 

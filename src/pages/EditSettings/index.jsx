@@ -98,7 +98,7 @@ const EditSettings = () => {
 
   useEffect(() => {
     if (organizationId) {
-      dispatch(fetchBranches(organizationId));
+      dispatch(fetchBranches());
     }
   }, [organizationId, dispatch]);
 
@@ -132,7 +132,6 @@ const EditSettings = () => {
         dispatch(createBranch({ name, address: addr, organization_id: organizationId }))
           .unwrap()
           .catch(() => {});
-        dispatch(fetchBranches(organizationId));
       }
     } catch (_) {}
   };
