@@ -53,9 +53,8 @@ const EditType = () => {
         }
 
         // Для создания новой карты
-        const newId = cards?.length > 0 ? Math.max(...cards.map((c) => c.id)) + 1 : 1;
         dispatch(setCurrentCard({ 
-          id: newId, 
+          id: null, 
           status: 'stamp', 
           name: 'Штамп',
           infoFields: {

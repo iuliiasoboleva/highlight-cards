@@ -25,20 +25,18 @@ const IntegrationPicker = ({ value, onChange, className }) => {
             role="radio"
             aria-checked={selected}
             $selected={selected}
-            onClick={() => onChange?.(item.key)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                onChange?.(item.key);
-              }
-            }}
+            $disabled={true}
+            title="Совсем скоро здесь будет доступна настройка интеграции"
+            onClick={(e) => e.preventDefault()}
+            onKeyDown={(e) => e.preventDefault()}
           >
             <RadioHidden
               type="radio"
               checked={selected}
-              onChange={() => onChange?.(item.key)}
+              onChange={() => {}}
               aria-hidden
               tabIndex={-1}
+              disabled
             />
             <LogoBox>
               {item.logo ? <img src={item.logo} alt="" /> : <span>{item.name}</span>}

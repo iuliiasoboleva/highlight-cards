@@ -52,7 +52,8 @@ export const Card = styled.button`
   transition:
     box-shadow 0.15s ease,
     border-color 0.15s ease,
-    transform 0.02s ease;
+    transform 0.02s ease,
+    opacity 0.15s ease;
 
   aspect-ratio: 299 / 186;
 
@@ -72,6 +73,22 @@ export const Card = styled.button`
     css`
       border-color: #bf4756;
       box-shadow: 0 0 0 2px rgba(191, 71, 86, 0.25) inset;
+    `}
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: auto;
+      
+      &:hover {
+        border-color: #e5e7eb;
+      }
+      
+      &:active {
+        transform: none;
+      }
     `}
 `;
 

@@ -69,7 +69,7 @@ const EditIntegration = () => {
       </div>
       <IntegrationPicker value={integration} onChange={handlePick} />
 
-      <CreateButton onClick={handleActivate}>Продолжить</CreateButton>
+      <CreateButton onClick={handleActivate}>Создать карту</CreateButton>
     </>
   );
 
