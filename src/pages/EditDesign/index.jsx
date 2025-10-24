@@ -6,6 +6,7 @@ import html2canvas from 'html2canvas';
 
 import EditLayout from '../../components/EditLayout';
 import TitleWithHelp from '../../components/TitleWithHelp';
+import CustomInput from '../../customs/CustomInput';
 import CustomTooltip from '../../customs/CustomTooltip';
 import { updateCurrentCardField } from '../../store/cardsSlice';
 import { stampIcons } from '../../utils/stampIcons';
@@ -290,7 +291,26 @@ const EditDesign = () => {
           />
         </StampSettingsBlock>
 
-        <StampSettingsBlock />
+        <StampSettingsBlock data-design-key="cardTitle">
+          <StampSectionLabel>
+            <BarcodeRadioTitle>Название на карте</BarcodeRadioTitle>
+            <CustomTooltip
+              id="card-title-help"
+              html
+              content="Название карты, которое будет отображаться сверху на карте и в push-уведомлениях. Рекомендуется использовать короткое название"
+            />
+          </StampSectionLabel>
+
+          <CustomInput
+            value={design.cardTitle || ''}
+            onChange={(e) => {
+              dispatch(updateCurrentCardField({ path: 'design.cardTitle', value: e.target.value }));
+              setIsDirty(true);
+            }}
+            placeholder="Введите короткое название"
+            type="text"
+          />
+        </StampSettingsBlock>
       </StampSettings>
 
       <hr />
