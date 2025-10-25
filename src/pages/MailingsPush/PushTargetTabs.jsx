@@ -92,8 +92,8 @@ const PushTargetTabs = ({ selectedCardId, onTabChange, onFilteredCountChange }) 
             'growing',
           ].includes(segment)
         ) {
-          const seg = (client.rfmSegment || client.segment || '').toString().trim().toLowerCase();
-          return seg === segment;
+          const clientSegment = client.rfmSegment || (client.segment && client.segment[0]) || '';
+          return clientSegment === segment;
         }
 
         if (segment === 'no-birthday') {
@@ -116,7 +116,6 @@ const PushTargetTabs = ({ selectedCardId, onTabChange, onFilteredCountChange }) 
 
       onFilteredCountChangeRef.current?.(filtered.length);
     } else {
-      // Для "Всем клиентам" используем только клиентов с выбранной картой
       onFilteredCountChangeRef.current?.(clientsWithSelectedCard.length);
     }
   }, [selectedTab, segment, symbol, filterInput, clientsWithSelectedCard]);

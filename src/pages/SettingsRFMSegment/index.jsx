@@ -1,10 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
+import axiosInstance from '../../axiosInstance';
 import CustomInput from '../../customs/CustomInput';
-import { mockClients, mockRFM } from '../../mocks/mockRFM';
-import { countClientsBySegments } from '../../utils/countClientsBySegments';
+import { useToast } from '../../components/Toast';
 import {
   Card,
   CardTitle,
@@ -25,11 +26,93 @@ import {
   Warning,
 } from './styles';
 
-const SettingsRFMSegment = () => {
-  const [segments, setSegments] = useState(mockRFM);
-  const [savedSegments, setSavedSegments] = useState(mockRFM);
+const DEFAULT_SEGMENTS = [
+  { title: 'Требуют внимания', freqFrom: 8, freqTo: 12, recencyFrom: 61, recencyTo: 90 },
+  { title: 'Лояльные - постоянные', freqFrom: 8, freqTo: 12, recencyFrom: 31, recencyTo: 60 },
+  { title: 'Чемпионы', freqFrom: 8, freqTo: 12, recencyFrom: 0, recencyTo: 30 },
+  { title: 'В зоне риска', freqFrom: 4, freqTo: 7, recencyFrom: 61, recencyTo: 90 },
+  { title: 'Средние (на грани)', freqFrom: 4, freqTo: 7, recencyFrom: 31, recencyTo: 60 },
+  { title: 'Растущие', freqFrom: 4, freqTo: 7, recencyFrom: 0, recencyTo: 30 },
+];
 
+const SettingsRFMSegment = () => {
+  const user = useSelector((state) => state.user);
+  const toast = useToast();
+  
+  const [segments, setSegments] = useState(DEFAULT_SEGMENTS);
+  const [savedSegments, setSavedSegments] = useState(DEFAULT_SEGMENTS);
+  const [counts, setCounts] = useState({});
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState({});
+
+  useEffect(() => {
+    loadSegments();
+  }, [user.organization_id]);
+
+  const loadSegments = async () => {
+    if (!user.organization_id) return;
+    
+    try {
+      setLoading(true);
+      const response = await axiosInstance.get(`/rfm-settings/`, {
+        params: { organization_id: String(user.organization_id) }
+      });
+      
+      if (response.data && response.data.length > 0) {
+        const loadedSegments = response.data.map(s => ({
+          id: s.id,
+          title: s.title,
+          freqFrom: s.freq_from,
+          freqTo: s.freq_to,
+          recencyFrom: s.recency_from,
+          recencyTo: s.recency_to
+        }));
+        setSegments(loadedSegments);
+        setSavedSegments(loadedSegments);
+      } else {
+        await initializeDefaultSegments();
+      }
+      
+      await loadSegmentCounts();
+    } catch (error) {
+      console.error('Ошибка при загрузке настроек сегментации:', error);
+      toast.error('Ошибка при загрузке настроек сегментации');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const initializeDefaultSegments = async () => {
+    try {
+      for (const segment of DEFAULT_SEGMENTS) {
+        await axiosInstance.post('/rfm-settings/', {
+          organization_id: String(user.organization_id),
+          title: segment.title,
+          freq_from: segment.freqFrom,
+          freq_to: segment.freqTo,
+          recency_from: segment.recencyFrom,
+          recency_to: segment.recencyTo
+        });
+      }
+      await loadSegments();
+    } catch (error) {
+      toast.error('Ошибка при инициализации настроек');
+    }
+  };
+
+  const loadSegmentCounts = async () => {
+    if (!user.organization_id) return;
+    
+    try {
+      const response = await axiosInstance.get('/rfm-settings/segment-counts', {
+        params: { organization_id: String(user.organization_id) }
+      });
+      setCounts(response.data);
+    } catch (error) {
+      console.error('Ошибка при загрузке счетчиков сегментов:', error);
+    }
+  };
 
   const handleChange = (index, field, value) => {
     const updated = [...segments];
@@ -37,13 +120,34 @@ const SettingsRFMSegment = () => {
     setSegments(updated);
   };
 
-  const handleSave = (index) => {
-    setSavedSegments((prev) =>
-      prev.map((seg, i) => (i === index ? { ...seg, ...segments[index] } : seg)),
-    );
+  const handleSave = async (index) => {
+    const segment = segments[index];
+    
+    setSaving(prev => ({ ...prev, [index]: true }));
+    
+    try {
+      await axiosInstance.post('/rfm-settings/', {
+        organization_id: String(user.organization_id),
+        title: segment.title,
+        freq_from: Number(segment.freqFrom),
+        freq_to: Number(segment.freqTo),
+        recency_from: Number(segment.recencyFrom),
+        recency_to: Number(segment.recencyTo)
+      });
+      
+      setSavedSegments((prev) =>
+        prev.map((seg, i) => (i === index ? { ...seg, ...segments[index] } : seg)),
+      );
+      
+      await loadSegmentCounts();
+      
+      toast.success('Настройки сегмента сохранены и пересчитаны');
+    } catch (error) {
+      toast.error('Ошибка при сохранении настроек');
+    } finally {
+      setSaving(prev => ({ ...prev, [index]: false }));
+    }
   };
-
-  const counts = useMemo(() => countClientsBySegments(savedSegments, mockClients), [savedSegments]);
 
   return (
     <Page>
@@ -78,9 +182,12 @@ const SettingsRFMSegment = () => {
 
       <Warning>При изменении настроек все сегменты автоматически пересчитаются.</Warning>
 
-      <Grid>
-        {segments.map((segment, index) => (
-          <Card key={segment.title}>
+      {loading ? (
+        <div>Загрузка...</div>
+      ) : (
+        <Grid>
+          {segments.map((segment, index) => (
+            <Card key={segment.title}>
             <CardTitle>{segment.title}</CardTitle>
 
             <Row>
@@ -153,15 +260,20 @@ const SettingsRFMSegment = () => {
               </Field>
             </Row>
 
-            <MainButton type="button" onClick={() => handleSave(index)}>
-              Сохранить
+            <MainButton 
+              type="button" 
+              onClick={() => handleSave(index)}
+              disabled={saving[index]}
+            >
+              {saving[index] ? 'Сохранение...' : 'Сохранить'}
             </MainButton>
           </Card>
         ))}
       </Grid>
+      )}
+
       <TableTitle>Сводка по сегментам</TableTitle>
 
-      {/* Сводная таблица */}
       <TableWrap>
         <Table>
           <thead>
@@ -176,10 +288,10 @@ const SettingsRFMSegment = () => {
                 <EmptyCell colSpan={2}>Нет данных</EmptyCell>
               </tr>
             ) : (
-              savedSegments.map((seg, i) => (
+              savedSegments.map((seg) => (
                 <tr key={seg.title}>
                   <Td>{seg.title}</Td>
-                  <Td>{counts[i] ?? 0}</Td>
+                  <Td>{counts[seg.title] ?? 0}</Td>
                 </tr>
               ))
             )}
