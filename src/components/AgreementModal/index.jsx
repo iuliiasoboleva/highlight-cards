@@ -112,6 +112,22 @@ const BenefitValue = styled(DetailValue)`
   white-space: nowrap;
 `;
 
+const PromoRow = styled(DetailRow)`
+  background: #ecfdf5;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  border-bottom: none;
+
+  ${DetailLabel} {
+    color: #065f46;
+  }
+
+  ${DetailValue} {
+    color: #065f46;
+  }
+`;
+
 const AgreementModal = ({
   open,
   onClose,
@@ -120,6 +136,9 @@ const AgreementModal = ({
   points,
   months,
   total,
+  originalTotal,
+  discount,
+  promoCode,
   monthlyPrice
 }) => {
   const [agreed, setAgreed] = useState(false);
@@ -178,6 +197,19 @@ const AgreementModal = ({
               <DetailLabel>Стоимость за месяц:</DetailLabel>
               <DetailValue>{monthlyPrice?.toLocaleString('ru-RU')} ₽</DetailValue>
             </DetailRow>
+
+            {promoCode && discount > 0 && (
+              <>
+                <DetailRow>
+                  <DetailLabel>Сумма до скидки:</DetailLabel>
+                  <DetailValue>{originalTotal?.toLocaleString('ru-RU')} ₽</DetailValue>
+                </DetailRow>
+                <PromoRow>
+                  <DetailLabel>🎉 Промокод {promoCode}:</DetailLabel>
+                  <DetailValue>-{discount?.toLocaleString('ru-RU')} ₽</DetailValue>
+                </PromoRow>
+              </>
+            )}
 
             <TotalRow>
               <TotalLabel>К оплате:</TotalLabel>

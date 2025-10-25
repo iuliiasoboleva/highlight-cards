@@ -45,6 +45,13 @@ import {
   PopularBadge,
   PriceRow,
   PrimaryBtn,
+  PromoApplyBtn,
+  PromoDiscount,
+  PromoInput,
+  PromoInputWrapper,
+  PromoLabel,
+  PromoMessage,
+  PromoWrapper,
   Radio,
   RangeLabels,
   RangeWrap,
@@ -86,6 +93,10 @@ const Settings = () => {
   const [points, setPoints] = useState(2);
   const [months, setMonths] = useState(6);
   const [invoiceOpen, setInvoiceOpen] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
+  const [promoApplied, setPromoApplied] = useState(null);
+  const [promoMessage, setPromoMessage] = useState('');
+  const [applyingPromo, setApplyingPromo] = useState(false);
 
   const plan = useMemo(() => planFeatures.find((p) => p.key === planKey), [planKey]);
 
@@ -111,11 +122,55 @@ const Settings = () => {
 
   useEffect(() => {
     setPoints((v) => clamp(v, pMin, pMax));
+    handleRemovePromo();
   }, [planKey]);
+
+  useEffect(() => {
+    if (promoApplied) {
+      handleRemovePromo();
+    }
+  }, [months, points]);
 
   const handleTopUpConfirm = (amount) => {
     setTopUpOpen(false);
     dispatch(topUpBalance({ orgId, amount }));
+  };
+
+  const handleApplyPromo = async () => {
+    if (!promoCode.trim()) {
+      setPromoMessage('Введите промокод');
+      return;
+    }
+
+    setApplyingPromo(true);
+    setPromoMessage('');
+
+    try {
+      const response = await axiosInstance.post('/promo/validate', {
+        promo_code: promoCode.trim().toUpperCase(),
+        organization_id: orgId
+      });
+
+      if (response.data.valid) {
+        setPromoApplied(response.data);
+        setPromoMessage(`Промокод применён! Скидка ${response.data.discount_percent}%`);
+        toast.success(`Промокод применён! Скидка ${response.data.discount_percent}%`);
+      } else {
+        setPromoMessage(response.data.message || 'Промокод недействителен');
+      }
+    } catch (error) {
+      const errorMsg = error.response?.data?.detail || 'Промокод не найден или недействителен';
+      setPromoMessage(errorMsg);
+      setPromoApplied(null);
+    } finally {
+      setApplyingPromo(false);
+    }
+  };
+
+  const handleRemovePromo = () => {
+    setPromoCode('');
+    setPromoApplied(null);
+    setPromoMessage('');
   };
 
   useEffect(() => {
@@ -148,6 +203,9 @@ const Settings = () => {
           : plan?.monthly;
 
   const total = monthlyPrice * months;
+  
+  const discount = promoApplied ? (total * promoApplied.discount_percent) / 100 : 0;
+  const finalTotal = Math.max(0, total - discount);
 
   const paidUntilRaw =
     subscription?.paid_until ?? subscription?.access_until ?? plan?.paidUntil ?? null;
@@ -332,10 +390,50 @@ const Settings = () => {
                   <b>{total.toLocaleString('ru-RU')} ₽</b>
                 </CalcLine>
 
+                {promoApplied && (
+                  <PromoDiscount>
+                    <span>
+                      🎉 Скидка по промокоду:
+                    </span>
+                    <b>-{discount.toLocaleString('ru-RU')} ₽</b>
+                  </PromoDiscount>
+                )}
+
                 <Total>
                   <span>К оплате:</span>
-                  <b>{total.toLocaleString('ru-RU')} ₽</b>
+                  <b>{finalTotal.toLocaleString('ru-RU')} ₽</b>
                 </Total>
+
+                <PromoWrapper>
+                  <PromoLabel>Есть промокод?</PromoLabel>
+                  <PromoInputWrapper>
+                    <PromoInput
+                      type="text"
+                      placeholder="Введите промокод"
+                      value={promoCode}
+                      onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                      onKeyPress={(e) => e.key === 'Enter' && handleApplyPromo()}
+                      disabled={applyingPromo || promoApplied}
+                    />
+                    {promoApplied ? (
+                      <PromoApplyBtn onClick={handleRemovePromo}>
+                        Удалить
+                      </PromoApplyBtn>
+                    ) : (
+                      <PromoApplyBtn 
+                        onClick={handleApplyPromo}
+                        disabled={applyingPromo || !promoCode.trim()}
+                      >
+                        {applyingPromo ? 'Проверка...' : 'Применить'}
+                      </PromoApplyBtn>
+                    )}
+                  </PromoInputWrapper>
+                  {promoMessage && (
+                    <PromoMessage $success={!!promoApplied} $error={!promoApplied}>
+                      {promoMessage}
+                    </PromoMessage>
+                  )}
+                </PromoWrapper>
 
                 <PrimaryBtn onClick={() => setShowModal(true)}>Оплатить картой</PrimaryBtn>
                 <GhostBtn type="button" onClick={() => setInvoiceOpen(true)}>
@@ -364,14 +462,15 @@ const Settings = () => {
             const res = await axiosInstance.post(
               '/payments/yookassa/create',
               {
-                amount: total,
-                description: `Оплата тарифа ${plan?.name}`,
+                amount: finalTotal,
+                description: `Оплата тарифа ${plan?.name}${promoApplied ? ` (промокод ${promoCode})` : ''}`,
                 return_url: window.location.origin + '/settings',
                 metadata: {
                   organization_id: orgId,
                   user_id: userId,
                   months,
                   plan: plan?.name,
+                  promo_code: promoApplied ? promoCode : null,
                 },
               },
               { headers: { 'Idempotence-Key': idk } },
@@ -388,7 +487,10 @@ const Settings = () => {
         plan={plan}
         points={points}
         months={months}
-        total={total}
+        total={finalTotal}
+        originalTotal={total}
+        discount={discount}
+        promoCode={promoApplied ? promoCode : null}
         monthlyPrice={monthlyPrice}
       />
 

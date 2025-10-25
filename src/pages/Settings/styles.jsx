@@ -527,3 +527,109 @@ export const SalesBtn = styled.button`
   border-radius: 4px;
   cursor: pointer;
 `;
+
+export const PromoWrapper = styled.div`
+  margin: 16px 0;
+  padding-top: 16px;
+  border-top: 1px solid #eef0f4;
+`;
+
+export const PromoLabel = styled.div`
+  font-size: 12px;
+  color: #868083;
+  margin-bottom: 8px;
+  font-weight: 500;
+`;
+
+export const PromoInputWrapper = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+`;
+
+export const PromoInput = styled.input`
+  flex: 1;
+  border: 1px solid #e6e8ee;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  outline: none;
+
+  &:focus {
+    border-color: #c4343c;
+    box-shadow: 0 0 0 3px rgba(196, 52, 60, 0.1);
+  }
+
+  &::placeholder {
+    text-transform: none;
+    font-weight: 400;
+  }
+
+  &:disabled {
+    background: #f8f9fa;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+`;
+
+export const PromoApplyBtn = styled.button`
+  border: 1px solid #c4343c;
+  background: #fff;
+  color: #c4343c;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) {
+    background: #c4343c;
+    color: #fff;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: #e6e8ee;
+    color: #aaa;
+  }
+`;
+
+export const PromoMessage = styled.div`
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  
+  ${p => p.$success && css`
+    background: #e9fbef;
+    color: #0f7a3b;
+  `}
+  
+  ${p => p.$error && css`
+    background: #fee;
+    color: #c4343c;
+  `}
+`;
+
+export const PromoDiscount = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 12px;
+  color: #0f7a3b;
+  font-weight: 600;
+  margin-top: 8px;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+`;
