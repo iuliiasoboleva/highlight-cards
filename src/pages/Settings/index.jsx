@@ -152,9 +152,23 @@ const Settings = () => {
       });
 
       if (response.data.valid) {
-        setPromoApplied(response.data);
-        setPromoMessage(`Промокод применён! Скидка ${response.data.discount_percent}%`);
-        toast.success(`Промокод применён! Скидка ${response.data.discount_percent}%`);
+        if (response.data.discount_percent === 0) {
+          const applyResponse = await axiosInstance.post('/promo/apply', {
+            promo_code: promoCode.trim().toUpperCase(),
+            organization_id: orgId
+          });
+          
+          setPromoApplied(null);
+          setPromoCode('');
+          setPromoMessage('');
+          toast.success(`Промокод применён! Вам предоставлен доступ к тарифу ${applyResponse.data.plan_name} на ${applyResponse.data.duration_days} дней`);
+          
+          dispatch(fetchSubscription(orgId));
+        } else {
+          setPromoApplied(response.data);
+          setPromoMessage(`Промокод применён! Скидка ${response.data.discount_percent}%`);
+          toast.success(`Промокод применён! Скидка ${response.data.discount_percent}%`);
+        }
       } else {
         setPromoMessage(response.data.message || 'Промокод недействителен');
       }
