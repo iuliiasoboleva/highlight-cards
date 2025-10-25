@@ -108,6 +108,7 @@ const Settings = () => {
     }
     
     const planNameLower = (subscription.plan_name || '').toLowerCase();
+    
     if (planNameLower.includes('бизнес') || planNameLower.includes('business')) {
       return planFeatures.find((p) => p.key === 'business');
     }
@@ -158,12 +159,11 @@ const Settings = () => {
             organization_id: orgId
           });
           
-          setPromoApplied(null);
-          setPromoCode('');
-          setPromoMessage('');
           toast.success(`Промокод применён! Вам предоставлен доступ к тарифу ${applyResponse.data.plan_name} на ${applyResponse.data.duration_days} дней`);
           
-          dispatch(fetchSubscription(orgId));
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
         } else {
           setPromoApplied(response.data);
           setPromoMessage(`Промокод применён! Скидка ${response.data.discount_percent}%`);
@@ -284,11 +284,11 @@ const Settings = () => {
                 <PlanCard
                   key={p.key}
                   $active={p.key === planKey}
-                  $current={p.key === 'free' && subscription?.status === 'trial'}
+                  $current={currentUserPlan?.key === p.key}
                   onClick={() => setPlanKey(p.key)}
                 >
                   {p.popular && <PopularBadge>Популярный</PopularBadge>}
-                  {p.key === 'free' && subscription?.status === 'trial' && (
+                  {currentUserPlan?.key === p.key && (
                     <CurrentBadge>Текущий</CurrentBadge>
                   )}
                   <Row>
