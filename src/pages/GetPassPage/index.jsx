@@ -184,8 +184,8 @@ const GetPassPage = () => {
         toast.success('Переход в Google Wallet...');
         
         const googleWalletUrl = BASE_URL === '/' 
-          ? `/google-wallet/${identifier}?${new URLSearchParams(clientData).toString()}`
-          : `${BASE_URL.replace(/\/$/, '')}/google-wallet/${identifier}?${new URLSearchParams(clientData).toString()}`;
+          ? `/google-wallet/save/${identifier}?${new URLSearchParams(clientData).toString()}`
+          : `${BASE_URL.replace(/\/$/, '')}/google-wallet/save/${identifier}?${new URLSearchParams(clientData).toString()}`;
         
         setTimeout(() => {
           window.location.href = googleWalletUrl;
