@@ -54,6 +54,8 @@ const GetPassPage = () => {
   }, [uuid]);
 
   const getCompanyInfo = () => {
+    if (!card) return 'Информация о компании не указана';
+    
     const issuerName = card?.infoFields?.issuerName || card?.infoFields?.companyName;
     const issuerEmail = card?.infoFields?.issuerEmail;
     const issuerPhone = card?.infoFields?.issuerPhone;
@@ -70,15 +72,19 @@ const GetPassPage = () => {
     return parts.join('\n');
   };
 
-  const accordionItems = [
-    { title: 'Информация о компании', content: getCompanyInfo() },
-    { title: 'Информация о карте', content: card?.infoFields?.howToGetStamp || 'Информация о карте не указана' },
-    {
-      title: 'Политика использования персональных данных',
-      content: card?.policySettings?.fullPolicyText || 'Политика не указана',
-    },
-    { title: 'Условия использования', content: card?.infoFields?.fullPolicyText || 'Условия не указаны' },
-  ];
+  const getAccordionItems = () => {
+    if (!card) return [];
+    
+    return [
+      { title: 'Информация о компании', content: getCompanyInfo() },
+      { title: 'Информация о карте', content: card?.infoFields?.howToGetStamp || 'Информация о карте не указана' },
+      {
+        title: 'Политика использования персональных данных',
+        content: card?.policySettings?.fullPolicyText || 'Политика не указана',
+      },
+      { title: 'Условия использования', content: card?.infoFields?.fullPolicyText || 'Условия не указаны' },
+    ];
+  };
 
   const [formData, setFormData] = useState({});
   const [consent, setConsent] = useState({
@@ -374,7 +380,7 @@ const GetPassPage = () => {
           </AuthForm>
 
           <AccordionsWrapper>
-            {accordionItems.map((item) => (
+            {getAccordionItems().map((item) => (
               <Accordion key={item.title} title={item.title} content={item.content} />
             ))}
           </AccordionsWrapper>

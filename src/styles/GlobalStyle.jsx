@@ -29,6 +29,7 @@ export const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     width: 100%;
+    max-width: 100vw;
     height: 100%;
     font-family: 'Manrope', system-ui;
     letter-spacing: 0.2px;
@@ -37,6 +38,7 @@ export const GlobalStyle = createGlobalStyle`
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
   }
 
   textarea, button, input, select {
