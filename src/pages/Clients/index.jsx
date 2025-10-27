@@ -105,7 +105,7 @@ const Clients = () => {
 
   const handleOpenAdd = () => {
     if (branches.length === 0) {
-      setShowAddModal(true);
+      setShowNoBranchModal(true);
     } else {
       setShowAddModal(true);
     }

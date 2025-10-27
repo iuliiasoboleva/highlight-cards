@@ -397,20 +397,20 @@ const ManagersPage = () => {
       <CustomModal
         open={showNoLocationsWarning}
         onClose={() => setShowNoLocationsWarning(false)}
-        title="Создайте торговую точку"
+        title="Создайте точку продаж"
         actions={
           <>
             <CustomModal.SecondaryButton onClick={() => setShowNoLocationsWarning(false)}>
               Отмена
             </CustomModal.SecondaryButton>
             <CustomModal.PrimaryButton onClick={handleCreateLocationFromWarning}>
-              Создать торговую точку
+              Создать точку продаж
             </CustomModal.PrimaryButton>
           </>
         }
       >
         <div style={{ padding: '16px 0', fontSize: '15px', lineHeight: '1.5' }}>
-          Для добавления сотрудника необходимо сначала создать хотя бы одну торговую точку. 
+          Для добавления сотрудника необходимо сначала создать хотя бы одну точку продаж. 
           Сотрудники привязываются к торговым точкам для учета продаж и начисления баллов.
         </div>
       </CustomModal>
@@ -425,7 +425,7 @@ const ManagersPage = () => {
               Отмена
             </CustomModal.SecondaryButton>
             <CustomModal.PrimaryButton onClick={handleCreateLocationFromNetworkWarning}>
-              Создать торговую точку
+              Создать точку продаж
             </CustomModal.PrimaryButton>
           </>
         }

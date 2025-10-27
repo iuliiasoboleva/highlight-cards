@@ -12,17 +12,24 @@ const NoBranchModal = ({ open, onClose }) => {
     <CustomModal
       open={open}
       onClose={onClose}
-      title="Нет точек продаж"
+      title="Необходимо создать точку продаж"
       actions={
         <>
-          <CustomModal.PrimaryButton onClick={() => navigate('/managers')}>
-            Перейти
+          <CustomModal.PrimaryButton 
+            onClick={() => {
+              onClose();
+              navigate('/managers');
+            }}
+          >
+            Создать точку продаж
           </CustomModal.PrimaryButton>
           <CustomModal.SecondaryButton onClick={onClose}>Отменить</CustomModal.SecondaryButton>
         </>
       }
     >
-      <FooterCardDescription>Сначала необходимо добавить точку продаж.</FooterCardDescription>
+      <FooterCardDescription>
+        Для добавления клиента необходимо сначала создать точку продаж.
+      </FooterCardDescription>
     </CustomModal>
   );
 };
