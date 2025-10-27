@@ -456,13 +456,24 @@ export const cardsSlice = createSlice({
     initializeCards: (state, action) => {
       try {
         const useTemplates = action.payload?.useTemplates || false;
-        state.cards = getAllCards(useTemplates).map((card) => ({
+        const allCards = getAllCards(useTemplates).map((card) => ({
           ...card,
           fieldsName: (statusConfig[card.status] || []).map((item) => ({
             type: item.valueKey,
             name: item.label,
           })),
         }));
+        
+        const uniqueCards = [];
+        const seenIds = new Set();
+        for (const card of allCards) {
+          if (!seenIds.has(card.id)) {
+            seenIds.add(card.id);
+            uniqueCards.push(card);
+          }
+        }
+        
+        state.cards = uniqueCards;
         state.error = null;
       } catch (err) {
         state.error = err.message;
@@ -473,15 +484,23 @@ export const cardsSlice = createSlice({
     },
 
     reorderCards: (state, action) => {
-      state.cards = action.payload;
+      const uniqueCards = [];
+      const seenIds = new Set();
+      for (const card of action.payload) {
+        if (!seenIds.has(card.id)) {
+          seenIds.add(card.id);
+          uniqueCards.push(card);
+        }
+      }
+      state.cards = uniqueCards;
     },
 
     togglePin: (state, action) => {
       const card = state.cards.find((c) => c.id === action.payload);
       if (!card || card.id === 'fixed') return;
       card.isPinned = !card.isPinned;
-      const fixed = state.cards[0];
-      const others = state.cards.slice(1);
+      const fixed = state.cards.find((c) => c.id === 'fixed') || state.cards[0];
+      const others = state.cards.filter((c) => c.id !== 'fixed');
       const pinned = others.filter((c) => c.isPinned);
       const rest = others.filter((c) => !c.isPinned);
       state.cards = [fixed, ...pinned, ...rest];
@@ -505,13 +524,10 @@ export const cardsSlice = createSlice({
         }
         
         const mappedCards = action.payload.map(mapCardFromAPI);
-        const rawCards = [fixedCard, ...mappedCards];
-
-        const fixed = rawCards[0];
-        const others = rawCards.slice(1);
+        const others = mappedCards.filter((c) => c.id !== 'fixed');
         const pinned = others.filter((c) => c.isPinned);
         const rest = others.filter((c) => !c.isPinned);
-        state.cards = [fixed, ...pinned, ...rest];
+        state.cards = [fixedCard, ...pinned, ...rest];
         state.loading = false;
         state.fetching = false;
       })
@@ -540,8 +556,9 @@ export const cardsSlice = createSlice({
       .addCase(createCard.fulfilled, (state, action) => {
         state.loading = false;
         const newCard = mapCardFromAPI(action.payload);
-        const rest = state.cards.slice(1).filter((c) => c.id !== newCard.id);
-        state.cards = [state.cards[0], ...rest, newCard];
+        const fixed = state.cards.find((c) => c.id === 'fixed') || fixedCard;
+        const rest = state.cards.filter((c) => c.id !== 'fixed' && c.id !== newCard.id);
+        state.cards = [fixed, ...rest, newCard];
         state.currentCard = mergeCardWithDefault(newCard);
       })
       .addCase(createCard.rejected, (state, action) => {
@@ -550,10 +567,15 @@ export const cardsSlice = createSlice({
       })
       .addCase(deleteCardAsync.fulfilled, (state, action) => {
         state.cards = state.cards.filter((c) => c.id !== action.payload);
+        if (!state.cards.some((c) => c.id === 'fixed')) {
+          state.cards.unshift(fixedCard);
+        }
       })
       .addCase(copyCardAsync.fulfilled, (state, action) => {
         const newCard = mapCardFromAPI(action.payload);
-        state.cards.push(newCard);
+        if (newCard.id !== 'fixed' && !state.cards.some((c) => c.id === newCard.id)) {
+          state.cards.push(newCard);
+        }
       })
       .addCase(renameCardAsync.fulfilled, (state, action) => {
         const { id, name } = action.payload;
@@ -564,8 +586,8 @@ export const cardsSlice = createSlice({
       })
       .addCase(togglePinAsync.fulfilled, (state, action) => {
         const id = action.payload;
-        const fixed = state.cards[0];
-        const others = state.cards.slice(1);
+        const fixed = state.cards.find((c) => c.id === 'fixed') || state.cards[0];
+        const others = state.cards.filter((c) => c.id !== 'fixed');
         const target = others.find((c) => c.id === id);
         if (!target) return;
         target.isPinned = !target.isPinned;
