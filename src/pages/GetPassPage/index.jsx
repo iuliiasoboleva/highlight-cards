@@ -34,6 +34,7 @@ const GetPassPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [card, setCard] = useState(null);
+  const [isWalletLoading, setIsWalletLoading] = useState(false);
 
   useEffect(() => {
     const fetchCard = async () => {
@@ -155,6 +156,8 @@ const GetPassPage = () => {
       }
     }
 
+    setIsWalletLoading(true);
+    
     try {
       const clientData = {};
       (card?.issueFormFields || []).forEach((field) => {
@@ -173,6 +176,7 @@ const GetPassPage = () => {
       
       if (!identifier) {
         toast.error('Не получен идентификатор карты');
+        setIsWalletLoading(false);
         return;
       }
       
@@ -207,6 +211,8 @@ const GetPassPage = () => {
       } else {
         toast.error('Не удалось создать карту. Попробуйте позже');
       }
+      
+      setIsWalletLoading(false);
     }
   };
 
@@ -369,12 +375,20 @@ const GetPassPage = () => {
             />
 
             <WalletButtonsWrapper>
-              <WalletButton type="button" onClick={() => handleWalletInstall('apple')}>
-                <span>Apple Wallet</span>
+              <WalletButton 
+                type="button" 
+                onClick={() => handleWalletInstall('apple')}
+                disabled={isWalletLoading}
+              >
+                <span>{isWalletLoading ? 'Загрузка...' : 'Apple Wallet'}</span>
               </WalletButton>
               
-              <WalletButton type="button" onClick={() => handleWalletInstall('google')}>
-                <span>Google Wallet</span>
+              <WalletButton 
+                type="button" 
+                onClick={() => handleWalletInstall('google')}
+                disabled={isWalletLoading}
+              >
+                <span>{isWalletLoading ? 'Загрузка...' : 'Google Wallet'}</span>
               </WalletButton>
             </WalletButtonsWrapper>
           </AuthForm>

@@ -171,14 +171,22 @@ export const WalletButton = styled.button`
     padding: 14px 20px;
   }
 
-  &:hover {
+  &:hover:not(:disabled) {
     background: #f8f9fa;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
-  &:active {
+  &:active:not(:disabled) {
     transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #e9ecef;
+    border-color: #adb5bd;
+    color: #6c757d;
   }
 `;
 

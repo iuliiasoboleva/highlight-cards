@@ -35,7 +35,7 @@ const ClientsChart = ({ title = 'Клиентская активность', ext
   const clientCalendarRef = useRef(null);
 
   useEffect(() => {
-    if (externalData && externalData.length) {
+    if (externalData !== null && externalData !== undefined) {
       const now = new Date();
       const startDate = new Date(now);
       startDate.setMonth(now.getMonth() - 1);
@@ -50,7 +50,7 @@ const ClientsChart = ({ title = 'Клиентская активность', ext
   }, [externalData]);
 
   useEffect(() => {
-    if (!externalData || !externalData.length) {
+    if (externalData === null || externalData === undefined) {
       if (selectedPeriod === 'custom' && customRange.start && customRange.end) {
         const all = Object.values(clientActivityMockData).flat();
         const filtered = all.filter((item) => {
@@ -119,7 +119,7 @@ const ClientsChart = ({ title = 'Клиентская активность', ext
     let previousData = [];
     let currentData = sortedChartData;
     
-    if (externalData && externalData.length && sortedChartData.length) {
+    if (externalData !== null && externalData !== undefined && sortedChartData.length) {
       const now = new Date();
       let currentPeriodStart, previousPeriodStart, previousPeriodEnd;
       

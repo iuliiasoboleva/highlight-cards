@@ -74,7 +74,7 @@ const Chart = ({
   }, [chartData]);
 
   useEffect(() => {
-    if (externalData && externalData.length) {
+    if (externalData !== null && externalData !== undefined) {
       const now = new Date();
       const startDate = new Date(now);
       startDate.setMonth(now.getMonth() - 1);
@@ -89,7 +89,7 @@ const Chart = ({
   }, [externalData]);
 
   useEffect(() => {
-    if (!externalData || !externalData.length) {
+    if (externalData === null || externalData === undefined) {
       if (selectedPeriod === 'custom') {
         return;
       }
@@ -149,13 +149,13 @@ const Chart = ({
     let previousData = [];
     let previousPreviousData = [];
     
-    if (externalData && externalData.length && sorted.length) {
-      if (sorted.length === 0) {
-        const stats = calculateOverallStats([], [], []);
-        setOverallStats(stats);
-        return;
-      }
-
+    if (sorted.length === 0) {
+      const stats = calculateOverallStats([], [], []);
+      setOverallStats(stats);
+      return;
+    }
+    
+    if (externalData !== null && externalData !== undefined && sorted.length) {
       const currentStart = new Date(sorted[0].date);
       const currentEnd = new Date(sorted[sorted.length - 1].date);
       const diffMs = currentEnd - currentStart;
@@ -232,7 +232,7 @@ const Chart = ({
     if (start && end) {
       setSelectedRange({ start, end });
       
-      const sourceData = externalData && externalData.length ? externalData : Object.values(dataMap).flat();
+      const sourceData = (externalData !== null && externalData !== undefined) ? externalData : Object.values(dataMap).flat();
       const byDate = new Map();
       for (const item of sourceData) {
         byDate.set(item.date, item);
