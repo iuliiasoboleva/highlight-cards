@@ -116,7 +116,8 @@ const EditInfo = () => {
 
   const handleSave = () => {
     dispatch(updateCurrentCardField({ path: 'infoReady', value: true }));
-    navigate(`/cards/${id}/edit/integration`);
+    const path = id ? `/cards/${id}/edit/integration` : '/cards/create/integration';
+    navigate(path);
   };
 
   const infoContent = (

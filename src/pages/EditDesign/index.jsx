@@ -141,7 +141,8 @@ const EditDesign = () => {
 
     dispatch(updateCurrentCardField({ path: 'designReady', value: true }));
     setIsDirty(false);
-    navigate(`/cards/${id}/edit/settings`);
+    const path = id ? `/cards/${id}/edit/settings` : '/cards/create/settings';
+    navigate(path);
   };
 
   const renderStampControls = () => (

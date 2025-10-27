@@ -78,7 +78,7 @@ export const saveCard = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const { currentCard } = getState().cards;
-      if (!currentCard?.id || currentCard.id === 'fixed') throw new Error('Нет id карты');
+      if (!currentCard?.id || currentCard.id === 'fixed' || currentCard.id === 'new') throw new Error('Нет id карты');
       const {
         frameUrl,
         cardImg,
@@ -391,7 +391,7 @@ export const cardsSlice = createSlice({
 
     addCard: (state) => {
       const exists = state.cards.some(
-        (card) => card.id !== 'fixed' && card.id === state.currentCard.id,
+        (card) => card.id !== 'fixed' && card.id !== 'new' && card.id === state.currentCard.id,
       );
       if (!exists) {
         state.cards.push({

@@ -1,5 +1,5 @@
 export const defaultCardTemplate = {
-  id: 3333,
+  id: 'new',
   status: 'stamp',
   name: 'Новая карта лояльности',
   isActive: false,

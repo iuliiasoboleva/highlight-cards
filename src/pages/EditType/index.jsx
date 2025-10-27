@@ -54,7 +54,6 @@ const EditType = () => {
 
         // Для создания новой карты
         dispatch(setCurrentCard({ 
-          id: null, 
           status: 'stamp', 
           name: 'Штамп',
           infoFields: {
@@ -85,7 +84,9 @@ const EditType = () => {
   const handleContinue = () => {
     if (!selectedType) return;
     dispatch(updateCurrentCardField({ path: 'typeReady', value: true }));
-    navigate(`/cards/${currentCard.id}/edit/design`);
+    const isNew = !id || id === 'new' || id === 'fixed';
+    const path = isNew ? '/cards/create/design' : `/cards/${id}/edit/design`;
+    navigate(path);
   };
 
   return (

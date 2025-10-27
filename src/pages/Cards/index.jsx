@@ -9,7 +9,7 @@ import CardButtons from '../../components/CardButtons';
 import CardInfo from '../../components/CardInfo/CardInfo';
 import LoaderCentered from '../../components/LoaderCentered';
 import TitleWithHelp from '../../components/TitleWithHelp';
-import { fetchCards, renameCardAsync, reorderCards, saveOrder } from '../../store/cardsSlice';
+import { fetchCards, initializeCards, renameCardAsync, reorderCards, saveOrder } from '../../store/cardsSlice';
 import {
   CardBottom,
   CardBottomText,
@@ -45,13 +45,18 @@ const Cards = () => {
 
   const cardsRef = React.useRef(cards);
   const saveOrderTimerRef = React.useRef(null);
+  const hasAppliedOrderRef = React.useRef(false);
   
   React.useEffect(() => {
     cardsRef.current = cards;
   }, [cards]);
 
   React.useEffect(() => {
-    if (cards.length <= 1) return;
+    hasAppliedOrderRef.current = false;
+  }, [isTemplatePage]);
+
+  React.useEffect(() => {
+    if (cards.length <= 1 || hasAppliedOrderRef.current || isTemplatePage) return;
     
     const savedOrder = JSON.parse(localStorage.getItem('cards_order') || '[]');
     if (savedOrder.length) {
@@ -64,15 +69,18 @@ const Cards = () => {
       ];
       if (ordered.length === cards.length - 1) {
         dispatch(reorderCards([cards[0], ...ordered]));
+        hasAppliedOrderRef.current = true;
       }
     }
-  }, [dispatch, cards]);
+  }, [dispatch, cards, isTemplatePage]);
 
   React.useEffect(() => {
     if (!isTemplatePage) {
       dispatch(fetchCards());
+    } else if (cards.length <= 1) {
+      dispatch(initializeCards({ useTemplates: true }));
     }
-  }, [dispatch, isTemplatePage]);
+  }, [dispatch, isTemplatePage, cards.length]);
 
   const debouncedSaveOrder = React.useCallback((ids) => {
     if (saveOrderTimerRef.current) {
@@ -114,7 +122,11 @@ const Cards = () => {
                 </CardState>
               )}
 
-              <CardImageBlock onClick={() => navigate(`/cards/${card.id}/info`)}>
+              <CardImageBlock onClick={() => {
+                if (!isTemplatePage) {
+                  navigate(`/cards/${card.id}/info`);
+                }
+              }}>
                 {!isTemplatePage && card.id !== 'fixed' && (
                   <DragHandle src={moveIcon} alt="Переместить" />
                 )}

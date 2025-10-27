@@ -163,7 +163,8 @@ const EditSettings = () => {
     }
 
     dispatch(updateCurrentCardField({ path: 'settingsReady', value: true }));
-    navigate(`/cards/${id}/edit/info`);
+    const path = id ? `/cards/${id}/edit/info` : '/cards/create/info';
+    navigate(path);
   };
 
   const flashInput = useCallback((key) => {

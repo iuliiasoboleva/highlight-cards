@@ -16,8 +16,7 @@ const EditIntegration = () => {
 
   const currentCard = useSelector((state) => state.cards.currentCard);
 
-  const cards = useSelector((state) => state.cards.cards);
-  const exists = cards.some((c) => c.id === currentCard?.id && c.id !== 'fixed');
+  const isCreatingNewCard = !id || id === 'new' || id === 'fixed';
   const integration = currentCard?.integration || null;
 
   const handlePick = (key) => {
@@ -26,30 +25,35 @@ const EditIntegration = () => {
 
   const handleActivate = async () => {
     try {
-      if (!exists) {
+      if (isCreatingNewCard) {
         const createdCard = await dispatch(createCard()).unwrap();
-        // Обновляем currentCard данными созданной карты
         dispatch(setCurrentCard(createdCard));
-        // Устанавливаем все поля готовности в true, поскольку карта создана
         dispatch(updateCurrentCardField({ path: 'typeReady', value: true }));
         dispatch(updateCurrentCardField({ path: 'designReady', value: true }));
         dispatch(updateCurrentCardField({ path: 'settingsReady', value: true }));
         dispatch(updateCurrentCardField({ path: 'infoReady', value: true }));
-        // Переходим сразу на страницу info созданной карты
         navigate(`/cards/${createdCard.id}/info`, { state: { skipLeaveGuard: true } });
         return;
       } else {
-        await dispatch(saveCard()).unwrap();
-        // Для сохраненной карты тоже устанавливаем все поля готовности в true
+        const savedCard = await dispatch(saveCard()).unwrap();
+        dispatch(setCurrentCard(savedCard));
         dispatch(updateCurrentCardField({ path: 'typeReady', value: true }));
         dispatch(updateCurrentCardField({ path: 'designReady', value: true }));
         dispatch(updateCurrentCardField({ path: 'settingsReady', value: true }));
         dispatch(updateCurrentCardField({ path: 'infoReady', value: true }));
+        dispatch(updateCurrentCardField({ path: 'active', value: true }));
+        navigate(`/cards/${savedCard.id}/info`, { state: { skipLeaveGuard: true } });
+        return;
       }
       dispatch(updateCurrentCardField({ path: 'active', value: true }));
-      navigate(`/cards/${currentCard.id}/info`, { state: { skipLeaveGuard: true } });
     } catch (e) {
       console.error('Ошибка при активации карты', e);
+      if (e?.detail === 'Карта не найдена') {
+        alert('Карта не найдена. Возможно, она была удалена. Перенаправляем на список карт.');
+        navigate('/cards');
+      } else {
+        alert(`Ошибка: ${e?.detail || e?.message || 'Не удалось сохранить карту'}`);
+      }
     }
   };
 
@@ -69,7 +73,9 @@ const EditIntegration = () => {
       </div>
       <IntegrationPicker value={integration} onChange={handlePick} />
 
-      <CreateButton onClick={handleActivate}>Создать карту</CreateButton>
+      <CreateButton onClick={handleActivate}>
+        {isCreatingNewCard ? 'Создать карту' : 'Сохранить изменения'}
+      </CreateButton>
     </>
   );
 

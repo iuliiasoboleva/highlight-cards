@@ -39,9 +39,7 @@ export const mergeCardWithDefault = (raw) => {
     merged.name = RUS_BY_STATUS[st] || defaultCardTemplate?.name || 'Карта';
   }
 
-  // Для существующих карт (с id) устанавливаем все ready поля в true,
-  // чтобы избежать проблем с leave guard
-  if (merged.id && typeof merged.id === 'string' && merged.id !== 'fixed') {
+  if (merged.id && typeof merged.id === 'string' && merged.id !== 'fixed' && merged.id !== 'new') {
     merged.typeReady = true;
     merged.designReady = true;
     merged.settingsReady = true;

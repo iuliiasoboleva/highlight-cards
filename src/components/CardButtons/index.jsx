@@ -41,7 +41,7 @@ const CardButtons = ({ isFixed, cardId }) => {
         {isTemplatePage ? (
           <ActionButton
             onClick={() => {
-              dispatch(setCurrentCard({}));
+              dispatch(setCurrentCard({ id: 'new' }));
               navigate('/cards/create');
             }}
           >
@@ -52,7 +52,7 @@ const CardButtons = ({ isFixed, cardId }) => {
             <ActionButton onClick={() => navigate('/cards/template')}>На шаблоне</ActionButton>
             <ActionButton
               onClick={() => {
-                dispatch(setCurrentCard({}));
+                dispatch(setCurrentCard({ id: 'new' }));
                 navigate('/cards/create');
               }}
             >
@@ -66,7 +66,10 @@ const CardButtons = ({ isFixed, cardId }) => {
 
   if (isTemplatePage) {
     const handleTemplateSelect = () => {
-      dispatch(setCurrentCard(card));
+      const templateCard = { ...card };
+      delete templateCard.id;
+      templateCard.id = 'new';
+      dispatch(setCurrentCard(templateCard));
       navigate('/cards/create');
     };
 
