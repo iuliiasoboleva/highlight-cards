@@ -510,7 +510,10 @@ const Settings = () => {
 
       <PaymentModal
         open={payOpen}
-        onClose={() => setPayOpen(false)}
+        onClose={() => {
+          setPayOpen(false);
+          setTimeout(() => window.location.reload(), 500);
+        }}
         confirmationToken={confirmationToken}
       />
 

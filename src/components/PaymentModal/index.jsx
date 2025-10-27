@@ -30,6 +30,9 @@ const PaymentModal = ({ open, onClose, confirmationToken }) => {
         widgetRef.current = new window.YooMoneyCheckoutWidget({
           confirmation_token: confirmationToken,
           return_url: window.location.href,
+          customization: {
+            modal: true,
+          },
           error_callback: (error) => {
             console.error('YooKassa widget error', error);
           },
