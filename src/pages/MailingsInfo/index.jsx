@@ -1,14 +1,12 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import axiosInstance from '../../axiosInstance';
 import CustomTable from '../../components/CustomTable';
 import LoaderCentered from '../../components/LoaderCentered';
 import Pagination from '../../components/Pagination';
 import TitleWithHelp from '../../components/TitleWithHelp';
-// import TopUpModal from '../../components/TopUpModal';
 import { mailingsHeaders } from '../../mocks/mockMailings';
-import { fetchBalance } from '../../store/balanceSlice';
 import MailingDetailsModal from './MailingDetailsModal';
 import { Badge, Container, Label, StatCard, StatsRow, TableWrapper, Value } from './styles';
 
@@ -27,16 +25,7 @@ const MailingsInfo = () => {
   const [sortOrder, setSortOrder] = useState('desc');
 
   const orgId = useSelector((state) => state.user.organization_id);
-  const dispatch = useDispatch();
   const allCards = useSelector((state) => state.cards?.cards || []);
-  const { amount: smsBalance = 0, loading: smsLoading } = useSelector(
-    (state) => state.balance || {},
-  );
-
-  useEffect(() => {
-    if (!orgId) return;
-    dispatch(fetchBalance(orgId));
-  }, [orgId, dispatch]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -219,7 +208,6 @@ const MailingsInfo = () => {
   const cards = [
     { value: '0', label: 'Клиентов в базе' },
     { value: 'Бесплатно!', label: 'Push и Web-push', highlight: true },
-    { value: smsBalance, label: 'Баланс SMS', sms: true },
   ];
 
   return (
