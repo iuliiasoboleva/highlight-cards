@@ -29,22 +29,21 @@ const SettingsArchive = () => {
     {
       key: 'paid_at',
       title: 'Дата',
-      className: 'text-left',
+      className: 'text-center',
       render: (row) => new Date(row.paid_at).toLocaleDateString(),
     },
-    { key: 'amount', title: 'Сумма', className: 'text-left', render: (row) => `${row.amount} ₽` },
-    { key: 'plan_name', title: 'Тарифный план', className: 'text-left' },
+    { key: 'amount', title: 'Сумма', className: 'text-center', render: (row) => `${row.amount} ₽` },
+    { key: 'plan_name', title: 'Тарифный план', className: 'text-center' },
     {
       key: 'status',
       title: 'Статус',
-      className: 'text-left',
+      className: 'text-center',
       render: (row) => (
         <span className={`status-badge ${row.status === 'Успешно' ? 'success' : ''}`}>
           {row.status}
         </span>
       ),
     },
-    { key: 'invoice_number', title: 'Инвойс', className: 'text-left' },
   ];
 
   if (loading) return <LoaderCentered />;

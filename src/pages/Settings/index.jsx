@@ -62,7 +62,10 @@ import {
   SmallList,
   Subtle,
   Title,
+  TooltipContent,
+  TooltipWrapper,
   Total,
+  QuestionIcon,
 } from './styles';
 
 const STATIC_LABELS = [
@@ -94,27 +97,52 @@ const Settings = () => {
   const [promoApplied, setPromoApplied] = useState(null);
   const [promoMessage, setPromoMessage] = useState('');
   const [applyingPromo, setApplyingPromo] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const plan = useMemo(() => planFeatures.find((p) => p.key === planKey), [planKey]);
 
   const currentUserPlan = useMemo(() => {
-    if (!subscription) return planFeatures.find((p) => p.key === 'free');
+    console.log('🔍 Subscription data:', subscription);
+    
+    if (!subscription) {
+      console.log('⚠️ No subscription data');
+      return planFeatures.find((p) => p.key === 'free');
+    }
+    
+    console.log('📊 Status:', subscription.status, 'Plan:', subscription.plan_name);
     
     if (subscription.status === 'trial') {
+      console.log('✅ Trial detected');
       return planFeatures.find((p) => p.key === 'free');
     }
     
     const planNameLower = (subscription.plan_name || '').toLowerCase();
+    console.log('🔤 Plan name lower:', planNameLower);
     
     if (planNameLower.includes('бизнес') || planNameLower.includes('business')) {
+      console.log('✅ Business plan detected');
       return planFeatures.find((p) => p.key === 'business');
     }
     if (planNameLower.includes('сеть') || planNameLower.includes('network')) {
+      console.log('✅ Network plan detected');
       return planFeatures.find((p) => p.key === 'network');
     }
     
-    return planFeatures.find((p) => p.key === 'free');
+    console.log('⚠️ Fallback to business');
+    return planFeatures.find((p) => p.key === 'business');
   }, [subscription]);
+
+  const branchesTooltipText = useMemo(() => {
+    if (!subscription) return currentUserPlan?.branchesText;
+    
+    const purchasedPoints = subscription.points || subscription.branches_count;
+    
+    if (purchasedPoints && purchasedPoints > 0) {
+      return `${purchasedPoints} ${plural(purchasedPoints, 'торговая точка', 'торговые точки', 'торговых точек')}`;
+    }
+    
+    return currentUserPlan?.branchesText || 'Безлимит торговых точек';
+  }, [subscription, currentUserPlan]);
 
   const { min: pMin, max: pMax } = getPointsBounds(planKey);
 
@@ -192,6 +220,7 @@ const Settings = () => {
 
   useEffect(() => {
     if (orgId) {
+      console.log('🔄 Fetching subscription for orgId:', orgId);
       dispatch(fetchSubscription(orgId));
       dispatch(fetchBalance(orgId));
     }
@@ -256,7 +285,18 @@ const Settings = () => {
         <HeaderCard>
           <div>
             <Subtle>Ваш тарифный план</Subtle>
-            <Title>{currentUserPlan?.name}</Title>
+            <Title>
+              {currentUserPlan?.name}
+              <TooltipWrapper
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+              >
+                <QuestionIcon>?</QuestionIcon>
+                <TooltipContent $show={showTooltip}>
+                  {branchesTooltipText}
+                </TooltipContent>
+              </TooltipWrapper>
+            </Title>
           </div>
           <RightMeta>
             <MetaRow className="duration">
@@ -483,6 +523,7 @@ const Settings = () => {
                   months,
                   plan: plan?.name,
                   promo_code: promoApplied ? promoCode : null,
+                  points: planKey === 'network' ? points : null,
                 },
               },
               { headers: { 'Idempotence-Key': idk } },

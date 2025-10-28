@@ -42,6 +42,63 @@ export const Subtle = styled.div`
 export const Title = styled.div`
   font-weight: 800;
   font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+export const TooltipWrapper = styled.div`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: help;
+`;
+
+export const QuestionIcon = styled.div`
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #8a94a6;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #4a5568;
+  }
+`;
+
+export const TooltipContent = styled.div`
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2d3748;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  z-index: 1000;
+  opacity: ${props => props.$show ? 1 : 0};
+  visibility: ${props => props.$show ? 'visible' : 'hidden'};
+  transition: opacity 0.2s, visibility 0.2s;
+  pointer-events: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #2d3748;
+  }
 `;
 
 export const RightMeta = styled.div`

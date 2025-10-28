@@ -7,6 +7,8 @@ export const planFeatures = [
     description: '7 дней доступа без привязки карты. Полный\nфункционал тарифа «Бизнес».',
     popular: false,
     paidUntil: null,
+    branchesLimit: 1,
+    branchesText: 'До 1 торговой точки',
   },
   {
     key: 'business',
@@ -16,6 +18,8 @@ export const planFeatures = [
     description: 'Безлимит: карты, сотрудники, уведомления,\nсертификаты.',
     popular: true,
     paidUntil: '2025-09-11',
+    branchesLimit: null,
+    branchesText: 'Безлимит торговых точек',
   },
   {
     key: 'network',
@@ -26,5 +30,7 @@ export const planFeatures = [
     note: 'от 3 990₽ / мес / точка',
     popular: false,
     paidUntil: null,
+    branchesLimit: null,
+    branchesText: 'Безлимит торговых точек (от 3 точек)',
   },
 ];
