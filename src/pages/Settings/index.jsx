@@ -102,33 +102,23 @@ const Settings = () => {
   const plan = useMemo(() => planFeatures.find((p) => p.key === planKey), [planKey]);
 
   const currentUserPlan = useMemo(() => {
-    console.log('🔍 Subscription data:', subscription);
-    
     if (!subscription) {
-      console.log('⚠️ No subscription data');
       return planFeatures.find((p) => p.key === 'free');
     }
     
-    console.log('📊 Status:', subscription.status, 'Plan:', subscription.plan_name);
-    
     if (subscription.status === 'trial') {
-      console.log('✅ Trial detected');
       return planFeatures.find((p) => p.key === 'free');
     }
     
     const planNameLower = (subscription.plan_name || '').toLowerCase();
-    console.log('🔤 Plan name lower:', planNameLower);
     
     if (planNameLower.includes('бизнес') || planNameLower.includes('business')) {
-      console.log('✅ Business plan detected');
       return planFeatures.find((p) => p.key === 'business');
     }
     if (planNameLower.includes('сеть') || planNameLower.includes('network')) {
-      console.log('✅ Network plan detected');
       return planFeatures.find((p) => p.key === 'network');
     }
     
-    console.log('⚠️ Fallback to business');
     return planFeatures.find((p) => p.key === 'business');
   }, [subscription]);
 
@@ -138,7 +128,7 @@ const Settings = () => {
     const purchasedPoints = subscription.points || subscription.branches_count;
     
     if (purchasedPoints && purchasedPoints > 0) {
-      return `${purchasedPoints} ${plural(purchasedPoints, 'торговая точка', 'торговые точки', 'торговых точек')}`;
+      return `${purchasedPoints} ${plural(purchasedPoints, ['торговая точка', 'торговые точки', 'торговых точек'])}`;
     }
     
     return currentUserPlan?.branchesText || 'Безлимит торговых точек';
@@ -220,7 +210,6 @@ const Settings = () => {
 
   useEffect(() => {
     if (orgId) {
-      console.log('🔄 Fetching subscription for orgId:', orgId);
       dispatch(fetchSubscription(orgId));
       dispatch(fetchBalance(orgId));
     }
