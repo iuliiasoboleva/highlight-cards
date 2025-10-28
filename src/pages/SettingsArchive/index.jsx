@@ -25,6 +25,18 @@ const SettingsArchive = () => {
     }
   }, [dispatch, payments.length, orgId, userId]);
 
+  const getPeriodText = (period) => {
+    if (period === 'month') return '1 месяц';
+    if (period === 'year') return '12 месяцев';
+    if (period?.endsWith('m')) {
+      const months = parseInt(period);
+      if (months === 1) return '1 месяц';
+      if (months >= 2 && months <= 4) return `${months} месяца`;
+      return `${months} месяцев`;
+    }
+    return period || '—';
+  };
+
   const paymentHistoryColumns = [
     {
       key: 'paid_at',
@@ -34,6 +46,18 @@ const SettingsArchive = () => {
     },
     { key: 'amount', title: 'Сумма', className: 'text-center', render: (row) => `${row.amount} ₽` },
     { key: 'plan_name', title: 'Тарифный план', className: 'text-center' },
+    {
+      key: 'period',
+      title: 'Срок оплаты',
+      className: 'text-center',
+      render: (row) => getPeriodText(row.period),
+    },
+    {
+      key: 'points',
+      title: 'Точек',
+      className: 'text-center',
+      render: (row) => row.points || '—',
+    },
     {
       key: 'status',
       title: 'Статус',
