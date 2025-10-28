@@ -5,7 +5,6 @@ import axiosInstance from '../../axiosInstance';
 import AgreementModal from '../../components/AgreementModal';
 import GeoBadge from '../../components/GeoBadge';
 import LoaderCentered from '../../components/LoaderCentered';
-import PaymentModal from '../../components/PaymentModal';
 import InvoicePayerModal from '../../components/InvoicePayerModal';
 import { buildReceiverDefaults } from '../../utils/pdfInvoice';
 import { useToast } from '../../components/Toast';
@@ -85,8 +84,6 @@ const Settings = () => {
   const { info: subscription, loading: subLoading } = useSelector((state) => state.subscription);
 
   const [showModal, setShowModal] = useState(false);
-  const [payOpen, setPayOpen] = useState(false);
-  const [confirmationToken, setConfirmationToken] = useState('');
   const [topUpOpen, setTopUpOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const [planKey, setPlanKey] = useState('business');
@@ -479,6 +476,7 @@ const Settings = () => {
                 amount: finalTotal,
                 description: `Оплата тарифа ${plan?.name}${promoApplied ? ` (промокод ${promoCode})` : ''}`,
                 return_url: window.location.origin + '/settings',
+                use_embedded: false,
                 metadata: {
                   organization_id: orgId,
                   user_id: userId,
@@ -490,9 +488,14 @@ const Settings = () => {
               { headers: { 'Idempotence-Key': idk } },
             );
             const data = res.data;
-            setConfirmationToken(data.confirmation_token || '');
             setShowModal(false);
-            setPayOpen(true);
+            
+            if (data.payment_url) {
+              window.open(data.payment_url, '_blank', 'noopener,noreferrer');
+              toast.success('Страница оплаты открыта в новом окне');
+            } else {
+              toast.error('Не удалось получить ссылку на оплату');
+            }
           } catch (e) {
             const message = e.response?.data?.detail || e.message || 'Не удалось создать платёж';
             toast.error(message);
@@ -506,15 +509,6 @@ const Settings = () => {
         discount={discount}
         promoCode={promoApplied ? promoCode : null}
         monthlyPrice={monthlyPrice}
-      />
-
-      <PaymentModal
-        open={payOpen}
-        onClose={() => {
-          setPayOpen(false);
-          setTimeout(() => window.location.reload(), 500);
-        }}
-        confirmationToken={confirmationToken}
       />
 
       <TopUpModal
