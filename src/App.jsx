@@ -68,6 +68,7 @@ import {
   AdminSupport,
   AdminFinance,
 } from './pages/Admin';
+import KnowledgeBase from './pages/KnowledgeBase';
 
 const App = () => {
   const user = useSelector((state) => state.user);
@@ -145,6 +146,8 @@ const App = () => {
                 />
                 <Route path="/locations" element={<Locations />} />
                 <Route path="/profile" element={<SettingsPersonal />} />
+                <Route path="/education" element={<KnowledgeBase />} />
+                <Route path="/education/:slug" element={<KnowledgeBase />} />
                 <Route path="/clients" element={<ClientsLayout />}>
                   <Route path="rfm-segment" element={<SettingsRFMSegment />} />
                   <Route index element={<Clients />} />
