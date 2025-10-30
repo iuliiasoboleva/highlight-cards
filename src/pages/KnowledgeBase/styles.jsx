@@ -4,7 +4,7 @@ export const Container = styled.div`
   display: flex;
   height: calc(100vh - 60px);
   background: #f9fafb;
-  
+
   @media (max-width: 768px) {
     flex-direction: column;
     height: auto;
@@ -18,7 +18,7 @@ export const Sidebar = styled.div`
   border-right: 1px solid #e5e7eb;
   overflow-y: auto;
   flex-shrink: 0;
-  
+
   @media (max-width: 768px) {
     width: 100%;
     border-right: none;
@@ -41,7 +41,7 @@ export const SearchInput = styled.input`
   border: none;
   outline: none;
   font-size: 14px;
-  
+
   &::placeholder {
     color: #9ca3af;
   }
@@ -67,16 +67,16 @@ export const ArticleLink = styled.div`
   background: ${(props) => (props.$active ? '#fef2f2' : 'transparent')};
   border-left: 3px solid ${(props) => (props.$active ? '#ef4444' : 'transparent')};
   font-size: 14px;
-  
+
   &:hover {
     background: #f9fafb;
   }
-  
+
   svg {
     opacity: ${(props) => (props.$active ? 1 : 0)};
     transition: opacity 0.2s;
   }
-  
+
   &:hover svg {
     opacity: 1;
   }
@@ -90,7 +90,7 @@ export const Content = styled.div`
   margin: 20px;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  
+
   @media (max-width: 768px) {
     margin: 0;
     padding: 20px;
@@ -104,7 +104,7 @@ export const ArticleTitle = styled.h1`
   font-weight: 700;
   margin: 0 0 24px;
   color: #111827;
-  
+
   @media (max-width: 768px) {
     font-size: 24px;
   }
@@ -114,60 +114,61 @@ export const ArticleContent = styled.div`
   font-size: 16px;
   line-height: 1.7;
   color: #374151;
-  
+
   @media (max-width: 768px) {
     font-size: 15px;
   }
-  
+
   h1 {
     font-size: 28px;
     font-weight: 700;
     margin: 32px 0 16px;
     color: #111827;
-    
+
     @media (max-width: 768px) {
       font-size: 22px;
       margin: 24px 0 12px;
     }
   }
-  
+
   h2 {
     font-size: 24px;
     font-weight: 600;
     margin: 28px 0 14px;
     color: #111827;
-    
+
     @media (max-width: 768px) {
       font-size: 20px;
       margin: 20px 0 10px;
     }
   }
-  
+
   h3 {
     font-size: 20px;
     font-weight: 600;
     margin: 24px 0 12px;
     color: #111827;
-    
+
     @media (max-width: 768px) {
       font-size: 18px;
       margin: 18px 0 10px;
     }
   }
-  
+
   p {
     margin: 16px 0;
   }
-  
-  ul, ol {
+
+  ul,
+  ol {
     margin: 16px 0;
     padding-left: 24px;
   }
-  
+
   li {
     margin: 8px 0;
   }
-  
+
   code {
     background: #f3f4f6;
     padding: 2px 6px;
@@ -175,21 +176,21 @@ export const ArticleContent = styled.div`
     font-family: 'Monaco', 'Courier New', monospace;
     font-size: 14px;
   }
-  
+
   pre {
     background: #1f2937;
     color: #f9fafb;
     padding: 16px;
     border-radius: 8px;
     overflow-x: auto;
-    
+
     code {
       background: transparent;
       color: inherit;
       padding: 0;
     }
   }
-  
+
   blockquote {
     border-left: 4px solid #ef4444;
     padding-left: 16px;
@@ -197,22 +198,22 @@ export const ArticleContent = styled.div`
     color: #6b7280;
     font-style: italic;
   }
-  
+
   a {
     color: #ef4444;
     text-decoration: none;
-    
+
     &:hover {
       text-decoration: underline;
     }
   }
-  
+
   img {
     max-width: 100%;
     border-radius: 8px;
     margin: 16px 0;
   }
-  
+
   hr {
     border: none;
     border-top: 1px solid #e5e7eb;
@@ -228,4 +229,3 @@ export const EmptyState = styled.div`
   color: #9ca3af;
   font-size: 16px;
 `;
-

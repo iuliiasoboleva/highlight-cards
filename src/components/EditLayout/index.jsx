@@ -56,7 +56,7 @@ const EditLayout = ({
 
   useEffect(() => {
     if (!currentCard.status) return;
-    
+
     const hasCustom = Array.isArray(currentCard.fieldsName) && currentCard.fieldsName.length > 0;
     if (hasCustom) return;
 

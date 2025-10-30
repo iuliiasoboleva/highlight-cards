@@ -113,14 +113,17 @@ const Clients = () => {
 
   const handleCreated = (clientData) => {
     let link = '/example';
-    
+
     if (clientData && clientData.cards && clientData.cards.length > 0) {
       const firstCard = clientData.cards[0];
-      link = firstCard.urlCopy || firstCard.url_copy || `https://app.loyalclub.ru/getpass/${firstCard.uuid || firstCard.cardUuid || clientData.id}`;
+      link =
+        firstCard.urlCopy ||
+        firstCard.url_copy ||
+        `https://app.loyalclub.ru/getpass/${firstCard.uuid || firstCard.cardUuid || clientData.id}`;
     } else if (clientData && clientData.id) {
       link = `https://app.loyalclub.ru/getpass/${clientData.id}`;
     }
-    
+
     setGeneratedLink(link);
 
     setShowAddModal(false);

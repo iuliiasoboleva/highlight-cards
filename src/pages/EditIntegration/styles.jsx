@@ -81,11 +81,11 @@ export const Card = styled.button`
       opacity: 0.4;
       cursor: not-allowed;
       pointer-events: auto;
-      
+
       &:hover {
         border-color: #e5e7eb;
       }
-      
+
       &:active {
         transform: none;
       }

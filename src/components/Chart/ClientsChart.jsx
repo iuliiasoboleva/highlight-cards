@@ -39,12 +39,12 @@ const ClientsChart = ({ title = 'Клиентская активность', ext
       const now = new Date();
       const startDate = new Date(now);
       startDate.setMonth(now.getMonth() - 1);
-      
+
       const filtered = externalData.filter((item) => {
         const itemDate = new Date(item.date);
         return itemDate >= startDate && itemDate <= now;
       });
-      
+
       setChartData(filtered.length ? filtered : externalData);
     }
   }, [externalData]);
@@ -118,11 +118,11 @@ const ClientsChart = ({ title = 'Клиентская активность', ext
     // Определяем период для расчета предыдущих данных
     let previousData = [];
     let currentData = sortedChartData;
-    
+
     if (externalData !== null && externalData !== undefined && sortedChartData.length) {
       const now = new Date();
       let currentPeriodStart, previousPeriodStart, previousPeriodEnd;
-      
+
       if (selectedPeriod === 'custom' && customRange.start && customRange.end) {
         // Для кастомного периода
         const diffMs = customRange.end - customRange.start;
@@ -169,7 +169,7 @@ const ClientsChart = ({ title = 'Клиентская активность', ext
             previousData = sortedChartData.slice(0, midDefault);
         }
       }
-      
+
       // Фильтруем данные для предыдущего периода (кроме 'allTime')
       if (selectedPeriod !== 'allTime' && previousPeriodStart && previousPeriodEnd) {
         previousData = externalData.filter((item) => {
@@ -182,11 +182,11 @@ const ClientsChart = ({ title = 'Клиентская активность', ext
       const mid = Math.floor(sortedChartData.length / 2);
       previousData = sortedChartData.slice(0, mid);
     }
-    
+
     const prevSum = previousData.reduce((acc, cur) => acc + (cur[key] || 0), 0);
     const nextSum = currentData.reduce((acc, cur) => acc + (cur[key] || 0), 0);
     const change = prevSum === 0 ? nextSum : ((nextSum - prevSum) / prevSum) * 100;
-    
+
     return {
       value: nextSum,
       change: isFinite(change) ? Math.round(change) : 0,

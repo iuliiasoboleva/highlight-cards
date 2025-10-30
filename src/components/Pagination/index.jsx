@@ -1,10 +1,6 @@
 import React from 'react';
-import {
-  PaginationWrapper,
-  PaginationButton,
-  PaginationNumbers,
-  PaginationInfo,
-} from './styles';
+
+import { PaginationButton, PaginationInfo, PaginationNumbers, PaginationWrapper } from './styles';
 
 const Pagination = ({ page, totalPages, onPageChange }) => {
   if (totalPages <= 1) return null;
@@ -17,17 +13,11 @@ const Pagination = ({ page, totalPages, onPageChange }) => {
 
   return (
     <PaginationWrapper>
-      <PaginationButton
-        onClick={() => handlePageChange(1)}
-        disabled={page === 1}
-      >
+      <PaginationButton onClick={() => handlePageChange(1)} disabled={page === 1}>
         « Первая
       </PaginationButton>
-      
-      <PaginationButton
-        onClick={() => handlePageChange(page - 1)}
-        disabled={page === 1}
-      >
+
+      <PaginationButton onClick={() => handlePageChange(page - 1)} disabled={page === 1}>
         ‹ Назад
       </PaginationButton>
 
@@ -43,7 +33,7 @@ const Pagination = ({ page, totalPages, onPageChange }) => {
           } else {
             pageNum = page - 2 + i;
           }
-          
+
           return (
             <PaginationButton
               key={pageNum}
@@ -56,17 +46,11 @@ const Pagination = ({ page, totalPages, onPageChange }) => {
         })}
       </PaginationNumbers>
 
-      <PaginationButton
-        onClick={() => handlePageChange(page + 1)}
-        disabled={page === totalPages}
-      >
+      <PaginationButton onClick={() => handlePageChange(page + 1)} disabled={page === totalPages}>
         Вперед ›
       </PaginationButton>
 
-      <PaginationButton
-        onClick={() => handlePageChange(totalPages)}
-        disabled={page === totalPages}
-      >
+      <PaginationButton onClick={() => handlePageChange(totalPages)} disabled={page === totalPages}>
         Последняя »
       </PaginationButton>
 
@@ -78,4 +62,3 @@ const Pagination = ({ page, totalPages, onPageChange }) => {
 };
 
 export default Pagination;
-

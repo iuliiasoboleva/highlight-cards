@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import BASE_URL from './config';
 
 const adminAxiosInstance = axios.create({
@@ -46,4 +47,3 @@ adminAxiosInstance.interceptors.response.use(
 );
 
 export default adminAxiosInstance;
-

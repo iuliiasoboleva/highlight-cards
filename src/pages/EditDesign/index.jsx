@@ -91,14 +91,25 @@ const EditDesign = () => {
         dispatch(updateCurrentCardField({ path: 'visitsCount', value: 10 }));
       }
     }
-    if (isSubscription && design.stampsQuantity && design.stampsQuantity !== currentCard?.visitsCount) {
+    if (
+      isSubscription &&
+      design.stampsQuantity &&
+      design.stampsQuantity !== currentCard?.visitsCount
+    ) {
       dispatch(updateCurrentCardField({ path: 'visitsCount', value: design.stampsQuantity }));
     }
     if (location.state?.flashKey) {
       handleFieldClick(location.state.flashKey);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isStampCard, isSubscription, design.stampsQuantity, currentCard?.visitsCount, location.state, handleFieldClick]);
+  }, [
+    isStampCard,
+    isSubscription,
+    design.stampsQuantity,
+    currentCard?.visitsCount,
+    location.state,
+    handleFieldClick,
+  ]);
 
   const handleStampIconChange = (path, iconName) => {
     dispatch(updateCurrentCardField({ path, value: iconName }));

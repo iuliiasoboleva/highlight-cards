@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import styled from 'styled-components';
+
 import adminAxiosInstance from '../../adminAxiosInstance';
 
 const Container = styled.div`
@@ -192,17 +194,13 @@ const AdminFinance = () => {
             <StatCard>
               <StatLabel>Доход за этот месяц</StatLabel>
               <StatValue>{formatCurrency(stats.this_month_revenue)}</StatValue>
-              <StatSubValue>
-                Прошлый месяц: {formatCurrency(stats.last_month_revenue)}
-              </StatSubValue>
+              <StatSubValue>Прошлый месяц: {formatCurrency(stats.last_month_revenue)}</StatSubValue>
             </StatCard>
 
             <StatCard>
               <StatLabel>MRR (Ежемесячный доход)</StatLabel>
               <StatValue>{formatCurrency(stats.monthly_recurring_revenue)}</StatValue>
-              <StatSubValue>
-                {stats.active_subscriptions} активных подписок
-              </StatSubValue>
+              <StatSubValue>{stats.active_subscriptions} активных подписок</StatSubValue>
             </StatCard>
 
             <StatCard>
@@ -236,4 +234,3 @@ const AdminFinance = () => {
 };
 
 export default AdminFinance;
-

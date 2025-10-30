@@ -15,7 +15,7 @@ const NoBranchModal = ({ open, onClose }) => {
       title="Необходимо создать точку продаж"
       actions={
         <>
-          <CustomModal.PrimaryButton 
+          <CustomModal.PrimaryButton
             onClick={() => {
               onClose();
               navigate('/managers');

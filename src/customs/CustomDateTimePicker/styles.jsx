@@ -16,7 +16,7 @@ export const DateTimeInput = styled.input`
   background: white;
   transition: all 0.2s;
   cursor: pointer;
-  color: ${props => props.$hasValue ? '#000' : '#a6a5ae'};
+  color: ${(props) => (props.$hasValue ? '#000' : '#a6a5ae')};
 
   &:hover {
     border-color: #bf4756;
@@ -27,7 +27,9 @@ export const DateTimeInput = styled.input`
     border-color: #bf4756;
   }
 
-  ${props => props.$error && `
+  ${(props) =>
+    props.$error &&
+    `
     border-color: #c14857;
   `}
 `;
@@ -132,12 +134,12 @@ export const DayCell = styled.button`
   width: 32px;
   height: 32px;
   border: none;
-  background: ${props => {
+  background: ${(props) => {
     if (props.$selected) return '#bf4756';
     if (props.$today) return '#fff0f2';
     return 'transparent';
   }};
-  color: ${props => {
+  color: ${(props) => {
     if (props.$selected) return 'white';
     if (props.$otherMonth) return '#ccc';
     return '#333';
@@ -145,14 +147,14 @@ export const DayCell = styled.button`
   border-radius: 6px;
   cursor: pointer;
   font-size: 13px;
-  font-weight: ${props => props.$selected ? '600' : '400'};
+  font-weight: ${(props) => (props.$selected ? '600' : '400')};
   transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
 
   &:hover:not(:disabled) {
-    background: ${props => props.$selected ? '#a63d4a' : '#f5f5f5'};
+    background: ${(props) => (props.$selected ? '#a63d4a' : '#f5f5f5')};
   }
 
   &:disabled {
@@ -160,7 +162,9 @@ export const DayCell = styled.button`
     opacity: 0.3;
   }
 
-  ${props => props.$otherMonth && `
+  ${(props) =>
+    props.$otherMonth &&
+    `
     opacity: 0.4;
   `}
 `;
@@ -224,5 +228,3 @@ export const TimeUnit = styled.span`
   color: #666;
   min-width: 50px;
 `;
-
-

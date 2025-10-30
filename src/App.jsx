@@ -17,6 +17,17 @@ import NotFound from './components/NotFound';
 import ScrollToTop from './components/ScrollToTop';
 import { ToastProvider } from './components/Toast';
 import AuthLayout from './layouts/AuthLayout';
+import {
+  AdminAnalytics,
+  AdminDashboard,
+  AdminFinance,
+  AdminLogin,
+  AdminManagers,
+  AdminOrganizationDetail,
+  AdminOrganizations,
+  AdminRedirect,
+  AdminSupport,
+} from './pages/Admin';
 import AuthRedirectGuard from './pages/AuthRedirectGuard';
 import CardDetails from './pages/CardDetails';
 import CardStats from './pages/CardStats';
@@ -34,6 +45,7 @@ import EditType from './pages/EditType';
 import GetPassPage from './pages/GetPassPage';
 import GiftCardPage from './pages/GiftCardPage';
 import Home from './pages/Home';
+import KnowledgeBase from './pages/KnowledgeBase';
 import Locations from './pages/Locations';
 import LoginVerify from './pages/LoginVerify';
 import MailingDetails from './pages/MailingDetails';
@@ -57,18 +69,6 @@ import SettingsPersonal from './pages/SettingsPersonal';
 import SettingsRFMSegment from './pages/SettingsRFMSegment';
 import SmsLogin from './pages/SmsLogin';
 import { GlobalStyle } from './styles/GlobalStyle';
-import {
-  AdminRedirect,
-  AdminLogin,
-  AdminDashboard,
-  AdminAnalytics,
-  AdminOrganizations,
-  AdminOrganizationDetail,
-  AdminManagers,
-  AdminSupport,
-  AdminFinance,
-} from './pages/Admin';
-import KnowledgeBase from './pages/KnowledgeBase';
 
 const App = () => {
   const user = useSelector((state) => state.user);
@@ -100,7 +100,14 @@ const App = () => {
                 <Route path="/scan" element={<ScanPage />} />
                 <Route path="/workplace" element={<Workplace />} />
 
-                <Route path="/cards/create" element={<EditGuard><Outlet /></EditGuard>}>
+                <Route
+                  path="/cards/create"
+                  element={
+                    <EditGuard>
+                      <Outlet />
+                    </EditGuard>
+                  }
+                >
                   <Route index element={<EditType />} />
                   <Route path="type" element={<EditType />} />
                   <Route path="design" element={<EditDesign />} />
@@ -158,14 +165,15 @@ const App = () => {
                   <Route path=":id/reviews" element={<NotFound />} />
                 </Route>
 
-                <Route path="*" element={<NotFound />} />
+                <Route path="/not-found" element={<NotFound />} />
+                <Route path="*" element={<Navigate to="/not-found" replace />} />
               </Route>
             </Route>
 
             <Route path="/customer/card/:cardNumber" element={<CustomerPage />} />
             <Route path="/getpass/:uuid" element={<GetPassPage />} />
             <Route path="/giftcard/:cardNumber" element={<GiftCardPage />} />
-            
+
             <Route path="/admin" element={<AdminRedirect />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />

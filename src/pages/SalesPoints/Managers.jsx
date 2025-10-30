@@ -53,7 +53,11 @@ const ManagersPage = () => {
   const [showNoNetworkWarning, setShowNoNetworkWarning] = useState(false);
 
   const { list: managers, loading: mLoading, fetching: mFetching } = useSelector((s) => s.managers);
-  const { list: locations, loading: lLoading, fetching: lFetching } = useSelector((s) => s.locations);
+  const {
+    list: locations,
+    loading: lLoading,
+    fetching: lFetching,
+  } = useSelector((s) => s.locations);
   const { list: networks, fetching: nFetching } = useSelector((s) => s.networks);
   const orgId = useSelector((s) => s.user.organization_id);
   const subscription = useSelector((s) => s.subscription?.info) || null;
@@ -93,7 +97,7 @@ const ManagersPage = () => {
     try {
       const response = await axiosInstance.get(`/clients/card/${trimmedCard}`);
       const foundClient = response.data;
-      
+
       if (foundClient?.id) {
         navigate(`/clients/${foundClient.id}`);
       } else {
@@ -324,7 +328,18 @@ const ManagersPage = () => {
       </Header>
 
       {isFetching && (
-        <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 9999, background: 'rgba(255, 255, 255, 0.9)', padding: '20px', borderRadius: '8px' }}>
+        <div
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 9999,
+            background: 'rgba(255, 255, 255, 0.9)',
+            padding: '20px',
+            borderRadius: '8px',
+          }}
+        >
           <LoaderCentered />
         </div>
       )}
@@ -410,8 +425,8 @@ const ManagersPage = () => {
         }
       >
         <div style={{ padding: '16px 0', fontSize: '15px', lineHeight: '1.5' }}>
-          Для добавления сотрудника необходимо сначала создать хотя бы одну точку продаж. 
-          Сотрудники привязываются к торговым точкам для учета продаж и начисления баллов.
+          Для добавления сотрудника необходимо сначала создать хотя бы одну точку продаж. Сотрудники
+          привязываются к торговым точкам для учета продаж и начисления баллов.
         </div>
       </CustomModal>
 
@@ -431,11 +446,12 @@ const ManagersPage = () => {
         }
       >
         <div style={{ padding: '16px 0', fontSize: '15px', lineHeight: '1.5' }}>
-          Для создания сети необходимо иметь минимум 2 торговые точки. 
-          Сеть объединяет несколько торговых точек для общего учета клиентов.
+          Для создания сети необходимо иметь минимум 2 торговые точки. Сеть объединяет несколько
+          торговых точек для общего учета клиентов.
           {locations && locations.length === 1 && (
             <div style={{ marginTop: '12px', fontWeight: '500' }}>
-              У вас сейчас {locations.length} торговая точка. Создайте ещё одну для формирования сети.
+              У вас сейчас {locations.length} торговая точка. Создайте ещё одну для формирования
+              сети.
             </div>
           )}
         </div>

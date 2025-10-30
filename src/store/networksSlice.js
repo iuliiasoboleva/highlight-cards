@@ -7,14 +7,15 @@ export const fetchNetworks = createAsyncThunk(
   async (forceRefresh = false, { getState, rejectWithValue }) => {
     try {
       const state = getState();
-      const orgId = typeof forceRefresh === 'object' ? forceRefresh.orgId : state.user.organization_id;
-      
+      const orgId =
+        typeof forceRefresh === 'object' ? forceRefresh.orgId : state.user.organization_id;
+
       if (!orgId) return [];
-      
+
       if (!forceRefresh && state.networks.list.length > 0 && !state.networks.loading) {
         return null;
       }
-      
+
       const res = await axiosInstance.get('/networks', { params: { organization_id: orgId } });
       return res.data;
     } catch (err) {

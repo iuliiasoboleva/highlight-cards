@@ -137,7 +137,7 @@ export const BottomNav = styled.nav`
     height: var(--bottom-nav-height);
     padding: 12px;
     padding-bottom: max(12px, env(safe-area-inset-bottom));
-    z-index: 800;
+    z-index: 9999;
     border-top: 1px solid #e0e0e0;
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
   }

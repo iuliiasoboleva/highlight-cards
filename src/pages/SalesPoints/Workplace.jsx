@@ -4,12 +4,12 @@ import { useNavigate } from 'react-router-dom';
 
 import { BarChart2, Camera, Search, User as UserIcon } from 'lucide-react';
 
+import axiosInstance from '../../axiosInstance';
 import { useToast } from '../../components/Toast';
 import CustomInput from '../../customs/CustomInput';
 import CustomMainButton from '../../customs/CustomMainButton';
 import { CARD_LENGTH, CARD_MIN_LENGTH, normalizeDigits, validateCard } from '../../utils/cardUtils';
 import { Card, Grid, Header, IconWithTooltip, Page, ScannerIcon, Tooltip } from './styles';
-import axiosInstance from '../../axiosInstance';
 
 const Workplace = () => {
   const navigate = useNavigate();
@@ -51,7 +51,7 @@ const Workplace = () => {
     try {
       const response = await axiosInstance.get(`/clients/card/${trimmedCard}`);
       const foundClient = response.data;
-      
+
       if (foundClient?.id) {
         navigate(`/clients/${foundClient.id}`);
       } else {
@@ -133,7 +133,9 @@ const Workplace = () => {
           <ScannerIcon>
             <IconWithTooltip onClick={(e) => e.stopPropagation()}>
               <Search size={18} />
-              <Tooltip>Введите от {CARD_MIN_LENGTH} до {CARD_LENGTH} цифр и нажмите «Найти клиента»</Tooltip>
+              <Tooltip>
+                Введите от {CARD_MIN_LENGTH} до {CARD_LENGTH} цифр и нажмите «Найти клиента»
+              </Tooltip>
             </IconWithTooltip>
           </ScannerIcon>
 

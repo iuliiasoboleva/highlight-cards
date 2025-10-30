@@ -115,31 +115,44 @@ export async function generateInvoicePdf({ receiver, payer, invoice }) {
       ...(logoDataUrl
         ? [
             { image: logoDataUrl, width: 120, absolutePosition: { x: 0, y: 36 } },
-            { text: `Счёт №${invoice.number} от ${dateStr}`, style: 'h1', alignment: 'right', margin: [0, 0, 0, 16] },
+            {
+              text: `Счёт №${invoice.number} от ${dateStr}`,
+              style: 'h1',
+              alignment: 'right',
+              margin: [0, 0, 0, 16],
+            },
           ]
         : [{ text: `Счёт №${invoice.number} от ${dateStr}`, style: 'h1' }]),
       { text: receiver.name, style: 'h1' },
-      { columns: [
-        [
-          { text: 'Получатель', style: 'h2' },
-          { text: `${receiver.name}` },
-          { text: `ИНН ${receiver.inn}${receiver.kpp ? ' / КПП ' + receiver.kpp : ''}`, style: 'small' },
-          { text: `${receiver.bank_name}`, style: 'small' },
-          { text: `р/с ${receiver.checking_account}`, style: 'small' },
-          { text: `к/с ${receiver.correspondent_account}`, style: 'small' },
-          { text: `БИК ${receiver.bik}`, style: 'small' },
+      {
+        columns: [
+          [
+            { text: 'Получатель', style: 'h2' },
+            { text: `${receiver.name}` },
+            {
+              text: `ИНН ${receiver.inn}${receiver.kpp ? ' / КПП ' + receiver.kpp : ''}`,
+              style: 'small',
+            },
+            { text: `${receiver.bank_name}`, style: 'small' },
+            { text: `р/с ${receiver.checking_account}`, style: 'small' },
+            { text: `к/с ${receiver.correspondent_account}`, style: 'small' },
+            { text: `БИК ${receiver.bik}`, style: 'small' },
+          ],
+          [
+            { text: 'Плательщик', style: 'h2' },
+            { text: `${payer.name}` },
+            { text: `ИНН ${payer.inn}${payer.kpp ? ' / КПП ' + payer.kpp : ''}`, style: 'small' },
+            payer.legal_address ? { text: payer.legal_address, style: 'small' } : {},
+            payer.phone ? { text: payer.phone, style: 'small' } : {},
+          ],
         ],
-        [
-          { text: 'Плательщик', style: 'h2' },
-          { text: `${payer.name}` },
-          { text: `ИНН ${payer.inn}${payer.kpp ? ' / КПП ' + payer.kpp : ''}`, style: 'small' },
-          payer.legal_address ? { text: payer.legal_address, style: 'small' } : {},
-          payer.phone ? { text: payer.phone, style: 'small' } : {},
-        ],
-      ]},
+      },
 
       { text: 'Назначение платежа', style: 'h2', margin: [0, 12, 0, 6] },
-      { text: invoice.purpose || 'Плата за пользование сервисом Loyal Club по тарифу', margin: [0, 0, 0, 8] },
+      {
+        text: invoice.purpose || 'Плата за пользование сервисом Loyal Club по тарифу',
+        margin: [0, 0, 0, 8],
+      },
 
       {
         table: {
@@ -161,35 +174,49 @@ export async function generateInvoicePdf({ receiver, payer, invoice }) {
         layout: 'lightHorizontalLines',
       },
 
-      { columns: [
-        { text: `Всего: ${invoice.items.length} наименование на сумму`, margin: [0, 10, 0, 0] },
-        { text: toRuble(invoice.total), alignment: 'right', margin: [0, 10, 0, 0] },
-      ]},
-
-      { columns: [
-      { text: `Итог к оплате: ${toRuble(invoice.total)}`, style: 'h2', margin: [0, 8, 0, 16] },
-        { text: 'Без НДС', alignment: 'right', margin: [0, 8, 0, 16] },
-      ]},
-
-      { columns: [
-        { text: `Получатель:`, margin: [0, 24, 0, 4] },
-        { text: `Плательщик:`, margin: [0, 24, 0, 4] },
-      ]},
-
-      { columns: [
-        [
-          { stack: [
-            { columns: [
-              signatureDataUrl ? { image: signatureDataUrl, width: 170, margin: [0, 6, 12, 0] } : { text: '', margin: [0, 40, 12, 0] },
-              stampDataUrl ? { image: stampDataUrl, width: 140, margin: [0, 0, 0, 0] } : { text: '' },
-            ]},
-            { text: `${receiver.signatory || ''}`, margin: [0, 8, 0, 4] }
-          ]},
+      {
+        columns: [
+          { text: `Всего: ${invoice.items.length} наименование на сумму`, margin: [0, 10, 0, 0] },
+          { text: toRuble(invoice.total), alignment: 'right', margin: [0, 10, 0, 0] },
         ],
-        [
-          { text: `${payer.signatory || ''}`, margin: [0, 48, 0, 4], alignment: 'right' }
+      },
+
+      {
+        columns: [
+          { text: `Итог к оплате: ${toRuble(invoice.total)}`, style: 'h2', margin: [0, 8, 0, 16] },
+          { text: 'Без НДС', alignment: 'right', margin: [0, 8, 0, 16] },
         ],
-      ]},
+      },
+
+      {
+        columns: [
+          { text: `Получатель:`, margin: [0, 24, 0, 4] },
+          { text: `Плательщик:`, margin: [0, 24, 0, 4] },
+        ],
+      },
+
+      {
+        columns: [
+          [
+            {
+              stack: [
+                {
+                  columns: [
+                    signatureDataUrl
+                      ? { image: signatureDataUrl, width: 170, margin: [0, 6, 12, 0] }
+                      : { text: '', margin: [0, 40, 12, 0] },
+                    stampDataUrl
+                      ? { image: stampDataUrl, width: 140, margin: [0, 0, 0, 0] }
+                      : { text: '' },
+                  ],
+                },
+                { text: `${receiver.signatory || ''}`, margin: [0, 8, 0, 4] },
+              ],
+            },
+          ],
+          [{ text: `${payer.signatory || ''}`, margin: [0, 48, 0, 4], alignment: 'right' }],
+        ],
+      },
     ],
     styles,
     defaultStyle: { fontSize: 10 },
@@ -210,5 +237,3 @@ export function buildReceiverDefaults() {
     signatory: 'Генеральный директор Яковлева Регина Ринатовна',
   };
 }
-
-

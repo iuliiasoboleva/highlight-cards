@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+
 import styled from 'styled-components';
+
 import adminAxiosInstance from '../../adminAxiosInstance';
 
 const AdminOrganizationDetail = () => {
@@ -33,7 +35,7 @@ const AdminOrganizationDetail = () => {
   const handleUpdateNiche = async () => {
     try {
       await adminAxiosInstance.patch(`/admin/users/organizations/${id}/niche`, {
-        niche: newNiche
+        niche: newNiche,
       });
       alert('Ниша успешно обновлена');
       setEditingNiche(false);
@@ -66,9 +68,7 @@ const AdminOrganizationDetail = () => {
   return (
     <Container>
       <Header>
-        <BackButton onClick={() => navigate('/admin/organizations')}>
-          ← Назад к списку
-        </BackButton>
+        <BackButton onClick={() => navigate('/admin/organizations')}>← Назад к списку</BackButton>
         <Title>{org.name}</Title>
       </Header>
 
@@ -143,9 +143,13 @@ const AdminOrganizationDetail = () => {
             <InfoItem>
               <Label>Статус</Label>
               <StatusBadge status={org.subscription?.status}>
-                {org.subscription?.status === 'active' ? 'Активна' :
-                 org.subscription?.status === 'trial' ? 'Пробная' :
-                 org.subscription?.status === 'expired' ? 'Истекла' : 'Пробная'}
+                {org.subscription?.status === 'active'
+                  ? 'Активна'
+                  : org.subscription?.status === 'trial'
+                    ? 'Пробная'
+                    : org.subscription?.status === 'expired'
+                      ? 'Истекла'
+                      : 'Пробная'}
               </StatusBadge>
             </InfoItem>
             {org.subscription?.started_at && (
@@ -166,11 +170,7 @@ const AdminOrganizationDetail = () => {
         <Section>
           <SectionHeader>
             <SectionTitle>Ниша бизнеса</SectionTitle>
-            {org.inn && (
-              <Button onClick={handleFetchInnInfo}>
-                Обновить из DaData
-              </Button>
-            )}
+            {org.inn && <Button onClick={handleFetchInnInfo}>Обновить из DaData</Button>}
           </SectionHeader>
           <InfoGrid>
             {org.niche?.company_full_name && (
@@ -198,10 +198,12 @@ const AdminOrganizationDetail = () => {
                   />
                   <EditButtons>
                     <SaveButton onClick={handleUpdateNiche}>Сохранить</SaveButton>
-                    <CancelButton onClick={() => {
-                      setEditingNiche(false);
-                      setNewNiche(org.niche?.niche || '');
-                    }}>
+                    <CancelButton
+                      onClick={() => {
+                        setEditingNiche(false);
+                        setNewNiche(org.niche?.niche || '');
+                      }}
+                    >
                       Отмена
                     </CancelButton>
                   </EditButtons>
@@ -209,9 +211,7 @@ const AdminOrganizationDetail = () => {
               ) : (
                 <ValueWithEdit>
                   <Value>{org.niche?.niche || 'Не определена'}</Value>
-                  <EditButton onClick={() => setEditingNiche(true)}>
-                    Редактировать
-                  </EditButton>
+                  <EditButton onClick={() => setEditingNiche(true)}>Редактировать</EditButton>
                 </ValueWithEdit>
               )}
             </InfoItem>
@@ -319,12 +319,12 @@ const StatusBadge = styled.span`
   border-radius: 20px;
   font-size: 14px;
   font-weight: 600;
-  background: ${props => {
+  background: ${(props) => {
     if (props.status === 'active') return '#d1fae5';
     if (props.status === 'trial') return '#fef3c7';
     return '#fee2e2';
   }};
-  color: ${props => {
+  color: ${(props) => {
     if (props.status === 'active') return '#059669';
     if (props.status === 'trial') return '#d97706';
     return '#dc2626';
@@ -435,4 +435,3 @@ const CancelButton = styled.button`
 `;
 
 export default AdminOrganizationDetail;
-

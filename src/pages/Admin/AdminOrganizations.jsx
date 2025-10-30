@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import styled from 'styled-components';
+
 import adminAxiosInstance from '../../adminAxiosInstance';
 
 const Container = styled.div`
@@ -133,12 +135,12 @@ const Badge = styled.span`
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
-  background: ${props => {
+  background: ${(props) => {
     if (props.status === 'active') return '#d1fae5';
     if (props.status === 'trial') return '#fef3c7';
     return '#fee2e2';
   }};
-  color: ${props => {
+  color: ${(props) => {
     if (props.status === 'active') return '#065f46';
     if (props.status === 'trial') return '#92400e';
     return '#991b1b';
@@ -279,7 +281,10 @@ const AdminOrganizations = () => {
 
           <InputGroup>
             <Label>Статус подписки</Label>
-            <Select value={subscriptionStatus} onChange={(e) => setSubscriptionStatus(e.target.value)}>
+            <Select
+              value={subscriptionStatus}
+              onChange={(e) => setSubscriptionStatus(e.target.value)}
+            >
               <option value="">Все</option>
               <option value="trial">Пробный период</option>
               <option value="active">Активна</option>
@@ -314,8 +319,11 @@ const AdminOrganizations = () => {
                 <Cell>{org.tariff}</Cell>
                 <Cell>
                   <Badge status={org.subscription_status}>
-                    {org.subscription_status === 'active' ? 'Активна' : 
-                     org.subscription_status === 'trial' ? 'Пробная' : 'Завершена'}
+                    {org.subscription_status === 'active'
+                      ? 'Активна'
+                      : org.subscription_status === 'trial'
+                        ? 'Пробная'
+                        : 'Завершена'}
                   </Badge>
                 </Cell>
                 <Cell>{org.niche || 'Не определена'}</Cell>
@@ -330,4 +338,3 @@ const AdminOrganizations = () => {
 };
 
 export default AdminOrganizations;
-

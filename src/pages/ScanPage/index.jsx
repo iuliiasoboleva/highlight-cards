@@ -3,15 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { Html5Qrcode } from 'html5-qrcode';
 
-import {
-  Header,
-  Loader,
-  Main,
-  Message,
-  Page,
-  QrReaderBox,
-  UserText,
-} from './styles';
+import { Header, Loader, Main, Message, Page, QrReaderBox, UserText } from './styles';
 
 const isProbablyMobile = () => {
   const ua = navigator.userAgent || '';
@@ -67,9 +59,7 @@ const ScanPage = () => {
         const container = document.getElementById('qr-reader');
         if (container) container.innerHTML = '';
 
-        const constraints = mobile 
-          ? { facingMode: 'environment' }
-          : { facingMode: 'user' };
+        const constraints = mobile ? { facingMode: 'environment' } : { facingMode: 'user' };
 
         await scanner.start(constraints, config, handleScanSuccess, (err) => {
           if (err !== 'QR code parse error, ignoring...') {

@@ -64,7 +64,7 @@ export const CardBlock = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   gap: 20px;
-  
+
   box-sizing: border-box;
   max-width: 100%;
   overflow-x: hidden;

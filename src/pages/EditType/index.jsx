@@ -53,15 +53,17 @@ const EditType = () => {
         }
 
         // Для создания новой карты
-        dispatch(setCurrentCard({ 
-          status: 'stamp', 
-          name: 'Штамп',
-          infoFields: {
-            issuerName: user.company || '',
-            issuerEmail: user.email || '',
-            issuerPhone: user.phone || '',
-          }
-        }));
+        dispatch(
+          setCurrentCard({
+            status: 'stamp',
+            name: 'Штамп',
+            infoFields: {
+              issuerName: user.company || '',
+              issuerEmail: user.email || '',
+              issuerPhone: user.phone || '',
+            },
+          }),
+        );
       }
     };
 

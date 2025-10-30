@@ -30,7 +30,13 @@ const normalizeColor = (str) => {
   return h || '';
 };
 
-const ColorSettings = ({ colors = {}, handleColorChange, isStampCard, isSubscription, onHoverKeyChange }) => {
+const ColorSettings = ({
+  colors = {},
+  handleColorChange,
+  isStampCard,
+  isSubscription,
+  onHoverKeyChange,
+}) => {
   const [validColors, setValidColors] = useState({});
   const [localInputs, setLocalInputs] = useState({});
 

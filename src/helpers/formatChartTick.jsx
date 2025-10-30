@@ -6,7 +6,20 @@ export const formatChartTick = (value, selectedPeriod) => {
   }
 
   if (selectedPeriod === 'year' || selectedPeriod === 'allTime') {
-    const months = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+    const months = [
+      'янв',
+      'фев',
+      'мар',
+      'апр',
+      'май',
+      'июн',
+      'июл',
+      'авг',
+      'сен',
+      'окт',
+      'ноя',
+      'дек',
+    ];
     return months[d.getMonth()];
   }
 

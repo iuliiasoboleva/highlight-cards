@@ -60,8 +60,8 @@ const StatCardItem = ({
   const isArray = Array.isArray(value);
   const hasData =
     (value !== null &&
-    value !== undefined &&
-    (isArray ? value.length > 0 : value !== 0 && value !== '')) ||
+      value !== undefined &&
+      (isArray ? value.length > 0 : value !== 0 && value !== '')) ||
     value === 'Без срока';
 
   const handleCopy = () => {
@@ -152,11 +152,16 @@ const StatCardItem = ({
             </DashboardActionIcon>
           )}
 
-          {copyable && hasData && !isArray && !isRating && !isDatePicker && value !== 'Без срока' && (
-            <DashboardActionIcon onClick={handleCopy} title="Скопировать">
-              <Copy size={16} />
-            </DashboardActionIcon>
-          )}
+          {copyable &&
+            hasData &&
+            !isArray &&
+            !isRating &&
+            !isDatePicker &&
+            value !== 'Без срока' && (
+              <DashboardActionIcon onClick={handleCopy} title="Скопировать">
+                <Copy size={16} />
+              </DashboardActionIcon>
+            )}
 
           {isDatePicker && value !== 'Без срока' ? (
             <>
@@ -170,7 +175,11 @@ const StatCardItem = ({
               {isCalendarOpen && (
                 <DatepickerWrapper ref={calendarRef}>
                   <DatePicker
-                    selected={value && value !== 'Без срока' && !isNaN(new Date(value).getTime()) ? new Date(value) : today}
+                    selected={
+                      value && value !== 'Без срока' && !isNaN(new Date(value).getTime())
+                        ? new Date(value)
+                        : today
+                    }
                     onChange={(date) => {
                       onDateChange?.(date);
                       setCalendarOpen(false);
@@ -209,29 +218,39 @@ const StatCardItem = ({
           )}
         </DashboardAction>
 
-        {showRightCircle && !isArray && !isRating && !(isDatePicker && value === 'Без срока') && !isDatePicker && hasData && (
-          <ClientStatDropdownIconCircle $type={changeType}>
-            {isPositive ? (
-              <ArrowUp size={14} />
-            ) : isNegative ? (
-              <ArrowDown size={14} />
-            ) : (
-              <Minus size={14} />
-            )}
-          </ClientStatDropdownIconCircle>
-        )}
+        {showRightCircle &&
+          !isArray &&
+          !isRating &&
+          !(isDatePicker && value === 'Без срока') &&
+          !isDatePicker &&
+          hasData && (
+            <ClientStatDropdownIconCircle $type={changeType}>
+              {isPositive ? (
+                <ArrowUp size={14} />
+              ) : isNegative ? (
+                <ArrowDown size={14} />
+              ) : (
+                <Minus size={14} />
+              )}
+            </ClientStatDropdownIconCircle>
+          )}
       </DashboardStatRow>
 
       <DashboardStatRow style={{ marginTop: 'auto' }}>
         <DashboardStatLabel>{label}</DashboardStatLabel>
 
-        {showRightCircle && !isArray && hasData && !isRating && !(isDatePicker && value === 'Без срока') && !isDatePicker && (
-          <ClientStatDropdownChange>
-            <ClientStatDropdownChangeValue $type={changeType}>
-              {isPositive ? `+${change}` : change}
-            </ClientStatDropdownChangeValue>
-          </ClientStatDropdownChange>
-        )}
+        {showRightCircle &&
+          !isArray &&
+          hasData &&
+          !isRating &&
+          !(isDatePicker && value === 'Без срока') &&
+          !isDatePicker && (
+            <ClientStatDropdownChange>
+              <ClientStatDropdownChangeValue $type={changeType}>
+                {isPositive ? `+${change}` : change}
+              </ClientStatDropdownChangeValue>
+            </ClientStatDropdownChange>
+          )}
       </DashboardStatRow>
     </DashboardStatCard>
   );

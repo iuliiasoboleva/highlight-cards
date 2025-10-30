@@ -2,10 +2,10 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import CustomCheckbox from '../../customs/CustomCheckbox';
+import CustomDatePicker from '../../customs/CustomDatePicker';
 import CustomInput from '../../customs/CustomInput';
 import CustomSelect from '../../customs/CustomSelect';
 import CustomTooltip from '../../customs/CustomTooltip';
-import CustomDatePicker from '../../customs/CustomDatePicker';
 import { formatDateToDDMMYYYY } from '../../helpers/date';
 import { pluralize } from '../../helpers/pluralize';
 import { updateCurrentCardField } from '../../store/cardsSlice';

@@ -4,7 +4,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import EditLayout from '../../components/EditLayout';
 import TitleWithHelp from '../../components/TitleWithHelp';
-import { createCard, saveCard, setCurrentCard, updateCurrentCardField } from '../../store/cardsSlice';
+import {
+  createCard,
+  saveCard,
+  setCurrentCard,
+  updateCurrentCardField,
+} from '../../store/cardsSlice';
 import { CreateButton } from '../EditDesign/styles';
 import IntegrationPicker from './IntegrationPicker';
 import { Divider, StepNote, TopRow } from './styles';

@@ -220,7 +220,7 @@ const Locations = () => {
 
   const handleConfirmDelete = () => {
     if (!locationToDelete) return;
-    
+
     dispatch(deleteBranchThunk(locationToDelete.id))
       .unwrap()
       .then(() => {
@@ -361,7 +361,7 @@ const Locations = () => {
   const toggleGeo = (loc) => {
     const currentState = loc.active !== undefined ? loc.active : true;
     const newState = !currentState;
-    
+
     dispatch(
       editBranch({
         id: loc.id,
@@ -423,17 +423,17 @@ const Locations = () => {
       toast.error('Сначала укажите адрес');
       return;
     }
-    
+
     if (singleShowMap && singleCoords) {
       toast.info('Адрес показан на карте');
       return;
     }
 
     setSingleShowMap(true);
-    
+
     if (!singleCoords) {
       setIsSearching(true);
-      
+
       setTimeout(async () => {
         try {
           if (mapRef.current) {
@@ -638,7 +638,10 @@ const Locations = () => {
             </LocationInfo>
 
             <LocationActions>
-              <ToggleSwitch checked={loc.active !== undefined ? loc.active : true} onChange={() => toggleGeo(loc)} />
+              <ToggleSwitch
+                checked={loc.active !== undefined ? loc.active : true}
+                onChange={() => toggleGeo(loc)}
+              />
               <DeleteLocationBtn
                 onClick={() => handleDeleteClick(loc)}
                 aria-label="Удалить локацию"
@@ -681,13 +684,13 @@ const Locations = () => {
         closeOnOverlayClick={false}
         actions={
           <>
-            <CustomModal.SecondaryButton 
+            <CustomModal.SecondaryButton
               onClick={handleConfirmDelete}
               style={{ background: '#f5f5f5', color: '#2c3e50' }}
             >
               Удалить
             </CustomModal.SecondaryButton>
-            <CustomModal.PrimaryButton 
+            <CustomModal.PrimaryButton
               onClick={handleCancelDelete}
               style={{ background: '#bf4756' }}
               onMouseEnter={(e) => {

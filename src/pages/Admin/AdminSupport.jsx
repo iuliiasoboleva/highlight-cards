@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import styled from 'styled-components';
+
 import adminAxiosInstance from '../../adminAxiosInstance';
 
 const Container = styled.div`
@@ -61,7 +63,7 @@ const StatLabel = styled.div`
 const StatValue = styled.div`
   font-size: 28px;
   font-weight: 700;
-  color: ${props => props.color || '#1a1a1a'};
+  color: ${(props) => props.color || '#1a1a1a'};
 `;
 
 const Filters = styled.div`
@@ -127,12 +129,12 @@ const Badge = styled.span`
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
-  background: ${props => {
+  background: ${(props) => {
     if (props.priority === 'high') return '#fee2e2';
     if (props.priority === 'normal') return '#fef3c7';
     return '#e0f2fe';
   }};
-  color: ${props => {
+  color: ${(props) => {
     if (props.priority === 'high') return '#991b1b';
     if (props.priority === 'normal') return '#92400e';
     return '#075985';
@@ -283,21 +285,30 @@ const AdminSupport = () => {
                 <TicketHeader>
                   <TicketTitle>{ticket.subject}</TicketTitle>
                   <Badge priority={ticket.priority}>
-                    {ticket.priority === 'high' ? 'Высокий' : 
-                     ticket.priority === 'normal' ? 'Нормальный' : 'Низкий'}
+                    {ticket.priority === 'high'
+                      ? 'Высокий'
+                      : ticket.priority === 'normal'
+                        ? 'Нормальный'
+                        : 'Низкий'}
                   </Badge>
                 </TicketHeader>
                 <TicketMeta>
                   <span>ID: #{ticket.id}</span>
-                  <span>Статус: {ticket.status === 'new' ? 'Новый' : 
-                                 ticket.status === 'in_progress' ? 'В работе' : 'Решён'}</span>
+                  <span>
+                    Статус:{' '}
+                    {ticket.status === 'new'
+                      ? 'Новый'
+                      : ticket.status === 'in_progress'
+                        ? 'В работе'
+                        : 'Решён'}
+                  </span>
                   <span>{new Date(ticket.created_at).toLocaleDateString('ru-RU')}</span>
                   {ticket.source && <span>Источник: {ticket.source}</span>}
                 </TicketMeta>
                 {ticket.description && (
                   <TicketDescription>
-                    {ticket.description.length > 200 
-                      ? `${ticket.description.substring(0, 200)}...` 
+                    {ticket.description.length > 200
+                      ? `${ticket.description.substring(0, 200)}...`
                       : ticket.description}
                   </TicketDescription>
                 )}
@@ -311,4 +322,3 @@ const AdminSupport = () => {
 };
 
 export default AdminSupport;
-

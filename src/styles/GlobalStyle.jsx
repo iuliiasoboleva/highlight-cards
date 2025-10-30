@@ -194,7 +194,7 @@ export const GlobalStyle = createGlobalStyle`
     .page-content {
       margin-left: 0;
       min-height: calc(100vh - var(--header-mobile-height));
-      margin-top: var(--header-mobile-height);
+      margin-top: 0;
       padding-bottom: var(--bottom-nav-height);
     }
   }

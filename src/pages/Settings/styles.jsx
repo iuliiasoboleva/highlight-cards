@@ -85,9 +85,11 @@ export const TooltipContent = styled.div`
   font-weight: 500;
   white-space: nowrap;
   z-index: 1000;
-  opacity: ${props => props.$show ? 1 : 0};
-  visibility: ${props => props.$show ? 'visible' : 'hidden'};
-  transition: opacity 0.2s, visibility 0.2s;
+  opacity: ${(props) => (props.$show ? 1 : 0)};
+  visibility: ${(props) => (props.$show ? 'visible' : 'hidden')};
+  transition:
+    opacity 0.2s,
+    visibility 0.2s;
   pointer-events: none;
 
   &::after {
@@ -427,8 +429,20 @@ export const SmallList = styled.ul`
   color: gray;
   font-size: 10px;
   font-weight: 200;
-  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    'Manrope',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
   display: grid;
   gap: 6px;
 
@@ -663,16 +677,20 @@ export const PromoMessage = styled.div`
   border-radius: 6px;
   font-size: 12px;
   font-weight: 500;
-  
-  ${p => p.$success && css`
-    background: #e9fbef;
-    color: #0f7a3b;
-  `}
-  
-  ${p => p.$error && css`
-    background: #fee;
-    color: #c4343c;
-  `}
+
+  ${(p) =>
+    p.$success &&
+    css`
+      background: #e9fbef;
+      color: #0f7a3b;
+    `}
+
+  ${(p) =>
+    p.$error &&
+    css`
+      background: #fee;
+      color: #c4343c;
+    `}
 `;
 
 export const PromoDiscount = styled.div`

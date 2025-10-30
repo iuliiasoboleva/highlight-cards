@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import styled from 'styled-components';
 
 import CustomCheckbox from '../../customs/CustomCheckbox';
@@ -139,24 +140,26 @@ const AgreementModal = ({
   originalTotal,
   discount,
   promoCode,
-  monthlyPrice
+  monthlyPrice,
 }) => {
   const [agreed, setAgreed] = useState(false);
 
   // Рассчитываем выгоду при покупке на год
   const isYear = months === 12;
-  const monthlyPriceWithoutDiscount = plan?.key === 'network'
-    ? plan?.monthly * Math.max(points, 3)
-    : plan?.key === 'business'
-      ? plan?.monthly * points
-      : plan?.monthly;
+  const monthlyPriceWithoutDiscount =
+    plan?.key === 'network'
+      ? plan?.monthly * Math.max(points, 3)
+      : plan?.key === 'business'
+        ? plan?.monthly * points
+        : plan?.monthly;
 
   const yearlyTotalWithoutDiscount = monthlyPriceWithoutDiscount * 12;
-  const yearlyTotalWithDiscount = plan?.key === 'network'
-    ? (plan?.yearlyMonthly * Math.max(points, 3)) * 12
-    : plan?.key === 'business'
-      ? (plan?.yearlyMonthly * points) * 12
-      : plan?.yearlyMonthly * 12;
+  const yearlyTotalWithDiscount =
+    plan?.key === 'network'
+      ? plan?.yearlyMonthly * Math.max(points, 3) * 12
+      : plan?.key === 'business'
+        ? plan?.yearlyMonthly * points * 12
+        : plan?.yearlyMonthly * 12;
 
   const savings = yearlyTotalWithoutDiscount - yearlyTotalWithDiscount;
 
@@ -226,9 +229,7 @@ const AgreementModal = ({
                 Стоимость на год: {yearlyTotalWithDiscount.toLocaleString('ru-RU')} ₽
               </div>
             </div>
-            <BenefitValue>
-              {savings.toLocaleString('ru-RU')} ₽
-            </BenefitValue>
+            <BenefitValue>{savings.toLocaleString('ru-RU')} ₽</BenefitValue>
           </BenefitRow>
         </TariffInfo>
 

@@ -11,7 +11,7 @@ export const FooterWrap = styled.footer`
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  z-index: 9999;
+  z-index: 9998;
 
   @media (max-width: 999px) {
     flex-direction: column;

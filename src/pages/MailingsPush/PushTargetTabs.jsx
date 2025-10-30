@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import CustomInput from '../../customs/CustomInput';
@@ -52,12 +52,14 @@ const PushTargetTabs = ({ selectedCardId, onTabChange, onFilteredCountChange }) 
   // Фильтруем клиентов только тех, у кого есть выбранная карта
   const clientsWithSelectedCard = useMemo(() => {
     if (!selectedCardId) return [];
-    
+
     return clients.filter((client) => {
       if (!client.cards || client.cards.length === 0) return false;
-      
-      return client.cards?.some((card) => 
-        String(card.cardUuid) === String(selectedCardId) || String(card.cardId) === String(selectedCardId)
+
+      return client.cards?.some(
+        (card) =>
+          String(card.cardUuid) === String(selectedCardId) ||
+          String(card.cardId) === String(selectedCardId),
       );
     });
   }, [clients, selectedCardId]);
@@ -67,7 +69,7 @@ const PushTargetTabs = ({ selectedCardId, onTabChange, onFilteredCountChange }) 
 
   const segmentLabel = useMemo(
     () => segmentOptions.find((o) => o.value === segment)?.label,
-    [segment]
+    [segment],
   );
 
   useEffect(() => {

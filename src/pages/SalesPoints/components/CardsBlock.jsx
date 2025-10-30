@@ -62,7 +62,10 @@ const CardsBlock = ({
         <ScannerIcon>
           <IconWithTooltip>
             <Search size={18} />
-            <Tooltip> Введите от {CARD_MIN_LENGTH} до {CARD_LENGTH} цифр и нажмите «Найти клиента»</Tooltip>
+            <Tooltip>
+              {' '}
+              Введите от {CARD_MIN_LENGTH} до {CARD_LENGTH} цифр и нажмите «Найти клиента»
+            </Tooltip>
           </IconWithTooltip>
         </ScannerIcon>
 

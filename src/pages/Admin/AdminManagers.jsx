@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import styled from 'styled-components';
+
 import adminAxiosInstance from '../../adminAxiosInstance';
 
 const AdminManagers = () => {
@@ -17,7 +19,7 @@ const AdminManagers = () => {
     email: '',
     name: '',
     password: '',
-    role: 'manager'
+    role: 'manager',
   });
 
   useEffect(() => {
@@ -46,7 +48,7 @@ const AdminManagers = () => {
 
   const handleAddManager = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.email || !formData.name || !formData.password) {
       alert('Заполните все поля');
       return;
@@ -100,15 +102,11 @@ const AdminManagers = () => {
   return (
     <Container>
       <Header>
-        <BackButton onClick={() => navigate('/admin/dashboard')}>
-          ← Назад к дашборду
-        </BackButton>
+        <BackButton onClick={() => navigate('/admin/dashboard')}>← Назад к дашборду</BackButton>
         <TitleRow>
           <Title>Управление менеджерами</Title>
           {isSuperAdmin && (
-            <AddButton onClick={() => setShowAddForm(true)}>
-              + Добавить менеджера
-            </AddButton>
+            <AddButton onClick={() => setShowAddForm(true)}>+ Добавить менеджера</AddButton>
           )}
         </TitleRow>
       </Header>
@@ -196,7 +194,7 @@ const AdminManagers = () => {
                         day: '2-digit',
                         hour: '2-digit',
                         minute: '2-digit',
-                        second: '2-digit'
+                        second: '2-digit',
                       })}
                     </LogCell>
                     <LogCell>{log.ip_address || 'Не определен'}</LogCell>
@@ -239,9 +237,7 @@ const AdminManagers = () => {
                   {manager.is_active ? 'Активен' : 'Неактивен'}
                 </StatusBadge>
               </Cell>
-              <Cell>
-                {new Date(manager.created_at).toLocaleDateString('ru-RU')}
-              </Cell>
+              <Cell>{new Date(manager.created_at).toLocaleDateString('ru-RU')}</Cell>
               <Cell>
                 <ActionButtons>
                   <ActionButton onClick={() => handleViewLogs(manager.id, manager.name)}>
@@ -258,9 +254,7 @@ const AdminManagers = () => {
           ))}
         </Table>
 
-        {managers.length === 0 && (
-          <EmptyState>Нет менеджеров</EmptyState>
-        )}
+        {managers.length === 0 && <EmptyState>Нет менеджеров</EmptyState>}
       </Content>
     </Container>
   );
@@ -373,8 +367,8 @@ const RoleBadge = styled.span`
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
-  background: ${props => props.role === 'super_admin' ? '#dbeafe' : '#f3e8ff'};
-  color: ${props => props.role === 'super_admin' ? '#1e40af' : '#7c3aed'};
+  background: ${(props) => (props.role === 'super_admin' ? '#dbeafe' : '#f3e8ff')};
+  color: ${(props) => (props.role === 'super_admin' ? '#1e40af' : '#7c3aed')};
 `;
 
 const StatusBadge = styled.span`
@@ -383,8 +377,8 @@ const StatusBadge = styled.span`
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
-  background: ${props => props.active ? '#d1fae5' : '#fee2e2'};
-  color: ${props => props.active ? '#059669' : '#dc2626'};
+  background: ${(props) => (props.active ? '#d1fae5' : '#fee2e2')};
+  color: ${(props) => (props.active ? '#059669' : '#dc2626')};
 `;
 
 const ActionButtons = styled.div`
@@ -603,4 +597,3 @@ const LogCell = styled.div`
 `;
 
 export default AdminManagers;
-

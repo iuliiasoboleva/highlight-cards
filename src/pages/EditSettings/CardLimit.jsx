@@ -31,20 +31,20 @@ const CardLimit = ({
         value={value}
         onChange={(e) => {
           let raw = e.target.value;
-          
+
           // Если пустая строка
           if (raw === '') {
             onChange('');
             return;
           }
-          
+
           // Убираем лидирующие нули (кроме самого нуля)
           // "040" -> "40", "00123" -> "123", "0" -> "0"
           if (raw.length > 1 && raw.startsWith('0')) {
             raw = raw.replace(/^0+/, '') || '0';
             e.target.value = raw; // Обновляем значение в input
           }
-          
+
           const n = parseInt(raw, 10);
           onChange(Number.isNaN(n) ? min : Math.max(min, n));
         }}

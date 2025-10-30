@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-import { ChevronRight, Book, Search } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
+
+import { Book, ChevronRight, Search } from 'lucide-react';
+
 import axiosInstance from '../../axiosInstance';
 import LoaderCentered from '../../components/LoaderCentered';
 import {
-  Container,
-  Sidebar,
-  Content,
-  CategoryTitle,
+  ArticleContent,
   ArticleLink,
   ArticleTitle,
-  ArticleContent,
+  CategoryTitle,
+  Container,
+  Content,
+  EmptyState,
   SearchBox,
   SearchInput,
-  EmptyState,
+  Sidebar,
 } from './styles';
 
 const KnowledgeBase = () => {
@@ -78,9 +80,7 @@ const KnowledgeBase = () => {
   }, {});
 
   const filteredArticles = searchQuery
-    ? articles.filter((a) =>
-        a.title.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+    ? articles.filter((a) => a.title.toLowerCase().includes(searchQuery.toLowerCase()))
     : articles;
 
   if (loading) return <LoaderCentered />;
@@ -158,4 +158,3 @@ const KnowledgeBase = () => {
 };
 
 export default KnowledgeBase;
-

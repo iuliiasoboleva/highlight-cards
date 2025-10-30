@@ -4,7 +4,7 @@ import { Header, HeaderTitle, Logo, Message, Push, Time, Title, Wrapper } from '
 
 const PushPreview = ({ card = {}, message, scheduledDate, isPreview }) => {
   const iconSrc = card?.design?.icon || '/push-logotype.svg';
-  
+
   const getCompanyName = () => {
     const infoName = card?.infoFields?.companyName;
     if (infoName && infoName !== 'Название компании') {
@@ -12,7 +12,7 @@ const PushPreview = ({ card = {}, message, scheduledDate, isPreview }) => {
     }
     return card?.name || card?.title || 'Название карты';
   };
-  
+
   const companyName = getCompanyName().toUpperCase();
 
   return (

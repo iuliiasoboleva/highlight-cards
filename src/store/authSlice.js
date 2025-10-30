@@ -105,11 +105,13 @@ export const requestSmsCode = createAsyncThunk(
   'auth/requestSmsCode',
   async ({ phone }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post('auth/sms-code-request', { phone: phone.replace(/\D/g, '') });
-      return { 
-        phone, 
+      const response = await axiosInstance.post('auth/sms-code-request', {
+        phone: phone.replace(/\D/g, ''),
+      });
+      return {
+        phone,
         has_pin: response.data?.has_pin || false,
-        token: response.data?.token || null
+        token: response.data?.token || null,
       };
     } catch (err) {
       const msg = err?.response?.data?.detail || err?.response?.data || err.message;

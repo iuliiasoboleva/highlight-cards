@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import { useSelector } from 'react-redux';
 
 import CustomInput from '../../customs/CustomInput';
 import CustomModal from '../../customs/CustomModal';
@@ -15,7 +15,7 @@ const ContactModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    inn: ''
+    inn: '',
   });
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [companyName, setCompanyName] = useState('');
@@ -28,30 +28,33 @@ const ContactModal = ({ isOpen, onClose }) => {
       setFormData({
         name: user.name || '',
         phone: user.phone || '',
-        inn: user.inn || ''
+        inn: user.inn || '',
       });
     }
   }, [isOpen, user]);
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const handleCompanySelect = (company) => {
     setSelectedCompany(company);
     setCompanyName(company.value || company.data?.name || '');
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      inn: company.data.inn
+      inn: company.data.inn,
     }));
   };
 
   const handleSubmit = async () => {
     if (!formData.name || !formData.phone || !formData.inn || !selectedCompany) {
-      addToast('Пожалуйста, заполните все обязательные поля и выберите компанию из списка', 'error');
+      addToast(
+        'Пожалуйста, заполните все обязательные поля и выберите компанию из списка',
+        'error',
+      );
       return;
     }
 
@@ -59,7 +62,7 @@ const ContactModal = ({ isOpen, onClose }) => {
 
     try {
       // Имитация отправки формы
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       // Здесь будет реальный запрос к API
       // await axiosInstance.post('/contact-form', formData);
@@ -71,7 +74,6 @@ const ContactModal = ({ isOpen, onClose }) => {
       setTimeout(() => {
         handleClose();
       }, 3000);
-
     } catch (error) {
       console.error('Ошибка отправки формы:', error);
       addToast('Произошла ошибка при отправке формы', 'error');
@@ -93,29 +95,29 @@ const ContactModal = ({ isOpen, onClose }) => {
     <CustomModal
       open={isOpen}
       onClose={handleClose}
-      title={isSuccess ? "Заявка отправлена!" : "Связаться с нами"}
+      title={isSuccess ? 'Заявка отправлена!' : 'Связаться с нами'}
       maxWidth={420}
       aria-label="Форма обратной связи"
     >
       {isSuccess ? (
         <div style={{ textAlign: 'center', padding: '20px 0' }}>
-          <div style={{
-            width: '60px',
-            height: '60px',
-            borderRadius: '50%',
-            background: '#c31e3c',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 20px',
-            fontSize: '30px',
-            color: 'white'
-          }}>
+          <div
+            style={{
+              width: '60px',
+              height: '60px',
+              borderRadius: '50%',
+              background: '#c31e3c',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px',
+              fontSize: '30px',
+              color: 'white',
+            }}
+          >
             ✓
           </div>
-          <p style={{ margin: '0 0 10px', fontWeight: '500' }}>
-            Спасибо за обращение!
-          </p>
+          <p style={{ margin: '0 0 10px', fontWeight: '500' }}>Спасибо за обращение!</p>
           <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>
             Мы получили вашу заявку и свяжемся с вами в ближайшее время.
           </p>
@@ -133,13 +135,15 @@ const ContactModal = ({ isOpen, onClose }) => {
           </div>
 
           <div style={{ marginBottom: '20px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '6px',
-              fontSize: '14px',
-              fontWeight: '500',
-              color: '#374151'
-            }}>
+            <label
+              style={{
+                display: 'block',
+                marginBottom: '6px',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: '#374151',
+              }}
+            >
               Номер телефона *
             </label>
             <PhoneInput
@@ -148,7 +152,7 @@ const ContactModal = ({ isOpen, onClose }) => {
               onChange={(phone) => handleInputChange('phone', '+' + phone)}
               inputProps={{ required: true }}
               containerStyle={{
-                width: '100%'
+                width: '100%',
               }}
               inputStyle={{
                 width: '100%',
@@ -156,12 +160,12 @@ const ContactModal = ({ isOpen, onClose }) => {
                 border: '1px solid #d5d5dd',
                 borderRadius: '6px',
                 height: '40px',
-                fontSize: '14px'
+                fontSize: '14px',
               }}
               buttonStyle={{
                 border: '1px solid #d5d5dd',
                 borderRight: '0',
-                borderRadius: '6px 0 0 6px'
+                borderRadius: '6px 0 0 6px',
               }}
             />
           </div>
@@ -178,13 +182,15 @@ const ContactModal = ({ isOpen, onClose }) => {
 
           {companyName && (
             <div style={{ marginBottom: '24px' }}>
-              <label style={{
-                display: 'block',
-                marginBottom: '6px',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#374151'
-              }}>
+              <label
+                style={{
+                  display: 'block',
+                  marginBottom: '6px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: '#374151',
+                }}
+              >
                 Наименование организации
               </label>
               <input
@@ -199,7 +205,7 @@ const ContactModal = ({ isOpen, onClose }) => {
                   height: '40px',
                   fontSize: '14px',
                   backgroundColor: '#f9fafb',
-                  color: '#6b7280'
+                  color: '#6b7280',
                 }}
               />
             </div>
@@ -216,7 +222,13 @@ const ContactModal = ({ isOpen, onClose }) => {
 
             <CustomModal.PrimaryButton
               onClick={handleSubmit}
-              disabled={isSubmitting || !formData.name || !formData.phone || !formData.inn || !selectedCompany}
+              disabled={
+                isSubmitting ||
+                !formData.name ||
+                !formData.phone ||
+                !formData.inn ||
+                !selectedCompany
+              }
               style={{ flex: 1 }}
             >
               {isSubmitting ? 'Отправка...' : 'Отправить'}

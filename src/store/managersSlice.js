@@ -7,14 +7,15 @@ export const fetchManagers = createAsyncThunk(
   async (forceRefresh = false, { getState, rejectWithValue }) => {
     try {
       const state = getState();
-      const orgId = typeof forceRefresh === 'object' ? forceRefresh.orgId : state.user.organization_id;
-      
+      const orgId =
+        typeof forceRefresh === 'object' ? forceRefresh.orgId : state.user.organization_id;
+
       if (!orgId) return [];
-      
+
       if (!forceRefresh && state.managers.list.length > 0 && !state.managers.loading) {
         return null;
       }
-      
+
       const res = await axiosInstance.get('/managers', { params: { organization_id: orgId } });
       return res.data;
     } catch (err) {

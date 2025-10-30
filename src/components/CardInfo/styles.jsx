@@ -24,7 +24,7 @@ export const CardInfo = styled.div`
     padding: 10px 0;
     gap: 8px;
   }
-  
+
   &.preview-list {
     transform: translate(-50%, -50%) scale(0.95);
     padding: 11px 0;

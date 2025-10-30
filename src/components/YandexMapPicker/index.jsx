@@ -25,7 +25,7 @@ const YandexMapPicker = forwardRef(({ onSelect, initialCoords }, ref) => {
 
   useEffect(() => {
     if (!isLoaded) return;
-    
+
     if (initialCoords && Array.isArray(initialCoords) && initialCoords.length === 2) {
       setCoords(initialCoords);
       if (mapRef.current) {
@@ -108,7 +108,7 @@ const YandexMapPicker = forwardRef(({ onSelect, initialCoords }, ref) => {
 
   const searchMultiple = async (query) => {
     if (!isLoaded || !ymapsRef.current || !query?.trim()) return [];
-    
+
     try {
       const results = await ymapsRef.current.geocode(query, { results: 20 });
       const found = [];

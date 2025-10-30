@@ -6,7 +6,7 @@ const AdminRedirect = () => {
 
   useEffect(() => {
     const adminToken = localStorage.getItem('adminToken');
-    
+
     if (adminToken) {
       navigate('/admin/dashboard', { replace: true });
     } else {
@@ -18,4 +18,3 @@ const AdminRedirect = () => {
 };
 
 export default AdminRedirect;
-

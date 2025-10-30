@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import axiosInstance from '../../axiosInstance';
@@ -45,11 +45,11 @@ const MailingsInfo = () => {
         page,
         page_size: pageSize,
         sort_by: 'date_time',
-        sort_order: sortOrder
+        sort_order: sortOrder,
       };
       if (debouncedSearch) params.search = debouncedSearch;
       if (recipientFilter) params.recipient_filter = recipientFilter;
-      
+
       const res = await axiosInstance.get('/mailings', { params });
       setRows(res.data?.items || []);
       setTotal(res.data?.total || 0);
@@ -254,7 +254,7 @@ const MailingsInfo = () => {
               padding: '8px 12px',
               border: '1px solid #ddd',
               borderRadius: '8px',
-              fontSize: '14px'
+              fontSize: '14px',
             }}
           />
           <select
@@ -267,7 +267,7 @@ const MailingsInfo = () => {
               border: '1px solid #ddd',
               borderRadius: '8px',
               fontSize: '14px',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
           >
             <option value="">Всем</option>
@@ -291,7 +291,7 @@ const MailingsInfo = () => {
                 border: '1px solid #ddd',
                 borderRadius: '8px',
                 fontSize: '14px',
-                cursor: 'pointer'
+                cursor: 'pointer',
               }}
             >
               <option value={10}>10</option>
@@ -301,9 +301,7 @@ const MailingsInfo = () => {
             </select>
           </div>
 
-          <span style={{ fontSize: '14px', color: '#666' }}>
-            Всего: {total}
-          </span>
+          <span style={{ fontSize: '14px', color: '#666' }}>Всего: {total}</span>
 
           <button
             onClick={handleSortToggle}
@@ -313,7 +311,7 @@ const MailingsInfo = () => {
               borderRadius: '8px',
               fontSize: '14px',
               cursor: 'pointer',
-              backgroundColor: '#fff'
+              backgroundColor: '#fff',
             }}
           >
             Дата: {sortOrder === 'desc' ? '↓ Новые сверху' : '↑ Старые сверху'}
@@ -323,18 +321,20 @@ const MailingsInfo = () => {
 
       <TableWrapper style={{ position: 'relative', minHeight: '400px' }}>
         {fetching && !loading && (
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(255, 255, 255, 0.8)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 10
-          }}>
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(255, 255, 255, 0.8)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 10,
+            }}
+          >
             <LoaderCentered />
           </div>
         )}
@@ -346,11 +346,7 @@ const MailingsInfo = () => {
         />
       </TableWrapper>
 
-      <Pagination 
-        page={page} 
-        totalPages={totalPages} 
-        onPageChange={handlePageChange}
-      />
+      <Pagination page={page} totalPages={totalPages} onPageChange={handlePageChange} />
 
       <MailingDetailsModal
         isOpen={!!selectedId}

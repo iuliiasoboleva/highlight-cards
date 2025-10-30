@@ -6,8 +6,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import axiosInstance from '../../axiosInstance';
 import LoaderCentered from '../../components/LoaderCentered';
-import CustomInput from '../../customs/CustomInput';
 import CustomDatePicker from '../../customs/CustomDatePicker';
+import CustomInput from '../../customs/CustomInput';
 import { setClients } from '../../store/clientsSlice';
 import DeleteClientModal from './DeleteClientModal';
 import {
@@ -149,7 +149,13 @@ const PersonalClientInfo = () => {
                 <Label>Пол</Label>
                 <CustomInput
                   type="text"
-                  value={client.gender === 'male' ? 'Мужской' : client.gender === 'female' ? 'Женский' : client.gender}
+                  value={
+                    client.gender === 'male'
+                      ? 'Мужской'
+                      : client.gender === 'female'
+                        ? 'Женский'
+                        : client.gender
+                  }
                   disabled
                   style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed' }}
                 />

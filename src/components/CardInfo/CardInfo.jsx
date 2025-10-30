@@ -31,7 +31,15 @@ import {
   TopFieldsBlock,
 } from './styles';
 
-const CardInfo = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef, isPreview, previewType }) => {
+const CardInfo = ({
+  card,
+  setShowInfo,
+  onFieldClick,
+  hoverDesignKey,
+  mainImgRef,
+  isPreview,
+  previewType,
+}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id: urlId } = useParams();
@@ -85,11 +93,14 @@ const CardInfo = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef,
   const ActiveIcon = normalizeIcon(design?.activeStamp || 'Star');
   const InactiveIcon = normalizeIcon(design?.inactiveStamp || 'Star');
 
-  const currentStamps = isPreview 
-    ? (typeof card.initialStampsOnIssue === 'number' ? card.initialStampsOnIssue : 0)
-    : (typeof card.stamps === 'number' ? card.stamps : (card.initialStampsOnIssue || 0));
-  const restStamps =
-    card.status === 'stamp' ? (design?.stampsQuantity || 10) - currentStamps : 0;
+  const currentStamps = isPreview
+    ? typeof card.initialStampsOnIssue === 'number'
+      ? card.initialStampsOnIssue
+      : 0
+    : typeof card.stamps === 'number'
+      ? card.stamps
+      : card.initialStampsOnIssue || 0;
+  const restStamps = card.status === 'stamp' ? (design?.stampsQuantity || 10) - currentStamps : 0;
 
   const mergedCard = {
     ...card,
@@ -287,9 +298,10 @@ const CardInfo = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef,
         {(() => {
           const rawNumber = card.cardNumber || card.serialNumber || '000001';
           const onlyDigits = String(rawNumber).replace(/\D/g, '');
-          const formatted = onlyDigits.length === 6
-            ? onlyDigits.replace(/(\d{3})(\d{3})/, '$1 $2')
-            : String(rawNumber);
+          const formatted =
+            onlyDigits.length === 6
+              ? onlyDigits.replace(/(\d{3})(\d{3})/, '$1 $2')
+              : String(rawNumber);
           return <CardNumber>{formatted}</CardNumber>;
         })()}
       </QrBlock>

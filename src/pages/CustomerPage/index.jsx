@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import axiosInstance from '../../axiosInstance';
 import LoaderCentered from '../../components/LoaderCentered';
@@ -17,6 +17,9 @@ import {
   InfoItem,
   InfoLabel,
   InfoValue,
+  LimitInfo,
+  QuickButton,
+  QuickButtons,
   Row,
   RowLabel,
   RowValue,
@@ -24,9 +27,6 @@ import {
   SectionTitle,
   StampControls,
   Title,
-  QuickButtons,
-  QuickButton,
-  LimitInfo,
 } from './styles';
 
 const CustomerPage = () => {
@@ -59,10 +59,10 @@ const CustomerPage = () => {
       try {
         const response = await axiosInstance.get(`/clients/card/${cardNumber}`);
         const clientData = response.data;
-        
+
         setClient(clientData);
-        
-        const foundCard = clientData.cards?.find(c => c.cardNumber === cardNumber);
+
+        const foundCard = clientData.cards?.find((c) => c.cardNumber === cardNumber);
         setCard(foundCard || null);
         hasLoadedRef.current = true;
         loadedCardRef.current = cardNumber;
@@ -84,7 +84,7 @@ const CustomerPage = () => {
         setLoading(false);
       }
     };
-    
+
     if (cardNumber && user?.organization_id) {
       loadClient();
     }
@@ -96,15 +96,15 @@ const CustomerPage = () => {
       // Сбрасываем флаг загрузки, чтобы можно было перезагрузить
       hasLoadedRef.current = false;
       loadedCardRef.current = null;
-      
+
       // Добавляем timestamp для избежания кеша
       const response = await axiosInstance.get(`/clients/card/${cardNumber}?t=${Date.now()}`);
       const clientData = response.data;
       setClient(clientData);
-      
-      const foundCard = clientData.cards?.find(c => c.cardNumber === cardNumber);
+
+      const foundCard = clientData.cards?.find((c) => c.cardNumber === cardNumber);
       setCard(foundCard || null);
-      
+
       // Восстанавливаем флаг после успешной загрузки
       hasLoadedRef.current = true;
       loadedCardRef.current = cardNumber;
@@ -131,9 +131,11 @@ const CustomerPage = () => {
     // Проверяем лимит на фронтенде
     const stampDailyLimit = card.stampDailyLimit || 999;
     const stampsToday = card.stampsToday || 0;
-    
+
     if (stampsToday + stampsAmount > stampDailyLimit) {
-      toast.error(`Превышен дневной лимит штампов. Лимит: ${stampDailyLimit}, уже выдано: ${stampsToday}`);
+      toast.error(
+        `Превышен дневной лимит штампов. Лимит: ${stampDailyLimit}, уже выдано: ${stampsToday}`,
+      );
       return;
     }
 
@@ -144,9 +146,9 @@ const CustomerPage = () => {
         updates: {
           stamps: (card.stamps || 0) + stampsAmount,
           active_storage: (card.activeStorage || 0) + stampsAmount,
-        }
+        },
       });
-      
+
       setStampsToAdd('');
       toast.success(`Добавлено ${stampsAmount} штампов! Спасибо за обслуживание клиента`);
       await reloadClient();
@@ -157,7 +159,7 @@ const CustomerPage = () => {
       setIsLoading(false);
     }
   };
-  
+
   const handleQuickStamp = (amount) => {
     setStampsToAdd(amount.toString());
   };
@@ -169,9 +171,9 @@ const CustomerPage = () => {
         card_number: cardNumber,
         updates: {
           available_rewards: (card.availableRewards || 0) + 1,
-        }
+        },
       });
-      
+
       toast.success('Награда добавлена! Спасибо за обслуживание клиента');
       await reloadClient();
     } catch (error) {
@@ -193,9 +195,9 @@ const CustomerPage = () => {
         card_number: cardNumber,
         updates: {
           available_rewards: (card.availableRewards || 0) - 1,
-        }
+        },
       });
-      
+
       toast.success('Награда успешно получена! Спасибо за обслуживание клиента');
       await reloadClient();
     } catch (error) {
@@ -209,11 +211,14 @@ const CustomerPage = () => {
     <Container>
       <Header>
         <Title>
-          Клиент: <CustomerName>{client.name} {client.surname}</CustomerName>
+          Клиент:{' '}
+          <CustomerName>
+            {client.name} {client.surname}
+          </CustomerName>
         </Title>
       </Header>
 
-      <CustomMainButton 
+      <CustomMainButton
         onClick={() => navigate(`/clients/${client.id}`)}
         style={{ width: '100%', marginBottom: '16px' }}
       >
@@ -242,14 +247,15 @@ const CustomerPage = () => {
               {(card.stampsToday || 0) >= card.stampDailyLimit && ' | Лимит достигнут!'}
             </LimitInfo>
           )}
-          
+
           <div>
             <div style={{ fontSize: '14px', color: '#7f8c8d', marginBottom: '8px' }}>
               Быстрый выбор:
             </div>
             <QuickButtons>
               {[1, 2, 3, 4, 5].map((num) => {
-                const isDisabled = isLoading || (card.stampsToday || 0) + num > (card.stampDailyLimit || 999);
+                const isDisabled =
+                  isLoading || (card.stampsToday || 0) + num > (card.stampDailyLimit || 999);
                 return (
                   <QuickButton
                     key={num}
@@ -262,7 +268,7 @@ const CustomerPage = () => {
               })}
             </QuickButtons>
           </div>
-          
+
           <CustomInput
             type="number"
             min="1"
@@ -279,11 +285,11 @@ const CustomerPage = () => {
             placeholder="Или введите количество штампов"
             disabled={isLoading || (card.stampsToday || 0) >= (card.stampDailyLimit || 999)}
           />
-          <CustomMainButton 
-            onClick={() => handleAddStamps()} 
+          <CustomMainButton
+            onClick={() => handleAddStamps()}
             disabled={
-              isLoading || 
-              !stampsToAdd || 
+              isLoading ||
+              !stampsToAdd ||
               Number(stampsToAdd) <= 0 ||
               (card.stampsToday || 0) >= (card.stampDailyLimit || 999) ||
               (card.stampsToday || 0) + Number(stampsToAdd) > (card.stampDailyLimit || 999)

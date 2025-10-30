@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import axiosInstance from '../../axiosInstance';
 import CustomTable from '../../components/CustomTable';
@@ -168,7 +168,7 @@ const ClientDetails = () => {
             borderRadius: '8px',
             fontSize: '14px',
             fontWeight: '600',
-            cursor: 'pointer'
+            cursor: 'pointer',
           }}
         >
           Удалить клиента
@@ -193,7 +193,8 @@ const prepareLinks = (client) => {
   if (!firstCard) return [];
 
   // Используем urlCopy из данных карты, если он есть
-  const cardUrl = firstCard.urlCopy || `https://app.loyalclub.ru/getpass/${firstCard.uuid || client.id}`;
+  const cardUrl =
+    firstCard.urlCopy || `https://app.loyalclub.ru/getpass/${firstCard.uuid || client.id}`;
 
   return [
     {
@@ -224,7 +225,7 @@ const prepareStats = (client) => {
   const formatIssueFields = (fields) => {
     if (!fields || !Array.isArray(fields)) return null;
 
-    return fields.map(field => {
+    return fields.map((field) => {
       let value = '';
 
       // Заполняем значения из данных клиента
@@ -250,8 +251,8 @@ const prepareStats = (client) => {
 
       return {
         label: field.name || field.label || '',
-        type: field.type === 'birthday' ? 'date' : (field.type === 'email' ? 'email' : 'text'),
-        value: value
+        type: field.type === 'birthday' ? 'date' : field.type === 'email' ? 'email' : 'text',
+        value: value,
       };
     });
   };
@@ -340,13 +341,17 @@ const prepareStats = (client) => {
       value: firstCard?.cardCreatedAt || '',
       showRightCircle: false,
     },
-    ...(issueFields ? [{
-      key: 'issue_fields',
-      label: 'Поля формы выдачи',
-      isFormPopup: true,
-      value: formatIssueFields(issueFields),
-      showRightCircle: false,
-    }] : []),
+    ...(issueFields
+      ? [
+          {
+            key: 'issue_fields',
+            label: 'Поля формы выдачи',
+            isFormPopup: true,
+            value: formatIssueFields(issueFields),
+            showRightCircle: false,
+          },
+        ]
+      : []),
   ];
 };
 

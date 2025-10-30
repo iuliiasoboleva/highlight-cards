@@ -12,13 +12,13 @@ const DeleteClientModal = ({ fullName, onConfirm, onCancel }) => {
       closeOnOverlayClick={false}
       actions={
         <>
-          <CustomModal.SecondaryButton 
+          <CustomModal.SecondaryButton
             onClick={onConfirm}
             style={{ background: '#f5f5f5', color: '#2c3e50' }}
           >
             Удалить
           </CustomModal.SecondaryButton>
-          <CustomModal.PrimaryButton 
+          <CustomModal.PrimaryButton
             onClick={onCancel}
             style={{ background: '#bf4756' }}
             onMouseEnter={(e) => {

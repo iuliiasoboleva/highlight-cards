@@ -5,9 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import { Copy, Inbox, Trash2 } from 'lucide-react';
 
 import axiosInstance from '../../axiosInstance';
+import Pagination from '../../components/Pagination';
 import TitleWithHelp from '../../components/TitleWithHelp';
 import { useToast } from '../../components/Toast';
-import Pagination from '../../components/Pagination';
 import { fetchCards, setCurrentCard } from '../../store/cardsSlice';
 import {
   EmptyMessage,
@@ -73,44 +73,43 @@ const PushHistory = () => {
     if (!user.organization_id) return;
     try {
       setFetching(true);
-      const params = { 
+      const params = {
         organization_id: user.organization_id,
         page,
         page_size: pageSize,
         sort_by: 'date_time',
         sort_order: sortOrder,
-        mailing_type: 'Push'
+        mailing_type: 'Push',
       };
       if (debouncedSearch) params.search = debouncedSearch;
       if (recipientFilter) params.recipient_filter = recipientFilter;
-      
+
       const res = await axiosInstance.get('/mailings', { params });
       const data = res.data || {};
-      const items = (Array.isArray(data.items) ? data.items : [])
-        .map((m) => {
-          try {
-            const iso = m.dateTime || '';
-            const fixed = iso.replace(/(\.\d{3})\d+/, '$1');
-            const d = new Date(fixed);
-            const parts = new Intl.DateTimeFormat('ru-RU', {
-              timeZone: tz,
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: false,
-            })
-              .formatToParts(d)
-              .reduce((acc, p) => ({ ...acc, [p.type]: p.value }), {});
-            return {
-              ...m,
-              dateTime: `${parts.day}-${parts.month}-${parts.year} ${parts.hour}:${parts.minute}`,
-            };
-          } catch {
-            return m;
-          }
-        });
+      const items = (Array.isArray(data.items) ? data.items : []).map((m) => {
+        try {
+          const iso = m.dateTime || '';
+          const fixed = iso.replace(/(\.\d{3})\d+/, '$1');
+          const d = new Date(fixed);
+          const parts = new Intl.DateTimeFormat('ru-RU', {
+            timeZone: tz,
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          })
+            .formatToParts(d)
+            .reduce((acc, p) => ({ ...acc, [p.type]: p.value }), {});
+          return {
+            ...m,
+            dateTime: `${parts.day}-${parts.month}-${parts.year} ${parts.hour}:${parts.minute}`,
+          };
+        } catch {
+          return m;
+        }
+      });
       setHistory(items);
       setTotal(data.total || 0);
       setTotalPages(data.total_pages || 0);
@@ -154,7 +153,7 @@ const PushHistory = () => {
         return (
           c.id === mailingItem.cardId ||
           c.uuid === mailingItem.cardId ||
-          String(c.id) === String(mailingItem.cardId) || 
+          String(c.id) === String(mailingItem.cardId) ||
           String(c.uuid) === String(mailingItem.cardId)
         );
       });
@@ -168,15 +167,17 @@ const PushHistory = () => {
           return;
         }
       }
-      
-      dispatch(setCurrentCard({
-        ...card,
-        pushNotification: {
-          message: mailingItem.message || '',
-          scheduledDate: '',
-        }
-      }));
-      
+
+      dispatch(
+        setCurrentCard({
+          ...card,
+          pushNotification: {
+            message: mailingItem.message || '',
+            scheduledDate: '',
+          },
+        }),
+      );
+
       toast.success('Параметры рассылки скопированы');
       setTimeout(() => navigate(`/mailings/push`), 300);
     } catch (e) {
@@ -237,7 +238,7 @@ const PushHistory = () => {
               padding: '8px 12px',
               border: '1px solid #ddd',
               borderRadius: '8px',
-              fontSize: '14px'
+              fontSize: '14px',
             }}
           />
           <select
@@ -250,7 +251,7 @@ const PushHistory = () => {
               border: '1px solid #ddd',
               borderRadius: '8px',
               fontSize: '14px',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
           >
             <option value="">Всем</option>
@@ -274,7 +275,7 @@ const PushHistory = () => {
                 border: '1px solid #ddd',
                 borderRadius: '8px',
                 fontSize: '14px',
-                cursor: 'pointer'
+                cursor: 'pointer',
               }}
             >
               <option value={10}>10</option>
@@ -292,32 +293,32 @@ const PushHistory = () => {
               borderRadius: '8px',
               fontSize: '14px',
               cursor: 'pointer',
-              backgroundColor: '#fff'
+              backgroundColor: '#fff',
             }}
           >
             Дата: {sortOrder === 'desc' ? '↓ Новые сверху' : '↑ Старые сверху'}
           </button>
 
-          <span style={{ fontSize: '14px', color: '#666' }}>
-            Всего: {total}
-          </span>
+          <span style={{ fontSize: '14px', color: '#666' }}>Всего: {total}</span>
         </div>
       </div>
 
       <div style={{ position: 'relative', minHeight: '300px' }}>
         {fetching && (
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(255, 255, 255, 0.8)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 10
-          }}>
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(255, 255, 255, 0.8)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 10,
+            }}
+          >
             <div style={{ fontSize: '14px', color: '#666' }}>Загрузка...</div>
           </div>
         )}
@@ -342,7 +343,11 @@ const PushHistory = () => {
                     >
                       <Copy size={16} />
                     </PushHistoryIcon>
-                    <PushHistoryIcon className="danger" onClick={() => openDeleteModal(item.id)} title="Удалить">
+                    <PushHistoryIcon
+                      className="danger"
+                      onClick={() => openDeleteModal(item.id)}
+                      title="Удалить"
+                    >
                       <Trash2 size={16} />
                     </PushHistoryIcon>
                   </PushHistoryControls>
@@ -357,11 +362,7 @@ const PushHistory = () => {
         </PushHistoryList>
       </div>
 
-      <Pagination 
-        page={page} 
-        totalPages={totalPages} 
-        onPageChange={handlePageChange}
-      />
+      <Pagination page={page} totalPages={totalPages} onPageChange={handlePageChange} />
 
       {/* Модалка подтверждения удаления */}
       {deleteModalOpen && (
@@ -400,7 +401,14 @@ const PushHistory = () => {
             <p style={{ margin: '0 0 24px 0', color: '#666', fontSize: '14px' }}>
               История рассылки будет удалена безвозвратно
             </p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'space-between', flexDirection: 'column' }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: '12px',
+                justifyContent: 'space-between',
+                flexDirection: 'column',
+              }}
+            >
               <button
                 onClick={onDelete}
                 style={{

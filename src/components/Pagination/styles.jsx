@@ -11,17 +11,17 @@ export const PaginationWrapper = styled.div`
 
 export const PaginationButton = styled.button`
   padding: 8px 16px;
-  border: 2px solid ${props => props.$active ? '#bf4756' : '#e0e0e0'};
+  border: 2px solid ${(props) => (props.$active ? '#bf4756' : '#e0e0e0')};
   border-radius: 8px;
   font-size: 14px;
-  font-weight: ${props => props.$active ? '600' : '400'};
-  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
-  background: ${props => {
+  font-weight: ${(props) => (props.$active ? '600' : '400')};
+  cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
+  background: ${(props) => {
     if (props.$active) return '#bf4756';
     if (props.disabled) return '#f5f5f5';
     return '#fff';
   }};
-  color: ${props => {
+  color: ${(props) => {
     if (props.$active) return '#fff';
     if (props.disabled) return '#999';
     return '#333';
@@ -29,11 +29,13 @@ export const PaginationButton = styled.button`
   transition: all 0.2s;
 
   &:hover:not(:disabled) {
-    ${props => !props.$active && css`
-      border-color: #bf4756;
-      color: #bf4756;
-      background: #fff0f2;
-    `}
+    ${(props) =>
+      !props.$active &&
+      css`
+        border-color: #bf4756;
+        color: #bf4756;
+        background: #fff0f2;
+      `}
   }
 
   &:active:not(:disabled) {
@@ -53,4 +55,3 @@ export const PaginationInfo = styled.span`
   margin-left: 12px;
   font-weight: 500;
 `;
-

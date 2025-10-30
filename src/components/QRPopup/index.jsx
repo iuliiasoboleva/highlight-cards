@@ -3,9 +3,8 @@ import QRCodeComponent from 'react-qr-code';
 import { useSelector } from 'react-redux';
 
 import CustomModal from '../../customs/CustomModal';
-import { Actions, Content, QRBlock, QRLink } from './styles';
-
 import { generatePDF } from '../../utils/pdfGenerator';
+import { Actions, Content, QRBlock, QRLink } from './styles';
 
 const QRPopup = ({ cardId, onClose, activateCard, open = true }) => {
   const currentCard = useSelector((state) => state.cards.currentCard);

@@ -362,14 +362,14 @@ const SalesPointsModalWithMap = ({
         <CustomMainButton
           onClick={() => setConfirmOpen(true)}
           disabled={!isDeletable}
-          style={{ 
-            background: '#2c3e50', 
+          style={{
+            background: '#2c3e50',
             color: '#fff',
             maxWidth: '100%',
             '&:hover': {
               background: '#1a252f',
-              color: '#fff'
-            }
+              color: '#fff',
+            },
           }}
           onMouseEnter={(e) => {
             if (!isDeletable) return;
@@ -386,11 +386,11 @@ const SalesPointsModalWithMap = ({
         </CustomMainButton>
       )}
       <Spacer />
-      <CustomMainButton 
-        onClick={handleSave} 
-        style={{ 
+      <CustomMainButton
+        onClick={handleSave}
+        style={{
           background: '#bf4756',
-          maxWidth: '100%'
+          maxWidth: '100%',
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.background = '#a63d49';

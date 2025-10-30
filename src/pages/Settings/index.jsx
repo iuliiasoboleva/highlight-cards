@@ -3,13 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import axiosInstance from '../../axiosInstance';
 import AgreementModal from '../../components/AgreementModal';
+import ContactModal from '../../components/ContactModal';
 import GeoBadge from '../../components/GeoBadge';
-import LoaderCentered from '../../components/LoaderCentered';
 import InvoicePayerModal from '../../components/InvoicePayerModal';
-import { buildReceiverDefaults } from '../../utils/pdfInvoice';
+import LoaderCentered from '../../components/LoaderCentered';
 import { useToast } from '../../components/Toast';
 import TopUpModal from '../../components/TopUpModal';
-import ContactModal from '../../components/ContactModal';
 import CustomMainButton from '../../customs/CustomMainButton';
 import { formatDateToDDMMYYYY } from '../../helpers/date';
 import { clamp, getPointsBounds } from '../../helpers/getPointsBounds';
@@ -18,6 +17,7 @@ import { fetchBalance, topUpBalance } from '../../store/balanceSlice';
 import { fetchPayments } from '../../store/paymentsSlice';
 import { fetchSubscription } from '../../store/subscriptionSlice';
 import { fetchTariffs } from '../../store/tariffsSlice';
+import { buildReceiverDefaults } from '../../utils/pdfInvoice';
 import StaticMeter from './StaticMeter';
 import { planFeatures } from './planFeatures';
 import {
@@ -51,6 +51,7 @@ import {
   PromoLabel,
   PromoMessage,
   PromoWrapper,
+  QuestionIcon,
   Radio,
   RangeLabels,
   RangeWrap,
@@ -65,7 +66,6 @@ import {
   TooltipContent,
   TooltipWrapper,
   Total,
-  QuestionIcon,
 } from './styles';
 
 const STATIC_LABELS = [
@@ -105,32 +105,32 @@ const Settings = () => {
     if (!subscription) {
       return planFeatures.find((p) => p.key === 'free');
     }
-    
+
     if (subscription.status === 'trial') {
       return planFeatures.find((p) => p.key === 'free');
     }
-    
+
     const planNameLower = (subscription.plan_name || '').toLowerCase();
-    
+
     if (planNameLower.includes('бизнес') || planNameLower.includes('business')) {
       return planFeatures.find((p) => p.key === 'business');
     }
     if (planNameLower.includes('сеть') || planNameLower.includes('network')) {
       return planFeatures.find((p) => p.key === 'network');
     }
-    
+
     return planFeatures.find((p) => p.key === 'business');
   }, [subscription]);
 
   const branchesTooltipText = useMemo(() => {
     if (!subscription) return currentUserPlan?.branchesText;
-    
+
     const purchasedPoints = subscription.points || subscription.branches_count;
-    
+
     if (purchasedPoints && purchasedPoints > 0) {
       return `${purchasedPoints} ${plural(purchasedPoints, ['торговая точка', 'торговые точки', 'торговых точек'])}`;
     }
-    
+
     return currentUserPlan?.branchesText || 'Безлимит торговых точек';
   }, [subscription, currentUserPlan]);
 
@@ -164,18 +164,20 @@ const Settings = () => {
     try {
       const response = await axiosInstance.post('/promo/validate', {
         promo_code: promoCode.trim().toUpperCase(),
-        organization_id: orgId
+        organization_id: orgId,
       });
 
       if (response.data.valid) {
         if (response.data.discount_percent === 0) {
           const applyResponse = await axiosInstance.post('/promo/apply', {
             promo_code: promoCode.trim().toUpperCase(),
-            organization_id: orgId
+            organization_id: orgId,
           });
-          
-          toast.success(`Промокод применён! Вам предоставлен доступ к тарифу ${applyResponse.data.plan_name} на ${applyResponse.data.duration_days} дней`);
-          
+
+          toast.success(
+            `Промокод применён! Вам предоставлен доступ к тарифу ${applyResponse.data.plan_name} на ${applyResponse.data.duration_days} дней`,
+          );
+
           setTimeout(() => {
             window.location.reload();
           }, 1500);
@@ -232,7 +234,7 @@ const Settings = () => {
           : plan?.monthly;
 
   const total = monthlyPrice * months;
-  
+
   const discount = promoApplied ? (total * promoApplied.discount_percent) / 100 : 0;
   const finalTotal = Math.max(0, total - discount);
 
@@ -281,9 +283,7 @@ const Settings = () => {
                 onMouseLeave={() => setShowTooltip(false)}
               >
                 <QuestionIcon>?</QuestionIcon>
-                <TooltipContent $show={showTooltip}>
-                  {branchesTooltipText}
-                </TooltipContent>
+                <TooltipContent $show={showTooltip}>{branchesTooltipText}</TooltipContent>
               </TooltipWrapper>
             </Title>
           </div>
@@ -314,9 +314,7 @@ const Settings = () => {
                   onClick={() => setPlanKey(p.key)}
                 >
                   {p.popular && <PopularBadge>Популярный</PopularBadge>}
-                  {currentUserPlan?.key === p.key && (
-                    <CurrentBadge>Текущий</CurrentBadge>
-                  )}
+                  {currentUserPlan?.key === p.key && <CurrentBadge>Текущий</CurrentBadge>}
                   <Row>
                     <Radio $checked={p.key === planKey} />
                     <PlanName>{p.name}</PlanName>
@@ -432,9 +430,7 @@ const Settings = () => {
 
                 {promoApplied && (
                   <PromoDiscount>
-                    <span>
-                      🎉 Скидка по промокоду:
-                    </span>
+                    <span>🎉 Скидка по промокоду:</span>
                     <b>-{discount.toLocaleString('ru-RU')} ₽</b>
                   </PromoDiscount>
                 )}
@@ -456,11 +452,9 @@ const Settings = () => {
                       disabled={applyingPromo || promoApplied}
                     />
                     {promoApplied ? (
-                      <PromoApplyBtn onClick={handleRemovePromo}>
-                        Удалить
-                      </PromoApplyBtn>
+                      <PromoApplyBtn onClick={handleRemovePromo}>Удалить</PromoApplyBtn>
                     ) : (
-                      <PromoApplyBtn 
+                      <PromoApplyBtn
                         onClick={handleApplyPromo}
                         disabled={applyingPromo || !promoCode.trim()}
                       >
@@ -519,7 +513,7 @@ const Settings = () => {
             );
             const data = res.data;
             setShowModal(false);
-            
+
             if (data.payment_url) {
               window.open(data.payment_url, '_blank', 'noopener,noreferrer');
               toast.success('Страница оплаты открыта в новом окне');
@@ -547,10 +541,7 @@ const Settings = () => {
         onConfirm={handleTopUpConfirm}
       />
 
-      <ContactModal
-        isOpen={contactOpen}
-        onClose={() => setContactOpen(false)}
-      />
+      <ContactModal isOpen={contactOpen} onClose={() => setContactOpen(false)} />
 
       <InvoicePayerModal
         open={invoiceOpen}

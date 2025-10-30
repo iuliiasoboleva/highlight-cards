@@ -9,7 +9,13 @@ import CardButtons from '../../components/CardButtons';
 import CardInfo from '../../components/CardInfo/CardInfo';
 import LoaderCentered from '../../components/LoaderCentered';
 import TitleWithHelp from '../../components/TitleWithHelp';
-import { fetchCards, initializeCards, renameCardAsync, reorderCards, saveOrder } from '../../store/cardsSlice';
+import {
+  fetchCards,
+  initializeCards,
+  renameCardAsync,
+  reorderCards,
+  saveOrder,
+} from '../../store/cardsSlice';
 import {
   CardBottom,
   CardBottomText,
@@ -46,7 +52,7 @@ const Cards = () => {
   const cardsRef = React.useRef(cards);
   const saveOrderTimerRef = React.useRef(null);
   const hasAppliedOrderRef = React.useRef(false);
-  
+
   React.useEffect(() => {
     cardsRef.current = cards;
   }, [cards]);
@@ -57,7 +63,7 @@ const Cards = () => {
 
   React.useEffect(() => {
     if (cards.length <= 1 || hasAppliedOrderRef.current || isTemplatePage) return;
-    
+
     const savedOrder = JSON.parse(localStorage.getItem('cards_order') || '[]');
     if (savedOrder.length) {
       const ordered = [
@@ -82,14 +88,17 @@ const Cards = () => {
     }
   }, [dispatch, isTemplatePage, cards.length]);
 
-  const debouncedSaveOrder = React.useCallback((ids) => {
-    if (saveOrderTimerRef.current) {
-      clearTimeout(saveOrderTimerRef.current);
-    }
-    saveOrderTimerRef.current = setTimeout(() => {
-      dispatch(saveOrder(ids));
-    }, 500);
-  }, [dispatch]);
+  const debouncedSaveOrder = React.useCallback(
+    (ids) => {
+      if (saveOrderTimerRef.current) {
+        clearTimeout(saveOrderTimerRef.current);
+      }
+      saveOrderTimerRef.current = setTimeout(() => {
+        dispatch(saveOrder(ids));
+      }, 500);
+    },
+    [dispatch],
+  );
 
   if (loading) return <LoaderCentered />;
 
@@ -104,7 +113,18 @@ const Cards = () => {
       />
 
       {fetching && (
-        <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 9999, background: 'rgba(255, 255, 255, 0.9)', padding: '20px', borderRadius: '8px' }}>
+        <div
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 9999,
+            background: 'rgba(255, 255, 255, 0.9)',
+            padding: '20px',
+            borderRadius: '8px',
+          }}
+        >
           <LoaderCentered />
         </div>
       )}
@@ -122,11 +142,13 @@ const Cards = () => {
                 </CardState>
               )}
 
-              <CardImageBlock onClick={() => {
-                if (!isTemplatePage) {
-                  navigate(`/cards/${card.id}/info`);
-                }
-              }}>
+              <CardImageBlock
+                onClick={() => {
+                  if (!isTemplatePage) {
+                    navigate(`/cards/${card.id}/info`);
+                  }
+                }}
+              >
                 {!isTemplatePage && card.id !== 'fixed' && (
                   <DragHandle src={moveIcon} alt="Переместить" />
                 )}

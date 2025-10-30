@@ -1,12 +1,12 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { Download, Upload } from 'lucide-react';
+import styled from 'styled-components';
 
-import CustomModal from '../../../customs/CustomModal';
-import { GhostButton, Hint, IconWrap, Row } from '../styles';
 import axiosInstance from '../../../axiosInstance';
 import { useToast } from '../../../components/Toast';
-import styled from 'styled-components';
+import CustomModal from '../../../customs/CustomModal';
+import { GhostButton, Hint, IconWrap, Row } from '../styles';
 
 const FileInput = styled.input`
   display: none;
@@ -44,13 +44,13 @@ const ResultsBox = styled.div`
   margin-top: 16px;
   padding: 12px;
   border-radius: 8px;
-  background-color: ${props => props.$success ? '#f0fff4' : '#fff5f5'};
-  border: 1px solid ${props => props.$success ? '#00c853' : '#e53935'};
+  background-color: ${(props) => (props.$success ? '#f0fff4' : '#fff5f5')};
+  border: 1px solid ${(props) => (props.$success ? '#00c853' : '#e53935')};
 `;
 
 const ResultText = styled.div`
   font-size: 14px;
-  color: ${props => props.$success ? '#00c853' : '#e53935'};
+  color: ${(props) => (props.$success ? '#00c853' : '#e53935')};
   margin-bottom: 4px;
   font-weight: 600;
 `;
@@ -111,7 +111,9 @@ const ImportClientsModal = ({ open, onClose, onImportSuccess }) => {
       });
 
       if (response.data.ok) {
-        toast.success(response.data.message || 'Файл получен. Клиенты импортируются в фоновом режиме.');
+        toast.success(
+          response.data.message || 'Файл получен. Клиенты импортируются в фоновом режиме.',
+        );
         setImportResults({ imported: '?' });
         if (onImportSuccess) {
           setTimeout(() => {
@@ -158,17 +160,9 @@ const ImportClientsModal = ({ open, onClose, onImportSuccess }) => {
         <GhostButton onClick={handleDownloadTemplate}>Скачать шаблон импорта</GhostButton>
       </Row>
 
-      <FileInput
-        ref={fileInputRef}
-        type="file"
-        accept=".xlsx,.xls"
-        onChange={handleFileSelect}
-      />
+      <FileInput ref={fileInputRef} type="file" accept=".xlsx,.xls" onChange={handleFileSelect} />
 
-      <FileUploadArea 
-        onClick={handleUploadClick}
-        className={selectedFile ? 'has-file' : ''}
-      >
+      <FileUploadArea onClick={handleUploadClick} className={selectedFile ? 'has-file' : ''}>
         <IconWrap>
           <Upload size={24} />
         </IconWrap>

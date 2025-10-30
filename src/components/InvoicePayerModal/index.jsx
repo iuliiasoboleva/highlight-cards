@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import CustomModal from '../../customs/CustomModal';
+
+import axiosInstance from '../../axiosInstance';
 import CustomInput from '../../customs/CustomInput';
 import CustomMainButton from '../../customs/CustomMainButton';
-import InnSuggestInput from '../InnSuggestInput';
-import axiosInstance from '../../axiosInstance';
+import CustomModal from '../../customs/CustomModal';
 import { formatPhone } from '../../helpers/formatPhone';
+import InnSuggestInput from '../InnSuggestInput';
 
 const initialState = {
   inn: '',
@@ -67,7 +68,7 @@ const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
       bikError: !!form.bik && !/^\d{9}$/.test(String(form.bik || '')),
       rsError: !!form.checking_account && !/^\d{20}$/.test(String(form.checking_account || '')),
       kppError: !isIp && !!form.kpp && !/^\d{9}$/.test(String(form.kpp || '')),
-      phoneError: !!form.phone && (String(form.phone).replace(/\D/g, '').length !== 11),
+      phoneError: !!form.phone && String(form.phone).replace(/\D/g, '').length !== 11,
     };
   }, [form]);
 
@@ -92,14 +93,21 @@ const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
   const fetchBankByBik = async (bik) => {
     try {
       const res = await axiosInstance.get('/billing/bank', { params: { bik } });
-      setForm((s) => ({ ...s, bik, bank_name: res.data?.name || s.bank_name, correspondent_account: res.data?.correspondent_account || s.correspondent_account }));
+      setForm((s) => ({
+        ...s,
+        bik,
+        bank_name: res.data?.name || s.bank_name,
+        correspondent_account: res.data?.correspondent_account || s.correspondent_account,
+      }));
     } catch {}
   };
 
   const handleCreate = async () => {
     setLoading(true);
     try {
-      await axiosInstance.post('/billing/payer', form, { params: { organization_id: organizationId } });
+      await axiosInstance.post('/billing/payer', form, {
+        params: { organization_id: organizationId },
+      });
       onSaved?.(form);
       onClose?.();
     } finally {
@@ -133,12 +141,18 @@ const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
             inputClass="custom-input"
           />
           {innError && (
-            <div style={{ color: '#c9353f', fontSize: 12, marginTop: 4 }}>ИНН должен состоять из 10 или 12 цифр</div>
+            <div style={{ color: '#c9353f', fontSize: 12, marginTop: 4 }}>
+              ИНН должен состоять из 10 или 12 цифр
+            </div>
           )}
         </div>
         <div>
           <div className="label">ФИО для подписи</div>
-          <CustomInput value={form.signatory} onChange={setField('signatory')} className="custom-input" />
+          <CustomInput
+            value={form.signatory}
+            onChange={setField('signatory')}
+            className="custom-input"
+          />
         </div>
         <div>
           <div className="label">Название организации</div>
@@ -146,20 +160,43 @@ const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
         </div>
         <div>
           <div className="label">КПП</div>
-          <CustomInput value={form.kpp} onChange={setField('kpp')} className="custom-input" placeholder="для ИП можно оставить пусто" maxLength={9} inputMode="numeric" pattern="[0-9]*" />
+          <CustomInput
+            value={form.kpp}
+            onChange={setField('kpp')}
+            className="custom-input"
+            placeholder="для ИП можно оставить пусто"
+            maxLength={9}
+            inputMode="numeric"
+            pattern="[0-9]*"
+          />
           {kppError && (
-            <div style={{ color: '#c9353f', fontSize: 12, marginTop: 4 }}>КПП должен содержать 9 цифр</div>
+            <div style={{ color: '#c9353f', fontSize: 12, marginTop: 4 }}>
+              КПП должен содержать 9 цифр
+            </div>
           )}
         </div>
         <div>
           <div className="label">Юридический адрес</div>
-          <CustomInput value={form.legal_address} onChange={setField('legal_address')} className="custom-input" />
+          <CustomInput
+            value={form.legal_address}
+            onChange={setField('legal_address')}
+            className="custom-input"
+          />
         </div>
         <div>
           <div className="label">р/с</div>
-          <CustomInput value={form.checking_account} onChange={setField('checking_account')} className="custom-input" maxLength={20} inputMode="numeric" pattern="[0-9]*" />
+          <CustomInput
+            value={form.checking_account}
+            onChange={setField('checking_account')}
+            className="custom-input"
+            maxLength={20}
+            inputMode="numeric"
+            pattern="[0-9]*"
+          />
           {rsError && (
-            <div style={{ color: '#c9353f', fontSize: 12, marginTop: 4 }}>р/с должен содержать ровно 20 цифр</div>
+            <div style={{ color: '#c9353f', fontSize: 12, marginTop: 4 }}>
+              р/с должен содержать ровно 20 цифр
+            </div>
           )}
         </div>
         <div>
@@ -177,20 +214,37 @@ const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
             pattern="[0-9]*"
           />
           {bikError && (
-            <div style={{ color: '#c9353f', fontSize: 12, marginTop: 4 }}>БИК должен содержать 9 цифр</div>
+            <div style={{ color: '#c9353f', fontSize: 12, marginTop: 4 }}>
+              БИК должен содержать 9 цифр
+            </div>
           )}
         </div>
         <div>
           <div className="label">Банк</div>
-          <CustomInput value={form.bank_name} onChange={setField('bank_name')} className="custom-input" />
+          <CustomInput
+            value={form.bank_name}
+            onChange={setField('bank_name')}
+            className="custom-input"
+          />
         </div>
         <div>
           <div className="label">к/с</div>
-          <CustomInput value={form.correspondent_account} onChange={setField('correspondent_account')} className="custom-input" maxLength={20} inputMode="numeric" pattern="[0-9]*" />
+          <CustomInput
+            value={form.correspondent_account}
+            onChange={setField('correspondent_account')}
+            className="custom-input"
+            maxLength={20}
+            inputMode="numeric"
+            pattern="[0-9]*"
+          />
         </div>
         <div>
           <div className="label">Почтовый адрес</div>
-          <CustomInput value={form.postal_address} onChange={setField('postal_address')} className="custom-input" />
+          <CustomInput
+            value={form.postal_address}
+            onChange={setField('postal_address')}
+            className="custom-input"
+          />
         </div>
         <div>
           <div className="label">Телефон</div>
@@ -202,7 +256,9 @@ const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
             inputMode="tel"
           />
           {phoneError && (
-            <div style={{ color: '#c9353f', fontSize: 12, marginTop: 4 }}>Введите номер в формате +7 (___) ___-__-__</div>
+            <div style={{ color: '#c9353f', fontSize: 12, marginTop: 4 }}>
+              Введите номер в формате +7 (___) ___-__-__
+            </div>
           )}
         </div>
       </div>
@@ -211,5 +267,3 @@ const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
 };
 
 export default InvoicePayerModal;
-
-

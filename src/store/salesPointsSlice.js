@@ -7,14 +7,15 @@ export const fetchBranches = createAsyncThunk(
   async (forceRefresh = false, { getState, rejectWithValue }) => {
     try {
       const state = getState();
-      const orgId = typeof forceRefresh === 'object' ? forceRefresh.orgId : state.user.organization_id;
-      
+      const orgId =
+        typeof forceRefresh === 'object' ? forceRefresh.orgId : state.user.organization_id;
+
       if (!orgId) return [];
-      
+
       if (!forceRefresh && state.locations.list.length > 0 && !state.locations.loading) {
         return null;
       }
-      
+
       const res = await axiosInstance.get('/branches', { params: { organization_id: orgId } });
       return res.data;
     } catch (err) {
@@ -136,7 +137,7 @@ const salesPointsSlice = createSlice({
           const branchId = b.uuid || b.id;
           return branchId === payloadId || String(branchId) === String(payloadId);
         });
-        
+
         if (idx !== -1) {
           state.list[idx] = action.payload;
         }

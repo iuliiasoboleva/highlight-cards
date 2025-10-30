@@ -78,12 +78,12 @@ const Chart = ({
       const now = new Date();
       const startDate = new Date(now);
       startDate.setMonth(now.getMonth() - 1);
-      
+
       const filtered = externalData.filter((item) => {
         const itemDate = new Date(item.date);
         return itemDate >= startDate && itemDate <= now;
       });
-      
+
       setChartData(filtered.length ? filtered : externalData);
     }
   }, [externalData]);
@@ -145,21 +145,21 @@ const Chart = ({
 
   useEffect(() => {
     const sorted = [...chartData].sort((a, b) => new Date(a.date) - new Date(b.date));
-    
+
     let previousData = [];
     let previousPreviousData = [];
-    
+
     if (sorted.length === 0) {
       const stats = calculateOverallStats([], [], []);
       setOverallStats(stats);
       return;
     }
-    
+
     if (externalData !== null && externalData !== undefined && sorted.length) {
       const currentStart = new Date(sorted[0].date);
       const currentEnd = new Date(sorted[sorted.length - 1].date);
       const diffMs = currentEnd - currentStart;
-      
+
       if (selectedPeriod === 'allTime') {
         const mid = Math.floor(sorted.length / 2);
         const quarter = Math.floor(sorted.length / 4);
@@ -168,15 +168,15 @@ const Chart = ({
       } else {
         const previousEnd = new Date(currentStart.getTime() - 1);
         const previousStart = new Date(previousEnd.getTime() - diffMs);
-        
+
         previousData = externalData.filter((item) => {
           const itemDate = new Date(item.date);
           return itemDate >= previousStart && itemDate <= previousEnd;
         });
-        
+
         const previousPreviousEnd = new Date(previousStart.getTime() - 1);
         const previousPreviousStart = new Date(previousPreviousEnd.getTime() - diffMs);
-        
+
         previousPreviousData = externalData.filter((item) => {
           const itemDate = new Date(item.date);
           return itemDate >= previousPreviousStart && itemDate <= previousPreviousEnd;
@@ -188,7 +188,7 @@ const Chart = ({
       previousData = sorted.slice(0, mid);
       previousPreviousData = sorted.slice(0, quarter);
     }
-    
+
     const stats = calculateOverallStats(sorted, previousData, previousPreviousData);
     setOverallStats(stats);
   }, [chartData, selectedPeriod, selectedRange, externalData]);
@@ -231,8 +231,11 @@ const Chart = ({
 
     if (start && end) {
       setSelectedRange({ start, end });
-      
-      const sourceData = (externalData !== null && externalData !== undefined) ? externalData : Object.values(dataMap).flat();
+
+      const sourceData =
+        externalData !== null && externalData !== undefined
+          ? externalData
+          : Object.values(dataMap).flat();
       const byDate = new Map();
       for (const item of sourceData) {
         byDate.set(item.date, item);

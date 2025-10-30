@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import BranchCheckboxList from '../../../components/BranchCheckboxList';
 import { useToast } from '../../../components/Toast';
+import CustomDatePicker from '../../../customs/CustomDatePicker';
 import CustomInput from '../../../customs/CustomInput';
 import CustomModal from '../../../customs/CustomModal';
 import { CustomRadioGroup } from '../../../customs/CustomRadio';
 import CustomSelect from '../../../customs/CustomSelect';
-import CustomDatePicker from '../../../customs/CustomDatePicker';
 import { formatPhone } from '../../../helpers/formatPhone';
 import { createClient, fetchClients } from '../../../store/clientsSlice';
 import { ClientsModalFormGroup, ErrorText, Label } from '../styles';
@@ -169,7 +169,9 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
           <CustomModal.PrimaryButton onClick={handleAddClient} disabled={loading || !isValid}>
             {loading ? 'Добавляю...' : 'Добавить клиента'}
           </CustomModal.PrimaryButton>
-          <CustomModal.SecondaryButton onClick={onClose} disabled={loading}>Отменить</CustomModal.SecondaryButton>
+          <CustomModal.SecondaryButton onClick={onClose} disabled={loading}>
+            Отменить
+          </CustomModal.SecondaryButton>
         </>
       }
     >

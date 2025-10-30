@@ -1,11 +1,11 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 import axiosInstance from '../../axiosInstance';
-import CustomInput from '../../customs/CustomInput';
 import { useToast } from '../../components/Toast';
+import CustomInput from '../../customs/CustomInput';
 import {
   Card,
   CardTitle,
@@ -38,7 +38,7 @@ const DEFAULT_SEGMENTS = [
 const SettingsRFMSegment = () => {
   const user = useSelector((state) => state.user);
   const toast = useToast();
-  
+
   const [segments, setSegments] = useState(DEFAULT_SEGMENTS);
   const [savedSegments, setSavedSegments] = useState(DEFAULT_SEGMENTS);
   const [counts, setCounts] = useState({});
@@ -52,28 +52,28 @@ const SettingsRFMSegment = () => {
 
   const loadSegments = async () => {
     if (!user.organization_id) return;
-    
+
     try {
       setLoading(true);
       const response = await axiosInstance.get(`/rfm-settings/`, {
-        params: { organization_id: String(user.organization_id) }
+        params: { organization_id: String(user.organization_id) },
       });
-      
+
       if (response.data && response.data.length > 0) {
-        const loadedSegments = response.data.map(s => ({
+        const loadedSegments = response.data.map((s) => ({
           id: s.id,
           title: s.title,
           freqFrom: s.freq_from,
           freqTo: s.freq_to,
           recencyFrom: s.recency_from,
-          recencyTo: s.recency_to
+          recencyTo: s.recency_to,
         }));
         setSegments(loadedSegments);
         setSavedSegments(loadedSegments);
       } else {
         await initializeDefaultSegments();
       }
-      
+
       await loadSegmentCounts();
     } catch (error) {
       console.error('Ошибка при загрузке настроек сегментации:', error);
@@ -92,7 +92,7 @@ const SettingsRFMSegment = () => {
           freq_from: segment.freqFrom,
           freq_to: segment.freqTo,
           recency_from: segment.recencyFrom,
-          recency_to: segment.recencyTo
+          recency_to: segment.recencyTo,
         });
       }
       await loadSegments();
@@ -103,10 +103,10 @@ const SettingsRFMSegment = () => {
 
   const loadSegmentCounts = async () => {
     if (!user.organization_id) return;
-    
+
     try {
       const response = await axiosInstance.get('/rfm-settings/segment-counts', {
-        params: { organization_id: String(user.organization_id) }
+        params: { organization_id: String(user.organization_id) },
       });
       setCounts(response.data);
     } catch (error) {
@@ -122,9 +122,9 @@ const SettingsRFMSegment = () => {
 
   const handleSave = async (index) => {
     const segment = segments[index];
-    
-    setSaving(prev => ({ ...prev, [index]: true }));
-    
+
+    setSaving((prev) => ({ ...prev, [index]: true }));
+
     try {
       await axiosInstance.post('/rfm-settings/', {
         organization_id: String(user.organization_id),
@@ -132,20 +132,20 @@ const SettingsRFMSegment = () => {
         freq_from: Number(segment.freqFrom),
         freq_to: Number(segment.freqTo),
         recency_from: Number(segment.recencyFrom),
-        recency_to: Number(segment.recencyTo)
+        recency_to: Number(segment.recencyTo),
       });
-      
+
       setSavedSegments((prev) =>
         prev.map((seg, i) => (i === index ? { ...seg, ...segments[index] } : seg)),
       );
-      
+
       await loadSegmentCounts();
-      
+
       toast.success('Настройки сегмента сохранены и пересчитаны');
     } catch (error) {
       toast.error('Ошибка при сохранении настроек');
     } finally {
-      setSaving(prev => ({ ...prev, [index]: false }));
+      setSaving((prev) => ({ ...prev, [index]: false }));
     }
   };
 
@@ -188,88 +188,84 @@ const SettingsRFMSegment = () => {
         <Grid>
           {segments.map((segment, index) => (
             <Card key={segment.title}>
-            <CardTitle>{segment.title}</CardTitle>
+              <CardTitle>{segment.title}</CardTitle>
 
-            <Row>
-              <Field>
-                <Label>Частота от (~кол-во раз)</Label>
-                <CustomInput
-                  type="number"
-                  value={segment.freqFrom}
-                  onChange={(e) => {
-                    let raw = e.target.value;
-                    // Убираем лидирующие нули
-                    if (raw.length > 1 && raw.startsWith('0')) {
-                      raw = raw.replace(/^0+/, '') || '0';
-                      e.target.value = raw;
-                    }
-                    handleChange(index, 'freqFrom', raw);
-                  }}
-                />
-              </Field>
-              <Field>
-                <Label>Частота до (~кол-во раз)</Label>
-                <CustomInput
-                  type="number"
-                  value={segment.freqTo}
-                  onChange={(e) => {
-                    let raw = e.target.value;
-                    // Убираем лидирующие нули
-                    if (raw.length > 1 && raw.startsWith('0')) {
-                      raw = raw.replace(/^0+/, '') || '0';
-                      e.target.value = raw;
-                    }
-                    handleChange(index, 'freqTo', raw);
-                  }}
-                />
-              </Field>
-            </Row>
+              <Row>
+                <Field>
+                  <Label>Частота от (~кол-во раз)</Label>
+                  <CustomInput
+                    type="number"
+                    value={segment.freqFrom}
+                    onChange={(e) => {
+                      let raw = e.target.value;
+                      // Убираем лидирующие нули
+                      if (raw.length > 1 && raw.startsWith('0')) {
+                        raw = raw.replace(/^0+/, '') || '0';
+                        e.target.value = raw;
+                      }
+                      handleChange(index, 'freqFrom', raw);
+                    }}
+                  />
+                </Field>
+                <Field>
+                  <Label>Частота до (~кол-во раз)</Label>
+                  <CustomInput
+                    type="number"
+                    value={segment.freqTo}
+                    onChange={(e) => {
+                      let raw = e.target.value;
+                      // Убираем лидирующие нули
+                      if (raw.length > 1 && raw.startsWith('0')) {
+                        raw = raw.replace(/^0+/, '') || '0';
+                        e.target.value = raw;
+                      }
+                      handleChange(index, 'freqTo', raw);
+                    }}
+                  />
+                </Field>
+              </Row>
 
-            <Row>
-              <Field>
-                <Label>Давность от (~дней)</Label>
-                <CustomInput
-                  type="number"
-                  value={segment.recencyFrom}
-                  onChange={(e) => {
-                    let raw = e.target.value;
-                    // Убираем лидирующие нули
-                    if (raw.length > 1 && raw.startsWith('0')) {
-                      raw = raw.replace(/^0+/, '') || '0';
-                      e.target.value = raw;
-                    }
-                    handleChange(index, 'recencyFrom', raw);
-                  }}
-                />
-              </Field>
-              <Field>
-                <Label>Давность до (~дней)</Label>
-                <CustomInput
-                  type="number"
-                  value={segment.recencyTo}
-                  onChange={(e) => {
-                    let raw = e.target.value;
-                    // Убираем лидирующие нули
-                    if (raw.length > 1 && raw.startsWith('0')) {
-                      raw = raw.replace(/^0+/, '') || '0';
-                      e.target.value = raw;
-                    }
-                    handleChange(index, 'recencyTo', raw);
-                  }}
-                />
-              </Field>
-            </Row>
+              <Row>
+                <Field>
+                  <Label>Давность от (~дней)</Label>
+                  <CustomInput
+                    type="number"
+                    value={segment.recencyFrom}
+                    onChange={(e) => {
+                      let raw = e.target.value;
+                      // Убираем лидирующие нули
+                      if (raw.length > 1 && raw.startsWith('0')) {
+                        raw = raw.replace(/^0+/, '') || '0';
+                        e.target.value = raw;
+                      }
+                      handleChange(index, 'recencyFrom', raw);
+                    }}
+                  />
+                </Field>
+                <Field>
+                  <Label>Давность до (~дней)</Label>
+                  <CustomInput
+                    type="number"
+                    value={segment.recencyTo}
+                    onChange={(e) => {
+                      let raw = e.target.value;
+                      // Убираем лидирующие нули
+                      if (raw.length > 1 && raw.startsWith('0')) {
+                        raw = raw.replace(/^0+/, '') || '0';
+                        e.target.value = raw;
+                      }
+                      handleChange(index, 'recencyTo', raw);
+                    }}
+                  />
+                </Field>
+              </Row>
 
-            <MainButton 
-              type="button" 
-              onClick={() => handleSave(index)}
-              disabled={saving[index]}
-            >
-              {saving[index] ? 'Сохранение...' : 'Сохранить'}
-            </MainButton>
-          </Card>
-        ))}
-      </Grid>
+              <MainButton type="button" onClick={() => handleSave(index)} disabled={saving[index]}>
+                {saving[index] ? 'Сохранение...' : 'Сохранить'}
+              </MainButton>
+            </Card>
+          ))}
+        </Grid>
       )}
 
       <TableTitle>Сводка по сегментам</TableTitle>

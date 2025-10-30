@@ -104,7 +104,8 @@ const MainLayout = () => {
     // Проверяем переход между страницами одной карты (info -> edit)
     const prevCardMatch = prev.match(/^\/cards\/([^/]+)\/info$/);
     const nextCardMatch = next.match(/^\/cards\/([^/]+)\/edit\//);
-    const isSameCardTransition = prevCardMatch && nextCardMatch && prevCardMatch[1] === nextCardMatch[1];
+    const isSameCardTransition =
+      prevCardMatch && nextCardMatch && prevCardMatch[1] === nextCardMatch[1];
 
     // Не показывать leave guard при переходе из edit/integration (завершающий шаг редактирования)
     const isCompletingEdit = prev.match(/^\/cards\/[^/]+\/edit\/integration$/);
@@ -222,8 +223,18 @@ const MainLayout = () => {
       return [
         { to: `/mailings/info`, label: 'Рассылки' },
         { to: `/mailings/push`, label: 'Создать push-рассылку' },
-        { to: `/mailings/auto-push`, label: 'Автоматизация push', disabled: true, tooltip: 'Скоро будет доступно...' },
-        { to: `/mailings/user-push`, label: 'Пользовательские авто-push', disabled: true, tooltip: 'Скоро будет доступно...' },
+        {
+          to: `/mailings/auto-push`,
+          label: 'Автоматизация push',
+          disabled: true,
+          tooltip: 'Скоро будет доступно...',
+        },
+        {
+          to: `/mailings/user-push`,
+          label: 'Пользовательские авто-push',
+          disabled: true,
+          tooltip: 'Скоро будет доступно...',
+        },
         { to: `/mailings/archive`, label: 'История рассылок' },
       ];
     }

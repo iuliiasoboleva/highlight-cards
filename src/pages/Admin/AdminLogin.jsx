@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import styled from 'styled-components';
+
 import adminAxiosInstance from '../../adminAxiosInstance';
 
 const Container = styled.div`
@@ -129,9 +131,9 @@ const AdminLogin = () => {
 
       localStorage.setItem('adminToken', response.data.token);
       localStorage.setItem('adminUser', JSON.stringify(response.data));
-      
+
       console.log('Token saved to localStorage:', localStorage.getItem('adminToken'));
-      
+
       navigate('/admin/dashboard');
     } catch (err) {
       console.error('Login error:', err);
@@ -184,4 +186,3 @@ const AdminLogin = () => {
 };
 
 export default AdminLogin;
-

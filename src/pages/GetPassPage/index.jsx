@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'react-phone-input-2/lib/style.css';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from '../../axiosInstance';
-import BASE_URL from '../../config';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import axios from '../../axiosInstance';
 import Accordion from '../../components/Accordion';
-import CustomCheckbox from '../../customs/CustomCheckbox';
-import CustomInput from '../../customs/CustomInput';
-import CustomDatePicker from '../../customs/CustomDatePicker';
-import CustomModal from '../../customs/CustomModal';
+import NotFound from '../../components/NotFound';
 import { useToast } from '../../components/Toast';
+import BASE_URL from '../../config';
+import CustomCheckbox from '../../customs/CustomCheckbox';
+import CustomDatePicker from '../../customs/CustomDatePicker';
+import CustomInput from '../../customs/CustomInput';
+import CustomModal from '../../customs/CustomModal';
 import {
   AccordionsWrapper,
   AuthForm,
@@ -21,10 +22,9 @@ import {
   HeaderContent,
   StyledPhoneInput,
   Title,
-  WalletButtonsWrapper,
   WalletButton,
+  WalletButtonsWrapper,
 } from './styles';
-import NotFound from '../../components/NotFound';
 
 const GetPassPage = () => {
   const { uuid } = useParams();
@@ -56,34 +56,40 @@ const GetPassPage = () => {
 
   const getCompanyInfo = () => {
     if (!card) return 'Информация о компании не указана';
-    
+
     const issuerName = card?.infoFields?.issuerName || card?.infoFields?.companyName;
     const issuerEmail = card?.infoFields?.issuerEmail;
     const issuerPhone = card?.infoFields?.issuerPhone;
-    
+
     if (!issuerName && !issuerEmail && !issuerPhone) {
       return 'Информация о компании не указана';
     }
-    
+
     const parts = [];
     if (issuerName) parts.push(issuerName);
     if (issuerEmail) parts.push(`Email: ${issuerEmail}`);
     if (issuerPhone) parts.push(`Телефон: ${issuerPhone}`);
-    
+
     return parts.join('\n');
   };
 
   const getAccordionItems = () => {
     if (!card) return [];
-    
+
     return [
       { title: 'Информация о компании', content: getCompanyInfo() },
-      { title: 'Информация о карте', content: card?.infoFields?.howToGetStamp || 'Информация о карте не указана' },
+      {
+        title: 'Информация о карте',
+        content: card?.infoFields?.howToGetStamp || 'Информация о карте не указана',
+      },
       {
         title: 'Политика использования персональных данных',
         content: card?.policySettings?.fullPolicyText || 'Политика не указана',
       },
-      { title: 'Условия использования', content: card?.infoFields?.fullPolicyText || 'Условия не указаны' },
+      {
+        title: 'Условия использования',
+        content: card?.infoFields?.fullPolicyText || 'Условия не указаны',
+      },
     ];
   };
 
@@ -101,7 +107,7 @@ const GetPassPage = () => {
 
   const handlePhoneChange = (value) => {
     // Находим поле телефона в issueFormFields
-    const phoneField = card?.issueFormFields?.find(field => field.type === 'phone');
+    const phoneField = card?.issueFormFields?.find((field) => field.type === 'phone');
     const key = phoneField ? phoneField.name : 'phone';
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
@@ -135,29 +141,31 @@ const GetPassPage = () => {
     }
 
     const birthdayField = (card?.issueFormFields || []).find(
-      (field) => field.type === 'birthday' || field.type === 'date'
+      (field) => field.type === 'birthday' || field.type === 'date',
     );
-    
+
     if (birthdayField && formData[birthdayField.name]) {
       const birthdayValue = formData[birthdayField.name];
       const birthdayDate = new Date(birthdayValue);
       const today = new Date();
-      
+
       if (birthdayDate > today) {
         toast.error('Дата рождения не может быть в будущем. Укажите корректную дату');
         return;
       }
-      
+
       const age = Math.floor((today - birthdayDate) / (365.25 * 24 * 60 * 60 * 1000));
-      
+
       if (age < 8) {
-        toast.error('Возраст должен быть не менее 8 лет. Пожалуйста, укажите реальную дату рождения');
+        toast.error(
+          'Возраст должен быть не менее 8 лет. Пожалуйста, укажите реальную дату рождения',
+        );
         return;
       }
     }
 
     setIsWalletLoading(true);
-    
+
     try {
       const clientData = {};
       (card?.issueFormFields || []).forEach((field) => {
@@ -173,30 +181,32 @@ const GetPassPage = () => {
       });
 
       const identifier = response.data?.identifier;
-      
+
       if (!identifier) {
         toast.error('Не получен идентификатор карты');
         setIsWalletLoading(false);
         return;
       }
-      
+
       if (walletType === 'apple') {
         toast.success('Переход в Apple Wallet...');
-        
-        const pkpassUrl = BASE_URL === '/' 
-          ? `/pkpass/${identifier}`
-          : `${BASE_URL.replace(/\/$/, '')}/pkpass/${identifier}`;
-        
+
+        const pkpassUrl =
+          BASE_URL === '/'
+            ? `/pkpass/${identifier}`
+            : `${BASE_URL.replace(/\/$/, '')}/pkpass/${identifier}`;
+
         setTimeout(() => {
           window.location.href = pkpassUrl;
         }, 500);
       } else if (walletType === 'google') {
         toast.success('Переход в Google Wallet...');
-        
-        const googleWalletUrl = BASE_URL === '/' 
-          ? `/google-wallet/save/${identifier}?${new URLSearchParams(clientData).toString()}`
-          : `${BASE_URL.replace(/\/$/, '')}/google-wallet/save/${identifier}?${new URLSearchParams(clientData).toString()}`;
-        
+
+        const googleWalletUrl =
+          BASE_URL === '/'
+            ? `/google-wallet/save/${identifier}?${new URLSearchParams(clientData).toString()}`
+            : `${BASE_URL.replace(/\/$/, '')}/google-wallet/save/${identifier}?${new URLSearchParams(clientData).toString()}`;
+
         setTimeout(() => {
           window.location.href = googleWalletUrl;
         }, 500);
@@ -205,13 +215,13 @@ const GetPassPage = () => {
       console.error('Ошибка при создании карты:', error);
       console.error('Статус ошибки:', error.response?.status);
       console.error('Данные ошибки:', error.response?.data);
-      
+
       if (error.response?.status === 409) {
         toast.error('Карта уже зарегистрирована');
       } else {
         toast.error('Не удалось создать карту. Попробуйте позже');
       }
-      
+
       setIsWalletLoading(false);
     }
   };
@@ -233,7 +243,7 @@ const GetPassPage = () => {
       // Фильтруем только валидные поля формы
       const clientData = {};
       if (card?.issueFormFields) {
-        card.issueFormFields.forEach(field => {
+        card.issueFormFields.forEach((field) => {
           if (formData[field.name]) {
             // Используем field.type как ключ для backend API
             clientData[field.type] = formData[field.name];
@@ -244,7 +254,7 @@ const GetPassPage = () => {
       // Создаем клиента и получаем .pkpass файл
       const response = await axios.get(`/passes/${uuid}`, {
         params: clientData,
-        responseType: 'blob'
+        responseType: 'blob',
       });
 
       // Скачиваем .pkpass файл
@@ -256,7 +266,7 @@ const GetPassPage = () => {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-      
+
       toast.success('Карта успешно создана!');
       setTimeout(() => navigate('/'), 1500);
     } catch (error) {
@@ -322,7 +332,7 @@ const GetPassPage = () => {
                     <option value="male">Мужской</option>
                     <option value="female">Женский</option>
                   </select>
-                ) : (field.type === 'date' || field.type === 'birthday') ? (
+                ) : field.type === 'date' || field.type === 'birthday' ? (
                   <CustomDatePicker
                     value={formData[field.name] || ''}
                     onChange={(value) => setFormData((prev) => ({ ...prev, [field.name]: value }))}
@@ -336,11 +346,7 @@ const GetPassPage = () => {
                     onChange={handleChange}
                     required={field.required}
                     type={
-                      field.type === 'email'
-                        ? 'email'
-                        : field.type === 'number'
-                          ? 'number'
-                          : 'text'
+                      field.type === 'email' ? 'email' : field.type === 'number' ? 'number' : 'text'
                     }
                     pattern={
                       field.type === 'text'
@@ -375,16 +381,16 @@ const GetPassPage = () => {
             />
 
             <WalletButtonsWrapper>
-              <WalletButton 
-                type="button" 
+              <WalletButton
+                type="button"
                 onClick={() => handleWalletInstall('apple')}
                 disabled={isWalletLoading}
               >
                 <span>{isWalletLoading ? 'Загрузка...' : 'Apple Wallet'}</span>
               </WalletButton>
-              
-              <WalletButton 
-                type="button" 
+
+              <WalletButton
+                type="button"
                 onClick={() => handleWalletInstall('google')}
                 disabled={isWalletLoading}
               >
@@ -409,18 +415,20 @@ const GetPassPage = () => {
         aria-label="Уведомление о существующей карте"
       >
         <div style={{ textAlign: 'center', padding: '20px 0' }}>
-          <div style={{
-            width: '60px',
-            height: '60px',
-            borderRadius: '50%',
-            background: '#f59e0b',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 20px',
-            fontSize: '30px',
-            color: 'white'
-          }}>
+          <div
+            style={{
+              width: '60px',
+              height: '60px',
+              borderRadius: '50%',
+              background: '#f59e0b',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px',
+              fontSize: '30px',
+              color: 'white',
+            }}
+          >
             ⚠️
           </div>
           <p style={{ margin: '0 0 16px', fontWeight: '500', fontSize: '16px' }}>

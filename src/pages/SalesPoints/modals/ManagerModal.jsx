@@ -188,10 +188,10 @@ const ManagerModal = ({ isOpen, onClose, onSave, onDelete, initialData = {}, isE
       {isEdit && (
         <CustomMainButton
           onClick={() => setConfirmOpen(true)}
-          style={{ 
+          style={{
             background: '#2c3e50',
             color: '#fff',
-            maxWidth: '100%'
+            maxWidth: '100%',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.background = '#1a252f';
@@ -232,9 +232,9 @@ const ManagerModal = ({ isOpen, onClose, onSave, onDelete, initialData = {}, isE
           });
         }}
         disabled={!isFormValid}
-        style={{ 
+        style={{
           background: '#bf4756',
-          maxWidth: '100%'
+          maxWidth: '100%',
         }}
         onMouseEnter={(e) => {
           if (isFormValid) {

@@ -73,10 +73,10 @@ const NetworkModal = ({
       {isEdit && (
         <CustomMainButton
           onClick={() => setConfirmingDelete(true)}
-          style={{ 
+          style={{
             background: '#2c3e50',
             color: '#fff',
-            maxWidth: '100%'
+            maxWidth: '100%',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.background = '#1a252f';
@@ -90,12 +90,12 @@ const NetworkModal = ({
           Удалить
         </CustomMainButton>
       )}
-      <CustomMainButton 
-        onClick={handleSave} 
-        disabled={!name.trim()} 
-        style={{ 
+      <CustomMainButton
+        onClick={handleSave}
+        disabled={!name.trim()}
+        style={{
           background: '#bf4756',
-          maxWidth: '100%'
+          maxWidth: '100%',
         }}
         onMouseEnter={(e) => {
           if (name.trim()) {

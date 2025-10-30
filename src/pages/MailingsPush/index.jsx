@@ -10,8 +10,8 @@ import GeoBadge from '../../components/GeoBadge';
 import TitleWithHelp from '../../components/TitleWithHelp';
 import { useToast } from '../../components/Toast';
 import CustomCheckbox from '../../customs/CustomCheckbox';
-import CustomSelect from '../../customs/CustomSelect';
 import CustomDateTimePicker from '../../customs/CustomDateTimePicker';
+import CustomSelect from '../../customs/CustomSelect';
 import CustomTooltip from '../../customs/CustomTooltip';
 import { getMinDateTime } from '../../helpers/date';
 import { pluralVerb, pluralize } from '../../helpers/pluralize';
@@ -133,7 +133,7 @@ const MailingsPush = () => {
     if (!currentCard || isSending) return;
 
     setIsSending(true);
-    
+
     dispatch(
       updateCurrentCardField({
         path: 'pushNotification',
@@ -162,13 +162,12 @@ const MailingsPush = () => {
         author_id: user.id,
         message: pushMessage,
       });
-      
+
       if (isScheduled) {
         toast.success('Push-уведомление запланировано');
       } else {
         toast.success('Рассылка началась! Push-уведомления отправляются в фоновом режиме');
       }
-      
     } catch (e) {
       console.error(e);
       const errorMessage = e.response?.data?.detail || 'Ошибка при отправке push-уведомления';
@@ -222,17 +221,17 @@ const MailingsPush = () => {
         </PushRecipientCount>
 
         <PushSchedule>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.5, cursor: 'not-allowed' }}>
-            <CustomCheckbox
-              label="Запланировать"
-              checked={false}
-              onChange={() => {}}
-              disabled
-            />
-            <CustomTooltip
-              id="schedule-disabled-tooltip"
-              content="Скоро будет доступно"
-            />
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              opacity: 0.5,
+              cursor: 'not-allowed',
+            }}
+          >
+            <CustomCheckbox label="Запланировать" checked={false} onChange={() => {}} disabled />
+            <CustomTooltip id="schedule-disabled-tooltip" content="Скоро будет доступно" />
           </div>
 
           {isScheduled && (

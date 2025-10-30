@@ -32,7 +32,14 @@ import {
   TopFieldsBlock,
 } from './styles';
 
-const CardInfoAndroid = ({ card, setShowInfo, onFieldClick, hoverDesignKey, mainImgRef, isPreview }) => {
+const CardInfoAndroid = ({
+  card,
+  setShowInfo,
+  onFieldClick,
+  hoverDesignKey,
+  mainImgRef,
+  isPreview,
+}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id: urlId } = useParams();
@@ -85,11 +92,14 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick, hoverDesignKey, main
   const ActiveIcon = normalizeIcon(design?.activeStamp || 'Star');
   const InactiveIcon = normalizeIcon(design?.inactiveStamp || 'Star');
 
-  const currentStamps = isPreview 
-    ? (typeof card.initialStampsOnIssue === 'number' ? card.initialStampsOnIssue : 0)
-    : (typeof card.stamps === 'number' ? card.stamps : (card.initialStampsOnIssue || 0));
-  const restStamps =
-    card.status === 'stamp' ? (design?.stampsQuantity || 10) - currentStamps : 0;
+  const currentStamps = isPreview
+    ? typeof card.initialStampsOnIssue === 'number'
+      ? card.initialStampsOnIssue
+      : 0
+    : typeof card.stamps === 'number'
+      ? card.stamps
+      : card.initialStampsOnIssue || 0;
+  const restStamps = card.status === 'stamp' ? (design?.stampsQuantity || 10) - currentStamps : 0;
 
   const mergedCard = {
     ...card,
@@ -290,9 +300,8 @@ const CardInfoAndroid = ({ card, setShowInfo, onFieldClick, hoverDesignKey, main
         {(() => {
           const raw = card.cardNumber || card.serialNumber || '000001';
           const onlyDigits = String(raw).replace(/\D/g, '');
-          const formatted = onlyDigits.length === 6
-            ? onlyDigits.replace(/(\d{3})(\d{3})/, '$1 $2')
-            : String(raw);
+          const formatted =
+            onlyDigits.length === 6 ? onlyDigits.replace(/(\d{3})(\d{3})/, '$1 $2') : String(raw);
           return <CardNumber>{formatted}</CardNumber>;
         })()}
       </QrBlock>

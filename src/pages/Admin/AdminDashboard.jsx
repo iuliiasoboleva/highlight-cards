@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
 import styled from 'styled-components';
+
 import adminAxiosInstance from '../../adminAxiosInstance';
 
 const Container = styled.div`
@@ -90,7 +92,7 @@ const StatValue = styled.div`
 
 const StatChange = styled.div`
   font-size: 14px;
-  color: ${props => props.$positive ? '#10b981' : '#ef4444'};
+  color: ${(props) => (props.$positive ? '#10b981' : '#ef4444')};
   margin-top: 8px;
 `;
 
@@ -194,7 +196,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
     const user = localStorage.getItem('adminUser');
-    
+
     if (!token) {
       navigate('/admin/login');
       return;
@@ -270,9 +272,7 @@ const AdminDashboard = () => {
           <StatCard>
             <StatLabel>Новых за неделю</StatLabel>
             <StatValue>{stats?.new_users_week || 0}</StatValue>
-            <StatChange $positive>
-              +{stats?.new_users_day || 0} за сегодня
-            </StatChange>
+            <StatChange $positive>+{stats?.new_users_day || 0} за сегодня</StatChange>
           </StatCard>
 
           <StatCard>
@@ -285,42 +285,32 @@ const AdminDashboard = () => {
           <MenuCard to="/admin/organizations">
             <MenuIcon>👥</MenuIcon>
             <MenuTitle>База пользователей</MenuTitle>
-            <MenuDescription>
-              Управление организациями, поиск, фильтры, экспорт
-            </MenuDescription>
+            <MenuDescription>Управление организациями, поиск, фильтры, экспорт</MenuDescription>
           </MenuCard>
 
           <MenuCard to="/admin/analytics">
             <MenuIcon>📊</MenuIcon>
             <MenuTitle>Аналитика</MenuTitle>
-            <MenuDescription>
-              Подробная статистика по нишам, конверсии, оттоку
-            </MenuDescription>
+            <MenuDescription>Подробная статистика по нишам, конверсии, оттоку</MenuDescription>
           </MenuCard>
 
           <MenuCard to="/admin/support">
             <MenuIcon>🎫</MenuIcon>
             <MenuTitle>Поддержка</MenuTitle>
-            <MenuDescription>
-              Тикеты, обращения клиентов, история
-            </MenuDescription>
+            <MenuDescription>Тикеты, обращения клиентов, история</MenuDescription>
           </MenuCard>
 
           <MenuCard to="/admin/finance">
             <MenuIcon>💰</MenuIcon>
             <MenuTitle>Финансы</MenuTitle>
-            <MenuDescription>
-              Доходы, прогнозы, платежи, MRR
-            </MenuDescription>
+            <MenuDescription>Доходы, прогнозы, платежи, MRR</MenuDescription>
           </MenuCard>
 
           {adminUser?.role === 'super_admin' && (
             <MenuCard to="/admin/managers">
               <MenuIcon>👔</MenuIcon>
               <MenuTitle>Менеджеры</MenuTitle>
-              <MenuDescription>
-                Управление командой, журнал входов
-              </MenuDescription>
+              <MenuDescription>Управление командой, журнал входов</MenuDescription>
             </MenuCard>
           )}
         </MenuGrid>
@@ -346,4 +336,3 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
-

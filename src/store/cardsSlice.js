@@ -40,8 +40,14 @@ const mapCardFromAPI = (card) => ({
   qrImg: card.qr_img || card.qrImg,
   urlCopy: card.url_copy || card.urlCopy,
   isActive: card.is_active !== undefined ? card.is_active : card.isActive,
-  initialStampsOnIssue: card.initial_stamps_on_issue !== undefined ? card.initial_stamps_on_issue : card.initialStampsOnIssue,
-  initialPointsOnIssue: card.initial_points_on_issue !== undefined ? card.initial_points_on_issue : card.initialPointsOnIssue,
+  initialStampsOnIssue:
+    card.initial_stamps_on_issue !== undefined
+      ? card.initial_stamps_on_issue
+      : card.initialStampsOnIssue,
+  initialPointsOnIssue:
+    card.initial_points_on_issue !== undefined
+      ? card.initial_points_on_issue
+      : card.initialPointsOnIssue,
   isPinned: card.is_pinned !== undefined ? card.is_pinned : card.isPinned,
 });
 
@@ -60,11 +66,11 @@ export const fetchCards = createAsyncThunk(
       const state = getState();
       const orgId = state.user.organization_id;
       if (!orgId) return [];
-      
+
       if (!forceRefresh && state.cards.cards.length > 1 && !state.cards.loading) {
         return null;
       }
-      
+
       const res = await axiosInstance.get('/cards', { params: { organization_id: orgId } });
       return res.data;
     } catch (err) {
@@ -78,7 +84,8 @@ export const saveCard = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const { currentCard } = getState().cards;
-      if (!currentCard?.id || currentCard.id === 'fixed' || currentCard.id === 'new') throw new Error('Нет id карты');
+      if (!currentCard?.id || currentCard.id === 'fixed' || currentCard.id === 'new')
+        throw new Error('Нет id карты');
       const {
         frameUrl,
         cardImg,
@@ -463,7 +470,7 @@ export const cardsSlice = createSlice({
             name: item.label,
           })),
         }));
-        
+
         const uniqueCards = [];
         const seenIds = new Set();
         for (const card of allCards) {
@@ -472,7 +479,7 @@ export const cardsSlice = createSlice({
             uniqueCards.push(card);
           }
         }
-        
+
         state.cards = uniqueCards;
         state.error = null;
       } catch (err) {
@@ -522,7 +529,7 @@ export const cardsSlice = createSlice({
           state.fetching = false;
           return;
         }
-        
+
         const mappedCards = action.payload.map(mapCardFromAPI);
         const others = mappedCards.filter((c) => c.id !== 'fixed');
         const pinned = others.filter((c) => c.isPinned);

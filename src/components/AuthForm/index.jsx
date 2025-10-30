@@ -223,17 +223,17 @@ const AuthForm = () => {
           setSubmitting(false);
           return;
         }
-        
+
         const smsResult = await dispatch(requestSmsCode({ phone: digits })).unwrap();
         setApiError('');
-        
+
         if (smsResult.has_pin && smsResult.token) {
           setMagicToken(smsResult.token);
           setStep('pinLogin');
           setSubmitting(false);
           return;
         }
-        
+
         navigate('/sms-code', { state: { phone: '+' + digits } });
       } catch (err) {
         setApiError(extractError(err));

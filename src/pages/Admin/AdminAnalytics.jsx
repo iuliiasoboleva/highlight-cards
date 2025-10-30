@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import styled from 'styled-components';
+
 import adminAxiosInstance from '../../adminAxiosInstance';
 
 const AdminAnalytics = () => {
@@ -17,7 +19,7 @@ const AdminAnalytics = () => {
     try {
       setLoading(true);
       const response = await adminAxiosInstance.get('/admin/analytics/dashboard', {
-        params: { period: dateFilter }
+        params: { period: dateFilter },
       });
       setStats(response.data);
     } catch (error) {
@@ -37,9 +39,7 @@ const AdminAnalytics = () => {
   return (
     <Container>
       <Header>
-        <BackButton onClick={() => navigate('/admin/dashboard')}>
-          ← Назад к дашборду
-        </BackButton>
+        <BackButton onClick={() => navigate('/admin/dashboard')}>← Назад к дашборду</BackButton>
         <Title>Детальная аналитика</Title>
       </Header>
 
@@ -50,7 +50,10 @@ const AdminAnalytics = () => {
         <FilterButton active={dateFilter === 'year'} onClick={() => setDateFilter('year')}>
           Год
         </FilterButton>
-        <FilterButton active={dateFilter === 'half_year'} onClick={() => setDateFilter('half_year')}>
+        <FilterButton
+          active={dateFilter === 'half_year'}
+          onClick={() => setDateFilter('half_year')}
+        >
           Полгода
         </FilterButton>
         <FilterButton active={dateFilter === 'month'} onClick={() => setDateFilter('month')}>
@@ -71,9 +74,10 @@ const AdminAnalytics = () => {
           <StatLabel>Активные подписки</StatLabel>
           <StatValue>{stats?.active_subscriptions || 0}</StatValue>
           <StatPercent>
-            {stats?.total_users > 0 
+            {stats?.total_users > 0
               ? ((stats?.active_subscriptions / stats?.total_users) * 100).toFixed(1)
-              : 0}% от всех
+              : 0}
+            % от всех
           </StatPercent>
         </StatCard>
 
@@ -120,13 +124,11 @@ const AdminAnalytics = () => {
               <Cell>% от всех</Cell>
             </TableHeader>
             {stats.users_by_niche.map((niche, index) => {
-              const conversionRate = niche.count > 0 
-                ? ((niche.with_subscription / niche.count) * 100).toFixed(1)
-                : 0;
-              const percentOfTotal = stats.total_users > 0
-                ? ((niche.count / stats.total_users) * 100).toFixed(1)
-                : 0;
-              
+              const conversionRate =
+                niche.count > 0 ? ((niche.with_subscription / niche.count) * 100).toFixed(1) : 0;
+              const percentOfTotal =
+                stats.total_users > 0 ? ((niche.count / stats.total_users) * 100).toFixed(1) : 0;
+
               return (
                 <TableRow key={index}>
                   <Cell>
@@ -135,7 +137,11 @@ const AdminAnalytics = () => {
                   <Cell>{niche.count}</Cell>
                   <Cell>{niche.with_subscription || 0}</Cell>
                   <Cell>
-                    <Badge status={conversionRate >= 30 ? 'good' : conversionRate >= 15 ? 'medium' : 'low'}>
+                    <Badge
+                      status={
+                        conversionRate >= 30 ? 'good' : conversionRate >= 15 ? 'medium' : 'low'
+                      }
+                    >
                       {conversionRate}%
                     </Badge>
                   </Cell>
@@ -155,9 +161,10 @@ const AdminAnalytics = () => {
           <MetricCard>
             <MetricLabel>Общая конверсия в платных</MetricLabel>
             <MetricValue>
-              {stats?.total_users > 0 
+              {stats?.total_users > 0
                 ? ((stats?.active_subscriptions / stats?.total_users) * 100).toFixed(1)
-                : 0}%
+                : 0}
+              %
             </MetricValue>
             <MetricDescription>
               {stats?.active_subscriptions || 0} из {stats?.total_users || 0} пользователей
@@ -173,7 +180,7 @@ const AdminAnalytics = () => {
           <MetricCard>
             <MetricLabel>Среднее время до активации</MetricLabel>
             <MetricValue>
-              {stats?.avg_activation_time 
+              {stats?.avg_activation_time
                 ? `${Math.round(stats.avg_activation_time)} дней`
                 : 'Нет данных'}
             </MetricValue>
@@ -183,7 +190,8 @@ const AdminAnalytics = () => {
           <MetricCard>
             <MetricLabel>Прирост за неделю</MetricLabel>
             <MetricValue $positive={stats?.new_users_week > 0}>
-              {stats?.new_users_week > 0 ? '+' : ''}{stats?.new_users_week || 0}
+              {stats?.new_users_week > 0 ? '+' : ''}
+              {stats?.new_users_week || 0}
             </MetricValue>
             <MetricDescription>Новых пользователей</MetricDescription>
           </MetricCard>
@@ -191,16 +199,19 @@ const AdminAnalytics = () => {
           <MetricCard>
             <MetricLabel>Прирост за месяц</MetricLabel>
             <MetricValue $positive={stats?.new_users_month > 0}>
-              {stats?.new_users_month > 0 ? '+' : ''}{stats?.new_users_month || 0}
+              {stats?.new_users_month > 0 ? '+' : ''}
+              {stats?.new_users_month || 0}
             </MetricValue>
             <MetricDescription>Новых пользователей</MetricDescription>
           </MetricCard>
 
           <MetricCard>
             <MetricLabel>Тренд роста</MetricLabel>
-            <MetricValue $positive={(stats?.new_users_month || 0) > (stats?.new_users_week || 0) * 4}>
-              {(stats?.new_users_month || 0) > (stats?.new_users_week || 0) * 4 
-                ? '📈 Растёт' 
+            <MetricValue
+              $positive={(stats?.new_users_month || 0) > (stats?.new_users_week || 0) * 4}
+            >
+              {(stats?.new_users_month || 0) > (stats?.new_users_week || 0) * 4
+                ? '📈 Растёт'
                 : '📉 Стабильно'}
             </MetricValue>
             <MetricDescription>На основе данных за месяц</MetricDescription>
@@ -224,7 +235,8 @@ const AdminAnalytics = () => {
                 <Cell>
                   {stats.total_users > 0
                     ? ((source.count / stats.total_users) * 100).toFixed(1)
-                    : 0}%
+                    : 0}
+                  %
                 </Cell>
               </TableRow>
             ))}
@@ -281,16 +293,16 @@ const FilterBar = styled.div`
 
 const FilterButton = styled.button`
   padding: 10px 20px;
-  background: ${props => props.active ? '#667eea' : 'white'};
-  color: ${props => props.active ? 'white' : '#374151'};
-  border: 2px solid ${props => props.active ? '#667eea' : '#e5e7eb'};
+  background: ${(props) => (props.active ? '#667eea' : 'white')};
+  color: ${(props) => (props.active ? 'white' : '#374151')};
+  border: 2px solid ${(props) => (props.active ? '#667eea' : '#e5e7eb')};
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    background: ${props => props.active ? '#5568d3' : '#f9fafb'};
+    background: ${(props) => (props.active ? '#5568d3' : '#f9fafb')};
   }
 `;
 
@@ -385,12 +397,12 @@ const Badge = styled.span`
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
-  background: ${props => {
+  background: ${(props) => {
     if (props.status === 'good') return '#d1fae5';
     if (props.status === 'medium') return '#fef3c7';
     return '#fee2e2';
   }};
-  color: ${props => {
+  color: ${(props) => {
     if (props.status === 'good') return '#059669';
     if (props.status === 'medium') return '#d97706';
     return '#dc2626';
@@ -427,7 +439,8 @@ const MetricLabel = styled.div`
 const MetricValue = styled.div`
   font-size: 28px;
   font-weight: 700;
-  color: ${props => props.$positive === false ? '#ef4444' : props.$positive ? '#10b981' : '#1a1a1a'};
+  color: ${(props) =>
+    props.$positive === false ? '#ef4444' : props.$positive ? '#10b981' : '#1a1a1a'};
   margin-bottom: 4px;
 `;
 
@@ -437,4 +450,3 @@ const MetricDescription = styled.div`
 `;
 
 export default AdminAnalytics;
-

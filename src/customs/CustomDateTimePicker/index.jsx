@@ -1,28 +1,40 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+
 import {
-  DateTimePickerWrapper,
-  DateTimeInput,
   CalendarDropdown,
-  CalendarSection,
   CalendarHeader,
-  NavButton,
-  MonthYearSelect,
-  WeekDaysRow,
-  WeekDay,
-  DaysGrid,
+  CalendarSection,
+  DateTimeInput,
+  DateTimePickerWrapper,
   DayCell,
-  TimeSection,
-  TimeLabel,
-  TimeInputs,
-  TimeInputGroup,
+  DaysGrid,
+  MonthYearSelect,
+  NavButton,
   TimeInput,
+  TimeInputGroup,
+  TimeInputs,
+  TimeLabel,
+  TimeSection,
   TimeUnit,
+  WeekDay,
+  WeekDaysRow,
 } from './styles';
 
 const MONTHS = [
-  'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-  'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+  'Январь',
+  'Февраль',
+  'Март',
+  'Апрель',
+  'Май',
+  'Июнь',
+  'Июль',
+  'Август',
+  'Сентябрь',
+  'Октябрь',
+  'Ноябрь',
+  'Декабрь',
 ];
 
 const WEEKDAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
@@ -57,7 +69,13 @@ const getFirstDayOfMonth = (year, month) => {
   return day === 0 ? 6 : day - 1;
 };
 
-const CustomDateTimePicker = ({ value, onChange, placeholder = 'Выберите дату и время', min, error }) => {
+const CustomDateTimePicker = ({
+  value,
+  onChange,
+  placeholder = 'Выберите дату и время',
+  min,
+  error,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [viewDate, setViewDate] = useState(() => {
     if (value) {
@@ -65,7 +83,7 @@ const CustomDateTimePicker = ({ value, onChange, placeholder = 'Выберите
     }
     return new Date();
   });
-  
+
   const [hours, setHours] = useState(() => {
     if (value) {
       return String(new Date(value).getHours()).padStart(2, '0');
@@ -79,7 +97,7 @@ const CustomDateTimePicker = ({ value, onChange, placeholder = 'Выберите
     }
     return '00';
   });
-  
+
   const wrapperRef = useRef(null);
 
   useEffect(() => {
@@ -108,7 +126,7 @@ const CustomDateTimePicker = ({ value, onChange, placeholder = 'Выберите
 
   const handleTimeChange = (newHours, newMinutes) => {
     if (!value) return;
-    
+
     const date = new Date(value);
     date.setHours(parseInt(newHours) || 0, parseInt(newMinutes) || 0, 0, 0);
     const formatted = formatDateTimeToValue(date);
@@ -135,9 +153,8 @@ const CustomDateTimePicker = ({ value, onChange, placeholder = 'Выберите
     }
   };
 
-
   const changeMonth = (delta) => {
-    setViewDate(prev => {
+    setViewDate((prev) => {
       const newDate = new Date(prev);
       newDate.setMonth(newDate.getMonth() + delta);
       return newDate;
@@ -146,12 +163,12 @@ const CustomDateTimePicker = ({ value, onChange, placeholder = 'Выберите
 
   const handleMonthChange = (e) => {
     const newMonth = parseInt(e.target.value);
-    setViewDate(prev => new Date(prev.getFullYear(), newMonth, 1));
+    setViewDate((prev) => new Date(prev.getFullYear(), newMonth, 1));
   };
 
   const handleYearChange = (e) => {
     const newYear = parseInt(e.target.value);
-    setViewDate(prev => new Date(newYear, prev.getMonth(), 1));
+    setViewDate((prev) => new Date(newYear, prev.getMonth(), 1));
   };
 
   const renderCalendar = () => {
@@ -159,13 +176,13 @@ const CustomDateTimePicker = ({ value, onChange, placeholder = 'Выберите
     const month = viewDate.getMonth();
     const daysInMonth = getDaysInMonth(year, month);
     const firstDay = getFirstDayOfMonth(year, month);
-    
+
     const prevMonth = month === 0 ? 11 : month - 1;
     const prevYear = month === 0 ? year - 1 : year;
     const daysInPrevMonth = getDaysInMonth(prevYear, prevMonth);
 
     const days = [];
-    
+
     for (let i = firstDay - 1; i >= 0; i--) {
       const day = daysInPrevMonth - i;
       const date = new Date(prevYear, prevMonth, day);
@@ -179,8 +196,8 @@ const CustomDateTimePicker = ({ value, onChange, placeholder = 'Выберите
 
     const totalCells = firstDay + daysInMonth;
     const weeksNeeded = Math.ceil(totalCells / 7);
-    const remainingDays = (weeksNeeded * 7) - days.length;
-    
+    const remainingDays = weeksNeeded * 7 - days.length;
+
     for (let day = 1; day <= remainingDays; day++) {
       const nextMonth = month === 11 ? 0 : month + 1;
       const nextYear = month === 11 ? year + 1 : year;
@@ -203,7 +220,7 @@ const CustomDateTimePicker = ({ value, onChange, placeholder = 'Выберите
     return days.map((dayInfo, index) => {
       const dayDate = new Date(dayInfo.date);
       dayDate.setHours(0, 0, 0, 0);
-      
+
       const isSelected = selectedDate && dayDate.getTime() === selectedDate.getTime();
       const isToday = dayDate.getTime() === today.getTime();
       const isDisabled = minDate && dayDate.getTime() < minDate.getTime();
@@ -237,7 +254,7 @@ const CustomDateTimePicker = ({ value, onChange, placeholder = 'Выберите
         $hasValue={!!value}
         $error={error}
       />
-      
+
       {isOpen && (
         <CalendarDropdown>
           <CalendarSection>
@@ -245,22 +262,20 @@ const CustomDateTimePicker = ({ value, onChange, placeholder = 'Выберите
               <NavButton onClick={() => changeMonth(-1)}>
                 <ChevronLeft size={20} />
               </NavButton>
-              
-              <MonthYearSelect 
-                value={viewDate.getMonth()} 
-                onChange={handleMonthChange}
-              >
+
+              <MonthYearSelect value={viewDate.getMonth()} onChange={handleMonthChange}>
                 {MONTHS.map((month, idx) => (
-                  <option key={idx} value={idx}>{month}</option>
+                  <option key={idx} value={idx}>
+                    {month}
+                  </option>
                 ))}
               </MonthYearSelect>
 
-              <MonthYearSelect 
-                value={viewDate.getFullYear()} 
-                onChange={handleYearChange}
-              >
-                {years.map(year => (
-                  <option key={year} value={year}>{year}</option>
+              <MonthYearSelect value={viewDate.getFullYear()} onChange={handleYearChange}>
+                {years.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
                 ))}
               </MonthYearSelect>
 
@@ -270,14 +285,12 @@ const CustomDateTimePicker = ({ value, onChange, placeholder = 'Выберите
             </CalendarHeader>
 
             <WeekDaysRow>
-              {WEEKDAYS.map(day => (
+              {WEEKDAYS.map((day) => (
                 <WeekDay key={day}>{day}</WeekDay>
               ))}
             </WeekDaysRow>
 
-            <DaysGrid>
-              {renderCalendar()}
-            </DaysGrid>
+            <DaysGrid>{renderCalendar()}</DaysGrid>
           </CalendarSection>
 
           <TimeSection>
@@ -312,4 +325,3 @@ const CustomDateTimePicker = ({ value, onChange, placeholder = 'Выберите
 };
 
 export default CustomDateTimePicker;
-

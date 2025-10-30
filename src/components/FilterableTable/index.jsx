@@ -7,16 +7,16 @@ import {
   CustomTable,
   DashboardTags,
   NoDataRow,
+  PaginationButton,
+  PaginationContainer,
+  PaginationInfo,
+  PaginationSelect,
   TBody,
   TD,
   TH,
   THead,
   TR,
   TableWrapper,
-  PaginationContainer,
-  PaginationButton,
-  PaginationInfo,
-  PaginationSelect,
 } from './styles';
 
 const FilterableTable = ({ columns, rows, onRowClick, onShowModal }) => {
@@ -76,7 +76,7 @@ const FilterableTable = ({ columns, rows, onRowClick, onShowModal }) => {
         }
         return 0;
       };
-      
+
       const dateA = parseDate(a.createdAt);
       const dateB = parseDate(b.createdAt);
       return dateB - dateA;
@@ -84,7 +84,7 @@ const FilterableTable = ({ columns, rows, onRowClick, onShowModal }) => {
   }, [rows, search, activeTags]);
 
   const totalPages = Math.ceil(sortedAndFilteredRows.length / rowsPerPage);
-  
+
   const paginatedRows = useMemo(() => {
     const startIndex = (currentPage - 1) * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
@@ -172,10 +172,7 @@ const FilterableTable = ({ columns, rows, onRowClick, onShowModal }) => {
           </PaginationInfo>
 
           <div style={{ display: 'flex', gap: '8px' }}>
-            <PaginationButton
-              onClick={() => handlePageChange(1)}
-              disabled={currentPage === 1}
-            >
+            <PaginationButton onClick={() => handlePageChange(1)} disabled={currentPage === 1}>
               ««
             </PaginationButton>
             <PaginationButton
@@ -202,7 +199,11 @@ const FilterableTable = ({ columns, rows, onRowClick, onShowModal }) => {
                   </PaginationButton>
                 );
               } else if (page === currentPage - 2 || page === currentPage + 2) {
-                return <span key={page} style={{ padding: '8px 4px' }}>...</span>;
+                return (
+                  <span key={page} style={{ padding: '8px 4px' }}>
+                    ...
+                  </span>
+                );
               }
               return null;
             })}

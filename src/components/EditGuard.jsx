@@ -35,4 +35,3 @@ const EditGuard = ({ children }) => {
 };
 
 export default EditGuard;
-
