@@ -306,6 +306,12 @@ const AdminDashboard = () => {
             <MenuDescription>Доходы, прогнозы, платежи, MRR</MenuDescription>
           </MenuCard>
 
+          <MenuCard to="/admin/faq">
+            <MenuIcon>📚</MenuIcon>
+            <MenuTitle>База знаний</MenuTitle>
+            <MenuDescription>Редактирование статей FAQ, управление базой знаний</MenuDescription>
+          </MenuCard>
+
           {adminUser?.role === 'super_admin' && (
             <MenuCard to="/admin/managers">
               <MenuIcon>👔</MenuIcon>

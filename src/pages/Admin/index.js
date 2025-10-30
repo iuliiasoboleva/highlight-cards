@@ -7,3 +7,4 @@ export { default as AdminOrganizationDetail } from './AdminOrganizationDetail';
 export { default as AdminManagers } from './AdminManagers';
 export { default as AdminSupport } from './AdminSupport';
 export { default as AdminFinance } from './AdminFinance';
+export { default as AdminFAQ } from './AdminFAQ';

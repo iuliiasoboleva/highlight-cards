@@ -21,6 +21,7 @@ import {
   AdminAnalytics,
   AdminDashboard,
   AdminFinance,
+  AdminFAQ,
   AdminLogin,
   AdminManagers,
   AdminOrganizationDetail,
@@ -183,6 +184,7 @@ const App = () => {
             <Route path="/admin/managers" element={<AdminManagers />} />
             <Route path="/admin/support" element={<AdminSupport />} />
             <Route path="/admin/finance" element={<AdminFinance />} />
+            <Route path="/admin/faq" element={<AdminFAQ />} />
           </Routes>
         </AuthRedirectGuard>
       </Router>
