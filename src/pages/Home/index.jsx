@@ -20,6 +20,35 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const loadJivoScript = () => {
+      if (document.getElementById('jivo-widget-script')) return;
+
+      const script = document.createElement('script');
+      script.id = 'jivo-widget-script';
+      script.src = '//code.jivo.ru/widget/YdmQ8aTC8C';
+      script.async = true;
+      document.body.appendChild(script);
+    };
+
+    loadJivoScript();
+
+    return () => {
+      const script = document.getElementById('jivo-widget-script');
+      if (script) {
+        script.remove();
+      }
+      if (window.jivo_api) {
+        try {
+          window.jivo_api.hide();
+        } catch (e) {
+        }
+      }
+      const jivoElements = document.querySelectorAll('[class*="jivo"], [id*="jivo"]');
+      jivoElements.forEach((el) => el.remove());
+    };
+  }, []);
+
+  useEffect(() => {
     if (!orgId) return;
 
     (async () => {
