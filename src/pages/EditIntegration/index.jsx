@@ -20,6 +20,7 @@ const EditIntegration = () => {
   const dispatch = useDispatch();
 
   const currentCard = useSelector((state) => state.cards.currentCard);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const isCreatingNewCard = !id || id === 'new' || id === 'fixed';
   const integration = currentCard?.integration || null;
@@ -29,6 +30,7 @@ const EditIntegration = () => {
   };
 
   const handleActivate = async () => {
+    setIsLoading(true);
     try {
       if (isCreatingNewCard) {
         const createdCard = await dispatch(createCard()).unwrap();
@@ -53,6 +55,7 @@ const EditIntegration = () => {
       dispatch(updateCurrentCardField({ path: 'active', value: true }));
     } catch (e) {
       console.error('Ошибка при активации карты', e);
+      setIsLoading(false);
       if (e?.detail === 'Карта не найдена') {
         alert('Карта не найдена. Возможно, она была удалена. Перенаправляем на список карт.');
         navigate('/cards');
@@ -78,8 +81,12 @@ const EditIntegration = () => {
       </div>
       <IntegrationPicker value={integration} onChange={handlePick} />
 
-      <CreateButton onClick={handleActivate}>
-        {isCreatingNewCard ? 'Создать карту' : 'Сохранить изменения'}
+      <CreateButton onClick={handleActivate} disabled={isLoading}>
+        {isLoading
+          ? 'Создаю...'
+          : isCreatingNewCard
+            ? 'Создать карту'
+            : 'Сохранить изменения'}
       </CreateButton>
     </>
   );

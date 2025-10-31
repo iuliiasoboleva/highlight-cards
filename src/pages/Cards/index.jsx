@@ -82,11 +82,11 @@ const Cards = () => {
 
   React.useEffect(() => {
     if (!isTemplatePage) {
-      dispatch(fetchCards());
+      dispatch(fetchCards(true));
     } else if (cards.length <= 1) {
       dispatch(initializeCards({ useTemplates: true }));
     }
-  }, [dispatch, isTemplatePage, cards.length]);
+  }, [dispatch, isTemplatePage]);
 
   const debouncedSaveOrder = React.useCallback(
     (ids) => {

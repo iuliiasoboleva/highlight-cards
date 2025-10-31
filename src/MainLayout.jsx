@@ -27,11 +27,12 @@ const MainLayout = () => {
   const isTemplatePage = location.pathname === '/cards/template';
 
   const hideLayout = ['/auth'].includes(location.pathname);
-  const matchCreate = matchPath('/cards/create', location.pathname);
+  const matchCreate = matchPath('/cards/create/*', location.pathname) || location.pathname.startsWith('/cards/create');
   const matchEdit = matchPath('/cards/:id/edit/*', location.pathname);
   const matchCardDetails =
     matchPath('/cards/:id/*', location.pathname) &&
-    !location.pathname.startsWith('/cards/template');
+    !location.pathname.startsWith('/cards/template') &&
+    !location.pathname.startsWith('/cards/create');
   const matchMailings = matchPath('/mailings/*', location.pathname);
   const matchSettings = matchPath('/settings/*', location.pathname);
   const matchClientsRoot = matchPath({ path: '/clients', end: true }, location.pathname);
