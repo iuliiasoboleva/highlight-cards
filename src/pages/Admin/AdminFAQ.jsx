@@ -233,20 +233,52 @@ const Loading = styled.div`
   color: #666;
 `;
 
+const Tabs = styled.div`
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #e0e0e0;
+`;
+
+const Tab = styled.button`
+  padding: 12px 24px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: ${(props) => (props.$active ? '#667eea' : '#666')};
+  border-bottom: 2px solid ${(props) => (props.$active ? '#667eea' : 'transparent')};
+  margin-bottom: -2px;
+  cursor: pointer;
+
+  &:hover {
+    color: #667eea;
+  }
+`;
+
 const AdminFAQ = () => {
   const navigate = useNavigate();
   const [articles, setArticles] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [editingArticle, setEditingArticle] = useState(null);
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [activeTab, setActiveTab] = useState('articles');
   const [formData, setFormData] = useState({
     slug: '',
     title: '',
     content: '',
-    category: '',
+    category_id: null,
     order_index: 0,
     is_published: true,
+  });
+  const [categoryFormData, setCategoryFormData] = useState({
+    name: '',
+    description: '',
+    order_index: 0,
+    is_active: true,
   });
 
   useEffect(() => {
@@ -289,7 +321,7 @@ const AdminFAQ = () => {
       slug: '',
       title: '',
       content: '',
-      category: '',
+      category_id: null,
       order_index: 0,
       is_published: true,
     });
@@ -302,11 +334,33 @@ const AdminFAQ = () => {
       slug: article.slug,
       title: article.title,
       content: article.content,
-      category: article.category || '',
+      category_id: article.category_id || null,
       order_index: article.order_index,
       is_published: article.is_published,
     });
     setShowModal(true);
+  };
+
+  const handleCreateCategory = () => {
+    setEditingCategory(null);
+    setCategoryFormData({
+      name: '',
+      description: '',
+      order_index: 0,
+      is_active: true,
+    });
+    setShowCategoryModal(true);
+  };
+
+  const handleEditCategory = (category) => {
+    setEditingCategory(category);
+    setCategoryFormData({
+      name: category.name,
+      description: category.description || '',
+      order_index: category.order_index,
+      is_active: category.is_active,
+    });
+    setShowCategoryModal(true);
   };
 
   const handleDelete = async (articleId) => {
@@ -322,6 +376,20 @@ const AdminFAQ = () => {
     }
   };
 
+  const handleDeleteCategory = async (categoryId) => {
+    if (!window.confirm('Вы уверены, что хотите удалить эту категорию?')) {
+      return;
+    }
+
+    try {
+      await adminAxiosInstance.delete(`/admin/faq/categories/${categoryId}`);
+      fetchCategories();
+      fetchArticles();
+    } catch (error) {
+      alert(error.response?.data?.detail || 'Ошибка при удалении категории');
+    }
+  };
+
   const handleSave = async () => {
     try {
       if (editingArticle) {
@@ -333,6 +401,21 @@ const AdminFAQ = () => {
       fetchArticles();
     } catch (error) {
       alert(error.response?.data?.detail || 'Ошибка при сохранении статьи');
+    }
+  };
+
+  const handleSaveCategory = async () => {
+    try {
+      if (editingCategory) {
+        await adminAxiosInstance.put(`/admin/faq/categories/${editingCategory.id}`, categoryFormData);
+      } else {
+        await adminAxiosInstance.post('/admin/faq/categories', categoryFormData);
+      }
+      setShowCategoryModal(false);
+      fetchCategories();
+      fetchArticles();
+    } catch (error) {
+      alert(error.response?.data?.detail || 'Ошибка при сохранении категории');
     }
   };
 
@@ -356,41 +439,100 @@ const AdminFAQ = () => {
       <Content>
         <Title>
           <span>База знаний (FAQ)</span>
-          <Button onClick={handleCreate}>+ Создать статью</Button>
         </Title>
 
-        <ArticlesList>
-          {articles.map((article) => (
-            <ArticleCard key={article.id}>
-              <ArticleInfo>
-                <ArticleTitle>{article.title}</ArticleTitle>
-                <ArticleMeta>
-                  <span>Slug: {article.slug}</span>
-                  {article.category && <span>Категория: {article.category}</span>}
-                  <span>Порядок: {article.order_index}</span>
-                  <Badge $published={article.is_published}>
-                    {article.is_published ? 'Опубликовано' : 'Черновик'}
-                  </Badge>
-                </ArticleMeta>
-                <ArticleContent>{article.content.substring(0, 200)}...</ArticleContent>
-              </ArticleInfo>
-              <ArticleActions>
-                <IconButton onClick={() => handleEdit(article)}>Редактировать</IconButton>
-                <IconButton $danger onClick={() => handleDelete(article.id)}>
-                  Удалить
-                </IconButton>
-              </ArticleActions>
-            </ArticleCard>
-          ))}
-          {articles.length === 0 && (
-            <ArticleCard>
-              <ArticleInfo>
-                <ArticleTitle>Статей пока нет</ArticleTitle>
-                <ArticleContent>Создайте первую статью базы знаний</ArticleContent>
-              </ArticleInfo>
-            </ArticleCard>
-          )}
-        </ArticlesList>
+        <Tabs>
+          <Tab $active={activeTab === 'articles'} onClick={() => setActiveTab('articles')}>
+            Статьи
+          </Tab>
+          <Tab $active={activeTab === 'categories'} onClick={() => setActiveTab('categories')}>
+            Категории
+          </Tab>
+        </Tabs>
+
+        {activeTab === 'articles' && (
+          <>
+            <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'flex-end' }}>
+              <Button onClick={handleCreate}>+ Создать статью</Button>
+            </div>
+
+            <ArticlesList>
+              {articles.map((article) => (
+                <ArticleCard key={article.id}>
+                  <ArticleInfo>
+                    <ArticleTitle>{article.title}</ArticleTitle>
+                    <ArticleMeta>
+                      <span>Slug: {article.slug}</span>
+                      {article.category_name && <span>Категория: {article.category_name}</span>}
+                      <span>Порядок: {article.order_index}</span>
+                      <Badge $published={article.is_published}>
+                        {article.is_published ? 'Опубликовано' : 'Черновик'}
+                      </Badge>
+                    </ArticleMeta>
+                    <ArticleContent>{article.content.substring(0, 200)}...</ArticleContent>
+                  </ArticleInfo>
+                  <ArticleActions>
+                    <IconButton onClick={() => handleEdit(article)}>Редактировать</IconButton>
+                    <IconButton $danger onClick={() => handleDelete(article.id)}>
+                      Удалить
+                    </IconButton>
+                  </ArticleActions>
+                </ArticleCard>
+              ))}
+              {articles.length === 0 && (
+                <ArticleCard>
+                  <ArticleInfo>
+                    <ArticleTitle>Статей пока нет</ArticleTitle>
+                    <ArticleContent>Создайте первую статью базы знаний</ArticleContent>
+                  </ArticleInfo>
+                </ArticleCard>
+              )}
+            </ArticlesList>
+          </>
+        )}
+
+        {activeTab === 'categories' && (
+          <>
+            <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'flex-end' }}>
+              <Button onClick={handleCreateCategory}>+ Создать категорию</Button>
+            </div>
+
+            <ArticlesList>
+              {categories.map((category) => (
+                <ArticleCard key={category.id}>
+                  <ArticleInfo>
+                    <ArticleTitle>{category.name}</ArticleTitle>
+                    <ArticleMeta>
+                      <span>Порядок: {category.order_index}</span>
+                      <Badge $published={category.is_active}>
+                        {category.is_active ? 'Активна' : 'Неактивна'}
+                      </Badge>
+                    </ArticleMeta>
+                    {category.description && (
+                      <ArticleContent>{category.description}</ArticleContent>
+                    )}
+                  </ArticleInfo>
+                  <ArticleActions>
+                    <IconButton onClick={() => handleEditCategory(category)}>
+                      Редактировать
+                    </IconButton>
+                    <IconButton $danger onClick={() => handleDeleteCategory(category.id)}>
+                      Удалить
+                    </IconButton>
+                  </ArticleActions>
+                </ArticleCard>
+              ))}
+              {categories.length === 0 && (
+                <ArticleCard>
+                  <ArticleInfo>
+                    <ArticleTitle>Категорий пока нет</ArticleTitle>
+                    <ArticleContent>Создайте первую категорию</ArticleContent>
+                  </ArticleInfo>
+                </ArticleCard>
+              )}
+            </ArticlesList>
+          </>
+        )}
 
         {showModal && (
           <Modal onClick={() => setShowModal(false)}>
@@ -428,17 +570,17 @@ const AdminFAQ = () => {
 
               <FormGroup>
                 <Label>Категория</Label>
-                <Input
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  placeholder="Общие вопросы"
-                  list="categories-list"
-                />
-                <datalist id="categories-list">
+                <Select
+                  value={formData.category_id || ''}
+                  onChange={(e) => setFormData({ ...formData, category_id: e.target.value ? parseInt(e.target.value) : null })}
+                >
+                  <option value="">Без категории</option>
                   {categories.map((cat) => (
-                    <option key={cat} value={cat} />
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
                   ))}
-                </datalist>
+                </Select>
               </FormGroup>
 
               <FormGroup>
@@ -469,6 +611,65 @@ const AdminFAQ = () => {
               <ModalActions>
                 <IconButton onClick={() => setShowModal(false)}>Отмена</IconButton>
                 <Button onClick={handleSave}>Сохранить</Button>
+              </ModalActions>
+            </ModalContent>
+          </Modal>
+        )}
+
+        {showCategoryModal && (
+          <Modal onClick={() => setShowCategoryModal(false)}>
+            <ModalContent onClick={(e) => e.stopPropagation()}>
+              <ModalTitle>
+                {editingCategory ? 'Редактировать категорию' : 'Создать категорию'}
+              </ModalTitle>
+
+              <FormGroup>
+                <Label>Название</Label>
+                <Input
+                  value={categoryFormData.name}
+                  onChange={(e) => setCategoryFormData({ ...categoryFormData, name: e.target.value })}
+                  placeholder="Название категории"
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <Label>Описание (необязательно)</Label>
+                <TextArea
+                  value={categoryFormData.description}
+                  onChange={(e) => setCategoryFormData({ ...categoryFormData, description: e.target.value })}
+                  placeholder="Описание категории..."
+                  style={{ minHeight: '100px' }}
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <Label>Порядок сортировки</Label>
+                <Input
+                  type="number"
+                  value={categoryFormData.order_index}
+                  onChange={(e) =>
+                    setCategoryFormData({ ...categoryFormData, order_index: parseInt(e.target.value) || 0 })
+                  }
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <Label>
+                  <input
+                    type="checkbox"
+                    checked={categoryFormData.is_active}
+                    onChange={(e) =>
+                      setCategoryFormData({ ...categoryFormData, is_active: e.target.checked })
+                    }
+                  />
+                  {' '}
+                  Активна
+                </Label>
+              </FormGroup>
+
+              <ModalActions>
+                <IconButton onClick={() => setShowCategoryModal(false)}>Отмена</IconButton>
+                <Button onClick={handleSaveCategory}>Сохранить</Button>
               </ModalActions>
             </ModalContent>
           </Modal>
