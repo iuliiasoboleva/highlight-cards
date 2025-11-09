@@ -120,11 +120,11 @@ const ClientDetails = () => {
                   Управление картой
                 </CardTag>
               )}
-              {card.id && (
+              {(card.uuid || card.cardNumber) && (
                 <>
                   <CardTag
                     as="a"
-                    href={`${(axiosInstance.defaults.baseURL || '').replace(/\/$/, '')}/passes/${card.id}`}
+                    href={`${(axiosInstance.defaults.baseURL || '').replace(/\/$/, '')}/passes/${card.uuid || card.cardNumber}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -132,7 +132,7 @@ const ClientDetails = () => {
                   </CardTag>
                   <CardTag
                     as="a"
-                    href={`${(axiosInstance.defaults.baseURL || '').replace(/\/$/, '')}/google-wallet/save/${card.id}`}
+                    href={`${(axiosInstance.defaults.baseURL || '').replace(/\/$/, '')}/google-wallet/save/${card.uuid || card.cardNumber}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{ marginLeft: '8px' }}
