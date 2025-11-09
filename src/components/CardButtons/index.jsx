@@ -10,7 +10,7 @@ import {
   deleteCardAsync,
   setCurrentCard,
   togglePinAsync,
-  updateCard,
+  toggleActiveAsync,
 } from '../../store/cardsSlice';
 import DeleteCardModal from '../DeleteCardModal';
 import {
@@ -81,12 +81,7 @@ const CardButtons = ({ isFixed, cardId }) => {
   }
 
   const handleToggleActive = () => {
-    dispatch(
-      updateCard({
-        id: cardId,
-        changes: { isActive: !card.isActive },
-      }),
-    );
+    dispatch(toggleActiveAsync(cardId));
   };
 
   const handleTogglePin = () => {

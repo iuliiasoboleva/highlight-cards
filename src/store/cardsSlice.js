@@ -341,6 +341,20 @@ export const togglePinAsync = createAsyncThunk(
   },
 );
 
+export const toggleActiveAsync = createAsyncThunk(
+  'cards/toggleActive',
+  async (id, { getState, rejectWithValue }) => {
+    try {
+      const card = getState().cards.cards.find((c) => c.id === id);
+      const newActive = !card?.isActive;
+      await axiosInstance.put(`/cards/${id}`, { is_active: newActive });
+      return { id, isActive: newActive };
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
+
 export const saveOrder = createAsyncThunk('cards/saveOrder', async (order, { rejectWithValue }) => {
   try {
     await axiosInstance.post('/cards/reorder', order);
@@ -601,6 +615,13 @@ export const cardsSlice = createSlice({
         const pinned = others.filter((c) => c.isPinned);
         const rest = others.filter((c) => !c.isPinned);
         state.cards = [fixed, ...pinned, ...rest];
+      })
+      .addCase(toggleActiveAsync.fulfilled, (state, action) => {
+        const { id, isActive } = action.payload;
+        const card = state.cards.find((c) => c.id === id);
+        if (card) {
+          card.isActive = isActive;
+        }
       });
   },
 });
