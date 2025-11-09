@@ -14,6 +14,32 @@ import { ClientsModalFormGroup, ErrorText, Label } from '../styles';
 
 const NAME_RE = /^[A-Za-zА-Яа-яЁё\s-]+$/;
 
+const generateWhatsAppLink = (phone, clientData) => {
+  const baseUrl = window.location.origin;
+  const cards = clientData?.cards || [];
+  
+  if (cards.length === 0) {
+    return null;
+  }
+
+  const firstCard = cards[0];
+  const cardNumber = firstCard.cardNumber;
+  
+  if (!cardNumber) {
+    return null;
+  }
+  
+  const appleWalletUrl = `${baseUrl}/pkpass/${cardNumber}`;
+  const googleWalletUrl = `${baseUrl}/google-wallet/save/${cardNumber}`;
+  
+  const messageText = `Ваша карта доступна по ссылке ниже\nAndroid: ${googleWalletUrl}\niOS: ${appleWalletUrl}`;
+  
+  const encodedMessage = encodeURIComponent(messageText);
+  const cleanPhone = phone.replace(/\D/g, '');
+  
+  return `https://api.whatsapp.com/send/?phone=${cleanPhone}&text=${encodedMessage}&type=phone_number&app_absent=0`;
+};
+
 const AddClientModal = ({ open, onClose, onCreated }) => {
   const dispatch = useDispatch();
   const toast = useToast();
@@ -123,8 +149,27 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
       const res = await dispatch(createClient(payload)).unwrap();
 
       const newId = safeGetId(res);
-      toast.success('Клиент добавлен');
-      onCreated?.(res);
+      
+      const hasNewCards = res?.cards && res.cards.length > 0;
+      const existingCardsCount = res?.cards?.length || 0;
+      
+      const whatsappLink = generateWhatsAppLink(phoneDigits, res);
+      if (whatsappLink) {
+        const message = existingCardsCount > 0 
+          ? 'Клиент добавлен. Открываем WhatsApp...' 
+          : 'Клиент уже существует, добавлены недостающие карты. Открываем WhatsApp...';
+        toast.success(message);
+        setTimeout(() => {
+          window.open(whatsappLink, '_blank');
+        }, 500);
+      } else {
+        if (!hasNewCards) {
+          toast.error('У вашей организации нет активных карт лояльности. Сначала создайте карту в разделе "Карты".');
+        } else {
+          toast.success('Клиент добавлен');
+          onCreated?.(res);
+        }
+      }
 
       await dispatch(fetchClients());
       onClose?.();

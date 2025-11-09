@@ -4,14 +4,21 @@ import CustomMainButton from '../../../customs/CustomMainButton';
 import CustomModal from '../../../customs/CustomModal';
 import { ActionsRow, Description } from '../styles';
 
-const ClientAddedModal = ({ open, onClose, link }) => {
-  const text = `Здравствуйте! Для активации карты лояльности перейдите по ссылке: ${link}`;
+const ClientAddedModal = ({ open, onClose, link, phone }) => {
+  const androidLink = link?.androidLink || '';
+  const iosLink = link?.iosLink || '';
+  
+  const text = androidLink && iosLink 
+    ? `Ваша карта доступна по ссылке ниже\nAndroid: ${androidLink}\niOS: ${iosLink}`
+    : 'Ваша карта лояльности готова';
 
   const handleWhatsApp = useCallback(() => {
-    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    const cleanPhone = phone ? phone.replace(/\D/g, '') : '';
+    const phoneParam = cleanPhone ? `phone=${cleanPhone}&` : '';
+    const url = `https://api.whatsapp.com/send/?${phoneParam}text=${encodeURIComponent(text)}&type=phone_number&app_absent=0`;
     window.open(url, '_blank', 'noopener,noreferrer');
     onClose?.();
-  }, [text, onClose]);
+  }, [text, phone, onClose]);
 
   return (
     <CustomModal
@@ -26,15 +33,6 @@ const ClientAddedModal = ({ open, onClose, link }) => {
 
       <ActionsRow>
         <CustomMainButton onClick={handleWhatsApp}>WhatsApp Business</CustomMainButton>
-
-        <CustomMainButton
-          onClick={() => {
-            window.dispatchEvent(new CustomEvent('open-sms-wallet-modal'));
-            onClose?.();
-          }}
-        >
-          СМС
-        </CustomMainButton>
       </ActionsRow>
     </CustomModal>
   );

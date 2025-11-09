@@ -46,6 +46,7 @@ const Clients = () => {
   const [showSmsWalletModal, setShowSmsWalletModal] = useState(false);
 
   const [generatedLink, setGeneratedLink] = useState('');
+  const [clientPhone, setClientPhone] = useState('');
 
   const orgId = useSelector((s) => s.user.organization_id);
 
@@ -112,19 +113,24 @@ const Clients = () => {
   };
 
   const handleCreated = (clientData) => {
-    let link = '/example';
+    let androidLink = '';
+    let iosLink = '';
+    let phone = '';
 
     if (clientData && clientData.cards && clientData.cards.length > 0) {
       const firstCard = clientData.cards[0];
-      link =
-        firstCard.urlCopy ||
-        firstCard.url_copy ||
-        `https://app.loyalclub.ru/getpass/${firstCard.uuid || firstCard.cardUuid || clientData.id}`;
-    } else if (clientData && clientData.id) {
-      link = `https://app.loyalclub.ru/getpass/${clientData.id}`;
+      const baseUrl = window.location.origin;
+      const cardNumber = firstCard.cardNumber;
+      
+      if (cardNumber) {
+        iosLink = `${baseUrl}/pkpass/${cardNumber}`;
+        androidLink = `${baseUrl}/google-wallet/save/${cardNumber}`;
+      }
+      phone = clientData.phone || '';
     }
 
-    setGeneratedLink(link);
+    setGeneratedLink({ androidLink, iosLink });
+    setClientPhone(phone);
 
     setShowAddModal(false);
     setShowAddedModal(true);
@@ -202,6 +208,7 @@ const Clients = () => {
         open={showAddedModal}
         onClose={() => setShowAddedModal(false)}
         link={generatedLink}
+        phone={clientPhone}
       />
 
       <SmsWalletModal open={showSmsWalletModal} onClose={() => setShowSmsWalletModal(false)} />
