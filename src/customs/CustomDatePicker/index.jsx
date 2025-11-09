@@ -57,6 +57,7 @@ const getFirstDayOfMonth = (year, month) => {
 
 const CustomDatePicker = ({ value, onChange, placeholder = 'Выберите дату', error }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [inputValue, setInputValue] = useState(formatDateToDisplay(value));
   const [viewDate, setViewDate] = useState(() => {
     if (value) {
       const [year, month] = value.split('-');
@@ -66,6 +67,10 @@ const CustomDatePicker = ({ value, onChange, placeholder = 'Выберите д�
   });
 
   const wrapperRef = useRef(null);
+
+  useEffect(() => {
+    setInputValue(formatDateToDisplay(value));
+  }, [value]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -86,7 +91,46 @@ const CustomDatePicker = ({ value, onChange, placeholder = 'Выберите д�
   const handleDateClick = (date) => {
     const formatted = formatDateToValue(date);
     onChange?.(formatted);
+    setInputValue(formatDateToDisplay(formatted));
     setIsOpen(false);
+  };
+
+  const handleInputChange = (e) => {
+    const digits = e.target.value.replace(/[^\d]/g, '');
+    
+    let formatted = digits;
+    if (digits.length > 8) {
+      formatted = digits.slice(0, 8);
+    }
+    
+    if (formatted.length > 2) {
+      formatted = formatted.slice(0, 2) + '.' + formatted.slice(2);
+    }
+    if (formatted.length > 5) {
+      formatted = formatted.slice(0, 5) + '.' + formatted.slice(5);
+    }
+    
+    setInputValue(formatted);
+    
+    if (digits.length === 8) {
+      const day = digits.slice(0, 2);
+      const month = digits.slice(2, 4);
+      const year = digits.slice(4, 8);
+      const d = parseInt(day);
+      const m = parseInt(month);
+      const y = parseInt(year);
+      
+      if (d >= 1 && d <= 31 && m >= 1 && m <= 12 && y >= 1900 && y <= 2100) {
+        const formattedDate = `${year}-${month}-${day}`;
+        onChange?.(formattedDate);
+      }
+    } else if (digits.length === 0) {
+      onChange?.('');
+    }
+  };
+
+  const handleInputFocus = () => {
+    setIsOpen(true);
   };
 
   const changeMonth = (delta) => {
@@ -179,10 +223,11 @@ const CustomDatePicker = ({ value, onChange, placeholder = 'Выберите д�
     <DatePickerWrapper ref={wrapperRef}>
       <DateInput
         type="text"
-        value={formatDateToDisplay(value)}
+        value={inputValue}
+        onChange={handleInputChange}
+        onFocus={handleInputFocus}
         onClick={() => setIsOpen(!isOpen)}
         placeholder={placeholder}
-        readOnly
         $hasValue={!!value}
         $error={error}
       />
