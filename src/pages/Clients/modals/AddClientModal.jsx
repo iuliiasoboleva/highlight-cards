@@ -1,15 +1,18 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import BranchCheckboxList from '../../../components/BranchCheckboxList';
 import { useToast } from '../../../components/Toast';
+import CustomCheckbox from '../../../customs/CustomCheckbox';
 import CustomDatePicker from '../../../customs/CustomDatePicker';
 import CustomInput from '../../../customs/CustomInput';
 import CustomModal from '../../../customs/CustomModal';
 import { CustomRadioGroup } from '../../../customs/CustomRadio';
 import CustomSelect from '../../../customs/CustomSelect';
 import { formatPhone } from '../../../helpers/formatPhone';
+import { normalizeErr } from '../../../utils/normalizeErr';
 import { createClient, fetchClients } from '../../../store/clientsSlice';
+import { fetchCards } from '../../../store/cardsSlice';
 import { ClientsModalFormGroup, ErrorText, Label } from '../styles';
 
 const NAME_RE = /^[A-Za-zА-Яа-яЁё\s-]+$/;
@@ -47,6 +50,7 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
   const orgId = useSelector((s) => s.user.organization_id);
   const branches = useSelector((s) => s.locations.list);
   const networks = useSelector((s) => s.networks.list);
+  const allCards = useSelector((s) => s.cards.cards || []);
 
   const [form, setForm] = useState({
     surname: '',
@@ -59,6 +63,7 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
   const [mode, setMode] = useState('branches');
   const [selectedBranches, setSelectedBranches] = useState([]);
   const [selectedNetwork, setSelectedNetwork] = useState(null);
+  const [selectedCards, setSelectedCards] = useState([]);
   const [loading, setLoading] = useState(false);
   const [touched, setTouched] = useState({
     surname: false,
@@ -66,7 +71,20 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
     phone: false,
     email: false,
     scope: false,
+    cards: false,
   });
+
+  useEffect(() => {
+    if (open && orgId) {
+      dispatch(fetchCards());
+    }
+  }, [open, orgId, dispatch]);
+
+  useEffect(() => {
+    if (open && allCards.length > 0 && selectedCards.length === 0) {
+      setSelectedCards(allCards.filter(c => c.isActive).map(c => c.id));
+    }
+  }, [open, allCards]);
 
   React.useEffect(() => {
     if (networks.length === 0 && mode === 'network') {
@@ -97,8 +115,10 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
       if (selectedNetwork === null) e.scope = 'Выберите сеть';
     }
 
+    if (selectedCards.length === 0) e.cards = 'Выберите хотя бы одну карту';
+
     return e;
-  }, [form, phoneDigits, mode, selectedBranches, selectedNetwork]);
+  }, [form, phoneDigits, mode, selectedBranches, selectedNetwork, selectedCards]);
 
   const isValid = Object.keys(errors).length === 0;
 
@@ -112,6 +132,7 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
         phone: true,
         email: true,
         scope: true,
+        cards: true,
       });
       toast.error('Проверьте заполнение обязательных полей');
       return;
@@ -127,6 +148,7 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
       organization_id: String(orgId),
       loyalty: 0,
       segment: [],
+      card_ids: selectedCards,
     };
 
     if (form.birthday) {
@@ -167,11 +189,11 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
       setForm({ surname: '', name: '', phone: '', email: '', birthday: '', gender: '' });
       setSelectedBranches([]);
       setSelectedNetwork(null);
+      setSelectedCards([]);
       setMode('branches');
-      setTouched({ surname: false, name: false, phone: false, email: false, scope: false });
+      setTouched({ surname: false, name: false, phone: false, email: false, scope: false, cards: false });
     } catch (err) {
-      const msg =
-        typeof err === 'string' ? err : err?.message || err?.error || 'Не удалось создать клиента';
+      const msg = normalizeErr(err);
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -184,6 +206,7 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
     mode,
     selectedBranches,
     selectedNetwork,
+    selectedCards,
     onClose,
     onCreated,
     isValid,
@@ -330,6 +353,32 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
           {touched.scope && errors.scope && <ErrorText>{errors.scope}</ErrorText>}
         </ClientsModalFormGroup>
       )}
+
+      <ClientsModalFormGroup>
+        <Label>Карты для выдачи</Label>
+        {allCards.length === 0 ? (
+          <ErrorText>У вашей организации нет активных карт лояльности. Сначала создайте карту в разделе "Карты".</ErrorText>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '180px', overflowY: 'auto', padding: '4px' }}>
+            {allCards.filter(card => card.isActive).map((card) => (
+              <CustomCheckbox
+                key={card.id}
+                label={card.name || card.title}
+                checked={selectedCards.includes(card.id)}
+                onChange={(checked) => {
+                  if (checked) {
+                    setSelectedCards((prev) => [...prev, card.id]);
+                  } else {
+                    setSelectedCards((prev) => prev.filter((id) => id !== card.id));
+                  }
+                  setTouched((t) => ({ ...t, cards: true }));
+                }}
+              />
+            ))}
+          </div>
+        )}
+        {touched.cards && errors.cards && <ErrorText>{errors.cards}</ErrorText>}
+      </ClientsModalFormGroup>
     </CustomModal>
   );
 };
