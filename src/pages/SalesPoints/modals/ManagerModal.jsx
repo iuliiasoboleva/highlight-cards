@@ -234,16 +234,19 @@ const ManagerModal = ({ isOpen, onClose, onSave, onDelete, initialData = {}, isE
         disabled={!isFormValid}
         style={{
           background: '#bf4756',
+          color: '#fff',
           maxWidth: '100%',
         }}
         onMouseEnter={(e) => {
           if (isFormValid) {
             e.currentTarget.style.background = '#a63d49';
+            e.currentTarget.style.color = '#fff';
           }
         }}
         onMouseLeave={(e) => {
           if (isFormValid) {
             e.currentTarget.style.background = '#bf4756';
+            e.currentTarget.style.color = '#fff';
           }
         }}
       >
