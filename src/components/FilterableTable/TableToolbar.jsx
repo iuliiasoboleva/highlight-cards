@@ -42,14 +42,14 @@ const TableToolbar = ({ onSearchChange, onAction }) => {
               <PlusCircle size={14} style={{ marginRight: 8 }} />
               Добавить клиента
             </DropdownItem>
-            <DropdownItem disabled>
+            {/* <DropdownItem disabled>
               <Trash2 size={14} style={{ marginRight: 8 }} />
               Удалить клиентов
             </DropdownItem>
             <DropdownItem disabled>
               <CreditCard size={14} style={{ marginRight: 8 }} />
               Выпустить карты
-            </DropdownItem>
+            </DropdownItem> */}
           </DropdownMenu>
         )}
       </Dropdown>
