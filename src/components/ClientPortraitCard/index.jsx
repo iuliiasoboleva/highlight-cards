@@ -3,7 +3,6 @@ import React, { useId, useMemo } from 'react';
 import { Sun } from 'lucide-react';
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
 
-import { useMediaQuery } from '../../hooks/useMediaQuery';
 import {
   EmptyState,
   Legend,
@@ -17,7 +16,6 @@ import {
 const BASE_COLORS = ['#6C2BD9', '#34C759', '#f0bf7c', '#ff8042', '#8dd1e1'];
 
 const ClientPortraitCard = ({ title, data }) => {
-  const isMobile = useMediaQuery('(max-width: 768px)');
   const hasData = Array.isArray(data) && data.some((d) => Number(d?.value) > 0);
 
   const uid = useId();
@@ -63,13 +61,9 @@ const ClientPortraitCard = ({ title, data }) => {
                 nameKey="label"
                 cx="50%"
                 cy="50%"
-                outerRadius={isMobile ? 58 : 64}
-                labelLine={!isMobile}
-                label={
-                  isMobile
-                    ? false
-                    : ({ percent, label }) => `${label}: ${Math.round((percent || 0) * 100)}%`
-                }
+                outerRadius={64}
+                labelLine={false}
+                label={false}
               >
                 {legend.map((_, index) => (
                   <Cell key={index} fill={`url(#${gradId(index)})`} />
@@ -78,19 +72,16 @@ const ClientPortraitCard = ({ title, data }) => {
             </PieChart>
           </ResponsiveContainer>
 
-          {/* Компактная легенда для мобильного */}
-          {isMobile && (
-            <Legend>
-              {legend.map((item, index) => (
-                <LegendItem key={`legend-${index}-${item.label}`}>
-                  <LegendDot style={{ background: item.gradientCss }} />
-                  <LegendText title={item.label}>
-                    {item.label}: {item.value}%
-                  </LegendText>
-                </LegendItem>
-              ))}
-            </Legend>
-          )}
+          <Legend>
+            {legend.map((item, index) => (
+              <LegendItem key={`legend-${index}-${item.label}`}>
+                <LegendDot style={{ background: item.gradientCss }} />
+                <LegendText title={item.label}>
+                  {item.label}: {item.value}%
+                </LegendText>
+              </LegendItem>
+            ))}
+          </Legend>
         </>
       )}
     </PortraitCard>
