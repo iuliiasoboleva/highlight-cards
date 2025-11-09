@@ -29,6 +29,7 @@ const ManagerModal = ({ isOpen, onClose, onSave, onDelete, initialData = {}, isE
 
   const [selectedBranches, setSelectedBranches] = useState([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const statusOptions = [
     { value: 'Активен', label: 'Активен' },
@@ -90,6 +91,7 @@ const ManagerModal = ({ isOpen, onClose, onSave, onDelete, initialData = {}, isE
         shiftEnd: false,
         branches: false,
       });
+      setIsSaving(false);
     }
   }, [isOpen]);
 
@@ -206,17 +208,19 @@ const ManagerModal = ({ isOpen, onClose, onSave, onDelete, initialData = {}, isE
         </CustomMainButton>
       )}
       <CustomMainButton
-        onClick={() => {
-          if (!isFormValid) {
-            setTouched({
-              name: true,
-              surname: true,
-              email: true,
-              phone: true,
-              shiftStart: true,
-              shiftEnd: true,
-              branches: true,
-            });
+        onClick={async () => {
+          if (!isFormValid || isSaving) {
+            if (!isFormValid) {
+              setTouched({
+                name: true,
+                surname: true,
+                email: true,
+                phone: true,
+                shiftStart: true,
+                shiftEnd: true,
+                branches: true,
+              });
+            }
             return;
           }
 
@@ -224,33 +228,39 @@ const ManagerModal = ({ isOpen, onClose, onSave, onDelete, initialData = {}, isE
           const firstById = locations.find((l) => l.id === firstId);
           const legacyLocationName = firstById?.name ?? '';
 
-          onSave?.({
-            ...manager,
-            phone: phoneDigits,
-            locations: selectedBranches,
-            location: legacyLocationName,
-          });
+          setIsSaving(true);
+          try {
+            await Promise.resolve(onSave?.({
+              ...manager,
+              phone: phoneDigits,
+              locations: selectedBranches,
+              location: legacyLocationName,
+            }));
+          } finally {
+            setIsSaving(false);
+          }
         }}
-        disabled={!isFormValid}
+        disabled={!isFormValid || isSaving}
         style={{
-          background: '#bf4756',
+          background: isSaving ? '#ccc' : '#bf4756',
           color: '#fff',
           maxWidth: '100%',
+          cursor: isSaving ? 'not-allowed' : 'pointer',
         }}
         onMouseEnter={(e) => {
-          if (isFormValid) {
+          if (isFormValid && !isSaving) {
             e.currentTarget.style.background = '#a63d49';
             e.currentTarget.style.color = '#fff';
           }
         }}
         onMouseLeave={(e) => {
-          if (isFormValid) {
+          if (isFormValid && !isSaving) {
             e.currentTarget.style.background = '#bf4756';
             e.currentTarget.style.color = '#fff';
           }
         }}
       >
-        {isEdit ? 'Сохранить' : 'Добавить'}
+        {isSaving ? 'Добавляю...' : (isEdit ? 'Сохранить' : 'Добавить')}
       </CustomMainButton>
       <CustomMainButton
         onClick={onClose}
