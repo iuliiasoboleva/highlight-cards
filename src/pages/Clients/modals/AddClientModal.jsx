@@ -82,7 +82,7 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
 
   useEffect(() => {
     if (open && allCards.length > 0 && selectedCards.length === 0) {
-      setSelectedCards(allCards.filter(c => c.isActive).map(c => c.id));
+      setSelectedCards(allCards.filter(c => c.id !== 'fixed' && c.isActive).map(c => c.id));
     }
   }, [open, allCards]);
 
@@ -360,7 +360,7 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
           <ErrorText>У вашей организации нет активных карт лояльности. Сначала создайте карту в разделе "Карты".</ErrorText>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '180px', overflowY: 'auto', padding: '4px' }}>
-            {allCards.filter(card => card.isActive).map((card) => (
+            {allCards.filter(card => card.id !== 'fixed' && card.isActive).map((card) => (
               <CustomCheckbox
                 key={card.id}
                 label={card.name || card.title}
