@@ -150,25 +150,15 @@ const AddClientModal = ({ open, onClose, onCreated }) => {
 
       const newId = safeGetId(res);
       
-      const hasNewCards = res?.cards && res.cards.length > 0;
-      const existingCardsCount = res?.cards?.length || 0;
-      
       const whatsappLink = generateWhatsAppLink(phoneDigits, res);
       if (whatsappLink) {
-        const message = existingCardsCount > 0 
-          ? 'Клиент добавлен. Открываем WhatsApp...' 
-          : 'Клиент уже существует, добавлены недостающие карты. Открываем WhatsApp...';
-        toast.success(message);
+        toast.success('Клиент добавлен. Открываем WhatsApp...');
         setTimeout(() => {
           window.open(whatsappLink, '_blank');
         }, 500);
       } else {
-        if (!hasNewCards) {
-          toast.error('У вашей организации нет активных карт лояльности. Сначала создайте карту в разделе "Карты".');
-        } else {
-          toast.success('Клиент добавлен');
-          onCreated?.(res);
-        }
+        toast.success('Клиент добавлен');
+        onCreated?.(res);
       }
 
       await dispatch(fetchClients());
