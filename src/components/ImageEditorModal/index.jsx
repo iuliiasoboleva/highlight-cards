@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Cropper from 'react-easy-crop';
 
 import { getCroppedImg } from '../../utils/cropImage';
@@ -69,7 +70,7 @@ const ImageEditorModal = ({
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <Overlay>
       <Modal>
         <Header>
@@ -141,7 +142,8 @@ const ImageEditorModal = ({
           <PrimaryBtn onClick={handleSave}>Сохранить</PrimaryBtn>
         </Footer>
       </Modal>
-    </Overlay>
+    </Overlay>,
+    document.body
   );
 };
 

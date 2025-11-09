@@ -4,7 +4,7 @@ export const Overlay = styled.div`
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.4);
-  z-index: 10000;
+  z-index: 100000;
   display: flex;
   justify-content: center;
   align-items: center;

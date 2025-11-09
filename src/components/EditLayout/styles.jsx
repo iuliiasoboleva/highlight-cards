@@ -27,6 +27,7 @@ export const Left = styled.div`
   align-self: flex-start;
   max-height: calc(100vh - var(--header-height) - var(--bar-height));
   overflow-y: auto;
+  z-index: 1;
 
   @media (max-width: 999px) {
     width: 100%;
@@ -34,6 +35,7 @@ export const Left = styled.div`
     position: static;
     max-height: none;
     overflow: visible;
+    z-index: auto;
   }
 `;
 
@@ -47,6 +49,7 @@ export const Right = styled.div`
   align-self: flex-start;
   max-height: calc(100vh - var(--header-height) - var(--bar-height));
   overflow-y: auto;
+  z-index: 1;
 
   @media (max-width: 999px) {
     width: 100%;
@@ -58,6 +61,7 @@ export const Right = styled.div`
     border-top: none;
     background: transparent;
     margin-top: 24px;
+    z-index: auto;
   }
 `;
 
