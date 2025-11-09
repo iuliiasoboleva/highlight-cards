@@ -98,6 +98,9 @@ const EditDesign = () => {
     ) {
       dispatch(updateCurrentCardField({ path: 'visitsCount', value: design.stampsQuantity }));
     }
+    if (!design.cardTitle && currentCard?.name) {
+      dispatch(updateCurrentCardField({ path: 'design.cardTitle', value: currentCard.name }));
+    }
     if (location.state?.flashKey) {
       handleFieldClick(location.state.flashKey);
     }

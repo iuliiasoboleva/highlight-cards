@@ -6,6 +6,10 @@ const PushPreview = ({ card = {}, message, scheduledDate, isPreview }) => {
   const iconSrc = card?.design?.icon || '/push-logotype.svg';
 
   const getCompanyName = () => {
+    const shortName = card?.design?.cardTitle;
+    if (shortName) {
+      return shortName;
+    }
     const infoName = card?.infoFields?.companyName;
     if (infoName && infoName !== 'Название компании') {
       return infoName;

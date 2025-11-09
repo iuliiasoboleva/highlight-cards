@@ -152,7 +152,7 @@ const CardInfoAndroid = ({
           {design.logo ? (
             <CardInfoLogo src={design.logo} alt="Лого" draggable="false" />
           ) : (
-            <CardName>{mergedCard.name}</CardName>
+            <CardName>{design.cardTitle || mergedCard.name}</CardName>
           )}
         </div>
 
