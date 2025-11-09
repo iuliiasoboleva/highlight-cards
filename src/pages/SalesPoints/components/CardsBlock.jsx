@@ -18,7 +18,7 @@ const CardsBlock = ({
 }) => {
   return (
     <>
-      <Card onClick={onOpenAdd}>
+      <Card>
         <h3>Добавить сотрудника</h3>
         <p>
           Добавьте сотрудника, чтобы настроить выдачу карт, начисление баллов и работу по сменам.
@@ -32,7 +32,7 @@ const CardsBlock = ({
         <CustomMainButton onClick={onOpenAdd}>Добавить сотрудника</CustomMainButton>
       </Card>
 
-      <Card onClick={onOpenLocation}>
+      <Card>
         <h3>Добавить точку продаж</h3>
         <p>Создавайте торговые точки, привязывайте сотрудников и настраивайте акции.</p>
         <ScannerIcon>
@@ -44,7 +44,7 @@ const CardsBlock = ({
         <CustomMainButton onClick={onOpenLocation}>Добавить точку</CustomMainButton>
       </Card>
 
-      <Card onClick={onOpenNetwork}>
+      <Card>
         <h3>Добавить сеть</h3>
         <p>Объедините несколько точек в одну сеть для общего учёта клиентов.</p>
         <ScannerIcon>
@@ -87,7 +87,7 @@ const CardsBlock = ({
         </CustomMainButton>
       </Card>
 
-      <Card onClick={onOpenScan}>
+      <Card>
         <h3>Сканер QR-кодов</h3>
         <p>Сканируйте карты лояльности клиентов прямо в браузере — быстро и удобно.</p>
         <ScannerIcon>

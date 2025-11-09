@@ -275,14 +275,32 @@ const ManagersPage = () => {
     const direct = Number(subscription?.limits?.locations);
     if (!Number.isNaN(direct) && direct > 0) return direct;
     if (String(subscription?.status || '').toLowerCase() === 'trial') return 1;
+    const points = subscription?.points;
+    if (points && Number(points) > 0) return Number(points);
     return MAX_LOCATIONS;
   })();
 
   const canCreateLocation = locations.length < maxLocations;
+  
+  const getPlanName = () => {
+    if (!subscription) return 'Демо';
+    if (subscription.status === 'trial') return 'Демо';
+    return subscription.plan_name || 'Текущий';
+  };
 
   const handleOpenLocation = () => {
     if (!canCreateLocation) {
-      toast.error('Достигнут лимит точек по вашему тарифу');
+      const planName = getPlanName();
+      const points = subscription?.points || maxLocations;
+      
+      if (subscription?.status === 'trial') {
+        toast.error('На демо-доступе доступна только одна точка продаж. Оплатите подписку для добавления дополнительных точек.');
+      } else {
+        toast.error(
+          `Ваш тариф "${planName}" включает ${points} ${points === 1 ? 'точку' : points < 5 ? 'точки' : 'точек'} продаж. Требуется докупить дополнительные точки продаж.`,
+          { duration: 5000 }
+        );
+      }
       return;
     }
     setShowLocationModal(true);
