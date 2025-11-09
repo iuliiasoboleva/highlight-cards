@@ -6,8 +6,10 @@ import CustomTable from '../../components/CustomTable';
 import FilterableTable from '../../components/FilterableTable';
 import LoaderCentered from '../../components/LoaderCentered';
 import TitleWithHelp from '../../components/TitleWithHelp';
+import { useToast } from '../../components/Toast';
 import CustomMainButton from '../../customs/CustomMainButton';
 import { mockClientsHeaders } from '../../mocks/clientsInfo';
+import { fetchCards } from '../../store/cardsSlice';
 import { fetchClients } from '../../store/clientsSlice';
 import { fetchNetworks } from '../../store/networksSlice';
 import { fetchBranches } from '../../store/salesPointsSlice';
@@ -34,10 +36,12 @@ import {
 const Clients = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const toast = useToast();
 
   const { list: clients, loading } = useSelector((s) => s.clients);
 
   const branches = useSelector((s) => s.locations.list);
+  const cards = useSelector((s) => s.cards.cards);
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [showNoBranchModal, setShowNoBranchModal] = useState(false);
@@ -55,6 +59,7 @@ const Clients = () => {
     if (orgId) {
       dispatch(fetchBranches());
       dispatch(fetchNetworks());
+      dispatch(fetchCards());
     }
   }, [dispatch, orgId]);
 
@@ -107,9 +112,19 @@ const Clients = () => {
   const handleOpenAdd = () => {
     if (branches.length === 0) {
       setShowNoBranchModal(true);
-    } else {
-      setShowAddModal(true);
+      return;
     }
+
+    const activeCards = Array.isArray(cards) 
+      ? cards.filter((card) => card.id !== 'fixed' && card.isActive)
+      : [];
+    
+    if (activeCards.length === 0) {
+      toast.error('У вашей организации нет активных карт лояльности. Сначала создайте карту в разделе "Карты".');
+      return;
+    }
+
+    setShowAddModal(true);
   };
 
   const handleCreated = (clientData) => {
