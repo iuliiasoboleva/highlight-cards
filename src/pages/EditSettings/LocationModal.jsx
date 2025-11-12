@@ -13,8 +13,9 @@ import CustomSelect from '../../customs/CustomSelect';
 import CustomToggleSwitch from '../../customs/CustomToggleSwitch';
 import { normalizeCoords } from '../../helpers/formatCoords';
 import { assignManagerToSalesPoint } from '../../store/managersSlice';
-import { DADATA_TOKEN, DADATA_URL, MAX_LOCATIONS } from '../../utils/locations';
+import { MAX_LOCATIONS } from '../../utils/locations';
 import { normalizeErr } from '../../utils/normalizeErr';
+import axiosInstance from '../../axiosInstance';
 import {
   AddressWrap,
   EditLink,
@@ -104,41 +105,10 @@ const LocationModal = ({ isOpen, onClose, onSave, initialData = {}, isEdit = fal
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, initialData]);
 
-  // Поиск адреса через карту, если DaData недоступна
-  useEffect(() => {
-    const searchAddress = async () => {
-      if (!debouncedSearchQuery || !mapRef.current) return;
-      if (DADATA_TOKEN) return;
-
-      try {
-        setIsSearching(true);
-        const coords = await mapRef.current.search(debouncedSearchQuery.trim());
-        if (Array.isArray(coords) && coords.length === 2) {
-          const nc = normalizeCoords({ lat: coords[0], lon: coords[1] });
-          setSelectedLocation({
-            address: debouncedSearchQuery,
-            coords: nc,
-          });
-        }
-      } catch (error) {
-        console.error('Ошибка поиска адреса:', error);
-      } finally {
-        setIsSearching(false);
-      }
-    };
-
-    searchAddress();
-  }, [debouncedSearchQuery]);
-
   useEffect(() => {
     let aborted = false;
 
     const fetchSuggests = async () => {
-      if (!DADATA_TOKEN) {
-        setSuggests([]);
-        setShowSuggests(false);
-        return;
-      }
       const q = debouncedSearchQuery?.trim();
       if (!q) {
         setSuggests([]);
@@ -150,25 +120,17 @@ const LocationModal = ({ isOpen, onClose, onSave, initialData = {}, isEdit = fal
         setIsSearching(true);
 
         const city = currentUser?.company?.city || currentUser?.profile?.city || null;
+        const params = { query: q, count: 8 };
+        if (city) {
+          params.city = city;
+        }
 
-        const body = { query: q, count: 8 };
-        if (city) body.locations = [{ city }];
+        const response = await axiosInstance.get('/address/suggest', { params });
 
-        const res = await fetch(DADATA_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Token ${DADATA_TOKEN}`,
-          },
-          body: JSON.stringify(body),
-        });
-
-        if (!res.ok) throw new Error(`DaData ${res.status}`);
-        const data = await res.json();
         if (!aborted) {
-          const s = Array.isArray(data?.suggestions) ? data.suggestions : [];
+          const s = Array.isArray(response.data?.suggestions) ? response.data.suggestions : [];
           setSuggests(s);
-          setShowSuggests(true);
+          setShowSuggests(s.length > 0);
           setActiveIndex(-1);
         }
       } catch (err) {

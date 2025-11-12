@@ -11,8 +11,8 @@ import CustomModal from '../../../customs/CustomModal';
 import CustomSelect from '../../../customs/CustomSelect';
 import CustomToggleSwitch from '../../../customs/CustomToggleSwitch';
 import { assignManagerToSalesPoint } from '../../../store/managersSlice';
-import { DADATA_TOKEN, DADATA_URL } from '../../../utils/locations';
 import { normalizeErr } from '../../../utils/normalizeErr';
+import axiosInstance from '../../../utils/axiosInstance';
 import {
   AddressWrap,
   FieldGroup,
@@ -136,39 +136,9 @@ const SalesPointsModalWithMap = ({
   }, []);
 
   useEffect(() => {
-    const searchAddress = async () => {
-      if (!debouncedSearchQuery || !mapRef.current) return;
-      if (DADATA_TOKEN) return;
-
-      try {
-        setIsSearching(true);
-        const coords = await mapRef.current.search(debouncedSearchQuery.trim());
-        if (Array.isArray(coords) && coords.length === 2) {
-          setSelectedLocation({
-            address: debouncedSearchQuery,
-            coords: { lat: coords[0], lon: coords[1] },
-          });
-        }
-      } catch (error) {
-        console.error('Ошибка поиска адреса:', error);
-      } finally {
-        setIsSearching(false);
-      }
-    };
-
-    searchAddress();
-  }, [debouncedSearchQuery]);
-
-  useEffect(() => {
     let aborted = false;
 
     const fetchSuggests = async () => {
-      if (!DADATA_TOKEN) {
-        setSuggests([]);
-        setShowSuggests(false);
-        return;
-      }
-
       const q = debouncedSearchQuery?.trim();
       if (!q) {
         setSuggests([]);
@@ -179,24 +149,14 @@ const SalesPointsModalWithMap = ({
       try {
         setIsSearching(true);
 
-        const body = { query: q, count: 8 };
-
-        const res = await fetch(DADATA_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Token ${DADATA_TOKEN}`,
-          },
-          body: JSON.stringify(body),
+        const response = await axiosInstance.get('/address/suggest', {
+          params: { query: q, count: 8 }
         });
 
-        if (!res.ok) throw new Error(`DaData ${res.status}`);
-        const data = await res.json();
-
         if (!aborted) {
-          const s = Array.isArray(data?.suggestions) ? data.suggestions : [];
+          const s = Array.isArray(response.data?.suggestions) ? response.data.suggestions : [];
           setSuggests(s);
-          setShowSuggests(true);
+          setShowSuggests(s.length > 0);
           setActiveIndex(-1);
         }
       } catch (err) {

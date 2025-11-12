@@ -22,7 +22,8 @@ import {
   editBranch,
   fetchBranches,
 } from '../../store/salesPointsSlice';
-import { DADATA_TOKEN, DADATA_URL, MAX_LOCATIONS } from '../../utils/locations.jsx';
+import { MAX_LOCATIONS } from '../../utils/locations.jsx';
+import axiosInstance from '../../axiosInstance';
 import {
   ActionButton,
   ActionRow,
@@ -108,7 +109,7 @@ const Locations = () => {
   useEffect(() => {
     let aborted = false;
     const fetchSuggests = async () => {
-      if (!DADATA_TOKEN || isSingleExisting) {
+      if (isSingleExisting) {
         setSuggests([]);
         setShowSuggests(false);
         return;
@@ -124,23 +125,17 @@ const Locations = () => {
         setIsSearching(true);
 
         const city = currentUser?.company?.city || currentUser?.profile?.city || null;
-        const body = { query: q, count: 8 };
-        if (city) body.locations = [{ city }];
+        const params = { query: q, count: 8 };
+        if (city) {
+          params.city = city;
+        }
 
-        const res = await fetch(DADATA_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Token ${DADATA_TOKEN}`,
-          },
-          body: JSON.stringify(body),
-        });
-        if (!res.ok) throw new Error(`DaData ${res.status}`);
-        const data = await res.json();
+        const response = await axiosInstance.get('/address/suggest', { params });
+
         if (!aborted) {
-          const s = Array.isArray(data?.suggestions) ? data.suggestions : [];
+          const s = Array.isArray(response.data?.suggestions) ? response.data.suggestions : [];
           setSuggests(s);
-          setShowSuggests(true);
+          setShowSuggests(s.length > 0);
           setActiveIndex(-1);
         }
       } catch (e) {
@@ -172,28 +167,6 @@ const Locations = () => {
     return () => document.removeEventListener('mousedown', onDocClick);
   }, []);
 
-  useEffect(() => {
-    const searchAddress = async () => {
-      if (!debouncedSearchQuery || !mapRef.current || isSingleExisting) return;
-      if (DADATA_TOKEN) return;
-      try {
-        setIsSearching(true);
-        const coords = await mapRef.current.search(debouncedSearchQuery.trim());
-        if (Array.isArray(coords) && coords.length === 2) {
-          setSelectedLocation({
-            address: debouncedSearchQuery,
-            coords: { lat: coords[0], lon: coords[1] },
-          });
-        }
-      } catch (error) {
-        console.error('Ошибка поиска:', error);
-        toast.error('Ошибка поиска адреса');
-      } finally {
-        setIsSearching(false);
-      }
-    };
-    searchAddress();
-  }, [debouncedSearchQuery, toast, isSingleExisting]);
 
   const handleCardSelect = (cardId) => {
     const selected = allCards.find((c) => c.id === cardId);
