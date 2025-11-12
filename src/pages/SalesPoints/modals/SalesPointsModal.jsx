@@ -12,7 +12,7 @@ import CustomSelect from '../../../customs/CustomSelect';
 import CustomToggleSwitch from '../../../customs/CustomToggleSwitch';
 import { assignManagerToSalesPoint } from '../../../store/managersSlice';
 import { normalizeErr } from '../../../utils/normalizeErr';
-import axiosInstance from '../../../utils/axiosInstance';
+import axiosInstance from '../../../axiosInstance';
 import {
   AddressWrap,
   FieldGroup,
