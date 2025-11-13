@@ -37,7 +37,12 @@ const CustomerPage = () => {
 
   const [client, setClient] = useState(null);
   const [card, setCard] = useState(null);
+  const [cardDetails, setCardDetails] = useState(null);
+  const [cardDetailsLoading, setCardDetailsLoading] = useState(false);
   const [stampsToAdd, setStampsToAdd] = useState('');
+  const [purchaseAmount, setPurchaseAmount] = useState('');
+  const [customCashback, setCustomCashback] = useState('');
+  const [cashbackToSpend, setCashbackToSpend] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const hasLoadedRef = useRef(false);
@@ -113,6 +118,37 @@ const CustomerPage = () => {
     }
   };
 
+  useEffect(() => {
+    if (!card?.cardUuid) {
+      setCardDetails(null);
+      return;
+    }
+
+    let cancelled = false;
+    setCardDetails(null);
+    setCardDetailsLoading(true);
+
+    axiosInstance
+      .get(`/cards/${card.cardUuid}`)
+      .then((res) => {
+        if (!cancelled) {
+          setCardDetails(res.data);
+        }
+      })
+      .catch((error) => {
+        console.error('Ошибка загрузки данных карты:', error);
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setCardDetailsLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [card?.cardUuid]);
+
   if (loading) {
     return <LoaderCentered />;
   }
@@ -121,10 +157,42 @@ const CustomerPage = () => {
     return <Container>Карта не найдена</Container>;
   }
 
+  const cardType = card?.type || cardDetails?.status || cardDetails?.card_type;
+  const isStampCard = cardType === 'stamp';
+  const isSubscriptionCard = cardType === 'subscription';
+  const isStampLikeCard = isStampCard || isSubscriptionCard;
+  const isCashbackCard = cardType === 'cashback';
+  const isDiscountCard = cardType === 'discount';
+  const isCertificateCard = cardType === 'certificate';
+  const currentCashbackBalance = card.cashbackBalance || 0;
+  const stampEntityName = isSubscriptionCard ? 'посещений' : 'штампов';
+
+  const normalizeMoney = (value) => {
+    if (value === null || value === undefined || value === '') {
+      return 0;
+    }
+    const numeric = Number(value);
+    if (Number.isNaN(numeric)) {
+      return 0;
+    }
+    return Math.round(numeric);
+  };
+
+  const getCashbackPercent = () => Number(cardDetails?.cashbackPercent || 0);
+
+  const calculateAutoCashback = () => {
+    const purchase = Number(purchaseAmount);
+    const percent = getCashbackPercent();
+    if (!purchase || Number.isNaN(purchase) || !percent) {
+      return 0;
+    }
+    return Math.max(0, Math.round((purchase * percent) / 100));
+  };
+
   const handleAddStamps = async (amount = null) => {
     const stampsAmount = amount || Number(stampsToAdd);
     if (!stampsAmount || Number.isNaN(stampsAmount) || stampsAmount <= 0) {
-      toast.error('Введите корректное количество штампов');
+      toast.error(`Введите корректное количество ${stampEntityName}`);
       return;
     }
 
@@ -134,7 +202,7 @@ const CustomerPage = () => {
 
     if (stampsToday + stampsAmount > stampDailyLimit) {
       toast.error(
-        `Превышен дневной лимит штампов. Лимит: ${stampDailyLimit}, уже выдано: ${stampsToday}`,
+        `Превышен дневной лимит ${stampEntityName}. Лимит: ${stampDailyLimit}, уже выдано: ${stampsToday}`,
       );
       return;
     }
@@ -150,7 +218,7 @@ const CustomerPage = () => {
       });
 
       setStampsToAdd('');
-      toast.success(`Добавлено ${stampsAmount} штампов! Спасибо за обслуживание клиента`);
+      toast.success(`Добавлено ${stampsAmount} ${stampEntityName}! Спасибо за обслуживание клиента`);
       await reloadClient();
     } catch (error) {
       const errorMessage = error.response?.data?.detail || 'Ошибка при добавлении штампов';
@@ -207,6 +275,296 @@ const CustomerPage = () => {
     }
   };
 
+  const handleCashbackAccrual = async () => {
+    if (!isCashbackCard) {
+      return;
+    }
+
+    const manualValue = normalizeMoney(customCashback);
+    const autoValue = calculateAutoCashback();
+    const amountToAdd = manualValue || autoValue;
+
+    if (!amountToAdd) {
+      toast.error('Введите сумму покупки или размер кешбэка');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await axiosInstance.post('/clients/card-action', {
+        card_number: cardNumber,
+        updates: {
+          cashback_balance: currentCashbackBalance + amountToAdd,
+          last_accrual: new Date().toLocaleString('ru-RU'),
+        },
+      });
+
+      toast.success(`Начислено ${amountToAdd} ₽ кешбэка`);
+      setPurchaseAmount('');
+      setCustomCashback('');
+      await reloadClient();
+    } catch (error) {
+      const message = error.response?.data?.detail || 'Ошибка при начислении кешбэка';
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCashbackRedeem = async () => {
+    if (!isCashbackCard) {
+      return;
+    }
+
+    const amountToSpend = normalizeMoney(cashbackToSpend);
+
+    if (!amountToSpend) {
+      toast.error('Введите сумму для списания');
+      return;
+    }
+
+    if (amountToSpend > currentCashbackBalance) {
+      toast.error('Недостаточно средств на балансе кешбэка');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await axiosInstance.post('/clients/card-action', {
+        card_number: cardNumber,
+        updates: {
+          cashback_balance: currentCashbackBalance - amountToSpend,
+          last_reward_received: new Date().toLocaleString('ru-RU'),
+        },
+      });
+
+      toast.success(`Списано ${amountToSpend} ₽ кешбэка`);
+      setCashbackToSpend('');
+      await reloadClient();
+    } catch (error) {
+      const message = error.response?.data?.detail || 'Ошибка при списании кешбэка';
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const renderCashbackControls = () => {
+    if (!isCashbackCard) {
+      return null;
+    }
+
+    if (cardDetailsLoading && !cardDetails) {
+      return (
+        <SectionCard>
+          <SectionTitle>Начисление кешбэка</SectionTitle>
+          <LoaderCentered />
+        </SectionCard>
+      );
+    }
+
+    if (!cardDetails) {
+      return (
+        <SectionCard>
+          <SectionTitle>Начисление кешбэка</SectionTitle>
+          <p style={{ margin: 0 }}>Не удалось загрузить параметры карты. Обновите страницу.</p>
+        </SectionCard>
+      );
+    }
+
+    const percent = getCashbackPercent();
+    const autoValue = calculateAutoCashback();
+    const manualValue = normalizeMoney(customCashback);
+    const accrualValue = manualValue || autoValue;
+
+    return (
+      <SectionCard>
+        <SectionTitle>Начисление кешбэка</SectionTitle>
+        <StampControls>
+          <div>
+            <div style={{ fontSize: '14px', color: '#7f8c8d', marginBottom: '8px' }}>
+              Сумма покупки, ₽
+            </div>
+            <CustomInput
+              type="number"
+              min="0"
+              value={purchaseAmount}
+              onChange={(e) => setPurchaseAmount(e.target.value)}
+              placeholder="Введите сумму покупки"
+              disabled={isLoading}
+            />
+          </div>
+
+          <div>
+            <div style={{ fontSize: '14px', color: '#7f8c8d', marginBottom: '8px' }}>
+              Кешбэк вручную (опционально)
+            </div>
+            <CustomInput
+              type="number"
+              min="0"
+              value={customCashback}
+              onChange={(e) => setCustomCashback(e.target.value)}
+              placeholder={`Авторасчёт: ${autoValue || 0} ₽`}
+              disabled={isLoading}
+            />
+            <div style={{ fontSize: '12px', color: '#95a5a6', marginTop: '4px' }}>
+              Процент карты: {percent ? `${percent}%` : 'не задан'}
+            </div>
+          </div>
+
+          <CustomMainButton onClick={handleCashbackAccrual} disabled={isLoading || accrualValue <= 0}>
+            {isLoading ? 'Обработка...' : `Начислить кешбэк${percent ? ` (${percent}%)` : ''}`}
+          </CustomMainButton>
+        </StampControls>
+
+        <StampControls style={{ marginTop: '16px' }}>
+          <div>
+            <div style={{ fontSize: '14px', color: '#7f8c8d', marginBottom: '8px' }}>
+              Списать кешбэк, ₽
+            </div>
+            <CustomInput
+              type="number"
+              min="0"
+              value={cashbackToSpend}
+              onChange={(e) => setCashbackToSpend(e.target.value)}
+              placeholder={`Доступно: ${currentCashbackBalance} ₽`}
+              disabled={isLoading || currentCashbackBalance <= 0}
+            />
+          </div>
+
+          <CustomMainButton
+            onClick={handleCashbackRedeem}
+            disabled={isLoading || currentCashbackBalance <= 0 || normalizeMoney(cashbackToSpend) <= 0}
+          >
+            {isLoading ? 'Обработка...' : 'Списать кешбэк'}
+          </CustomMainButton>
+        </StampControls>
+      </SectionCard>
+    );
+  };
+
+  const renderInfoNotice = () => {
+    if (isDiscountCard) {
+      const percent = cardDetails?.discountPercent;
+      const status = cardDetails?.discountStatus;
+      return (
+        <SectionCard>
+          <SectionTitle>Скидочная карта</SectionTitle>
+          <p style={{ margin: 0, lineHeight: 1.5 }}>
+            Текущая скидка: {percent ? `${percent}%` : 'нет данных'}
+            {status ? ` (${status})` : ''}. Примените скидку вручную при расчёте заказа и подтвердите
+            клиенту показом этой страницы.
+          </p>
+        </SectionCard>
+      );
+    }
+
+    if (isCertificateCard) {
+      const balance = cardDetails?.balanceMoney;
+      return (
+        <SectionCard>
+          <SectionTitle>Подарочный сертификат</SectionTitle>
+          <p style={{ margin: 0, lineHeight: 1.5 }}>
+            Доступный баланс: {balance ? `${balance} ₽` : 'не задан'}. Списание суммы происходит на
+            кассе, фиксируйте остаток после обслуживания.
+          </p>
+        </SectionCard>
+      );
+    }
+
+    return null;
+  };
+
+  const getCardHint = () => {
+    if (isStampCard) {
+      return 'Введите количество штампов и нажмите «Добавить».';
+    }
+    if (isSubscriptionCard) {
+      return 'Отметьте посещения клиента и сохраните изменения.';
+    }
+    if (isCashbackCard) {
+      return 'Начисляйте или списывайте кешбэк в зависимости от суммы покупки.';
+    }
+    if (isDiscountCard) {
+      return 'Примените скидку вручную по значениям на странице.';
+    }
+    if (isCertificateCard) {
+      return 'Проверьте баланс сертификата перед обслуживанием клиента.';
+    }
+    return '';
+  };
+
+  const infoItems = [
+    {
+      key: 'stamps',
+      label: isSubscriptionCard ? 'Посещений зачтено' : 'Текущие штампы',
+      value: card.stamps || 0,
+      show: isStampLikeCard,
+    },
+    {
+      key: 'storage',
+      label: 'Активное хранилище',
+      value: card.activeStorage || 0,
+      show: isStampLikeCard,
+    },
+    {
+      key: 'rewards_available',
+      label: 'Доступные награды',
+      value: card.availableRewards || 0,
+      show: isStampLikeCard,
+    },
+    {
+      key: 'cashback_balance',
+      label: 'Баланс кешбэка',
+      value: `${currentCashbackBalance} ₽`,
+      show: isCashbackCard,
+    },
+    {
+      key: 'cashback_percent',
+      label: 'Процент кешбэка',
+      value: cardDetails?.cashbackPercent ? `${cardDetails.cashbackPercent}%` : '—',
+      show: isCashbackCard,
+    },
+    {
+      key: 'last_accrual',
+      label: 'Последнее начисление',
+      value: card.lastAccrual || '—',
+      show: isStampLikeCard || isCashbackCard,
+    },
+    {
+      key: 'last_reward',
+      label: 'Последняя награда',
+      value: card.lastRewardReceived || '—',
+      show: isStampLikeCard || isCashbackCard,
+    },
+    {
+      key: 'discount_percent',
+      label: 'Текущая скидка',
+      value: cardDetails?.discountPercent ? `${cardDetails.discountPercent}%` : '—',
+      show: isDiscountCard,
+    },
+    {
+      key: 'discount_status',
+      label: 'Статус клиента',
+      value: cardDetails?.discountStatus || '—',
+      show: isDiscountCard,
+    },
+    {
+      key: 'card_expiration',
+      label: 'Срок действия карты',
+      value: card.cardExpirationDate || 'Без срока',
+      show: true,
+    },
+    {
+      key: 'card_created',
+      label: 'Дата выпуска карты',
+      value: card.cardCreatedAt || '—',
+      show: true,
+    },
+  ].filter((item) => item.show);
+
+  const hintText = getCardHint();
+
   return (
     <Container>
       <Header>
@@ -225,114 +583,96 @@ const CustomerPage = () => {
         Перейти к профилю клиента
       </CustomMainButton>
 
-      <Actions>
-        <CustomMainButton onClick={handleAddReward} disabled={isLoading}>
-          {isLoading ? 'Обработка...' : 'Добавить награду'}
-        </CustomMainButton>
-
-        <CustomMainButton
-          onClick={handleReceiveReward}
-          disabled={isLoading || (card.availableRewards || 0) <= 0}
-        >
-          {isLoading ? 'Обработка...' : 'Получить награду'}
-        </CustomMainButton>
-      </Actions>
-
-      <SectionCard>
-        <SectionTitle>Добавить штампы:</SectionTitle>
-        <StampControls>
-          {card.stampDailyLimit && card.stampDailyLimit < 999 && (
-            <LimitInfo isLimitReached={(card.stampsToday || 0) >= card.stampDailyLimit}>
-              Лимит в день: {card.stampDailyLimit} | Выдано сегодня: {card.stampsToday || 0}
-              {(card.stampsToday || 0) >= card.stampDailyLimit && ' | Лимит достигнут!'}
-            </LimitInfo>
-          )}
-
-          <div>
-            <div style={{ fontSize: '14px', color: '#7f8c8d', marginBottom: '8px' }}>
-              Быстрый выбор:
-            </div>
-            <QuickButtons>
-              {[1, 2, 3, 4, 5].map((num) => {
-                const isDisabled =
-                  isLoading || (card.stampsToday || 0) + num > (card.stampDailyLimit || 999);
-                return (
-                  <QuickButton
-                    key={num}
-                    onClick={() => handleQuickStamp(num)}
-                    disabled={isDisabled}
-                  >
-                    {num}
-                  </QuickButton>
-                );
-              })}
-            </QuickButtons>
-          </div>
-
-          <CustomInput
-            type="number"
-            min="1"
-            value={stampsToAdd}
-            onChange={(e) => {
-              let raw = e.target.value;
-              // Убираем лидирующие нули
-              if (raw.length > 1 && raw.startsWith('0')) {
-                raw = raw.replace(/^0+/, '') || '1';
-                e.target.value = raw;
-              }
-              setStampsToAdd(raw);
-            }}
-            placeholder="Или введите количество штампов"
-            disabled={isLoading || (card.stampsToday || 0) >= (card.stampDailyLimit || 999)}
-          />
-          <CustomMainButton
-            onClick={() => handleAddStamps()}
-            disabled={
-              isLoading ||
-              !stampsToAdd ||
-              Number(stampsToAdd) <= 0 ||
-              (card.stampsToday || 0) >= (card.stampDailyLimit || 999) ||
-              (card.stampsToday || 0) + Number(stampsToAdd) > (card.stampDailyLimit || 999)
-            }
-          >
-            {isLoading ? 'Добавление...' : 'Добавить'}
+      {isStampLikeCard && (
+        <Actions>
+          <CustomMainButton onClick={handleAddReward} disabled={isLoading}>
+            {isLoading ? 'Обработка...' : 'Добавить награду'}
           </CustomMainButton>
-        </StampControls>
-      </SectionCard>
+
+          <CustomMainButton
+            onClick={handleReceiveReward}
+            disabled={isLoading || (card.availableRewards || 0) <= 0}
+          >
+            {isLoading ? 'Обработка...' : 'Получить награду'}
+          </CustomMainButton>
+        </Actions>
+      )}
+
+      {isStampLikeCard && (
+        <SectionCard>
+          <SectionTitle>
+            {isSubscriptionCard ? 'Добавить посещения:' : 'Добавить штампы:'}
+          </SectionTitle>
+          <StampControls>
+            {card.stampDailyLimit && card.stampDailyLimit < 999 && (
+              <LimitInfo isLimitReached={(card.stampsToday || 0) >= card.stampDailyLimit}>
+                Лимит в день: {card.stampDailyLimit} | Выдано сегодня: {card.stampsToday || 0}
+                {(card.stampsToday || 0) >= card.stampDailyLimit && ' | Лимит достигнут!'}
+              </LimitInfo>
+            )}
+
+            <div>
+              <div style={{ fontSize: '14px', color: '#7f8c8d', marginBottom: '8px' }}>
+                Быстрый выбор:
+              </div>
+              <QuickButtons>
+                {[1, 2, 3, 4, 5].map((num) => {
+                  const isDisabled =
+                    isLoading || (card.stampsToday || 0) + num > (card.stampDailyLimit || 999);
+                  return (
+                    <QuickButton
+                      key={num}
+                      onClick={() => handleQuickStamp(num)}
+                      disabled={isDisabled}
+                    >
+                      {num}
+                    </QuickButton>
+                  );
+                })}
+              </QuickButtons>
+            </div>
+
+            <CustomInput
+              type="number"
+              min="1"
+              value={stampsToAdd}
+              onChange={(e) => {
+                let raw = e.target.value;
+                if (raw.length > 1 && raw.startsWith('0')) {
+                  raw = raw.replace(/^0+/, '') || '1';
+                  e.target.value = raw;
+                }
+                setStampsToAdd(raw);
+              }}
+              placeholder={`Или введите количество ${stampEntityName}`}
+              disabled={isLoading || (card.stampsToday || 0) >= (card.stampDailyLimit || 999)}
+            />
+            <CustomMainButton
+              onClick={() => handleAddStamps()}
+              disabled={
+                isLoading ||
+                !stampsToAdd ||
+                Number(stampsToAdd) <= 0 ||
+                (card.stampsToday || 0) >= (card.stampDailyLimit || 999) ||
+                (card.stampsToday || 0) + Number(stampsToAdd) > (card.stampDailyLimit || 999)
+              }
+            >
+              {isLoading ? 'Добавление...' : 'Добавить'}
+            </CustomMainButton>
+          </StampControls>
+        </SectionCard>
+      )}
+
+      {renderCashbackControls()}
+      {renderInfoNotice()}
 
       <InfoGrid>
-        <InfoItem>
-          <InfoLabel>Текущие штампы:</InfoLabel>
-          <InfoValue>{card.stamps || 0}</InfoValue>
-        </InfoItem>
-        <InfoItem>
-          <InfoLabel>Активное хранилище:</InfoLabel>
-          <InfoValue>{card.activeStorage || 0}</InfoValue>
-        </InfoItem>
-        <InfoItem>
-          <InfoLabel>Доступные награды:</InfoLabel>
-          <InfoValue>{card.availableRewards || 0}</InfoValue>
-        </InfoItem>
-        <InfoItem>
-          <InfoLabel>Последняя награда:</InfoLabel>
-          <InfoValue>{card.lastRewardReceived || '—'}</InfoValue>
-        </InfoItem>
-        <InfoItem>
-          <InfoLabel>Последнее начисление:</InfoLabel>
-          <InfoValue>{card.lastAccrual || '—'}</InfoValue>
-        </InfoItem>
-        <InfoItem>
-          <InfoLabel>Срок действия карты:</InfoLabel>
-          <InfoValue>{card.cardExpirationDate || 'Без срока'}</InfoValue>
-        </InfoItem>
-        <InfoItem>
-          <InfoLabel>Дата выпуска карты:</InfoLabel>
-          <InfoValue>{card.cardCreatedAt || '—'}</InfoValue>
-        </InfoItem>
-        <InfoItem>
-          <InfoLabel>Кешбэк баланс:</InfoLabel>
-          <InfoValue>{card.cashbackBalance || 0}</InfoValue>
-        </InfoItem>
+        {infoItems.map((item) => (
+          <InfoItem key={item.key}>
+            <InfoLabel>{item.label}</InfoLabel>
+            <InfoValue>{item.value}</InfoValue>
+          </InfoItem>
+        ))}
       </InfoGrid>
 
       <Row>
@@ -350,7 +690,7 @@ const CustomerPage = () => {
         <RowValue>{client.email || '—'}</RowValue>
       </Row>
 
-      <Hint>Введите количество штампов и нажмите «Добавить» для начисления баллов.</Hint>
+      {hintText && <Hint>{hintText}</Hint>}
     </Container>
   );
 };
