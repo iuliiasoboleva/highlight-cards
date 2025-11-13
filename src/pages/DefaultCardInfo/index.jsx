@@ -37,6 +37,7 @@ const DefaultCardInfo = () => {
 
   const [card, setCard] = useState(cards.find((c) => c.id === +id) || null);
   const [transactions, setTransactions] = useState([]);
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(!card);
   const [showInfo, setShowInfo] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -67,13 +68,18 @@ const DefaultCardInfo = () => {
     if (!card) return;
     (async () => {
       try {
-        const res = await axiosInstance.get(`/clients/transactions/${card.id}`);
-        const mappedRows = res.data.map((tr) => ({
+        const [txRes, statsRes] = await Promise.all([
+          axiosInstance.get(`/clients/transactions/${card.id}`),
+          axiosInstance.get(`/cards/${card.id}/stats`)
+        ]);
+        
+        const mappedRows = txRes.data.map((tr) => ({
           ...tr,
           userName: tr.user_name || tr.userName,
           dateTime: tr.date_time || tr.dateTime || tr.created_at,
         }));
         setTransactions(mappedRows);
+        setStats(statsRes.data);
       } catch (e) {
         console.error(e);
       }
@@ -137,7 +143,7 @@ const DefaultCardInfo = () => {
           </QrContainer>
         </InfoBlock>
 
-        <DashboardStats />
+        <DashboardStats data={stats} />
       </ImageWrapper>
 
       <TableWrapper>
