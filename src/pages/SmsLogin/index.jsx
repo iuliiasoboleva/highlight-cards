@@ -13,13 +13,17 @@ const SmsLogin = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { phone, forceSetPin } = location.state || {};
+  const { phone, forceSetPin, channel: initialChannel = 'sms', email: initialEmail } =
+    location.state || {};
 
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [resending, setResending] = useState(false);
+  const [resendingSms, setResendingSms] = useState(false);
+  const [resendingEmail, setResendingEmail] = useState(false);
   const [cooldown, setCooldown] = useState(RESEND_COOLDOWN);
+  const [deliveryChannel, setDeliveryChannel] = useState(initialChannel);
+  const [emailTarget, setEmailTarget] = useState(initialEmail || null);
 
   const timerRef = useRef(null);
 
@@ -57,17 +61,38 @@ const SmsLogin = () => {
     return `${m}:${ss}`;
   };
 
-  const handleResend = async () => {
-    if (cooldown > 0 || resending) return;
-    setResending(true);
+  const requestCode = async (channel) => {
+    const res = await dispatch(
+      requestSmsCode({ phone: phone.replace(/\D/g, ''), channel }),
+    ).unwrap();
+    setDeliveryChannel(res.channel || channel);
+    if (res.email) setEmailTarget(res.email);
+    startCooldown();
+  };
+
+  const handleResendSms = async () => {
+    if (cooldown > 0 || resendingSms) return;
+    setResendingSms(true);
     setError('');
     try {
-      await dispatch(requestSmsCode({ phone: phone?.replace(/\D/g, '') })).unwrap();
-      startCooldown();
+      await requestCode('sms');
     } catch (err) {
       setError(typeof err === 'string' ? err : err?.message || 'Не удалось отправить код');
     } finally {
-      setResending(false);
+      setResendingSms(false);
+    }
+  };
+
+  const handleSendEmail = async () => {
+    if (resendingEmail) return;
+    setResendingEmail(true);
+    setError('');
+    try {
+      await requestCode('email');
+    } catch (err) {
+      setError(typeof err === 'string' ? err : err?.message || 'Не удалось отправить код');
+    } finally {
+      setResendingEmail(false);
     }
   };
 
@@ -93,8 +118,16 @@ const SmsLogin = () => {
   return (
     <Wrapper>
       <Logo src="/logoColored.png" alt="Loyal Club" />
-      <Title>Введите код из SMS или из Telegram</Title>
-      <Hint>Отправили на {phone}</Hint>
+      <Title>
+        {deliveryChannel === 'email' ? 'Введите код из письма' : 'Введите код из SMS или Telegram'}
+      </Title>
+      <Hint>
+        {deliveryChannel === 'email'
+          ? emailTarget
+            ? `Письмо отправили на ${emailTarget}`
+            : 'Письмо отправили на email, проверьте входящие и спам'
+          : `Отправили на ${phone}`}
+      </Hint>
 
       <CustomPinInput
         value={code}
@@ -108,12 +141,15 @@ const SmsLogin = () => {
       {error && <ErrorText>{error}</ErrorText>}
 
       {cooldown > 0 ? (
-        <Status>Отправим код повторно через {fmt(cooldown)}</Status>
+        <Status>Отправим SMS повторно через {fmt(cooldown)}</Status>
       ) : (
-        <ResendButton type="button" onClick={handleResend} disabled={resending}>
-          {resending ? 'Отправляем…' : 'Отправить код повторно'}
+        <ResendButton type="button" onClick={handleResendSms} disabled={resendingSms}>
+          {resendingSms ? 'Отправляем…' : 'Отправить SMS повторно'}
         </ResendButton>
       )}
+      <ResendButton type="button" onClick={handleSendEmail} disabled={resendingEmail}>
+        {resendingEmail ? 'Отправляем…' : 'Отправить код на email'}
+      </ResendButton>
     </Wrapper>
   );
 };

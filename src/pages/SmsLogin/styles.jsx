@@ -43,6 +43,8 @@ export const ResendButton = styled.button`
   color: #888;
   cursor: pointer;
   text-decoration: underline;
+  display: block;
+  margin-top: 8px;
 
   &:disabled {
     color: #888;

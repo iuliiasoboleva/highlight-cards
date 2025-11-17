@@ -1,7 +1,7 @@
 import React from 'react';
 
 import CustomInput from '../../../customs/CustomInput';
-import { CustomButton } from '../styles';
+import { CustomButton, SecondaryButton } from '../styles';
 
 const LoginRequest = ({
   formData,
@@ -10,7 +10,12 @@ const LoginRequest = ({
   isPhoneValid,
   onPhoneFocus,
   onPhoneBlur,
+  onSendEmail,
+  codeChannelLoading,
 }) => {
+  const smsLoading = codeChannelLoading === 'sms';
+  const emailLoading = codeChannelLoading === 'email';
+
   return (
     <>
       <CustomInput
@@ -22,9 +27,23 @@ const LoginRequest = ({
         onBlur={onPhoneBlur}
         required
       />
-      <CustomButton type="submit" $loading={submitting} disabled={submitting || !isPhoneValid}>
-        {submitting ? '' : 'Получить код'}
+      <CustomButton
+        type="submit"
+        $loading={smsLoading}
+        disabled={submitting || !isPhoneValid}
+      >
+        {smsLoading ? '' : 'Получить код'}
       </CustomButton>
+      {typeof onSendEmail === 'function' && (
+        <SecondaryButton
+          type="button"
+          onClick={onSendEmail}
+          disabled={submitting || !isPhoneValid}
+          $loading={emailLoading}
+        >
+          {emailLoading ? '' : 'Отправить код на email'}
+        </SecondaryButton>
+      )}
     </>
   );
 };

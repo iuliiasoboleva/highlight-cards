@@ -53,6 +53,7 @@ const AuthForm = () => {
   const [apiError, setApiError] = useState('');
 
   const [submitting, setSubmitting] = useState(false);
+  const [codeChannelLoading, setCodeChannelLoading] = useState(null);
   const [phoneFocused, setPhoneFocused] = useState(false);
 
   const resetForm = () => {
@@ -162,6 +163,46 @@ const AuthForm = () => {
     setTouchedFields((prev) => ({ ...prev, [field]: true }));
   };
 
+  const requestLoginCode = async ({
+    channel = 'sms',
+    phoneOverride,
+    fallbackEmail,
+    navigateState = {},
+  } = {}) => {
+    const rawPhone = phoneOverride ?? formData.phone;
+    const digits = (rawPhone || '').replace(/\D/g, '');
+    if (digits.length !== 11) {
+      setApiError('Введите корректный номер');
+      return false;
+    }
+    setCodeChannelLoading(channel);
+    try {
+      const smsResult = await dispatch(requestSmsCode({ phone: digits, channel })).unwrap();
+      setApiError('');
+
+      if (smsResult.has_pin && smsResult.token) {
+        setMagicToken(smsResult.token);
+        setStep('pinLogin');
+        return true;
+      }
+
+      navigate('/sms-code', {
+        state: {
+          phone: '+' + digits,
+          channel: smsResult.channel || channel,
+          email: smsResult.email || fallbackEmail || null,
+          ...navigateState,
+        },
+      });
+      return true;
+    } catch (err) {
+      setApiError(extractError(err));
+      return false;
+    } finally {
+      setCodeChannelLoading(null);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (submitting) return;
@@ -216,30 +257,8 @@ const AuthForm = () => {
       }
 
       // Нет quickjwt → работаем по SMS или PIN
-      try {
-        const digits = formData.phone.replace(/\D/g, '');
-        if (digits.length !== 11) {
-          setApiError('Введите корректный номер');
-          setSubmitting(false);
-          return;
-        }
-
-        const smsResult = await dispatch(requestSmsCode({ phone: digits })).unwrap();
-        setApiError('');
-
-        if (smsResult.has_pin && smsResult.token) {
-          setMagicToken(smsResult.token);
-          setStep('pinLogin');
-          setSubmitting(false);
-          return;
-        }
-
-        navigate('/sms-code', { state: { phone: '+' + digits } });
-      } catch (err) {
-        setApiError(extractError(err));
-      } finally {
-        setSubmitting(false);
-      }
+      await requestLoginCode({ channel: 'sms' });
+      setSubmitting(false);
       return;
     }
 
@@ -247,7 +266,7 @@ const AuthForm = () => {
     if (step === 'request') {
       const role = userType === 'company' ? 'admin' : 'employee';
       try {
-        const res = await dispatch(
+        await dispatch(
           requestMagicLink({
             email: formData.email,
             inn: formData.inn,
@@ -262,11 +281,7 @@ const AuthForm = () => {
           }),
         ).unwrap();
 
-        // после успешного создания пользователя отправляем SMS код
-        const digits = formData.phone.replace(/\D/g, '');
-        await dispatch(requestSmsCode({ phone: digits })).unwrap();
-        setApiError('');
-        navigate('/sms-code', { state: { phone: '+' + digits } });
+        await requestLoginCode({ channel: 'sms', fallbackEmail: formData.email });
       } catch (err) {
         setApiError(extractError(err));
       } finally {
@@ -305,16 +320,22 @@ const AuthForm = () => {
     if (submitting) return;
     setSubmitting(true);
     try {
-      const digits = formData.phone.replace(/\D/g, '');
-      if (digits.length !== 11) {
-        setStep('request');
-        setSubmitting(false);
-        return;
-      }
-      await dispatch(requestSmsCode({ phone: digits })).unwrap();
-      navigate('/sms-code', { state: { phone: '+' + digits, forceSetPin: true } });
-    } catch (err) {
-      setApiError(extractError(err));
+      const ok = await requestLoginCode({
+        channel: 'sms',
+        fallbackEmail: formData.email,
+        navigateState: { forceSetPin: true },
+      });
+      if (!ok) setStep('request');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleSendEmailCode = async () => {
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      await requestLoginCode({ channel: 'email' });
     } finally {
       setSubmitting(false);
     }
@@ -378,6 +399,8 @@ const AuthForm = () => {
               isPhoneValid={isPhoneValid}
               onPhoneFocus={() => setPhoneFocused(true)}
               onPhoneBlur={() => setPhoneFocused(false)}
+              onSendEmail={handleSendEmailCode}
+              codeChannelLoading={codeChannelLoading}
             />
           )}
 

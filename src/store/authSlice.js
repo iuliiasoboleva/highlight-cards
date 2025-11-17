@@ -103,15 +103,17 @@ export const resetPinConfirm = createAsyncThunk(
 
 export const requestSmsCode = createAsyncThunk(
   'auth/requestSmsCode',
-  async ({ phone }, { rejectWithValue }) => {
+  async ({ phone, channel }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post('auth/sms-code-request', {
-        phone: phone.replace(/\D/g, ''),
-      });
+      const payload = { phone: phone.replace(/\D/g, '') };
+      if (channel) payload.channel = channel;
+      const response = await axiosInstance.post('auth/sms-code-request', payload);
       return {
         phone,
         has_pin: response.data?.has_pin || false,
         token: response.data?.token || null,
+        channel: response.data?.channel || channel || 'sms',
+        email: response.data?.email || null,
       };
     } catch (err) {
       const msg = err?.response?.data?.detail || err?.response?.data || err.message;

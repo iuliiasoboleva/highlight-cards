@@ -93,6 +93,22 @@ export const CustomButton = styled.button`
     `}
 `;
 
+export const SecondaryButton = styled(CustomButton)`
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #000;
+
+  &:hover {
+    background-color: #f4f4f4;
+  }
+
+  &:disabled {
+    background-color: #f8f8f8;
+    color: #aaa;
+    border-color: #e0e0e0;
+  }
+`;
+
 /* ─── Links / Messages ───────────────────────────────────── */
 export const LinkAction = styled.p`
   font-size: 14px;
