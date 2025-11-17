@@ -54,6 +54,7 @@ const AuthForm = () => {
 
   const [submitting, setSubmitting] = useState(false);
   const [codeChannelLoading, setCodeChannelLoading] = useState(null);
+  const [smsFallback, setSmsFallback] = useState(null);
   const [phoneFocused, setPhoneFocused] = useState(false);
 
   const resetForm = () => {
@@ -163,6 +164,10 @@ const AuthForm = () => {
     setTouchedFields((prev) => ({ ...prev, [field]: true }));
   };
 
+  useEffect(() => {
+    setSmsFallback(null);
+  }, [formData.phone, mode]);
+
   const requestLoginCode = async ({
     channel = 'sms',
     phoneOverride,
@@ -179,6 +184,7 @@ const AuthForm = () => {
     try {
       const smsResult = await dispatch(requestSmsCode({ phone: digits, channel })).unwrap();
       setApiError('');
+      setSmsFallback(null);
 
       if (smsResult.has_pin && smsResult.token) {
         setMagicToken(smsResult.token);
@@ -196,6 +202,26 @@ const AuthForm = () => {
       });
       return true;
     } catch (err) {
+      const canShowFallback = mode === 'login' && step === 'request';
+      const detail = err?.response?.data?.detail;
+      if (
+        canShowFallback &&
+        detail &&
+        typeof detail === 'object' &&
+        detail.fallback === 'email'
+      ) {
+        const fallbackEmailValue = detail.email || fallbackEmail || formData.email || '';
+        if (fallbackEmailValue) {
+          setSmsFallback({
+            email: fallbackEmailValue,
+            message:
+              detail.message ||
+              'К сожалению, не удалось отправить SMS. Можно получить код на email, указанный при регистрации.',
+          });
+          setApiError('');
+          return false;
+        }
+      }
       setApiError(extractError(err));
       return false;
     } finally {
@@ -334,8 +360,12 @@ const AuthForm = () => {
   const handleSendEmailCode = async () => {
     if (submitting) return;
     setSubmitting(true);
+    if (!smsFallback?.email) {
+      setSubmitting(false);
+      return;
+    }
     try {
-      await requestLoginCode({ channel: 'email' });
+      await requestLoginCode({ channel: 'email', fallbackEmail: smsFallback.email });
     } finally {
       setSubmitting(false);
     }
@@ -399,8 +429,9 @@ const AuthForm = () => {
               isPhoneValid={isPhoneValid}
               onPhoneFocus={() => setPhoneFocused(true)}
               onPhoneBlur={() => setPhoneFocused(false)}
-              onSendEmail={handleSendEmailCode}
               codeChannelLoading={codeChannelLoading}
+              smsFallback={smsFallback}
+              onSendEmail={handleSendEmailCode}
             />
           )}
 

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import CustomInput from '../../../customs/CustomInput';
-import { CustomButton, SecondaryButton } from '../styles';
+import { ApiError, CustomButton, SecondaryButton } from '../styles';
 
 const LoginRequest = ({
   formData,
@@ -12,6 +12,7 @@ const LoginRequest = ({
   onPhoneBlur,
   onSendEmail,
   codeChannelLoading,
+  smsFallback,
 }) => {
   const smsLoading = codeChannelLoading === 'sms';
   const emailLoading = codeChannelLoading === 'email';
@@ -34,15 +35,23 @@ const LoginRequest = ({
       >
         {smsLoading ? '' : 'Получить код'}
       </CustomButton>
-      {typeof onSendEmail === 'function' && (
-        <SecondaryButton
-          type="button"
-          onClick={onSendEmail}
-          disabled={submitting || !isPhoneValid}
-          $loading={emailLoading}
-        >
-          {emailLoading ? '' : 'Отправить код на email'}
-        </SecondaryButton>
+      {smsFallback && (
+        <>
+          <ApiError>
+            {smsFallback.message}
+            {smsFallback.email ? ` (${smsFallback.email})` : ''}
+          </ApiError>
+          {typeof onSendEmail === 'function' && (
+            <SecondaryButton
+              type="button"
+              onClick={onSendEmail}
+              disabled={submitting || !isPhoneValid || !smsFallback.email}
+              $loading={emailLoading}
+            >
+              {emailLoading ? '' : 'Отправить код на email'}
+            </SecondaryButton>
+          )}
+        </>
       )}
     </>
   );
