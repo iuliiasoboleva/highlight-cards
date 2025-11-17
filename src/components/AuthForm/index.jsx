@@ -173,6 +173,7 @@ const AuthForm = () => {
     phoneOverride,
     fallbackEmail,
     navigateState = {},
+    preferPin = false,
   } = {}) => {
     const rawPhone = phoneOverride ?? formData.phone;
     const digits = (rawPhone || '').replace(/\D/g, '');
@@ -182,7 +183,9 @@ const AuthForm = () => {
     }
     setCodeChannelLoading(channel);
     try {
-      const smsResult = await dispatch(requestSmsCode({ phone: digits, channel })).unwrap();
+      const smsResult = await dispatch(
+        requestSmsCode({ phone: digits, channel, preferPin }),
+      ).unwrap();
       setApiError('');
       setSmsFallback(null);
 

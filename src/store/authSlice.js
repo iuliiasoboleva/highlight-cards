@@ -103,10 +103,11 @@ export const resetPinConfirm = createAsyncThunk(
 
 export const requestSmsCode = createAsyncThunk(
   'auth/requestSmsCode',
-  async ({ phone, channel }, { rejectWithValue }) => {
+  async ({ phone, channel, preferPin }, { rejectWithValue }) => {
     try {
       const payload = { phone: phone.replace(/\D/g, '') };
       if (channel) payload.channel = channel;
+      if (typeof preferPin === 'boolean') payload.prefer_pin = preferPin;
       const response = await axiosInstance.post('auth/sms-code-request', payload);
       return {
         phone,
