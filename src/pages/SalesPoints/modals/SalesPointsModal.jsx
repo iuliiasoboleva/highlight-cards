@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import styled from 'styled-components';
 
 import { useDebounce } from 'use-debounce';
 
@@ -21,10 +22,37 @@ import {
   Label,
   LocationInfo,
   ModalBody,
-  Spacer,
   SuggestItem,
   SuggestList,
 } from '../styles';
+
+const DarkButton = styled(CustomMainButton)`
+  background: #2c3e50;
+  color: #fff;
+  width: 100%;
+  max-width: 100%;
+  margin-top: 0;
+  flex: 1 0 100%;
+
+  &:hover:not(:disabled) {
+    background: #1a252f;
+    color: #fff;
+  }
+`;
+
+const DangerButton = styled(CustomMainButton)`
+  background: #bf4756;
+  color: #fff;
+  width: 100%;
+  max-width: 100%;
+  margin-top: 0;
+  flex: 1 0 100%;
+
+  &:hover:not(:disabled) {
+    background: #a63d49;
+    color: #fff;
+  }
+`;
 
 const SalesPointsModalWithMap = ({
   isOpen,
@@ -320,48 +348,13 @@ const SalesPointsModalWithMap = ({
   ) : (
     <>
       {isEdit && (
-        <CustomMainButton
-          onClick={() => setConfirmOpen(true)}
-          disabled={!isDeletable}
-          style={{
-            background: '#2c3e50',
-            color: '#fff',
-            maxWidth: '100%',
-            '&:hover': {
-              background: '#1a252f',
-              color: '#fff',
-            },
-          }}
-          onMouseEnter={(e) => {
-            if (!isDeletable) return;
-            e.currentTarget.style.background = '#1a252f';
-            e.currentTarget.style.color = '#fff';
-          }}
-          onMouseLeave={(e) => {
-            if (!isDeletable) return;
-            e.currentTarget.style.background = '#2c3e50';
-            e.currentTarget.style.color = '#fff';
-          }}
-        >
+        <DarkButton onClick={() => setConfirmOpen(true)} disabled={!isDeletable}>
           Удалить
-        </CustomMainButton>
+        </DarkButton>
       )}
-      <Spacer />
-      <CustomMainButton
-        onClick={handleSave}
-        style={{
-          background: '#bf4756',
-          maxWidth: '100%',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = '#a63d49';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = '#bf4756';
-        }}
-      >
+      <DangerButton onClick={handleSave}>
         Сохранить
-      </CustomMainButton>
+      </DangerButton>
     </>
   );
 

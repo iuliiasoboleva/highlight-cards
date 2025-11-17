@@ -175,7 +175,7 @@ const YandexMapPicker = forwardRef(({ onSelect, initialCoords }, ref) => {
 
         <Map
           instanceRef={mapRef}
-          state={{ center: coords, zoom: 15 }}
+          state={{ center: coords, zoom: 15, controls: [] }}
           width="100%"
           height="100%"
           modules={['geocode', 'SuggestView', 'vow', 'search']}
