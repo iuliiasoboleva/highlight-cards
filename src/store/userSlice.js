@@ -226,13 +226,20 @@ export const userSlice = createSlice({
         }
       })
       .addCase(updateUserSettings.fulfilled, (state, action) => {
-        Object.assign(state, action.payload);
+        const payload = action.payload || {};
+        if (payload.date_format !== undefined) state.dateFormat = payload.date_format;
+        if (payload.country !== undefined) state.country = payload.country;
+        if (payload.language !== undefined) state.language = payload.language;
+        if (payload.timezone !== undefined) state.timezone = payload.timezone;
+        if (payload.extra_contacts !== undefined) state.contact = payload.extra_contacts;
+        if (payload.avatar_url !== undefined) state.avatar = payload.avatar_url;
       })
       .addCase(updateProfile.fulfilled, (state, action) => {
-        const { name, surname, phone, extra_contacts } = action.payload || {};
+        const { name, surname, phone, email, extra_contacts } = action.payload || {};
         if (name) state.firstName = name.split(' ')[0];
         if (surname !== undefined) state.lastName = surname;
         if (phone !== undefined) state.phone = phone;
+        if (email !== undefined) state.email = email;
         if (extra_contacts !== undefined) state.contact = extra_contacts;
       })
       .addCase(uploadAvatar.fulfilled, (state, action) => {

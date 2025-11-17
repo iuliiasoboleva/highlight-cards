@@ -249,6 +249,7 @@ const SettingsPersonal = () => {
           name: user.firstName,
           surname: user.lastName,
           phone: user.phone,
+          email: user.email,
           extra_contacts: user.contact,
         }),
       ).unwrap();
