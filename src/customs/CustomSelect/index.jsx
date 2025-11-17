@@ -19,6 +19,7 @@ const CustomSelect = ({
   $error = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [openUp, setOpenUp] = useState(false);
   const ref = useRef(null);
 
   const toggleOpen = () => {
@@ -40,6 +41,16 @@ const CustomSelect = ({
     document.addEventListener('mousedown', onDocClick);
     return () => document.removeEventListener('mousedown', onDocClick);
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen || !ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+    const spaceBelow = viewportHeight - rect.bottom;
+    const estimatedHeight = Math.min(options.length || 0, 6) * 44 + 16;
+    const shouldOpenUp = spaceBelow < estimatedHeight && rect.top > spaceBelow;
+    setOpenUp(shouldOpenUp);
+  }, [isOpen, options.length]);
 
   useEffect(() => {
     if (disabled && isOpen) setIsOpen(false);
@@ -77,7 +88,7 @@ const CustomSelect = ({
       </HeaderBox>
 
       {isOpen && !disabled && options.length > 0 && (
-        <OptionsList role="listbox">
+        <OptionsList role="listbox" $placement={openUp ? 'up' : 'down'}>
           {options.map((option) => (
             <OptionItem
               key={option.value}

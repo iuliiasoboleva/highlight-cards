@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
 `;
 
 export const Left = styled.div`
@@ -29,15 +29,7 @@ export const Right = styled.div`
   width: 100%;
   max-width: 40rem;
   margin: 50px auto;
-  overflow-y: auto;
-
-  /* скрыть скроллбар */
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  &::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-  }
+  overflow: visible;
 
   @media (max-width: 768px) {
     width: 100%;

@@ -293,6 +293,12 @@ const AuthForm = () => {
 
     // mode === 'register'
     if (step === 'request') {
+      if (!isFormValid) {
+        setSubmitting(false);
+        setTouchedFields((prev) => ({ ...prev, referral: true }));
+        setApiError('Заполните обязательные поля');
+        return;
+      }
       const role = userType === 'company' ? 'admin' : 'employee';
       try {
         await dispatch(

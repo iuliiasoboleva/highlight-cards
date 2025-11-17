@@ -4,6 +4,7 @@ export const SelectWrapper = styled.div`
   position: relative;
   width: 100%;
   font-size: 16px;
+  z-index: 2;
 
   ${({ $disabled }) =>
     $disabled &&
@@ -89,10 +90,8 @@ export const ArrowIcon = styled.svg`
 
 export const OptionsList = styled.div`
   position: absolute;
-  top: 100%;
   left: 0;
   width: 100%;
-  margin-top: 4px;
   padding: 4px 0;
   background-color: #fff;
   border-radius: 4px;
@@ -103,6 +102,25 @@ export const OptionsList = styled.div`
   z-index: 10000;
   max-height: 260px;
   overflow-y: auto;
+  margin-top: 4px;
+
+  ${({ $placement }) =>
+    $placement === 'up' &&
+    css`
+      top: auto;
+      bottom: 100%;
+      margin-top: 0;
+      margin-bottom: 4px;
+    `}
+
+  ${({ $placement }) =>
+    $placement !== 'up' &&
+    css`
+      top: 100%;
+      bottom: auto;
+      margin-bottom: 0;
+    `}
+
   svg {
     width: 20px;
     height: 20px;
