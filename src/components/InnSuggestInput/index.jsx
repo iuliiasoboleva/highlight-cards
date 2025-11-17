@@ -2,9 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import axiosInstance from '../../axiosInstance';
 import CustomInput from '../../customs/CustomInput';
+import { DADATA_TOKEN } from '../../config/env';
 import { Container, Dropdown, Item, ItemSub, ItemTitle } from './styles';
-
-const DADATA_TOKEN = process.env.REACT_APP_DADATA_TOKEN || '';
 
 const InnSuggestInput = ({
   value,

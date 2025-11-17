@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 
 import { useToast } from '../../components/Toast';
+import { DADATA_TOKEN } from '../../config/env';
 import YandexMapPicker from '../../components/YandexMapPicker';
 import CustomInput from '../../customs/CustomInput';
 import CustomMainButton from '../../customs/CustomMainButton';

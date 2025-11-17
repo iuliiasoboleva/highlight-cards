@@ -8,6 +8,7 @@ import EditLayout from '../../components/EditLayout';
 import GeoBadge from '../../components/GeoBadge';
 import LoaderCentered from '../../components/LoaderCentered';
 import { useToast } from '../../components/Toast';
+import { DADATA_TOKEN } from '../../config/env';
 import YandexMapPicker from '../../components/YandexMapPicker';
 import CustomInput from '../../customs/CustomInput/index.jsx';
 import CustomModal from '../../customs/CustomModal';

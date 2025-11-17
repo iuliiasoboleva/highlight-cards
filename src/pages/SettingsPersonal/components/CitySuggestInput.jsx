@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import CustomInput from '../../../customs/CustomInput';
-
-const DADATA_TOKEN = process.env.REACT_APP_DADATA_TOKEN || '';
+import { DADATA_TOKEN } from '../../../config/env';
 
 const fallbackCities = [
   'Москва',

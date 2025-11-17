@@ -157,7 +157,7 @@ const CustomerPage = () => {
     return <Container>Карта не найдена</Container>;
   }
 
-  const cardType = card?.type || cardDetails?.status || cardDetails?.card_type;
+  const cardType = cardDetails?.status || cardDetails?.card_type || card?.type;
   const isStampCard = cardType === 'stamp';
   const isSubscriptionCard = cardType === 'subscription';
   const isStampLikeCard = isStampCard || isSubscriptionCard;
