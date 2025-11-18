@@ -8,6 +8,10 @@ import {
   YMaps,
 } from '@pbe/react-yandex-maps';
 
+if (Map && Map.defaultProps) {
+  Map.defaultProps = undefined;
+}
+
 const YandexMapPicker = forwardRef(({ onSelect, initialCoords }, ref) => {
   const getInitialCoords = () => {
     if (!initialCoords) return [55.751574, 37.573856];

@@ -76,15 +76,6 @@ const SalesPointsModalWithMap = ({
     () => Array.isArray(allManagers) && allManagers.length > 0,
     [allManagers],
   );
-  const managerOptions = useMemo(
-    () =>
-      (allManagers || []).map((m) => ({
-        value: m.id,
-        label: `${m.name || ''} ${m.surname || ''}`.trim() || 'Без имени',
-      })),
-    [allManagers],
-  );
-
   const currentAdminId =
     currentUser?.id ||
     currentUser?.userId ||
@@ -96,6 +87,25 @@ const SalesPointsModalWithMap = ({
     [currentUser?.name, currentUser?.surname].filter(Boolean).join(' ') ||
     [currentUser?.profile?.first_name, currentUser?.profile?.last_name].filter(Boolean).join(' ') ||
     'Текущий администратор';
+
+  const managerOptions = useMemo(
+    () =>
+      (allManagers || []).map((m) => ({
+        value: m.id,
+        label: `${m.name || ''} ${m.surname || ''}`.trim() || 'Без имени',
+      })),
+    [allManagers],
+  );
+  const responsibleOptions = useMemo(() => {
+    const options = [...managerOptions];
+    if (currentAdminId && !options.some((opt) => opt.value === currentAdminId)) {
+      options.unshift({
+        value: currentAdminId,
+        label: currentAdminName,
+      });
+    }
+    return options;
+  }, [managerOptions, currentAdminId, currentAdminName]);
 
   const mapRef = useRef(null);
   const clickAwayRef = useRef(null);
@@ -111,8 +121,14 @@ const SalesPointsModalWithMap = ({
   );
   const [isSearching, setIsSearching] = useState(false);
 
-  const [isPartOfNetwork, setIsPartOfNetwork] = useState(Boolean(initialData.network_id));
-  const [selectedNetwork, setSelectedNetwork] = useState(initialData.network_id || null);
+  const hasNetworks = useMemo(() => Array.isArray(networks) && networks.length > 0, [networks]);
+
+  const [isPartOfNetwork, setIsPartOfNetwork] = useState(
+    hasNetworks && Boolean(initialData.network_id),
+  );
+  const [selectedNetwork, setSelectedNetwork] = useState(
+    hasNetworks ? initialData.network_id || null : null,
+  );
 
   const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -128,14 +144,20 @@ const SalesPointsModalWithMap = ({
   useEffect(() => {
     if (!isOpen) return;
 
-    if (hasManagers) {
-      const initialManagerFromData =
-        (Array.isArray(initialData.employees) && initialData.employees[0]) || null;
-      setSelectedManager(initialManagerFromData ?? allManagers[0]?.id ?? null);
-    } else {
-      setSelectedManager(currentAdminId ?? null);
+    const initialManagerFromData =
+      (Array.isArray(initialData.employees) && initialData.employees[0]) || null;
+    if (initialManagerFromData) {
+      setSelectedManager(initialManagerFromData);
+      return;
     }
-  }, [isOpen, hasManagers, allManagers, initialData.employees, currentAdminId]);
+    const fallback = responsibleOptions[0]?.value ?? currentAdminId ?? null;
+    setSelectedManager(fallback);
+  }, [
+    isOpen,
+    initialData.employees,
+    responsibleOptions,
+    currentAdminId,
+  ]);
 
   useEffect(() => {
     if (isOpen) {
@@ -146,12 +168,12 @@ const SalesPointsModalWithMap = ({
           ? { address: initialData.address, coords: initialData.coords }
           : null,
       );
-      setIsPartOfNetwork(Boolean(initialData.network_id));
-      setSelectedNetwork(initialData.network_id || null);
+      setIsPartOfNetwork(hasNetworks && Boolean(initialData.network_id));
+      setSelectedNetwork(hasNetworks ? initialData.network_id || null : null);
       setConfirmOpen(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialData, isOpen]);
+  }, [initialData, isOpen, hasNetworks]);
 
   useEffect(() => {
     const onDocClick = (e) => {
@@ -257,7 +279,7 @@ const SalesPointsModalWithMap = ({
   };
 
   const resetForm = () => {
-    setSelectedManager(null);
+    setSelectedManager(responsibleOptions[0]?.value ?? currentAdminId ?? null);
     setName('');
     setSearchQuery('');
     setSelectedLocation(null);
@@ -276,8 +298,7 @@ const SalesPointsModalWithMap = ({
       return;
     }
 
-    const responsibleId =
-      (hasManagers ? selectedManager : currentAdminId) || selectedManager || null;
+    const responsibleId = selectedManager || currentAdminId || null;
 
     const newSalesPoint = {
       name,
@@ -301,7 +322,7 @@ const SalesPointsModalWithMap = ({
         );
       }
 
-      toast.success('Точка продаж сохранена');
+      toast.success(isEdit ? 'Точка продаж обновлена' : 'Точка продаж сохранена');
       onClose?.();
       resetForm();
     } catch (e) {
@@ -450,53 +471,48 @@ const SalesPointsModalWithMap = ({
             <FieldGroup style={{ flex: 1, minWidth: 280 }}>
               <Label>Ответственный сотрудник</Label>
 
-              {hasManagers ? (
-                <CustomSelect
-                  value={selectedManager}
-                  onChange={setSelectedManager}
-                  options={managerOptions}
-                  placeholder="Выберите сотрудника"
-                />
-              ) : (
-                <CustomInput
-                  value={currentAdminName}
-                  disabled
-                  placeholder="Будет назначен текущий администратор"
-                />
-              )}
+              <CustomSelect
+                value={selectedManager}
+                onChange={setSelectedManager}
+                options={responsibleOptions}
+                placeholder="Выберите сотрудника"
+                disabled={!responsibleOptions.length}
+              />
             </FieldGroup>
 
-            <FieldGroup style={{ flex: 1, minWidth: 280 }}>
-              <Label
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 12,
-                  justifyContent: 'space-between',
-                }}
-              >
-                Эта точка продаж является частью сети?
-                <CustomToggleSwitch
-                  checked={isPartOfNetwork}
-                  onChange={(e) => {
-                    const checked = e?.target ? e.target.checked : !isPartOfNetwork;
-                    setIsPartOfNetwork(checked);
-                    if (!checked) setSelectedNetwork(null);
+            {hasNetworks && (
+              <FieldGroup style={{ flex: 1, minWidth: 280 }}>
+                <Label
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    justifyContent: 'space-between',
                   }}
-                />
-              </Label>
-
-              {isPartOfNetwork && (
-                <div style={{ marginTop: 10 }}>
-                  <CustomSelect
-                    value={selectedNetwork}
-                    onChange={setSelectedNetwork}
-                    options={networks.map((n) => ({ value: n.id, label: n.name }))}
-                    placeholder="Выберите сеть"
+                >
+                  Эта точка продаж является частью сети?
+                  <CustomToggleSwitch
+                    checked={isPartOfNetwork}
+                    onChange={(e) => {
+                      const checked = e?.target ? e.target.checked : !isPartOfNetwork;
+                      setIsPartOfNetwork(checked);
+                      if (!checked) setSelectedNetwork(null);
+                    }}
                   />
-                </div>
-              )}
-            </FieldGroup>
+                </Label>
+
+                {isPartOfNetwork && (
+                  <div style={{ marginTop: 10 }}>
+                    <CustomSelect
+                      value={selectedNetwork}
+                      onChange={setSelectedNetwork}
+                      options={networks.map((n) => ({ value: n.id, label: n.name }))}
+                      placeholder="Выберите сеть"
+                    />
+                  </div>
+                )}
+              </FieldGroup>
+            )}
           </InlineRow>
         </ModalBody>
       )}

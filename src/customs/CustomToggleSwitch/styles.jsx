@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from 'styled-components';
 
 export const SwitchLabel = styled.label`
@@ -8,11 +9,15 @@ export const SwitchLabel = styled.label`
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 `;
 
-export const HiddenCheckbox = styled.input.attrs({ type: 'checkbox' })`
+const HiddenCheckboxElement = styled.input`
   opacity: 0;
   width: 0;
   height: 0;
 `;
+
+export const HiddenCheckbox = React.forwardRef(({ type = 'checkbox', ...props }, ref) => (
+  <HiddenCheckboxElement ref={ref} type={type} {...props} />
+));
 
 export const Slider = styled.span`
   position: absolute;

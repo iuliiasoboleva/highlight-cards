@@ -249,7 +249,6 @@ const ManagersPage = () => {
 
     try {
       await dispatch(action).unwrap();
-      toast.success('Точка продаж сохранена');
       setShowLocationModal(false);
       setInitialLocationData(null);
     } catch (e) {

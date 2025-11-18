@@ -1,3 +1,4 @@
+import React, { forwardRef } from 'react';
 import styled from 'styled-components';
 
 export const Overlay = styled.div`
@@ -37,7 +38,7 @@ export const Title = styled.h3`
   flex: 1;
 `;
 
-export const CloseBtn = styled.button.attrs({ type: 'button' })`
+const CloseBtnElement = styled.button`
   border: none;
   background: transparent;
   padding: 6px;
@@ -55,6 +56,10 @@ export const CloseBtn = styled.button.attrs({ type: 'button' })`
   }
 `;
 
+export const CloseBtn = forwardRef(({ type = 'button', ...props }, ref) => (
+  <CloseBtnElement ref={ref} type={type} {...props} />
+));
+
 export const Content = styled.div`
   padding: 20px;
   overflow: auto;
@@ -71,7 +76,7 @@ export const Actions = styled.div`
   flex-wrap: wrap;
 `;
 
-export const BaseButton = styled.button.attrs({ type: 'button' })`
+const BaseButtonElement = styled.button`
   appearance: none;
   border: 0;
   border-radius: 8px;
@@ -87,6 +92,10 @@ export const BaseButton = styled.button.attrs({ type: 'button' })`
     cursor: not-allowed;
   }
 `;
+
+const BaseButton = forwardRef(({ type = 'button', ...props }, ref) => (
+  <BaseButtonElement ref={ref} type={type} {...props} />
+));
 
 export const PrimaryButton = styled(BaseButton)`
   background: #000;

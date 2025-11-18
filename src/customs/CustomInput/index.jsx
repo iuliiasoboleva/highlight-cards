@@ -1,29 +1,34 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 
 import { IconButton, IconImg, Input, InputWrapper, RequiredMark, Suffix } from './styles';
 
-const CustomInput = ({
-  value,
-  onChange,
-  placeholder = '',
-  type = 'text',
-  required,
-  iconSrc,
-  iconAlt = 'icon',
-  iconTitle,
-  onIconClick,
-  iconAriaLabel,
-  disabled,
-  suffix,
-  $error,
-  ...props
-}) => {
+const CustomInput = forwardRef(
+  (
+    {
+      value,
+      onChange,
+      placeholder = '',
+      type = 'text',
+      required,
+      iconSrc,
+      iconAlt = 'icon',
+      iconTitle,
+      onIconClick,
+      iconAriaLabel,
+      disabled,
+      suffix,
+      $error,
+      ...props
+    },
+    ref,
+  ) => {
   const hasIcon = Boolean(iconSrc);
   const hasSuffix = typeof suffix === 'string' && suffix.length > 0;
 
   return (
     <InputWrapper>
       <Input
+        ref={ref}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
@@ -52,6 +57,8 @@ const CustomInput = ({
       {hasSuffix && <Suffix>{suffix}</Suffix>}
     </InputWrapper>
   );
-};
+});
+
+CustomInput.displayName = 'CustomInput';
 
 export default CustomInput;
