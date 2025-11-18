@@ -260,7 +260,7 @@ const ManagerModal = ({ isOpen, onClose, onSave, onDelete, initialData = {}, isE
           }
         }}
       >
-        {isSaving ? 'Добавляю...' : (isEdit ? 'Сохранить' : 'Добавить')}
+        {isSaving ? (isEdit ? 'Сохраняю...' : 'Добавляю...') : isEdit ? 'Сохранить' : 'Добавить'}
       </CustomMainButton>
       <CustomMainButton
         onClick={onClose}

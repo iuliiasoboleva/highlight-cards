@@ -59,6 +59,24 @@ const TablesBlock = ({
   );
 
   // ---- COLS: Locations
+  const managerNameMap = useMemo(() => {
+    const map = new Map();
+    (managers || []).forEach((m) => {
+      const fullName = `${m.name || ''} ${m.surname || ''}`.trim();
+      const label = fullName || m.email || 'Неизвестный';
+      const ids = [
+        m.id,
+        String(m.id),
+        m.uuid,
+        String(m.uuid || ''),
+        m.user_id,
+        String(m.user_id || ''),
+      ].filter(Boolean);
+      ids.forEach((key) => map.set(key, label));
+    });
+    return map;
+  }, [managers]);
+
   const locationColumns = useMemo(
     () => [
       ...locationsHeaders.map((header) => {
@@ -71,6 +89,27 @@ const TablesBlock = ({
             render: (row) => {
               const net = networks.find((n) => n.id === row.network_id);
               return net ? net.name : '-';
+            },
+          };
+        }
+        if (header.key === 'employees') {
+          return {
+            key: 'employees',
+            title: header.label,
+            className: 'text-center',
+            cellClassName: 'text-center',
+            render: (row) => {
+              const rawList = row.employees || [];
+              const list = rawList
+                .map((emp) => {
+                  if (typeof emp === 'object' && emp !== null) {
+                    const fullName = `${emp.name || ''} ${emp.surname || ''}`.trim();
+                    return fullName || emp.email || null;
+                  }
+                  return managerNameMap.get(emp) || managerNameMap.get(Number(emp)) || emp;
+                })
+                .filter(Boolean);
+              return list.length ? list.join(', ') : '—';
             },
           };
         }
@@ -102,7 +141,7 @@ const TablesBlock = ({
         ),
       },
     ],
-    [locationsHeaders, networks, onEditLocation],
+    [locationsHeaders, networks, onEditLocation, managerNameMap],
   );
 
   // ---- COLS: Networks

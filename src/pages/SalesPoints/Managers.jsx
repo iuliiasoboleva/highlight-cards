@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -37,6 +37,9 @@ import NetworkModal from './modals/NetworkModal';
 import SalesPointsModal from './modals/SalesPointsModal';
 import { Grid, Header, Page } from './styles';
 
+const composeFullName = (surname, name) =>
+  [surname || '', name || ''].map((part) => String(part || '').trim()).filter(Boolean).join(' ');
+
 const ManagersPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -59,7 +62,8 @@ const ManagersPage = () => {
     fetching: lFetching,
   } = useSelector((s) => s.locations);
   const { list: networks, fetching: nFetching } = useSelector((s) => s.networks);
-  const orgId = useSelector((s) => s.user.organization_id);
+  const currentUserRaw = useSelector((s) => s.user) || {};
+  const orgId = currentUserRaw.organization_id;
   const subscription = useSelector((s) => s.subscription?.info) || null;
 
   const clientsRaw = useSelector((s) => s.clients);
@@ -70,6 +74,40 @@ const ManagersPage = () => {
       : [];
 
   const isFetching = mFetching || lFetching || nFetching;
+
+  const currentAdminName = useMemo(() => {
+    const direct = composeFullName(currentUserRaw.surname, currentUserRaw.name);
+    if (direct) return direct;
+    const profileName = composeFullName(
+      currentUserRaw.profile?.last_name,
+      currentUserRaw.profile?.first_name,
+    );
+    if (profileName) return profileName;
+    return currentUserRaw.email || 'Ответственный';
+  }, [currentUserRaw]);
+
+  const adminIdentifiers = useMemo(() => {
+    const rawIds = [
+      currentUserRaw.id,
+      currentUserRaw.userId,
+      currentUserRaw.uuid,
+      currentUserRaw.user_uuid,
+      currentUserRaw.profile?.id,
+      currentUserRaw.profile?.userId,
+    ].filter(Boolean);
+    const result = new Set();
+    rawIds.forEach((val) => {
+      const trimmed = String(val).trim();
+      if (!trimmed) return;
+      result.add(trimmed);
+      result.add(trimmed.toLowerCase());
+      const numeric = Number(trimmed);
+      if (Number.isFinite(numeric)) {
+        result.add(String(numeric));
+      }
+    });
+    return result;
+  }, [currentUserRaw]);
 
   useEffect(() => {
     if (orgId) {
@@ -230,6 +268,21 @@ const ManagersPage = () => {
     }
   };
 
+  const normalizeEmployeeEntry = (value) => {
+    if (value === null || value === undefined) return null;
+    const manager = managers.find((man) => String(man.id) === String(value));
+    if (manager) {
+      const label = composeFullName(manager.surname, manager.name);
+      return label || manager.email || String(manager.id);
+    }
+    const raw = String(value).trim();
+    if (!raw) return null;
+    if (adminIdentifiers.has(raw) || adminIdentifiers.has(raw.toLowerCase())) {
+      return currentAdminName;
+    }
+    return raw;
+  };
+
   const handleSaveLocation = async (data) => {
     const payload = {
       name: data.name,
@@ -237,10 +290,9 @@ const ManagersPage = () => {
       coords_lat: data.coords?.lat,
       coords_lon: data.coords?.lon,
       organization_id: orgId,
-      employees: (data.employees || []).map((id) => {
-        const m = managers.find((man) => man.id === id);
-        return m ? `${m.surname} ${m.name}`.trim() : id.toString();
-      }),
+      employees: (data.employees || [])
+        .map((entry) => normalizeEmployeeEntry(entry))
+        .filter(Boolean),
       network_id: data.network_id,
     };
 
