@@ -43,6 +43,9 @@ const Clients = () => {
   const branches = useSelector((s) => s.locations.list);
   const cards = useSelector((s) => s.cards.cards);
 
+  const role = useSelector((s) => s.user.role);
+  const isEmployee = role === 'employee';
+
   const [showAddModal, setShowAddModal] = useState(false);
   const [showNoBranchModal, setShowNoBranchModal] = useState(false);
 
@@ -229,24 +232,28 @@ const Clients = () => {
       <SmsWalletModal open={showSmsWalletModal} onClose={() => setShowSmsWalletModal(false)} />
       <NoBranchModal open={showNoBranchModal} onClose={() => setShowNoBranchModal(false)} />
 
-      <SectionHeading>Рассылка push</SectionHeading>
+      {!isEmployee && (
+        <>
+          <SectionHeading>Рассылка push</SectionHeading>
 
-      <PushCardWrapper $width={statWidth}>
-        <PushCard>
-          <StatClientsLabel as="div" style={{ fontWeight: 600 }}>
-            Отправляйте своим клиентам push-уведомления
-          </StatClientsLabel>
-          <PushDescription>
-            Настройте и отправьте кампанию по базе клиентов за пару кликов.
-          </PushDescription>
-        </PushCard>
-      </PushCardWrapper>
+          <PushCardWrapper $width={statWidth}>
+            <PushCard>
+              <StatClientsLabel as="div" style={{ fontWeight: 600 }}>
+                Отправляйте своим клиентам push-уведомления
+              </StatClientsLabel>
+              <PushDescription>
+                Настройте и отправьте кампанию по базе клиентов за пару кликов.
+              </PushDescription>
+            </PushCard>
+          </PushCardWrapper>
 
-      <PushActions>
-        <CustomMainButton onClick={() => navigate('/mailings/push')}>
-          Создать рассылку
-        </CustomMainButton>
-      </PushActions>
+          <PushActions>
+            <CustomMainButton onClick={() => navigate('/mailings/push')}>
+              Создать рассылку
+            </CustomMainButton>
+          </PushActions>
+        </>
+      )}
     </ClientsContainer>
   );
 };

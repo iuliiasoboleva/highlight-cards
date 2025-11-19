@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { BarChart2, Camera, Search, User as UserIcon } from 'lucide-react';
+import { Camera, Search } from 'lucide-react';
 
 import axiosInstance from '../../axiosInstance';
 import { useToast } from '../../components/Toast';
@@ -16,24 +16,8 @@ const Workplace = () => {
   const toast = useToast();
 
   const user = useSelector((state) => state.user);
-  const locations = useSelector((state) => state.locations.list);
-
-  const clientsRaw = useSelector((state) => state.clients);
-  const clients = Array.isArray(clientsRaw)
-    ? clientsRaw
-    : Array.isArray(clientsRaw?.list)
-      ? clientsRaw.list
-      : [];
 
   const [cardNumber, setCardNumber] = useState('');
-
-  const userLocation = Array.isArray(locations)
-    ? locations.find(
-        (loc) =>
-          Array.isArray(loc.employees) &&
-          loc.employees.includes(`${user?.name || ''} ${user?.surname || ''}`.trim()),
-      )
-    : null;
 
   const onCardChange = (e) => {
     const digits = normalizeDigits(e.target.value).slice(0, CARD_LENGTH);
@@ -62,72 +46,22 @@ const Workplace = () => {
     }
   };
 
-  if (!userLocation) {
-    return (
-      <Page>
-        <Header>
-          <h2>Рабочее место</h2>
-          <p>Для вашего профиля не привязана точка продаж</p>
-        </Header>
-      </Page>
-    );
-  }
-
   return (
     <Page>
       <Header>
-        <h2>Рабочее место</h2>
+        <h2>Менеджеры</h2>
         <p>
-          Добро пожаловать,{' '}
-          <strong>
-            {user?.name || '—'} <strong>{user?.surname || ''}</strong>
-          </strong>
-          ! Вы находитесь в точке <strong>{userLocation.name}</strong>. Начните работу —
-          отсканируйте карту клиента или введите номер карты и начислите баллы.
+          {user?.name ? `Здравствуйте, ${user.name}! ` : 'Здравствуйте! '}
+          Здесь доступны только рабочие инструменты: поиск клиента по номеру карты и сканер QR-кодов.
         </p>
       </Header>
 
       <Grid>
         <Card onClick={(e) => e.preventDefault()}>
-          <h3>Информация о сотруднике</h3>
-          <div>
-            <p>
-              Ваши точки продаж: <strong>{userLocation?.name || '—'}</strong>
-            </p>
-            <p>Адрес: {userLocation?.address || 'не указан'}</p>
-            <p>Смена: —</p>
-            <p>Статус: {user?.status || 'неизвестен'}</p>
-          </div>
-
-          <ScannerIcon>
-            <IconWithTooltip onClick={(e) => e.stopPropagation()}>
-              <UserIcon size={18} />
-              <Tooltip>Ваш профиль сотрудника и назначенная точка</Tooltip>
-            </IconWithTooltip>
-          </ScannerIcon>
-        </Card>
-
-        <Card onClick={(e) => e.preventDefault()}>
-          <h3>Мини-отчёт по смене</h3>
+          <h3>Поиск клиента по карте</h3>
           <p>
-            - Обслужено клиентов: {user?.clientsServed ?? 0}
-            <br />- Начислено баллов: {user?.pointsIssued ?? 0}
-            <br />- Выдано подарков: {user?.giftsGiven ?? 0}
-          </p>
-
-          <ScannerIcon>
-            <IconWithTooltip onClick={(e) => e.stopPropagation()}>
-              <BarChart2 size={18} />
-              <Tooltip>Краткая статистика по текущей смене</Tooltip>
-            </IconWithTooltip>
-          </ScannerIcon>
-        </Card>
-
-        <Card onClick={(e) => e.preventDefault()}>
-          <h3>Поиск по карте</h3>
-          <p>
-            Введите номер карты лояльности клиента, чтобы перейти к его профилю. Удобно, если нет
-            приложения-сканера.
+            Введите номер карты лояльности и сразу переходите в профиль клиента. Можно использовать,
+            когда сканер недоступен.
           </p>
 
           <ScannerIcon>
@@ -161,8 +95,8 @@ const Workplace = () => {
         <Card onClick={() => navigate('/scan')}>
           <h3>Сканер QR-кодов</h3>
           <p>
-            Сканер QR-кодов — инструмент для ваших менеджеров. Сканируйте карты лояльности клиентов
-            прямо в браузере — быстро и удобно.
+            Откройте встроенный сканер и считывайте QR/штрих-коды карт прямо в браузере — это быстрее,
+            чем вводить вручную.
           </p>
 
           <ScannerIcon>

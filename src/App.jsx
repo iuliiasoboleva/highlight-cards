@@ -73,6 +73,7 @@ import { GlobalStyle } from './styles/GlobalStyle';
 
 const App = () => {
   const user = useSelector((state) => state.user);
+  const isEmployee = user?.role === 'employee';
 
   return (
     <ToastProvider>
@@ -96,7 +97,7 @@ const App = () => {
 
             <Route element={<PlanGate />}>
               <Route element={<MainLayout />}>
-                <Route index element={<Home />} />
+                <Route index element={isEmployee ? <Navigate to="/managers" replace /> : <Home />} />
                 <Route path="/cards" element={<Cards />} />
                 <Route path="/scan" element={<ScanPage />} />
                 <Route path="/workplace" element={<Workplace />} />

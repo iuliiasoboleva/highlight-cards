@@ -34,7 +34,8 @@ const Sidebar = () => {
   ];
 
   const employeeItems = [
-    { icon: <Glyph src={'/icons/home.svg'} />, label: 'Рабочее место', path: '/workplace' },
+    { icon: <Glyph src={'/icons/managers.svg'} />, label: 'Менеджеры', path: '/managers' },
+    { icon: <Glyph src={'/icons/people.svg'} />, label: 'Клиенты', path: '/clients' },
     { icon: <Glyph src={'/icons/scanner.svg'} />, label: 'Сканер', path: '/scan' },
   ];
 
