@@ -87,13 +87,22 @@ const GiftCardPage = () => {
         opened={opened}
         onOpen={() => setOpened(true)}
         onClose={() => setOpened(false)}
-        onCTA={() => alert('Здесь будет переход к записи')}
+        onCTA={() => {
+          if (cardData.buttonLink) {
+            window.location.href = cardData.buttonLink;
+          } else {
+            alert('Здесь будет переход к записи');
+          }
+        }}
         name={cardData.name}
         text={cardData.text}
         amount={cardData.amount}
         expiry={cardData.expiry}
         serial={cardData.serial}
       />
+      <div style={{ textAlign: 'center', marginTop: '10px', color: '#888', fontSize: '14px', maxWidth: '100%', padding: '0 20px' }}>
+        {cardData.termsText || 'Акции и скидки не действуют на сертификат'}
+      </div>
       <HowTo>
         <h2>
           Как воспользоваться <span>сертификатом</span>
