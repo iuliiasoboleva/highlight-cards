@@ -6,6 +6,7 @@ import ImageEditorModal from '../../components/ImageEditorModal';
 import LoaderCentered from '../../components/LoaderCentered';
 import { useToast } from '../../components/Toast';
 import { logout as authLogout } from '../../store/authSlice';
+ import { resetSubscription } from '../../store/subscriptionSlice';
 import {
   deleteAccount,
   fetchOrganization,
@@ -280,6 +281,7 @@ const SettingsPersonal = () => {
       toast.success('Аккаунт удалён');
       setTimeout(() => {
         dispatch(logout());
+        dispatch(resetSubscription());
         dispatch(authLogout());
         navigate('/auth');
       }, 1200);

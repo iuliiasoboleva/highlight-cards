@@ -7,7 +7,7 @@ import { GraduationCap, LogOut, User as UserIcon } from 'lucide-react';
 import { pluralize } from '../../helpers/pluralize';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { logout as authLogout } from '../../store/authSlice';
-import { fetchSubscription } from '../../store/subscriptionSlice';
+import { fetchSubscription, resetSubscription } from '../../store/subscriptionSlice';
 import { logout as userLogout } from '../../store/userSlice';
 import {
   AvatarCircle,
@@ -37,8 +37,9 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const user = useSelector((state) => state.user);
-  const subscription = useSelector((state) => state.subscription.info);
-  const subLoading = useSelector((state) => state.subscription.loading);
+  const { info: subscription, loading: subLoading, orgId: subscriptionOrgId } = useSelector(
+    (state) => state.subscription,
+  );
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -85,9 +86,10 @@ const Header = () => {
   );
 
   useEffect(() => {
-    if (!user?.organization_id || subLoading || subscription) return;
+    if (!user?.organization_id || subLoading) return;
+    if (subscriptionOrgId === user.organization_id) return;
     dispatch(fetchSubscription(user.organization_id));
-  }, [dispatch, user?.organization_id, subLoading, subscription]);
+  }, [dispatch, user?.organization_id, subLoading, subscriptionOrgId]);
 
   const d = Math.max(0, Number(subscription?.days_left ?? 0));
   const isTrial = String(subscription?.status || '').toLowerCase() === 'trial';
@@ -103,6 +105,7 @@ const Header = () => {
 
   const handleLogout = useCallback(() => {
     dispatch(userLogout());
+    dispatch(resetSubscription());
     dispatch(authLogout());
     navigate('/auth');
   }, [dispatch, navigate]);

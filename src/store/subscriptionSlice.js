@@ -9,7 +9,7 @@ export const fetchSubscription = createAsyncThunk(
       const res = await axiosInstance.get('/subscription', {
         params: { organization_id: orgId },
       });
-      return res.data;
+      return { data: res.data, orgId: orgId != null ? String(orgId) : null };
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -22,23 +22,35 @@ const subscriptionSlice = createSlice({
     info: null,
     loading: false,
     error: null,
+    orgId: null,
   },
-  reducers: {},
+  reducers: {
+    resetSubscription: (state) => {
+      state.info = null;
+      state.loading = false;
+      state.error = null;
+      state.orgId = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchSubscription.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.orgId = null;
       })
       .addCase(fetchSubscription.fulfilled, (state, action) => {
         state.loading = false;
-        state.info = action.payload;
+        state.info = action.payload.data;
+        state.orgId = action.payload.orgId;
       })
       .addCase(fetchSubscription.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.orgId = null;
       });
   },
 });
 
+export const { resetSubscription } = subscriptionSlice.actions;
 export default subscriptionSlice.reducer;

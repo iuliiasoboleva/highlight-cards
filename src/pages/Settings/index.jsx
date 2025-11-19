@@ -84,7 +84,11 @@ const Settings = () => {
   const { amount: balance = 0, loading: balanceLoading } = useSelector(
     (state) => state.balance || {},
   );
-  const { info: subscription, loading: subLoading } = useSelector((state) => state.subscription);
+  const {
+    info: subscription,
+    loading: subLoading,
+    orgId: subscriptionOrgId,
+  } = useSelector((state) => state.subscription);
 
   const [showModal, setShowModal] = useState(false);
   const [topUpOpen, setTopUpOpen] = useState(false);
@@ -211,10 +215,14 @@ const Settings = () => {
   }, [dispatch, tariffPlans.length]);
 
   useEffect(() => {
-    if (orgId) {
-      dispatch(fetchSubscription(orgId));
-      dispatch(fetchBalance(orgId));
-    }
+    if (!orgId) return;
+    if (subscriptionOrgId === orgId) return;
+    dispatch(fetchSubscription(orgId));
+  }, [dispatch, orgId, subscriptionOrgId]);
+
+  useEffect(() => {
+    if (!orgId) return;
+    dispatch(fetchBalance(orgId));
   }, [dispatch, orgId]);
 
   useEffect(() => {
