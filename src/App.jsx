@@ -75,6 +75,9 @@ const App = () => {
   const user = useSelector((state) => state.user);
   const isEmployee = user?.role === 'employee';
 
+  const restrictForEmployee = (element, redirectTo = '/') =>
+    isEmployee ? <Navigate to={redirectTo} replace /> : element;
+
   return (
     <ToastProvider>
       <Router>
@@ -118,7 +121,7 @@ const App = () => {
                   <Route path="integration" element={<EditIntegration />} />
                 </Route>
                 <Route path="/cards/template" element={<Cards />} />
-                <Route path="/mailings" element={<Mailings />}>
+                <Route path="/mailings" element={restrictForEmployee(<Mailings />)}>
                   <Route path="info" element={<MailingsInfo />} />
                   <Route path="push" element={<MailingsPush />} />
                   <Route path="auto-push" element={<MailingsAutoPush />} />
@@ -145,7 +148,7 @@ const App = () => {
                 <Route path="/cards/:id" element={<CardDetails />}>
                   <Route path="info" element={<DefaultCardInfo />} />
                   <Route path="clients" element={<Clients />} />
-                  <Route path="push" element={<MailingsPush />} />
+                  <Route path="push" element={restrictForEmployee(<MailingsPush />)} />
                   <Route path="stats" element={<CardStats />} />
                 </Route>
 
@@ -165,7 +168,7 @@ const App = () => {
                   <Route index element={<Clients />} />
                   <Route path="reviews" element={<NotFound />} />
                   <Route path=":id" element={<ClientDetails />} />
-                  <Route path=":id/push" element={<MailingsPush />} />
+                  <Route path=":id/push" element={restrictForEmployee(<MailingsPush />)} />
                   <Route path=":id/edit" element={<PersonalClientInfo />} />
                   <Route path=":id/reviews" element={<NotFound />} />
                 </Route>

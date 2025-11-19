@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Outlet, matchPath, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import Header from './components/Header';
+import LoaderCentered from './components/LoaderCentered';
 import Sidebar from './components/Sidebar';
 import SubMenu from './components/SubMenu';
 import CustomModal from './customs/CustomModal';
@@ -17,8 +18,9 @@ const MainLayout = () => {
 
   const subscription = useSelector((state) => state.subscription.info);
   const currentCard = useSelector((state) => state.cards.currentCard);
-  const role = useSelector((state) => state.user.role);
+  const { role, email, isLoading: userLoading } = useSelector((state) => state.user);
   const isEmployee = role === 'employee';
+  const waitingForRole = !role && (userLoading || !email);
 
   const trialExpired = useMemo(() => {
     const s = String(subscription?.status || '').toLowerCase();
@@ -144,6 +146,10 @@ const MainLayout = () => {
     pendingNextRef.current = null;
     setLeaveModalOpen(false);
   };
+
+  if (waitingForRole) {
+    return <LoaderCentered />;
+  }
 
   if (hideLayout) {
     return <Outlet />;
