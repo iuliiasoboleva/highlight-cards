@@ -4,7 +4,7 @@ export const SelectWrapper = styled.div`
   position: relative;
   width: 100%;
   font-size: 16px;
-  z-index: 2;
+  z-index: ${({ $isOpen }) => ($isOpen ? '10001' : '2')};
 
   ${({ $disabled }) =>
     $disabled &&

@@ -60,7 +60,7 @@ const CustomSelect = ({
   const displayValue = selectedOption ? selectedOption.label : placeholder;
 
   return (
-    <SelectWrapper className={className} ref={ref} $disabled={disabled}>
+    <SelectWrapper className={className} ref={ref} $disabled={disabled} $isOpen={isOpen}>
       <HeaderBox
         $opened={isOpen}
         $disabled={disabled}

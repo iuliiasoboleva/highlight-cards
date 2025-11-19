@@ -2,8 +2,6 @@ import { pluralize } from '../helpers/pluralize';
 
 export const statusConfig = {
   certificate: [
-    { label: 'Баллы', valueKey: 'balanceMoney', suffix: '₽' },
-    { label: 'Имя', valueKey: 'certificateName', suffix: '' },
     { label: 'Срок действия', valueKey: 'expirationDate' },
   ],
   cashback: [

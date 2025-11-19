@@ -76,6 +76,39 @@ const EditLayout = ({
   }, [currentCard.status, dispatch]);
 
   useEffect(() => {
+    if (currentCard.status !== 'certificate') return;
+
+    const allowedTypes = ['expirationDate'];
+    const currentFields = Array.isArray(currentCard.fieldsName) ? currentCard.fieldsName : [];
+    const filteredFields = currentFields.filter((field) => allowedTypes.includes(field.type));
+
+    if (filteredFields.length === 0) {
+      const defaultFields = (statusConfig.certificate || []).map((item) => ({
+        type: item.valueKey,
+        name: item.label,
+      }));
+      if (defaultFields.length) {
+        dispatch(
+          updateCurrentCardField({
+            path: 'fieldsName',
+            value: defaultFields,
+          }),
+        );
+      }
+      return;
+    }
+
+    if (filteredFields.length !== currentFields.length) {
+      dispatch(
+        updateCurrentCardField({
+          path: 'fieldsName',
+          value: filteredFields,
+        }),
+      );
+    }
+  }, [currentCard.status, currentCard.fieldsName, dispatch]);
+
+  useEffect(() => {
     if (location.pathname.includes('/edit/info')) {
       previousPlatform.current = platform;
       setPlatform('info');
