@@ -180,7 +180,7 @@ const App = () => {
 
             <Route path="/customer/card/:cardNumber" element={<CustomerPage />} />
             <Route path="/getpass/:uuid" element={<GetPassPage />} />
-            <Route path="/giftcard/:cardNumber" element={<GiftCardPage />} />
+            <Route path="/giftcard/:uuid" element={<GiftCardPage />} />
 
             <Route path="/admin" element={<AdminRedirect />} />
             <Route path="/admin/login" element={<AdminLogin />} />

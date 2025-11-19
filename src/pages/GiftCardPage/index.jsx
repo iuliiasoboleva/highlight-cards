@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-
+import React, { useRef, useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Clusterer, Map, Placemark, YMaps } from '@pbe/react-yandex-maps';
 
 import iconDiploma from '../../assets/icons/diploma.svg';
@@ -7,8 +7,9 @@ import iconExpensive from '../../assets/icons/expensive.svg';
 import iconSale from '../../assets/icons/sale.svg';
 import iconServices from '../../assets/icons/services.svg';
 import HeroCard from '../../components/HeroCard';
-import { ADDRESSES, GIFT_CARD_HERO } from '../../mocks/giftCardMocks';
+import { ADDRESSES } from '../../mocks/giftCardMocks';
 import Footer from '../Footer';
+import axiosInstance from '../../axiosInstance';
 import {
   AddressItem,
   Addresses,
@@ -32,11 +33,53 @@ const HOW_TO = [
   { id: 2, icon: iconServices, text: 'Указать номер сертификата при записи' },
   { id: 3, icon: iconExpensive, text: 'Можно доплатить, если сумма превышает номинал' },
   { id: 4, icon: iconSale, text: 'Акции и скидки не действуют на сертификат' },
+  { id: 5, icon: iconSale, text: 'Сертификат не подлежит возврату или обмену на наличные' },
 ];
 
 const GiftCardPage = () => {
+  const { uuid } = useParams();
   const [opened, setOpened] = useState(false);
+  const [cardData, setCardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const mapRef = useRef(null);
+
+  useEffect(() => {
+    const fetchCard = async () => {
+      try {
+        const { data } = await axiosInstance.get(`/cards/gift/${uuid}`);
+        setCardData(data);
+      } catch (e) {
+        console.error('Failed to fetch gift card', e);
+        setError('Сертификат не найден');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (uuid) {
+      fetchCard();
+    } else {
+      setLoading(false);
+      setError('Не указан номер сертификата');
+    }
+  }, [uuid]);
+
+  if (loading) {
+    return (
+      <Container style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        Загрузка...
+      </Container>
+    );
+  }
+
+  if (error || !cardData) {
+    return (
+      <Container style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {error || 'Сертификат не найден'}
+      </Container>
+    );
+  }
 
   return (
     <Container>
@@ -45,11 +88,11 @@ const GiftCardPage = () => {
         onOpen={() => setOpened(true)}
         onClose={() => setOpened(false)}
         onCTA={() => alert('Здесь будет переход к записи')}
-        name={GIFT_CARD_HERO.name}
-        text={GIFT_CARD_HERO.text}
-        amount={GIFT_CARD_HERO.amount}
-        expiry={GIFT_CARD_HERO.expiry}
-        serial={GIFT_CARD_HERO.serial}
+        name={cardData.name}
+        text={cardData.text}
+        amount={cardData.amount}
+        expiry={cardData.expiry}
+        serial={cardData.serial}
       />
       <HowTo>
         <h2>
