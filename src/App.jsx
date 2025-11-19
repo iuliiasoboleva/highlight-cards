@@ -97,7 +97,7 @@ const App = () => {
 
             <Route element={<PlanGate />}>
               <Route element={<MainLayout />}>
-                <Route index element={isEmployee ? <Navigate to="/managers" replace /> : <Home />} />
+                <Route index element={<Home />} />
                 <Route path="/cards" element={<Cards />} />
                 <Route path="/scan" element={<ScanPage />} />
                 <Route path="/workplace" element={<Workplace />} />
@@ -158,7 +158,10 @@ const App = () => {
                 <Route path="/education" element={<KnowledgeBase />} />
                 <Route path="/education/:slug" element={<KnowledgeBase />} />
                 <Route path="/clients" element={<ClientsLayout />}>
-                  <Route path="rfm-segment" element={<SettingsRFMSegment />} />
+                  <Route
+                    path="rfm-segment"
+                    element={isEmployee ? <Navigate to="/clients" replace /> : <SettingsRFMSegment />}
+                  />
                   <Route index element={<Clients />} />
                   <Route path="reviews" element={<NotFound />} />
                   <Route path=":id" element={<ClientDetails />} />

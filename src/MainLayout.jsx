@@ -17,6 +17,8 @@ const MainLayout = () => {
 
   const subscription = useSelector((state) => state.subscription.info);
   const currentCard = useSelector((state) => state.cards.currentCard);
+  const role = useSelector((state) => state.user.role);
+  const isEmployee = role === 'employee';
 
   const trialExpired = useMemo(() => {
     const s = String(subscription?.status || '').toLowerCase();
@@ -248,10 +250,11 @@ const MainLayout = () => {
     }
 
     if (matchClientsRoot || matchClientsReviews || matchClientsRfm) {
-      return [
-        { to: `/clients`, label: 'Клиентская база' },
-        { to: `/clients/rfm-segment`, label: 'Сегментация клиентов' },
-      ];
+      const items = [{ to: `/clients`, label: 'Клиентская база' }];
+      if (!isEmployee) {
+        items.push({ to: `/clients/rfm-segment`, label: 'Сегментация клиентов' });
+      }
+      return items;
     }
 
     if (matchClientDetails) {
@@ -288,7 +291,7 @@ const MainLayout = () => {
           <SubMenu
             menuItems={getMenuItems()}
             showRightActions={!!matchEdit || !!matchCreate}
-            showDownloadTable={!!matchClientsRoot}
+            showDownloadTable={!!matchClientsRoot && !isEmployee}
             showNameInput={!!matchEdit || !!matchCreate}
             initialName={currentCard?.name || ''}
             onNameChange={(newName) => {
