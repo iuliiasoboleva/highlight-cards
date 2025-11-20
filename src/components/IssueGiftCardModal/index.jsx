@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import CustomModal from '../../customs/CustomModal';
+import CustomCheckbox from '../../customs/CustomCheckbox';
 import { Input, InputGroup, Label, PrimaryButton, SecondaryButton, TextArea } from './styles';
 
 const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues }) => {
@@ -12,14 +13,15 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues }) 
     button_link: '',
     terms_text: '',
   });
+  const [isUnlimited, setIsUnlimited] = useState(false);
 
   useEffect(() => {
     if (open && defaultValues) {
-        // Calculate default expiry (e.g. +1 year) if not present? 
-        // Or just leave empty. 
-        // Assuming defaultValues contain card settings
         const settings = defaultValues.settings || {};
         const infoFields = defaultValues.infoFields || {};
+        const isExpUnlimited = defaultValues.expirationDate === '00.00.0000';
+        
+        setIsUnlimited(isExpUnlimited);
         setFormData(prev => ({
             ...prev,
             button_text: settings.giftButtonText || 'Записаться онлайн',
@@ -27,6 +29,7 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues }) 
             terms_text: settings.giftTermsText || 'Акции и скидки не применяются к подарочному сертификату',
             greeting_message: infoFields.message || '',
             amount: defaultValues.balanceMoney || '',
+            expiration_date: '', // Reset date if needed
         }));
     }
   }, [open, defaultValues]);
@@ -38,7 +41,9 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues }) 
 
   const handleSubmit = () => {
     const data = { ...formData };
-    if (data.expiration_date) {
+    if (isUnlimited) {
+        data.expiration_date = '00.00.0000';
+    } else if (data.expiration_date) {
        const [y, m, d] = data.expiration_date.split('-');
        data.expiration_date = `${d}.${m}.${y}`;
     }
@@ -89,7 +94,15 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues }) 
           type="date"
           value={formData.expiration_date}
           onChange={handleChange}
+          disabled={isUnlimited}
         />
+        <div style={{ marginTop: 8 }}>
+            <CustomCheckbox
+                label="Бессрочно"
+                checked={isUnlimited}
+                onChange={(e) => setIsUnlimited(e.target.checked)}
+            />
+        </div>
       </InputGroup>
 
       <InputGroup>
