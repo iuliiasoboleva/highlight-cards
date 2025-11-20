@@ -37,6 +37,7 @@ const EditInfo = () => {
 
   const currentCard = useSelector((state) => state.cards.currentCard);
   const cardStatus = currentCard?.status;
+  const settings = currentCard?.settings || {};
   const formRef = useRef(null);
 
   const user = useSelector((state) => state.user);
@@ -90,6 +91,17 @@ const EditInfo = () => {
       dispatch(updateCurrentCardField({ path: 'infoFields', value: newInfoFields }));
     },
     [dispatch, infoFields],
+  );
+
+  const handleSettingsChange = useCallback(
+    (field) => (e) => {
+      const newSettings = {
+        ...settings,
+        [field]: e.target.value,
+      };
+      dispatch(updateCurrentCardField({ path: 'settings', value: newSettings }));
+    },
+    [dispatch, settings],
   );
 
   const handleMultiRewardsChange = (e) => {
@@ -248,6 +260,68 @@ const EditInfo = () => {
             name="auto-redeem"
             dataKey="autoRedeem"
             additionalContentByValue={{}}
+          />
+        </>
+      )}
+
+      {cardStatus === 'certificate' && (
+        <>
+          <Hr />
+          <StampSectionLabel>
+            <BarcodeRadioTitle>Настройки сертификата</BarcodeRadioTitle>
+            <CustomTooltip
+              id="certificate-help"
+              html
+              content={'Эти данные будут использоваться по умолчанию при выпуске сертификата'}
+            />
+          </StampSectionLabel>
+
+          <LabeledTextarea
+            label="Поздравительный текст"
+            value={infoFields.message || ''}
+            onChange={handleFieldChange('message')}
+            placeholder="С днем рождения!"
+            subtitle="Текст по умолчанию для поздравления"
+            required
+            dataKey="message"
+            showCounter
+            maxLength={180}
+            warnAt={20}
+          />
+
+          <LabeledTextarea
+            label="Текст на кнопке"
+            value={settings.giftButtonText || ''}
+            onChange={handleSettingsChange('giftButtonText')}
+            placeholder="Записаться онлайн"
+            subtitle="Текст кнопки действия в сертификате"
+            required
+            dataKey="giftButtonText"
+            showCounter
+            maxLength={30}
+            warnAt={5}
+          />
+
+          <LabeledTextarea
+            label="Ссылка в кнопке"
+            value={settings.giftButtonLink || ''}
+            onChange={handleSettingsChange('giftButtonLink')}
+            placeholder="https://..."
+            subtitle="Куда ведет кнопка (например, на запись)"
+            dataKey="giftButtonLink"
+          />
+
+          <LabeledTextarea
+            label="Сообщение под датой"
+            value={settings.giftTermsText || ''}
+            onChange={handleSettingsChange('giftTermsText')}
+            placeholder="Акции и скидки не применяются..."
+            subtitle="Условия использования или дополнительная информация (до 64 символов)"
+            required
+            dataKey="giftTermsText"
+            showCounter
+            maxLength={64}
+            warnAt={10}
           />
         </>
       )}

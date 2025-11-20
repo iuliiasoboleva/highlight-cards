@@ -19,11 +19,13 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues }) 
         // Or just leave empty. 
         // Assuming defaultValues contain card settings
         const settings = defaultValues.settings || {};
+        const infoFields = defaultValues.infoFields || {};
         setFormData(prev => ({
             ...prev,
             button_text: settings.giftButtonText || 'Записаться онлайн',
             button_link: settings.giftButtonLink || '',
             terms_text: settings.giftTermsText || 'Акции и скидки не применяются к подарочному сертификату',
+            greeting_message: infoFields.message || '',
             amount: defaultValues.balanceMoney || '',
         }));
     }
