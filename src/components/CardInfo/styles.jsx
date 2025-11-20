@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const CardInfo = styled.div`
   position: absolute;
@@ -262,15 +262,25 @@ export const CardInlineValue = styled.div`
 `;
 
 export const CardInfoRowValue = styled.span`
-  font-size: 16px;
+  font-size: 14px;
+  letter-spacing: 0.02em;
   display: block;
   font-weight: 400;
-  line-height: 28px;
-  white-space: nowrap;
-
+  line-height: 24px;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
+
+  ${({ $allowWrap }) =>
+    $allowWrap
+      ? css`
+          white-space: normal;
+          overflow: visible;
+          text-overflow: unset;
+        `
+      : css`
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        `}
 `;
 
 export const CardNumber = styled.div`

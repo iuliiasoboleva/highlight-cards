@@ -217,7 +217,9 @@ const CardInfo = ({
               onClick={() => handleFieldClick(type)}
             >
               <CardInfoRowLabel title={fieldLabel}>{fieldLabel}</CardInfoRowLabel>
-              <CardInfoRowValue>{renderFieldValue(value, { type })}</CardInfoRowValue>
+              <CardInfoRowValue $allowWrap={type === 'expirationDate'}>
+                {renderFieldValue(value, { type })}
+              </CardInfoRowValue>
             </CardInfoRow>
           );
         })}
