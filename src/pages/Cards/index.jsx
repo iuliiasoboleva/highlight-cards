@@ -132,6 +132,9 @@ const Cards = () => {
       <CardsGrid>
         {cards.map((card, idx) => {
           const noHover = isTemplatePage;
+          const nameText = card.name || '';
+          const isLongName = nameText.length > 18;
+          const nameClass = `text${isLongName ? ' marquee' : ''}`;
 
           return (
             <CardWrap key={card.id} $noHover={noHover}>
@@ -202,15 +205,17 @@ const Cards = () => {
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
                         onBlur={() => {
-                          if (newName.trim() && newName !== card.name) {
-                            dispatch(renameCardAsync({ id: card.id, name: newName.trim() }));
+                          const trimmed = newName.trim();
+                          if (trimmed && trimmed !== nameText) {
+                            dispatch(renameCardAsync({ id: card.id, name: trimmed }));
                           }
                           setEditingId(null);
                         }}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') {
-                            if (newName.trim() && newName !== card.name) {
-                              dispatch(renameCardAsync({ id: card.id, name: newName.trim() }));
+                            const trimmed = newName.trim();
+                            if (trimmed && trimmed !== nameText) {
+                              dispatch(renameCardAsync({ id: card.id, name: trimmed }));
                             }
                             setEditingId(null);
                           }
@@ -220,8 +225,9 @@ const Cards = () => {
                       />
                       <NameSaveBtn
                         onClick={() => {
-                          if (newName.trim() && newName !== card.name) {
-                            dispatch(renameCardAsync({ id: card.id, name: newName.trim() }));
+                          const trimmed = newName.trim();
+                          if (trimmed && trimmed !== nameText) {
+                            dispatch(renameCardAsync({ id: card.id, name: trimmed }));
                           }
                           setEditingId(null);
                         }}
@@ -232,8 +238,8 @@ const Cards = () => {
                       </NameSaveBtn>
                     </NameEdit>
                   ) : card.id === 'fixed' ? (
-                    <span className="text" title={card.name}>
-                      {card.name}
+                    <span className="text-wrapper" title={nameText}>
+                      <span className={nameClass}>{nameText}</span>
                     </span>
                   ) : (
                     <EditableName
@@ -242,18 +248,18 @@ const Cards = () => {
                       aria-label="Редактировать название карты"
                       onClick={() => {
                         setEditingId(card.id);
-                        setNewName(card.name);
+                        setNewName(nameText);
                       }}
                       onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          setEditingId(card.id);
-                          setNewName(card.name);
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setEditingId(card.id);
+                            setNewName(nameText);
                         }
                       }}
                     >
-                      <span className="text" title={card.name}>
-                        {card.name}
+                      <span className="text-wrapper" title={nameText}>
+                        <span className={nameClass}>{nameText}</span>
                       </span>
                       <Pencil className="pencil" size={16} aria-hidden="true" />
                     </EditableName>

@@ -22,7 +22,6 @@ import {
   CardInfoRowValue,
   CardInfoTitleRow,
   CardInlineValue,
-  CardName,
   CardNumber,
   CardTypeDescription,
   HiZone,
@@ -156,11 +155,7 @@ const CardInfoAndroid = ({
     <CardInfoHeader>
       <CardInfoTitleRow className="android">
         <div>
-          {design.logo ? (
-            <CardInfoLogo src={design.logo} alt="Лого" draggable="false" />
-          ) : (
-            <CardName>{design.cardTitle || mergedCard.name}</CardName>
-          )}
+          {design.logo && <CardInfoLogo src={design.logo} alt="Лого" draggable="false" />}
         </div>
 
         <TopFieldsBlock>

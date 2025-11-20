@@ -237,16 +237,6 @@ export const TopFieldsBlock = styled.div`
   }
 `;
 
-export const CardName = styled.div`
-  font-weight: 700;
-  font-size: 10px;
-  text-align: left;
-
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
 export const CardInlineValue = styled.div`
   min-height: 15px;
   display: inline-flex;

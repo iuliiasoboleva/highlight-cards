@@ -1,4 +1,13 @@
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
+
+const cardNameMarquee = keyframes`
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+`;
 
 export const Page = styled.div`
   padding: 20px;
@@ -151,6 +160,7 @@ export const CardBottomText = styled.div`
   flex-direction: column;
   gap: 8px;
   margin-bottom: 20px;
+  overflow: hidden;
 
   h3 {
     font-weight: 600;
@@ -170,6 +180,19 @@ export const CardBottomText = styled.div`
 
   p {
     font-size: 18px;
+  }
+
+  .text {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .text.marquee {
+    display: inline-block;
+    animation: ${cardNameMarquee} 8s linear infinite;
+    padding-right: 40px;
   }
 `;
 
@@ -234,10 +257,19 @@ export const EditableName = styled.button`
     border-color 0.2s ease,
     background-color 0.2s ease;
 
-  .text {
+  .text-wrapper {
     overflow: hidden;
-    text-overflow: ellipsis;
+    width: 100%;
+  }
+
+  .text {
+    display: inline-block;
     white-space: nowrap;
+  }
+
+  .text.marquee {
+    animation: ${cardNameMarquee} 10s linear infinite;
+    padding-right: 60px;
   }
 
   .pencil {
