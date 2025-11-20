@@ -121,6 +121,9 @@ export const saveCard = createAsyncThunk(
         ...rest
       } = currentCard;
 
+      const normalizeInitialPoints = (value) =>
+        value === undefined || value === null || value === '' ? '' : String(value);
+
       const payload = {
         ...rest,
         frame_url: frameUrl || 'phone.svg',
@@ -148,7 +151,7 @@ export const saveCard = createAsyncThunk(
         utm_links: utmLinks,
         fields_name: fieldsName,
         require_purchase_amount_on_accrual: requirePurchaseAmountOnAccrual,
-        initial_points_on_issue: initialPointsOnIssue,
+        initial_points_on_issue: normalizeInitialPoints(initialPointsOnIssue),
         initial_stamps_on_issue: initialStampsOnIssue,
         stamp_daily_limit: stampDailyLimit,
         policy_settings: policySettings,
@@ -213,6 +216,9 @@ export const createCard = createAsyncThunk(
         ...rest
       } = currentCard;
 
+      const normalizeInitialPoints = (value) =>
+        value === undefined || value === null || value === '' ? '' : String(value);
+
       const payload = {
         ...rest,
         frame_url: frameUrl || 'phone.svg',
@@ -241,7 +247,7 @@ export const createCard = createAsyncThunk(
         utm_links: utmLinks,
         fields_name: fieldsName,
         require_purchase_amount_on_accrual: requirePurchaseAmountOnAccrual,
-        initial_points_on_issue: initialPointsOnIssue,
+        initial_points_on_issue: normalizeInitialPoints(initialPointsOnIssue),
         initial_stamps_on_issue: initialStampsOnIssue,
         stamp_daily_limit: stampDailyLimit,
         policy_settings: policySettings,

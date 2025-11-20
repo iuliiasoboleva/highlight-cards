@@ -120,6 +120,13 @@ const CardInfoAndroid = ({
     }
 
     const wl = card.settings?.walletLabels || {};
+    if (type === 'expirationDate') {
+      const cardLimit = card.settings?.cardLimit;
+      if (!value || value === '00.00.0000' || cardLimit === 'cardUnlimit') {
+        return 'Неограниченный';
+      }
+      return value;
+    }
     if (type === 'restStamps') {
       const defaultWord = card.status === 'subscription' ? 'визитов' : 'штампов';
       const word = wl.stampsWord || defaultWord;

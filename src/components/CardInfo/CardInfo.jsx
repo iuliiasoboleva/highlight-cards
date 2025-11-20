@@ -114,7 +114,11 @@ const CardInfo = ({
     const wl = card.settings?.walletLabels || {};
 
     if (type === 'expirationDate') {
-      return value ? value : wl.perpetual || 'бессрочно';
+      const cardLimit = card.settings?.cardLimit;
+      if (!value || value === '00.00.0000' || cardLimit === 'cardUnlimit') {
+        return 'Неограниченный';
+      }
+      return value;
     }
 
     if (value === undefined || value === null) {
