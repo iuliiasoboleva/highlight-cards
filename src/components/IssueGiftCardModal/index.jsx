@@ -1,11 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import CustomModal from '../../customs/CustomModal';
 import CustomCheckbox from '../../customs/CustomCheckbox';
-import { Input, InputGroup, Label, PrimaryButton, SecondaryButton, TextArea } from './styles';
+import { 
+  Input, 
+  InputGroup, 
+  Label, 
+  PrimaryButton, 
+  SecondaryButton, 
+  TextArea,
+  SectionTitle,
+  RadioGroup,
+  RadioLabel,
+  RequiredMark
+} from './styles';
 
 const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues }) => {
   const [formData, setFormData] = useState({
     recipient_name: '',
+    surname: '',
+    name: '',
+    phone: '',
+    email: '',
+    gender: '',
+    birthday: '',
     amount: '',
     expiration_date: '',
     greeting_message: '',
@@ -29,7 +46,14 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues }) 
             terms_text: settings.giftTermsText || 'Акции и скидки не применяются к подарочному сертификату',
             greeting_message: infoFields.message || '',
             amount: defaultValues.balanceMoney || '',
-            expiration_date: '', // Reset date if needed
+            expiration_date: '',
+            surname: '',
+            name: '',
+            phone: '',
+            email: '',
+            gender: '',
+            birthday: '',
+            recipient_name: '',
         }));
     }
   }, [open, defaultValues]);
@@ -47,6 +71,12 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues }) 
        const [y, m, d] = data.expiration_date.split('-');
        data.expiration_date = `${d}.${m}.${y}`;
     }
+
+    if (data.birthday) {
+       const [y, m, d] = data.birthday.split('-');
+       data.birthday = `${d}.${m}.${y}`;
+    }
+    
     onIssue(data);
   };
 
@@ -66,8 +96,99 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues }) 
         </>
       }
     >
+      <SectionTitle>Данные клиента</SectionTitle>
+
       <InputGroup>
-        <Label>Имя получателя</Label>
+        <Label>
+          Фамилия<RequiredMark>*</RequiredMark>
+        </Label>
+        <Input
+          name="surname"
+          value={formData.surname}
+          onChange={handleChange}
+          placeholder="Иванов"
+          required
+        />
+      </InputGroup>
+
+      <InputGroup>
+        <Label>
+          Имя<RequiredMark>*</RequiredMark>
+        </Label>
+        <Input
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          placeholder="Дмитрий"
+          required
+        />
+      </InputGroup>
+
+      <InputGroup>
+        <Label>
+          Телефон<RequiredMark>*</RequiredMark>
+        </Label>
+        <Input
+          name="phone"
+          type="tel"
+          value={formData.phone}
+          onChange={handleChange}
+          placeholder="+7 (900) 123-45-67"
+          required
+        />
+      </InputGroup>
+
+      <InputGroup>
+        <Label>Email</Label>
+        <Input
+          name="email"
+          type="email"
+          value={formData.email}
+          onChange={handleChange}
+          placeholder="example@mail.ru"
+        />
+      </InputGroup>
+
+      <InputGroup>
+        <Label>Пол</Label>
+        <RadioGroup>
+          <RadioLabel>
+            <input
+              type="radio"
+              name="gender"
+              value="male"
+              checked={formData.gender === 'male'}
+              onChange={handleChange}
+            />
+            М
+          </RadioLabel>
+          <RadioLabel>
+            <input
+              type="radio"
+              name="gender"
+              value="female"
+              checked={formData.gender === 'female'}
+              onChange={handleChange}
+            />
+            Ж
+          </RadioLabel>
+        </RadioGroup>
+      </InputGroup>
+
+      <InputGroup>
+        <Label>Дата рождения</Label>
+        <Input
+          name="birthday"
+          type="date"
+          value={formData.birthday}
+          onChange={handleChange}
+        />
+      </InputGroup>
+
+      <SectionTitle>Данные сертификата</SectionTitle>
+
+      <InputGroup>
+        <Label>Имя получателя (для отображения на сертификате)</Label>
         <Input
           name="recipient_name"
           value={formData.recipient_name}

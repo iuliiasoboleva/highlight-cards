@@ -51,3 +51,43 @@ export const PrimaryButton = styled(CustomModal.PrimaryButton)`
 export const SecondaryButton = styled(CustomModal.SecondaryButton)`
 `;
 
+export const SectionTitle = styled.h3`
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 24px 0 16px 0;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+
+  &:first-of-type {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+`;
+
+export const RadioGroup = styled.div`
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+`;
+
+export const RadioLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+
+  input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+`;
+
+export const RequiredMark = styled.span`
+  color: #e74c3c;
+  margin-left: 4px;
+`;
