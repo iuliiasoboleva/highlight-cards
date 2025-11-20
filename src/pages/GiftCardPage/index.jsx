@@ -99,10 +99,10 @@ const GiftCardPage = () => {
         amount={cardData.amount}
         expiry={cardData.expiry}
         serial={cardData.serial}
+        buttonText={cardData.buttonText}
+        termsText={cardData.termsText}
       />
-      <div style={{ textAlign: 'center', marginTop: '10px', color: '#888', fontSize: '14px', maxWidth: '100%', padding: '0 20px' }}>
-        {cardData.termsText || 'Акции и скидки не действуют на сертификат'}
-      </div>
+
       <HowTo>
         <h2>
           Как воспользоваться <span>сертификатом</span>

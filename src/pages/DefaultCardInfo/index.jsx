@@ -7,7 +7,9 @@ import CardInfo from '../../components/CardInfo/CardInfo';
 import CustomTable from '../../components/CustomTable';
 import DashboardStats from '../../components/DashboardStats';
 import InfoOverlay from '../../components/InfoOverlay';
+import IssueGiftCardModal from '../../components/IssueGiftCardModal';
 import LoaderCentered from '../../components/LoaderCentered';
+import { useToast } from '../../components/Toast';
 import { transactionHeaders } from '../../mocks/mockTransactions';
 import { generatePDF } from '../../utils/pdfGenerator';
 import {
@@ -34,6 +36,7 @@ const DefaultCardInfo = () => {
   const { cards } = useSelector((state) => state.cards);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const toast = useToast();
 
   const [card, setCard] = useState(cards.find((c) => c.id === +id) || null);
   const [transactions, setTransactions] = useState([]);
@@ -41,6 +44,8 @@ const DefaultCardInfo = () => {
   const [loading, setLoading] = useState(!card);
   const [showInfo, setShowInfo] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
+  const [issuing, setIssuing] = useState(false);
 
   useEffect(() => {
     if (card) return;
@@ -86,6 +91,20 @@ const DefaultCardInfo = () => {
     })();
   }, [card]);
 
+  const handleIssueGift = async (data) => {
+    setIssuing(true);
+    try {
+      const res = await axiosInstance.post(`/cards/${card.id}/issue_gift`, data);
+      toast.success(`Сертификат выпущен! Номер: ${res.data.card_number}`);
+      setIsIssueModalOpen(false);
+    } catch (e) {
+      console.error(e);
+      toast.error('Ошибка при выпуске сертификата');
+    } finally {
+      setIssuing(false);
+    }
+  };
+
   if (loading) {
     return <LoaderCentered />;
   }
@@ -129,6 +148,9 @@ const DefaultCardInfo = () => {
             <QrLink title="Ссылка регистрации карты">{card.urlCopy}</QrLink>
 
             <ButtonsRow>
+              {card.status === 'certificate' && (
+                <Button onClick={() => setIsIssueModalOpen(true)}>Выпустить сертификат</Button>
+              )}
               <Button onClick={() => generatePDF(card)}>Печать QR-кода</Button>
               <Button
                 onClick={() => {
@@ -150,6 +172,16 @@ const DefaultCardInfo = () => {
         <h3 className="table-name">Последние транзакции по карте</h3>
         <CustomTable columns={transactionHeaders} rows={transactions} />
       </TableWrapper>
+
+      {isIssueModalOpen && (
+        <IssueGiftCardModal
+          open={isIssueModalOpen}
+          onClose={() => setIsIssueModalOpen(false)}
+          onIssue={handleIssueGift}
+          loading={issuing}
+          defaultValues={card}
+        />
+      )}
     </Wrapper>
   );
 };

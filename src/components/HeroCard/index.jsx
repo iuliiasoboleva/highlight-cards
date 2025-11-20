@@ -15,6 +15,8 @@ const HeroCard = ({
   amount,
   expiry,
   serial,
+  buttonText,
+  termsText,
 }) => {
   const closedImgRef = useRef(null);
 
@@ -46,15 +48,16 @@ const HeroCard = ({
           </div>
 
           <CTAButton className="cta" onClick={() => onCTA?.()}>
-            Записаться онлайн
+            {buttonText || 'Записаться онлайн'}
           </CTAButton>
 
           <div className="meta">
             <div>Срок действия: до {expiry}</div>
-            <div>
-              Акции и скидки не применяются
-              <br /> к подарочному сертификату
-            </div>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: termsText || 'Акции и скидки не применяются<br /> к подарочному сертификату',
+              }}
+            />
             <div className="serial">{serial}</div>
           </div>
         </Certificate>
