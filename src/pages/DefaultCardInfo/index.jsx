@@ -17,6 +17,7 @@ import {
   ButtonsRow,
   CardWrapper,
   FrameImg,
+  HeaderButton,
   ImageWrapper,
   InfoBlock,
   OverlayWrapper,
@@ -117,12 +118,21 @@ const DefaultCardInfo = () => {
   return (
     <Wrapper>
       <TitleRow>
-        <h1>{card.name}</h1>
-        <StateTag>
-          <StatusIndicator $active={card.isActive} />
-          {card.isActive ? 'Активна' : 'Не активна'}
-        </StateTag>
-        <StateTag>{card.title}</StateTag>
+        <div>
+          <h1>{card.name}</h1>
+          <div className="tags">
+            <StateTag>
+              <StatusIndicator $active={card.isActive} />
+              {card.isActive ? 'Активна' : 'Не активна'}
+            </StateTag>
+            <StateTag>{card.title}</StateTag>
+          </div>
+        </div>
+        {card.status === 'certificate' && (
+          <HeaderButton onClick={() => setIsIssueModalOpen(true)}>
+            Выпустить сертификат
+          </HeaderButton>
+        )}
       </TitleRow>
 
       <ImageWrapper>
@@ -148,9 +158,6 @@ const DefaultCardInfo = () => {
             <QrLink title="Ссылка регистрации карты">{card.urlCopy}</QrLink>
 
             <ButtonsRow>
-              {card.status === 'certificate' && (
-                <Button onClick={() => setIsIssueModalOpen(true)}>Выпустить сертификат</Button>
-              )}
               <Button onClick={() => generatePDF(card)}>Печать QR-кода</Button>
               <Button
                 onClick={() => {

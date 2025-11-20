@@ -15,21 +15,55 @@ export const Wrapper = styled.div`
 export const TitleRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
   flex-wrap: wrap;
+  justify-content: space-between;
 
   h1 {
     font-size: 24px;
-    margin-right: 8px;
-    flex: 1 1 100%;
+    margin: 0;
+    font-weight: 700;
+  }
+
+  .tags {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+
     h1 {
-      font-size: 18px;
-      margin-bottom: 4px;
+      font-size: 20px;
     }
-    gap: 6px;
+  }
+`;
+
+export const HeaderButton = styled.button`
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
   }
 `;
 
