@@ -63,7 +63,8 @@ export const ClosedLayer = styled.div`
   pointer-events: ${(p) => (p.$opened ? 'none' : 'auto')};
 
   img {
-    width: 581px;
+    width: clamp(320px, 62vw, 700px);
+    max-width: 90vw;
     height: auto;
     object-fit: contain;
     align-self: end;
@@ -71,9 +72,10 @@ export const ClosedLayer = styled.div`
     -webkit-user-drag: none;
     cursor: pointer;
 
-     @media (max-width: 520px) {
-width: 100%;
-max-width: 100%;
+    @media (max-width: 520px) {
+      width: 100%;
+      max-width: 100%;
+    }
   }
 `;
 
@@ -106,7 +108,7 @@ export const OpenedLayer = styled.div`
 
 export const Certificate = styled.div`
   width: 100%;
-  max-width: 330px;
+  max-width: clamp(240px, 50vw, 360px);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -189,7 +191,7 @@ export const Certificate = styled.div`
     }
   }
   @media (max-width: 520px) {
-    max-width: 270px;
+    max-width: min(270px, 80vw);
     .title {
       font-size: 38px;
     }
