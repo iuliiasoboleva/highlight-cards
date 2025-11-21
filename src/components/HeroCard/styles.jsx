@@ -48,13 +48,11 @@ export const HeroContainer = styled.section`
 `;
 
 export const ClosedLayer = styled.div`
-  height: ${CLOSED_LAYER_HEIGHT}px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
   gap: 16px;
   width: 100%;
-  max-width: 900px;
   overflow: hidden;
 
   will-change: transform, opacity;
@@ -66,14 +64,31 @@ export const ClosedLayer = styled.div`
   opacity: ${(p) => (p.$opened ? 0 : 1)};
   pointer-events: ${(p) => (p.$opened ? 'none' : 'auto')};
 
+  @media (min-width: 769px) {
+    height: ${CLOSED_LAYER_HEIGHT}px;
+    max-width: 1260px;
+  }
+
+  @media (max-width: 768px) {
+    height: 800px;
+    max-width: 900px;
+  }
+
   img {
     width: 100%;
-    max-width: 900px;
     height: auto;
     object-fit: contain;
     user-select: none;
     -webkit-user-drag: none;
     cursor: pointer;
+
+    @media (min-width: 769px) {
+      max-width: 1260px;
+    }
+
+    @media (max-width: 768px) {
+      max-width: 900px;
+    }
 
     @media (max-width: 520px) {
       width: 180%;
@@ -84,8 +99,6 @@ export const ClosedLayer = styled.div`
 `;
 
 export const OpenedLayer = styled.div`
-  height: ${OPENED_LAYER_HEIGHT}px;
-  max-width: 900px;
   width: 100%;
   display: grid;
   align-content: end;
@@ -102,14 +115,31 @@ export const OpenedLayer = styled.div`
   opacity: ${(p) => (p.$opened ? 1 : 0)};
   pointer-events: ${(p) => (p.$opened ? 'auto' : 'none')};
 
+  @media (min-width: 769px) {
+    height: ${OPENED_LAYER_HEIGHT}px;
+    max-width: 1260px;
+  }
+
+  @media (max-width: 768px) {
+    height: 800px;
+    max-width: 900px;
+  }
+
   .pocket {
     position: absolute;
     width: 100%;
-    max-width: 900px;
     left: 50%;
     transform: translateX(-50%);
     align-self: end;
     pointer-events: none;
+
+    @media (min-width: 769px) {
+      max-width: 1260px;
+    }
+
+    @media (max-width: 768px) {
+      max-width: 900px;
+    }
 
     @media (max-width: 520px) {
       width: 180%;
@@ -120,22 +150,37 @@ export const OpenedLayer = styled.div`
 
 export const Certificate = styled.div`
   width: 100%;
-  max-width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 26px;
 
   background: #fff;
-  padding: 56px 32px 74px;
-
   color: #111;
+
+  @media (min-width: 769px) {
+    max-width: 1260px;
+    padding: 112px 64px 148px;
+    gap: 52px;
+  }
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    padding: 56px 32px 74px;
+    gap: 26px;
+  }
 
   .logo {
     width: auto;
-    height: 48px;
     object-fit: cover;
     align-self: center;
+
+    @media (min-width: 769px) {
+      height: 96px;
+    }
+
+    @media (max-width: 768px) {
+      height: 48px;
+    }
   }
 
   .title {
@@ -144,9 +189,16 @@ export const Certificate = styled.div`
     font-family: 'Playfair Display', 'Times New Roman', Georgia, serif;
     font-style: italic;
     font-weight: 500;
-    font-size: clamp(40px, 6vw, 56px);
     line-height: 1.08;
     letter-spacing: -0.2px;
+
+    @media (min-width: 769px) {
+      font-size: 112px;
+    }
+
+    @media (max-width: 768px) {
+      font-size: clamp(40px, 6vw, 56px);
+    }
   }
 
   .name {
@@ -154,40 +206,79 @@ export const Certificate = styled.div`
     font-family: 'Playfair Display', 'Times New Roman', Georgia, serif;
     font-style: italic;
     font-weight: 400;
-    font-size: 22px;
     color: #333;
+
+    @media (min-width: 769px) {
+      font-size: 44px;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 22px;
+    }
   }
 
   .text {
     text-align: center;
     color: #343434;
     line-height: 1.4;
-    font-size: 18px;
+
+    @media (min-width: 769px) {
+      font-size: 36px;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 18px;
+    }
   }
 
   .amount {
     text-align: center;
     font-family: Georgia, 'Times New Roman', serif;
   }
+  
   .sum {
-    font-size: 48px;
     font-weight: 700;
     font-style: italic;
+
+    @media (min-width: 769px) {
+      font-size: 96px;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 48px;
+    }
   }
+  
   .rub {
-    font-size: 22px;
     font-weight: 500;
     margin-left: 0.15em;
+
+    @media (min-width: 769px) {
+      font-size: 44px;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 22px;
+    }
   }
 
   .cta {
-    width: 260px;
-    height: 44px;
     padding: 10px 18px;
-    font-size: 14px;
     font-weight: 500;
     display: block;
     margin: 0 auto;
+
+    @media (min-width: 769px) {
+      width: 520px;
+      height: 88px;
+      font-size: 28px;
+    }
+
+    @media (max-width: 768px) {
+      width: 260px;
+      height: 44px;
+      font-size: 14px;
+    }
   }
 
   .meta {
@@ -195,17 +286,34 @@ export const Certificate = styled.div`
     gap: 6px;
     margin-top: 12px;
     text-align: center;
-    font-size: 12px;
     font-weight: 600;
 
+    @media (min-width: 769px) {
+      font-size: 24px;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 12px;
+    }
+
     .serial {
-      margin-top: 8px;
-      font-size: 10px;
+      @media (min-width: 769px) {
+        margin-top: 16px;
+        font-size: 20px;
+      }
+
+      @media (max-width: 768px) {
+        margin-top: 8px;
+        font-size: 10px;
+      }
     }
   }
+  
   @media (max-width: 520px) {
     max-width: 100%;
-    padding: 40px 20px 100px; // Increased bottom padding for pocket
+    padding: 40px 20px 100px;
     gap: 20px;
     .title {
       font-size: 40px;
