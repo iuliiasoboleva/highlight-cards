@@ -106,6 +106,7 @@ const GiftCardPage = () => {
         serial={cardData.serial}
         buttonText={cardData.buttonText}
         termsText={cardData.termsText}
+        certificateLogo={cardData.certificateLogo}
       />
 
       <HowTo>

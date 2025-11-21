@@ -17,6 +17,7 @@ const HeroCard = ({
   serial,
   buttonText,
   termsText,
+  certificateLogo,
 }) => {
   const closedImgRef = useRef(null);
 
@@ -43,7 +44,11 @@ const HeroCard = ({
       {/* Открытый сертификат */}
       <OpenedLayer $opened={opened} onClick={(e) => e.stopPropagation()}>
         <Certificate>
-          <img src={logoImg} alt="Лого" className="logo" />
+          {certificateLogo ? (
+            <img src={certificateLogo} alt="Лого" className="logo" />
+          ) : (
+            <img src={logoImg} alt="Лого" className="logo" />
+          )}
           <h1 className="title">Подарочный сертификат</h1>
           <div className="name">{name}</div>
 
