@@ -81,7 +81,10 @@ const GiftCardPage = () => {
   }
 
   const branches = cardData.branches || [];
-  const branchesWithCoords = branches.filter(b => b.coords);
+  const branchesWithCoords = branches.filter((b) => b.coords);
+  const firstCoords = branchesWithCoords[0]?.coords;
+  const defaultCenter = firstCoords || [55.7558, 37.6176];
+  const defaultZoom = firstCoords ? 13 : 5;
 
   return (
     <Container>
@@ -135,28 +138,30 @@ const GiftCardPage = () => {
             >
               <Map
                 defaultState={{
-                  center: [55.7558, 37.6176],
-                  zoom: 5,
+                  center: defaultCenter,
+                  zoom: defaultZoom,
                   controls: ['zoomControl', 'fullscreenControl'],
                 }}
                 modules={['control.ZoomControl', 'control.FullscreenControl']}
                 style={{ height: '360px', width: '100%' }}
                 instanceRef={mapRef}
                 onLoad={() => {
-                  const coords = branchesWithCoords.map(b => b.coords);
+                  const coords = branchesWithCoords.map((b) => b.coords);
                   if (!mapRef.current || !coords.length) return;
 
-                  if (coords.length === 1) {
-                    mapRef.current.setCenter(coords[0], 13);
-                    return;
+                  if (coords.length > 1) {
+                    const lats = coords.map((p) => p[0]);
+                    const lngs = coords.map((p) => p[1]);
+                    const bounds = [
+                      [Math.min(...lats), Math.min(...lngs)],
+                      [Math.max(...lats), Math.max(...lngs)],
+                    ];
+                    mapRef.current.setBounds(bounds, { checkZoomRange: true, zoomMargin: 40 });
                   }
-                  const lats = coords.map((p) => p[0]);
-                  const lngs = coords.map((p) => p[1]);
-                  const bounds = [
-                    [Math.min(...lats), Math.min(...lngs)],
-                    [Math.max(...lats), Math.max(...lngs)],
-                  ];
-                  mapRef.current.setBounds(bounds, { checkZoomRange: true, zoomMargin: 40 });
+
+                  if (firstCoords) {
+                    mapRef.current.setCenter(firstCoords, 13, { duration: 300 });
+                  }
                 }}
               >
                 <Clusterer
