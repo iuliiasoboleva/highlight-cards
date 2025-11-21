@@ -9,6 +9,7 @@ export const HeroContainer = styled.section`
   justify-items: center;
   align-items: end;
   height: ${HERO_HEIGHT}px;
+  min-height: 100vh;
   border-radius: 0 0 24px 24px;
   overflow: hidden;
 
@@ -37,6 +38,11 @@ export const HeroContainer = styled.section`
   grid-template-areas: 'stack';
   & > * {
     grid-area: stack;
+  }
+
+  @media (max-width: 768px) {
+    height: 100vh;
+    min-height: 100vh;
   }
 `;
 
