@@ -7,6 +7,7 @@ import { YMaps } from '@pbe/react-yandex-maps';
 import EditLayout from '../../components/EditLayout';
 import TitleWithHelp from '../../components/TitleWithHelp';
 import CustomTooltip from '../../customs/CustomTooltip';
+import CustomCheckbox from '../../customs/CustomCheckbox';
 import {
   addCurrentCardArrayItem,
   removeCurrentCardArrayItem,
@@ -37,6 +38,7 @@ const EditInfo = () => {
 
   const currentCard = useSelector((state) => state.cards.currentCard);
   const cardStatus = currentCard?.status;
+  const isCertificate = (cardStatus || '').trim() === 'certificate';
   const settings = currentCard?.settings || {};
   const formRef = useRef(null);
 
@@ -264,7 +266,7 @@ const EditInfo = () => {
         </>
       )}
 
-      {cardStatus === 'certificate' && (
+      {isCertificate && (
         <>
           <Hr />
           <StampSectionLabel>
@@ -430,6 +432,40 @@ const EditInfo = () => {
           dispatch(updateCurrentCardField({ path: `infoFields.${field}`, value }))
         }
       />
+
+      {isCertificate && (
+        <>
+          <SettingsInputsContainer style={{ marginTop: '12px' }}>
+            <CustomCheckbox
+              label="Отображать email на сертификате"
+              checked={settings.showEmailOnCertificate || false}
+              onChange={(e) =>
+                dispatch(
+                  updateCurrentCardField({
+                    path: 'settings.showEmailOnCertificate',
+                    value: e.target.checked,
+                  })
+                )
+              }
+            />
+          </SettingsInputsContainer>
+
+          <SettingsInputsContainer style={{ marginTop: '8px', marginBottom: '16px' }}>
+            <CustomCheckbox
+              label="Отображать телефон на сертификате"
+              checked={settings.showPhoneOnCertificate || false}
+              onChange={(e) =>
+                dispatch(
+                  updateCurrentCardField({
+                    path: 'settings.showPhoneOnCertificate',
+                    value: e.target.checked,
+                  })
+                )
+              }
+            />
+          </SettingsInputsContainer>
+        </>
+      )}
 
       <CreateButton onClick={handleSave}>Перейти к следующему шагу</CreateButton>
     </SettingsInputsContainer>

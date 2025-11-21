@@ -7,7 +7,6 @@ import iconExpensive from '../../assets/icons/expensive.svg';
 import iconSale from '../../assets/icons/sale.svg';
 import iconServices from '../../assets/icons/services.svg';
 import HeroCard from '../../components/HeroCard';
-import { ADDRESSES } from '../../mocks/giftCardMocks';
 import Footer from '../Footer';
 import axiosInstance from '../../axiosInstance';
 import {
@@ -81,6 +80,9 @@ const GiftCardPage = () => {
     );
   }
 
+  const branches = cardData.branches || [];
+  const branchesWithCoords = branches.filter(b => b.coords);
+
   return (
     <Container>
       <HeroCard
@@ -120,98 +122,105 @@ const GiftCardPage = () => {
         </HowGrid>
       </HowTo>
 
-      <MapBlock>
-        <YMaps query={{ lang: 'ru_RU' /*, apikey: 'ВАШ_API_KEY'*/ }}>
-          <div
-            style={{
-              height: 360,
-              width: '100%',
-              maxWidth: '100%',
-              overflow: 'hidden',
-            }}
-          >
-            <Map
-              defaultState={{
-                center: [55.7558, 37.6176],
-                zoom: 5,
-                controls: ['zoomControl', 'fullscreenControl'],
-              }}
-              modules={['control.ZoomControl', 'control.FullscreenControl']}
-              style={{ height: '360px', width: '100%' }}
-              instanceRef={mapRef}
-              onLoad={() => {
-                const all = ADDRESSES.flatMap((g) => g.items.map((i) => i.coords));
-                if (!mapRef.current || !all.length) return;
-
-                if (all.length === 1) {
-                  mapRef.current.setCenter(all[0], 13);
-                  return;
-                }
-                const lats = all.map((p) => p[0]);
-                const lngs = all.map((p) => p[1]);
-                const bounds = [
-                  [Math.min(...lats), Math.min(...lngs)],
-                  [Math.max(...lats), Math.max(...lngs)],
-                ];
-                mapRef.current.setBounds(bounds, { checkZoomRange: true, zoomMargin: 40 });
+      {branchesWithCoords.length > 0 && (
+        <MapBlock>
+          <YMaps query={{ lang: 'ru_RU' }}>
+            <div
+              style={{
+                height: 360,
+                width: '100%',
+                maxWidth: '100%',
+                overflow: 'hidden',
               }}
             >
-              <Clusterer
-                options={{ preset: 'islands#invertedRedClusterIcons', groupByCoordinates: false }}
+              <Map
+                defaultState={{
+                  center: [55.7558, 37.6176],
+                  zoom: 5,
+                  controls: ['zoomControl', 'fullscreenControl'],
+                }}
+                modules={['control.ZoomControl', 'control.FullscreenControl']}
+                style={{ height: '360px', width: '100%' }}
+                instanceRef={mapRef}
+                onLoad={() => {
+                  const coords = branchesWithCoords.map(b => b.coords);
+                  if (!mapRef.current || !coords.length) return;
+
+                  if (coords.length === 1) {
+                    mapRef.current.setCenter(coords[0], 13);
+                    return;
+                  }
+                  const lats = coords.map((p) => p[0]);
+                  const lngs = coords.map((p) => p[1]);
+                  const bounds = [
+                    [Math.min(...lats), Math.min(...lngs)],
+                    [Math.max(...lats), Math.max(...lngs)],
+                  ];
+                  mapRef.current.setBounds(bounds, { checkZoomRange: true, zoomMargin: 40 });
+                }}
               >
-                {ADDRESSES.flatMap((group) =>
-                  group.items.map((a) => (
+                <Clusterer
+                  options={{ preset: 'islands#invertedRedClusterIcons', groupByCoordinates: false }}
+                >
+                  {branchesWithCoords.map((branch) => (
                     <Placemark
-                      key={a.id}
-                      geometry={a.coords}
+                      key={branch.id}
+                      geometry={branch.coords}
                       options={{ preset: 'islands#redDotIcon' }}
                       properties={{
-                        balloonContentHeader: group.city,
-                        balloonContentBody: `<div>${a.line1}</div><div style="color:#8a94a6">${a.line2 || ''}</div>`,
+                        balloonContentHeader: branch.name,
+                        balloonContentBody: `<div>${branch.address || ''}</div>`,
                       }}
                       modules={['geoObject.addon.balloon', 'geoObject.addon.hint']}
                     />
-                  )),
-                )}
-              </Clusterer>
-            </Map>
-          </div>
-        </YMaps>
-      </MapBlock>
-      <BottomBlock>
-        <h3 className="addr-title">
-          <em>Адреса,</em> где можно <br />
-          <span>использовать сертификат</span>
-        </h3>
+                  ))}
+                </Clusterer>
+              </Map>
+            </div>
+          </YMaps>
+        </MapBlock>
+      )}
+      
+      {branches.length > 0 && (
+        <BottomBlock>
+          <h3 className="addr-title">
+            <em>Адреса,</em> где можно <br />
+            <span>использовать сертификат</span>
+          </h3>
 
-        <Addresses>
-          {ADDRESSES.map((group) => (
-            <CityCol key={group.city}>
-              <CityTitle>{group.city}</CityTitle>
-              {group.items.map((a) => (
-                <AddressItem key={a.id}>
-                  <div className="line1">{a.line}</div>
+          <Addresses>
+            <CityCol>
+              {branches.map((branch) => (
+                <AddressItem key={branch.id}>
+                  <div className="line1">{branch.name}</div>
+                  {branch.address && <div className="line2">{branch.address}</div>}
                 </AddressItem>
               ))}
             </CityCol>
-          ))}
-        </Addresses>
+          </Addresses>
 
-        <ContactRow>
-          <div className="contact">
-            <div className="label">Колл-центр:</div>
-            <a className="value" href="tel:+74992262931">
-              +7 (499) 226-29-31
-            </a>
-          </div>
-          <div className="contact">
-            <div className="label">E-mail:</div>
-            <a className="value" href="mailto:boss@feedback-massage.ru">
-              boss@feedback-massage.ru
-            </a>
-          </div>
-        </ContactRow>
-      </BottomBlock>
+          {(cardData.phone || cardData.email) && (
+            <ContactRow>
+              {cardData.phone && (
+                <div className="contact">
+                  <div className="label">Телефон:</div>
+                  <a className="value" href={`tel:${cardData.phone}`}>
+                    {cardData.phone}
+                  </a>
+                </div>
+              )}
+              {cardData.email && (
+                <div className="contact">
+                  <div className="label">E-mail:</div>
+                  <a className="value" href={`mailto:${cardData.email}`}>
+                    {cardData.email}
+                  </a>
+                </div>
+              )}
+            </ContactRow>
+          )}
+        </BottomBlock>
+      )}
       <Footer />
     </Container>
   );
