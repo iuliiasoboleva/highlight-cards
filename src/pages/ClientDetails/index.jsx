@@ -111,6 +111,17 @@ const ClientDetails = () => {
         {client.cards?.length > 0 ? (
           client.cards.map((card, index) => (
             <React.Fragment key={card.id || index}>
+              {card.type === 'certificate' && (card.uuid || card.cardUuid) && (
+                <CardTag
+                  as="a"
+                  href={`/giftcard/${card.uuid || card.cardUuid}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ cursor: 'pointer', border: 'none', background: '#c93542' }}
+                >
+                  🎁 Подарочный сертификат
+                </CardTag>
+              )}
               {card.cardNumber && (
                 <CardTag
                   as="button"
