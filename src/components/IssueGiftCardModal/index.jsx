@@ -15,27 +15,47 @@ import {
 } from './styles';
 
 const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues, onSuccess }) => {
-  const [formData, setFormData] = useState({
-    recipient_name: '',
-    surname: '',
-    name: '',
-    phone: '',
-    email: '',
-    gender: '',
-    birthday: '',
-    amount: '',
-    expiration_date: '',
-    greeting_message: '',
-    button_text: '',
-    button_link: '',
-    terms_text: '',
+  const STORAGE_KEY = 'giftCardFormData';
+  
+  const getInitialFormData = () => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  };
+  
+  const [formData, setFormData] = useState(() => {
+    const saved = getInitialFormData();
+    return saved || {
+      recipient_name: '',
+      surname: '',
+      name: '',
+      phone: '',
+      email: '',
+      gender: '',
+      birthday: '',
+      amount: '',
+      expiration_date: '',
+      greeting_message: '',
+      button_text: '',
+      button_link: '',
+      terms_text: '',
+    };
   });
-  const [isUnlimited, setIsUnlimited] = useState(false);
+  const [isUnlimited, setIsUnlimited] = useState(() => {
+    const saved = localStorage.getItem(`${STORAGE_KEY}_unlimited`);
+    return saved === 'true';
+  });
   const phoneInputRef = useRef(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
   const resetForm = () => {
-    setFormData({
+    const newFormData = {
       recipient_name: '',
       surname: '',
       name: '',
@@ -49,8 +69,12 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues, on
       button_text: defaultValues?.settings?.giftButtonText || 'Записаться онлайн',
       button_link: defaultValues?.settings?.giftButtonLink || '',
       terms_text: defaultValues?.settings?.giftTermsText || 'Акции и скидки не применяются к подарочному сертификату',
-    });
-    setIsUnlimited(defaultValues?.expirationDate === '00.00.0000');
+    };
+    setFormData(newFormData);
+    const unlimited = defaultValues?.expirationDate === '00.00.0000';
+    setIsUnlimited(unlimited);
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(`${STORAGE_KEY}_unlimited`);
   };
 
   const formatPhoneInput = (value) => {
@@ -111,7 +135,9 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues, on
 
     const digits = value.replace(/\D/g, '').split('');
     if (!digits.length) {
-      setFormData((prev) => ({ ...prev, phone: '' }));
+      const newFormData = { ...formData, phone: '' };
+      setFormData(newFormData);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newFormData));
       return;
     }
 
@@ -122,7 +148,9 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues, on
     const newDigits = digits.join('');
     const formatted = formatPhoneInput(newDigits);
 
-    setFormData((prev) => ({ ...prev, phone: formatted }));
+    const newFormData = { ...formData, phone: formatted };
+    setFormData(newFormData);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newFormData));
 
     requestAnimationFrame(() => {
       if (phoneInputRef.current) {
@@ -158,11 +186,14 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues, on
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    let newFormData;
     if (name === 'phone') {
-      setFormData((prev) => ({ ...prev, [name]: formatPhoneInput(value) }));
+      newFormData = { ...formData, [name]: formatPhoneInput(value) };
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      newFormData = { ...formData, [name]: value };
     }
+    setFormData(newFormData);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newFormData));
   };
 
   const handleSubmit = () => {
@@ -331,7 +362,11 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues, on
             <CustomCheckbox
                 label="Бессрочно"
                 checked={isUnlimited}
-                onChange={(e) => setIsUnlimited(e.target.checked)}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setIsUnlimited(checked);
+                  localStorage.setItem(`${STORAGE_KEY}_unlimited`, checked);
+                }}
             />
         </div>
       </InputGroup>
