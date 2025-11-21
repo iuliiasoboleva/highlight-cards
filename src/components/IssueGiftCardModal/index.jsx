@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import CustomModal from '../../customs/CustomModal';
 import CustomCheckbox from '../../customs/CustomCheckbox';
 import { 
@@ -31,6 +31,87 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues }) 
     terms_text: '',
   });
   const [isUnlimited, setIsUnlimited] = useState(false);
+  const phoneInputRef = useRef(null);
+
+  const formatPhoneInput = (value) => {
+    const digits = value.replace(/\D/g, '');
+    
+    if (!digits) return '';
+    
+    let workDigits = digits;
+    if (workDigits[0] !== '7') {
+      workDigits = '7' + workDigits;
+    }
+    
+    workDigits = workDigits.slice(0, 11);
+    
+    let formatted = '+7';
+    const rest = workDigits.slice(1);
+    
+    if (rest.length === 0) return '+7';
+    
+    if (rest.length > 0) formatted += `(${rest.slice(0, 3)}`;
+    if (rest.length >= 3) formatted += `)`;
+    if (rest.length > 3) formatted += rest.slice(3, 6);
+    if (rest.length >= 6) formatted += `-${rest.slice(6, 8)}`;
+    if (rest.length >= 8) formatted += `-${rest.slice(8, 10)}`;
+    
+    return formatted;
+  };
+
+  const getCaretPosByDigits = (value, digitsCount) => {
+    if (!value) return 0;
+    if (!digitsCount) return 0;
+
+    let count = 0;
+    for (let i = 0; i < value.length; i += 1) {
+      if (/\d/.test(value[i])) {
+        count += 1;
+        if (count === digitsCount) {
+          return i + 1;
+        }
+      }
+    }
+
+    return value.length;
+  };
+
+  const handlePhoneKeyDown = (e) => {
+    if (e.key !== 'Backspace') return;
+
+    const { selectionStart, selectionEnd, value } = e.target;
+    if (selectionStart !== selectionEnd) return;
+
+    const leftIndex = selectionStart - 1;
+    if (leftIndex < 0) return;
+
+    if (/\d/.test(value[leftIndex])) return;
+
+    e.preventDefault();
+
+    const digits = value.replace(/\D/g, '').split('');
+    if (!digits.length) {
+      setFormData((prev) => ({ ...prev, phone: '' }));
+      return;
+    }
+
+    const digitsBeforeCaret = value.slice(0, selectionStart).replace(/\D/g, '').length;
+    if (!digitsBeforeCaret) return;
+
+    digits.splice(digitsBeforeCaret - 1, 1);
+    const newDigits = digits.join('');
+    const formatted = formatPhoneInput(newDigits);
+
+    setFormData((prev) => ({ ...prev, phone: formatted }));
+
+    requestAnimationFrame(() => {
+      if (phoneInputRef.current) {
+        const caretDigits = Math.max(digitsBeforeCaret - 1, 0);
+        const nextPos = getCaretPosByDigits(formatted, caretDigits);
+        phoneInputRef.current.setSelectionRange(nextPos, nextPos);
+      }
+    });
+  };
 
   useEffect(() => {
     if (open && defaultValues) {
@@ -60,7 +141,11 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues }) 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === 'phone') {
+      setFormData((prev) => ({ ...prev, [name]: formatPhoneInput(value) }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = () => {
@@ -133,6 +218,8 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues }) 
           type="tel"
           value={formData.phone}
           onChange={handleChange}
+          onKeyDown={handlePhoneKeyDown}
+          ref={phoneInputRef}
           placeholder="+7 (900) 123-45-67"
           required
         />
