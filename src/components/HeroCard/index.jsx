@@ -20,6 +20,13 @@ const HeroCard = ({
 }) => {
   const closedImgRef = useRef(null);
 
+  const formatExpiry = (expiryDate) => {
+    if (!expiryDate || expiryDate === '00.00.0000' || expiryDate === '0000-00-00') {
+      return 'Бессрочно';
+    }
+    return `до ${expiryDate}`;
+  };
+
   return (
     <HeroContainer onClick={() => opened && onClose?.()}>
       {/* Закрытый конверт */}
@@ -52,7 +59,7 @@ const HeroCard = ({
           </CTAButton>
 
           <div className="meta">
-            <div>Срок действия: до {expiry}</div>
+            <div>Срок действия: {formatExpiry(expiry)}</div>
             <div
               dangerouslySetInnerHTML={{
                 __html: termsText || 'Акции и скидки не применяются<br /> к подарочному сертификату',
