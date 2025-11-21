@@ -330,7 +330,7 @@ const prepareStats = (client) => {
     {
       key: 'valid_until',
       label: 'Дата окончания действия карты',
-      value: firstCard?.cardExpirationDate || 'Без срока',
+      value: firstCard?.cardExpirationDate === '00.00.0000' ? 'Неограниченно' : (firstCard?.cardExpirationDate || 'Без срока'),
       isDatePicker: true,
       showRightCircle: false,
     },
