@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-const HERO_HEIGHT = 660;
-const CLOSED_LAYER_HEIGHT = 520;
-const OPENED_LAYER_HEIGHT = 460;
+const HERO_HEIGHT = 960;
+const CLOSED_LAYER_HEIGHT = 800;
+const OPENED_LAYER_HEIGHT = 800;
 
 export const HeroContainer = styled.section`
   position: relative;
@@ -52,7 +52,9 @@ export const ClosedLayer = styled.div`
   display: grid;
   align-content: end;
   justify-items: center;
-  gap: 10px;
+  gap: 16px;
+  width: 100%;
+  max-width: 100%;
 
   will-change: transform, opacity;
   transition:
@@ -64,30 +66,33 @@ export const ClosedLayer = styled.div`
   pointer-events: ${(p) => (p.$opened ? 'none' : 'auto')};
 
   img {
-    width: clamp(320px, 62vw, 700px);
-    max-width: 90vw;
+    width: 115%;
+    max-width: 1150px;
     height: auto;
     object-fit: contain;
     align-self: end;
     user-select: none;
     -webkit-user-drag: none;
     cursor: pointer;
+    margin-left: -7.5%;
 
     @media (max-width: 520px) {
-      width: 100%;
-      max-width: 100%;
+      width: 115%;
+      max-width: 1150px;
+      margin-left: -7.5%;
+      padding: 0;
     }
   }
 `;
 
 export const OpenedLayer = styled.div`
   height: ${OPENED_LAYER_HEIGHT}px;
-  max-width: 381px;
+  max-width: 1000px;
   width: 100%;
   display: grid;
   align-content: end;
   justify-items: center;
-  gap: 10px;
+  gap: 20px;
   position: relative;
 
   will-change: transform, opacity;
@@ -101,7 +106,9 @@ export const OpenedLayer = styled.div`
 
   .pocket {
     position: absolute;
-    width: 100%;
+    width: 115%;
+    left: 50%;
+    transform: translateX(-50%);
     align-self: end;
     pointer-events: none;
   }
@@ -109,20 +116,20 @@ export const OpenedLayer = styled.div`
 
 export const Certificate = styled.div`
   width: 100%;
-  max-width: clamp(240px, 50vw, 360px);
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 20px;
+  gap: 26px;
 
   background: #fff;
-  padding: 40px 20px 55px;
+  padding: 56px 32px 74px;
 
   color: #111;
 
   .logo {
     width: auto;
-    height: 40px;
+    height: 48px;
     object-fit: cover;
     align-self: center;
   }
@@ -133,7 +140,7 @@ export const Certificate = styled.div`
     font-family: 'Playfair Display', 'Times New Roman', Georgia, serif;
     font-style: italic;
     font-weight: 500;
-    font-size: 45px;
+    font-size: clamp(40px, 6vw, 56px);
     line-height: 1.08;
     letter-spacing: -0.2px;
   }
@@ -143,7 +150,7 @@ export const Certificate = styled.div`
     font-family: 'Playfair Display', 'Times New Roman', Georgia, serif;
     font-style: italic;
     font-weight: 400;
-    font-size: 18px;
+    font-size: 22px;
     color: #333;
   }
 
@@ -151,6 +158,7 @@ export const Certificate = styled.div`
     text-align: center;
     color: #343434;
     line-height: 1.4;
+    font-size: 18px;
   }
 
   .amount {
@@ -158,21 +166,21 @@ export const Certificate = styled.div`
     font-family: Georgia, 'Times New Roman', serif;
   }
   .sum {
-    font-size: 36px;
+    font-size: 48px;
     font-weight: 700;
     font-style: italic;
   }
   .rub {
-    font-size: 18px;
+    font-size: 22px;
     font-weight: 500;
     margin-left: 0.15em;
   }
 
   .cta {
-    width: 210px;
-    height: 36px;
-    padding: 8px 12px;
-    font-size: 12px;
+    width: 260px;
+    height: 44px;
+    padding: 10px 18px;
+    font-size: 14px;
     font-weight: 500;
     display: block;
     margin: 0 auto;
@@ -183,18 +191,43 @@ export const Certificate = styled.div`
     gap: 6px;
     margin-top: 12px;
     text-align: center;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 600;
 
     .serial {
       margin-top: 8px;
-      font-size: 8px;
+      font-size: 10px;
     }
   }
   @media (max-width: 520px) {
-    max-width: min(270px, 80vw);
+    max-width: 100%;
+    padding: 40px 20px 100px; // Increased bottom padding for pocket
+    gap: 20px;
     .title {
+      font-size: 40px;
+    }
+    .name {
+      font-size: 18px;
+    }
+    .text {
+      font-size: 16px;
+    }
+    .sum {
       font-size: 38px;
+    }
+    .rub {
+      font-size: 18px;
+    }
+    .cta {
+      width: 220px;
+      height: 40px;
+      font-size: 13px;
+    }
+    .meta {
+      font-size: 11px;
+      .serial {
+        font-size: 9px;
+      }
     }
   }
 `;
