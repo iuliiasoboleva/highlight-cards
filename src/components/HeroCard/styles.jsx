@@ -49,12 +49,13 @@ export const HeroContainer = styled.section`
 
 export const ClosedLayer = styled.div`
   height: ${CLOSED_LAYER_HEIGHT}px;
-  display: grid;
-  align-content: end;
-  justify-items: center;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
   gap: 16px;
   width: 100%;
   max-width: 100%;
+  overflow: hidden;
 
   will-change: transform, opacity;
   transition:
@@ -66,20 +67,17 @@ export const ClosedLayer = styled.div`
   pointer-events: ${(p) => (p.$opened ? 'none' : 'auto')};
 
   img {
-    width: 115%;
-    max-width: 1150px;
+    width: 180%;
+    max-width: 2000px;
     height: auto;
     object-fit: contain;
-    align-self: end;
     user-select: none;
     -webkit-user-drag: none;
     cursor: pointer;
-    margin-left: -7.5%;
 
     @media (max-width: 520px) {
-      width: 115%;
-      max-width: 1150px;
-      margin-left: -7.5%;
+      width: 180%;
+      max-width: 2000px;
       padding: 0;
     }
   }
@@ -106,7 +104,8 @@ export const OpenedLayer = styled.div`
 
   .pocket {
     position: absolute;
-    width: 115%;
+    width: 180%;
+    max-width: 2000px;
     left: 50%;
     transform: translateX(-50%);
     align-self: end;
