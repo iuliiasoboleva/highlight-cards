@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 
 const HERO_HEIGHT = 660;
-const LAYER_HEIGHT = 420;
+const CLOSED_LAYER_HEIGHT = 520;
+const OPENED_LAYER_HEIGHT = 460;
 
 export const HeroContainer = styled.section`
   position: relative;
@@ -47,7 +48,7 @@ export const HeroContainer = styled.section`
 `;
 
 export const ClosedLayer = styled.div`
-  height: ${LAYER_HEIGHT}px;
+  height: ${CLOSED_LAYER_HEIGHT}px;
   display: grid;
   align-content: end;
   justify-items: center;
@@ -80,7 +81,7 @@ export const ClosedLayer = styled.div`
 `;
 
 export const OpenedLayer = styled.div`
-  height: ${LAYER_HEIGHT}px;
+  height: ${OPENED_LAYER_HEIGHT}px;
   max-width: 381px;
   width: 100%;
   display: grid;
