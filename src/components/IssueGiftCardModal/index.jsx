@@ -280,7 +280,7 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues }) 
           name="recipient_name"
           value={formData.recipient_name}
           onChange={handleChange}
-          placeholder="Дмитрию"
+          placeholder="Дмитрий"
         />
       </InputGroup>
 
