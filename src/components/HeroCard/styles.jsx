@@ -54,7 +54,7 @@ export const ClosedLayer = styled.div`
   justify-content: center;
   gap: 16px;
   width: 100%;
-  max-width: 100%;
+  max-width: 900px;
   overflow: hidden;
 
   will-change: transform, opacity;
@@ -67,8 +67,8 @@ export const ClosedLayer = styled.div`
   pointer-events: ${(p) => (p.$opened ? 'none' : 'auto')};
 
   img {
-    width: 180%;
-    max-width: 2000px;
+    width: 100%;
+    max-width: 900px;
     height: auto;
     object-fit: contain;
     user-select: none;
@@ -85,7 +85,7 @@ export const ClosedLayer = styled.div`
 
 export const OpenedLayer = styled.div`
   height: ${OPENED_LAYER_HEIGHT}px;
-  max-width: 1000px;
+  max-width: 900px;
   width: 100%;
   display: grid;
   align-content: end;
@@ -104,12 +104,17 @@ export const OpenedLayer = styled.div`
 
   .pocket {
     position: absolute;
-    width: 180%;
-    max-width: 2000px;
+    width: 100%;
+    max-width: 900px;
     left: 50%;
     transform: translateX(-50%);
     align-self: end;
     pointer-events: none;
+
+    @media (max-width: 520px) {
+      width: 180%;
+      max-width: 2000px;
+    }
   }
 `;
 
