@@ -14,7 +14,7 @@ import {
   RequiredMark
 } from './styles';
 
-const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues }) => {
+const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues, onSuccess }) => {
   const [formData, setFormData] = useState({
     recipient_name: '',
     surname: '',
@@ -32,6 +32,26 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues }) 
   });
   const [isUnlimited, setIsUnlimited] = useState(false);
   const phoneInputRef = useRef(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  const resetForm = () => {
+    setFormData({
+      recipient_name: '',
+      surname: '',
+      name: '',
+      phone: '',
+      email: '',
+      gender: '',
+      birthday: '',
+      amount: defaultValues?.balanceMoney || '',
+      expiration_date: '',
+      greeting_message: defaultValues?.infoFields?.message || '',
+      button_text: defaultValues?.settings?.giftButtonText || 'Записаться онлайн',
+      button_link: defaultValues?.settings?.giftButtonLink || '',
+      terms_text: defaultValues?.settings?.giftTermsText || 'Акции и скидки не применяются к подарочному сертификату',
+    });
+    setIsUnlimited(defaultValues?.expirationDate === '00.00.0000');
+  };
 
   const formatPhoneInput = (value) => {
     const digits = value.replace(/\D/g, '');
@@ -114,7 +134,7 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues }) 
   };
 
   useEffect(() => {
-    if (open && defaultValues) {
+    if (open && defaultValues && !isInitialized) {
         const settings = defaultValues.settings || {};
         const infoFields = defaultValues.infoFields || {};
         const isExpUnlimited = defaultValues.expirationDate === '00.00.0000';
@@ -127,17 +147,14 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues }) 
             terms_text: settings.giftTermsText || 'Акции и скидки не применяются к подарочному сертификату',
             greeting_message: infoFields.message || '',
             amount: defaultValues.balanceMoney || '',
-            expiration_date: '',
-            surname: '',
-            name: '',
-            phone: '',
-            email: '',
-            gender: '',
-            birthday: '',
-            recipient_name: '',
         }));
+        setIsInitialized(true);
     }
-  }, [open, defaultValues]);
+    
+    if (!open) {
+      setIsInitialized(false);
+    }
+  }, [open, defaultValues, isInitialized]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -164,6 +181,12 @@ const IssueGiftCardModal = ({ open, onClose, onIssue, loading, defaultValues }) 
     
     onIssue(data);
   };
+  
+  useEffect(() => {
+    if (onSuccess) {
+      resetForm();
+    }
+  }, [onSuccess]);
 
   return (
     <CustomModal

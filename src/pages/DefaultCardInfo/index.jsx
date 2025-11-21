@@ -47,6 +47,7 @@ const DefaultCardInfo = () => {
   const [isCopied, setIsCopied] = useState(false);
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
   const [issuing, setIssuing] = useState(false);
+  const [issueSuccess, setIssueSuccess] = useState(0);
 
   useEffect(() => {
     if (card) return;
@@ -98,6 +99,7 @@ const DefaultCardInfo = () => {
       const res = await axiosInstance.post(`/cards/${card.id}/issue_gift`, data);
       toast.success(`Сертификат выпущен! Номер: ${res.data.card_number}`);
       setIsIssueModalOpen(false);
+      setIssueSuccess(prev => prev + 1);
     } catch (e) {
       console.error(e);
       toast.error('Ошибка при выпуске сертификата');
@@ -187,6 +189,7 @@ const DefaultCardInfo = () => {
           onIssue={handleIssueGift}
           loading={issuing}
           defaultValues={card}
+          onSuccess={issueSuccess}
         />
       )}
     </Wrapper>
