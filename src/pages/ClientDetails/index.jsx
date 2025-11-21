@@ -228,7 +228,6 @@ const prepareStats = (client) => {
     return fields.map((field) => {
       let value = '';
 
-      // Заполняем значения из данных клиента
       switch (field.type) {
         case 'name':
           value = client.name || '';
@@ -243,7 +242,16 @@ const prepareStats = (client) => {
           value = client.surname || '';
           break;
         case 'birthday':
-          value = client.birthday ? new Date(client.birthday).toISOString().split('T')[0] : '';
+          if (client.birthdate) {
+            const parts = client.birthdate.split('/');
+            if (parts.length === 3) {
+              const [day, month, year] = parts;
+              value = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+            }
+          }
+          break;
+        case 'gender':
+          value = client.gender || '';
           break;
         default:
           value = field.value || '';
@@ -251,7 +259,7 @@ const prepareStats = (client) => {
 
       return {
         label: field.name || field.label || '',
-        type: field.type === 'birthday' ? 'date' : field.type === 'email' ? 'email' : 'text',
+        type: field.type === 'birthday' ? 'date' : field.type === 'email' ? 'email' : field.type === 'gender' ? 'gender' : 'text',
         value: value,
       };
     });

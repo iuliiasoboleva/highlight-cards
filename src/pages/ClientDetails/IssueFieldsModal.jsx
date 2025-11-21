@@ -41,11 +41,38 @@ const IssueFieldsModal = ({ fields = [], onClose, onSave }) => {
         {formState?.map((field, i) => (
           <div key={i}>
             <Label>{field.label}</Label>
-            <CustomInput
-              type={field.type === 'date' ? 'date' : 'text'}
-              value={field.value ?? ''}
-              onChange={(e) => handleChange(i, e.target.value)}
-            />
+            {field.type === 'gender' ? (
+              <div style={{ display: 'flex', gap: '20px', marginTop: '8px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input
+                    type="radio"
+                    name={`gender-${i}`}
+                    value="male"
+                    checked={field.value === 'male'}
+                    onChange={(e) => handleChange(i, e.target.value)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                  <span>М</span>
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input
+                    type="radio"
+                    name={`gender-${i}`}
+                    value="female"
+                    checked={field.value === 'female'}
+                    onChange={(e) => handleChange(i, e.target.value)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                  <span>Ж</span>
+                </label>
+              </div>
+            ) : (
+              <CustomInput
+                type={field.type === 'date' ? 'date' : field.type === 'email' ? 'email' : 'text'}
+                value={field.value ?? ''}
+                onChange={(e) => handleChange(i, e.target.value)}
+              />
+            )}
           </div>
         ))}
       </FormWrapper>
