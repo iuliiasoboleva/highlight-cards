@@ -303,8 +303,8 @@ const prepareStats = (client) => {
     {
       key: 'status',
       label: 'Статус',
-      value: firstCard?.cardInstallationDate ? 'Установлена' : 'Не установлена',
-      valueColor: firstCard?.cardInstallationDate ? 'limegreen' : 'red',
+      value: firstCard?.walletInstalled ? 'Установлена' : 'Не установлена',
+      valueColor: firstCard?.walletInstalled ? 'limegreen' : 'red',
       showRightCircle: false,
       small: true,
     },
@@ -318,7 +318,13 @@ const prepareStats = (client) => {
     {
       key: 'device_installed',
       label: 'Установлено в приложении',
-      value: firstCard?.cardInstallationDate ? 'Apple Wallet' : '',
+      value: (() => {
+        if (!firstCard?.walletInstalled) return '';
+        if (firstCard.walletInstalled === 'apple') return 'Apple Wallet';
+        if (firstCard.walletInstalled === 'google') return 'Google Wallet';
+        if (firstCard.walletInstalled === 'both') return 'Apple Wallet, Google Wallet';
+        return '';
+      })(),
       showRightCircle: false,
     },
     {
