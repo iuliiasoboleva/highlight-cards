@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 
 import giftCardTop from '../../assets/gift-card-top.png';
 import giftCardImg from '../../assets/gift-card.png';
@@ -19,8 +19,6 @@ const HeroCard = ({
   termsText,
   certificateLogo,
 }) => {
-  const closedImgRef = useRef(null);
-
   const formatExpiry = (expiryDate) => {
     if (!expiryDate || expiryDate === '00.00.0000' || expiryDate === '0000-00-00') {
       return 'Бессрочно';
@@ -38,7 +36,7 @@ const HeroCard = ({
           onOpen?.();
         }}
       >
-        <img ref={closedImgRef} src={giftCardImg} alt="Конверт" />
+        <img src={giftCardImg} alt="Конверт" />
       </ClosedLayer>
 
       {/* Открытый сертификат */}

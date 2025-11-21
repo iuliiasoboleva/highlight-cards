@@ -7,7 +7,9 @@ const DESKTOP_MAX_WIDTH = 1260;
 const TABLET_MAX_WIDTH = 900;
 const MOBILE_EXTRA_WIDTH = '180%';
 const MOBILE_MAX_WIDTH = 2000;
-const DESKTOP_SIDE_PADDING_PERCENT = ((1594 - 864) / 1594 / 2) * 100;
+const OPENED_DESKTOP_HEIGHT = 940;
+const DESKTOP_PADDING_LEFT_PERCENT = (378 / 1594) * 100;
+const DESKTOP_PADDING_RIGHT_PERCENT = (352 / 1594) * 100;
 
 const sharedLayerWidth = css`
   width: 100%;
@@ -118,9 +120,9 @@ export const ClosedLayer = styled.div`
 export const OpenedLayer = styled.div`
   ${sharedLayerWidth};
   display: grid;
-  align-content: end;
+  align-content: flex-start;
   justify-items: center;
-  gap: 20px;
+  gap: 24px;
   position: relative;
   box-sizing: border-box;
 
@@ -134,11 +136,11 @@ export const OpenedLayer = styled.div`
   pointer-events: ${(p) => (p.$opened ? 'auto' : 'none')};
 
   @media (min-width: 769px) {
-    height: ${OPENED_LAYER_HEIGHT}px;
+    height: ${OPENED_DESKTOP_HEIGHT}px;
   }
 
   @media (min-width: 1025px) {
-    padding: 0 ${DESKTOP_SIDE_PADDING_PERCENT}%;
+    padding: 60px ${DESKTOP_PADDING_RIGHT_PERCENT}% 140px ${DESKTOP_PADDING_LEFT_PERCENT}%;
   }
 
   @media (max-width: 768px) {
@@ -152,12 +154,16 @@ export const OpenedLayer = styled.div`
     align-self: end;
     pointer-events: none;
     ${sharedArtworkWidth};
+
+    @media (min-width: 1025px) {
+      width: calc(100% - ${DESKTOP_PADDING_LEFT_PERCENT + DESKTOP_PADDING_RIGHT_PERCENT}%);
+    }
   }
 `;
 
 export const Certificate = styled.div`
   width: 100%;
-  max-width: ${DESKTOP_MAX_WIDTH}px;
+  max-width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -169,6 +175,11 @@ export const Certificate = styled.div`
   box-sizing: border-box;
 
   color: #111;
+  transition: transform 0.3s ease;
+
+  @media (min-width: 769px) {
+    transform: translate(-10px, 10px);
+  }
 
   .logo {
     width: auto;
