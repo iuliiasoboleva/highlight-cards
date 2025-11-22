@@ -206,3 +206,36 @@ export const SecondaryButton = styled.button`
     cursor: not-allowed;
   }
 `;
+
+export const TransactionsTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 14px;
+
+  th,
+  td {
+    padding: 10px 8px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: top;
+  }
+
+  th {
+    font-weight: 600;
+    color: #7f8c8d;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+`;
+
+export const TransactionsEmpty = styled.div`
+  padding: 16px 0;
+  color: #95a5a6;
+  font-size: 14px;
+`;

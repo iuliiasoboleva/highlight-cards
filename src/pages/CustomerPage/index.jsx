@@ -28,6 +28,8 @@ import {
   SectionTitle,
   StampControls,
   SecondaryButton,
+  TransactionsTable,
+  TransactionsEmpty,
   Title,
 } from './styles';
 
@@ -48,6 +50,8 @@ const CustomerPage = () => {
   const [certificateWriteoff, setCertificateWriteoff] = useState('');
   const [certificateProcessing, setCertificateProcessing] = useState(false);
   const [certificateConfirm, setCertificateConfirm] = useState({ open: false, amount: 0 });
+  const [transactions, setTransactions] = useState([]);
+  const [transactionsLoading, setTransactionsLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const hasLoadedRef = useRef(false);
@@ -126,12 +130,15 @@ const CustomerPage = () => {
   useEffect(() => {
     if (!card?.cardUuid) {
       setCardDetails(null);
+      setTransactions([]);
+      setTransactionsLoading(false);
       return;
     }
 
     let cancelled = false;
     setCardDetails(null);
     setCardDetailsLoading(true);
+    setTransactionsLoading(true);
 
     axiosInstance
       .get(`/cards/${card.cardUuid}`)
@@ -146,6 +153,25 @@ const CustomerPage = () => {
       .finally(() => {
         if (!cancelled) {
           setCardDetailsLoading(false);
+        }
+      });
+
+    axiosInstance
+      .get(`/clients/transactions/${card.cardUuid}`)
+      .then((res) => {
+        if (!cancelled) {
+          setTransactions(res.data || []);
+        }
+      })
+      .catch((error) => {
+        console.error('Ошибка загрузки истории операций:', error);
+        if (!cancelled) {
+          setTransactions([]);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setTransactionsLoading(false);
         }
       });
 
@@ -171,6 +197,22 @@ const CustomerPage = () => {
   const isCertificateCard = cardType === 'certificate';
   const currentCashbackBalance = card.cashbackBalance || 0;
   const stampEntityName = isSubscriptionCard ? 'посещений' : 'штампов';
+  const EVENT_LABELS = {
+    stamp_add: 'Начисление штампов',
+    reward_given: 'Добавление награды',
+    reward_received: 'Получение награды',
+    cashback_accrued: 'Начисление кешбэка',
+    cashback_spent: 'Списание кешбэка',
+    certificate_spend: 'Списание сертификата',
+  };
+  const getEventLabel = (event) => EVENT_LABELS[event] || event || 'Операция';
+  const formatTransactionAmount = (tx) => {
+    const value = tx.quantity ?? tx.amount ?? '';
+    if (value === '' || value === null || Number.isNaN(Number(value))) {
+      return '—';
+    }
+    return `${value}`;
+  };
   const certificateInfo = card.certificateInfo || {};
   const certificateBalanceValue =
     (certificateInfo && certificateInfo.amount !== undefined ? certificateInfo.amount : undefined) ??
@@ -615,6 +657,38 @@ const CustomerPage = () => {
     return null;
   };
 
+  const renderTransactionsHistory = () => (
+    <SectionCard>
+      <SectionTitle>История операций</SectionTitle>
+      {transactionsLoading ? (
+        <LoaderCentered />
+      ) : transactions.length === 0 ? (
+        <TransactionsEmpty>Пока нет операций по этой карте</TransactionsEmpty>
+      ) : (
+        <TransactionsTable>
+          <thead>
+            <tr>
+              <th>Дата</th>
+              <th>Операция</th>
+              <th>Кол-во / сумма</th>
+              <th>Баланс</th>
+            </tr>
+          </thead>
+          <tbody>
+            {transactions.map((tx) => (
+              <tr key={tx.id}>
+                <td>{tx.dateTime || '—'}</td>
+                <td>{getEventLabel(tx.event)}</td>
+                <td>{formatTransactionAmount(tx)}</td>
+                <td>{tx.balance || '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </TransactionsTable>
+      )}
+    </SectionCard>
+  );
+
   const getCardHint = () => {
     if (isStampCard) {
       return 'Введите количество штампов и нажмите «Добавить».';
@@ -812,6 +886,7 @@ const CustomerPage = () => {
 
       {renderCashbackControls()}
       {renderInfoNotice()}
+      {renderTransactionsHistory()}
 
       <InfoGrid>
         {infoItems.map((item) => (
