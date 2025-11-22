@@ -37,6 +37,7 @@ export const clientHeaders = [
   { key: 'userName', title: 'Имя пользователя' },
   { key: 'dateTime', title: 'Дата и время' },
   { key: 'phone', title: 'Телефон' },
+  { key: 'email', title: 'Email' },
   { key: 'device', title: 'Устройство' },
   { key: 'template', title: 'Шаблон' },
   { key: 'event', title: 'Событие' },

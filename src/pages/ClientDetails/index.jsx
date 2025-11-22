@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import axiosInstance from '../../axiosInstance';
@@ -37,6 +37,74 @@ const EVENT_LABELS = {
   certificate_adjustment: 'Корректировка',
 };
 
+const PLACEHOLDER = '—';
+
+const toCleanString = (value) => {
+  if (value === null || value === undefined) return '';
+  if (typeof value === 'string') return value.trim();
+  try {
+    return String(value).trim();
+  } catch (e) {
+    return '';
+  }
+};
+
+const normalizeKey = (value) => (typeof value === 'string' ? value.trim().toLowerCase() : '');
+
+const pickIssueFieldValue = (fields, candidates) => {
+  if (!Array.isArray(fields) || !candidates?.length) return '';
+  const normalized = candidates.map((item) => normalizeKey(item)).filter(Boolean);
+  if (!normalized.length) return '';
+  const match = fields.find((field) => {
+    const type = normalizeKey(field?.type);
+    const name = normalizeKey(field?.name);
+    const label = normalizeKey(field?.label);
+    return normalized.some((target) => type === target || name === target || label === target);
+  });
+  return toCleanString(match?.value);
+};
+
+const buildOwnerDetails = (clientData) => {
+  if (!clientData) {
+    return { name: '', phone: '', email: '' };
+  }
+  const issueFields = clientData.issueFields;
+  const phoneFromIssue = pickIssueFieldValue(issueFields, ['phone', 'phone_number', 'телефон']);
+  const emailFromIssue = pickIssueFieldValue(issueFields, ['email', 'e-mail', 'почта']);
+  const fallbackFirstName = pickIssueFieldValue(issueFields, ['name', 'first_name', 'имя']);
+  const resolvedName = toCleanString(clientData.name) || fallbackFirstName;
+  const resolvedSurname = toCleanString(clientData.surname);
+  const fullName = [resolvedName, resolvedSurname].filter(Boolean).join(' ');
+  return {
+    name: fullName,
+    phone: toCleanString(clientData.phone) || phoneFromIssue || '',
+    email: toCleanString(clientData.email) || emailFromIssue || '',
+  };
+};
+
+const getCardTransactionsId = (card) => {
+  if (!card) return '';
+  const candidates = [
+    card.cardUuid,
+    card.card_uuid,
+    card.cardUUID,
+    card.cardUuidV2,
+    card.card_uuid_v2,
+    card.uuid_v2,
+  ];
+  return candidates.map(toCleanString).find(Boolean) || '';
+};
+
+const enhanceTransactionWithOwner = (transaction, owner) => {
+  const safeOwner = owner || { name: '', phone: '', email: '' };
+  return {
+    ...transaction,
+    userName: transaction.userName || safeOwner.name || PLACEHOLDER,
+    phone: transaction.phone || safeOwner.phone || PLACEHOLDER,
+    email: transaction.email || safeOwner.email || PLACEHOLDER,
+  };
+};
+
 const ClientDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -49,6 +117,43 @@ const ClientDetails = () => {
   const [transactionsPageSize, setTransactionsPageSize] = useState(5);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  const ownerDetails = useMemo(() => buildOwnerDetails(client), [client]);
+
+  const fetchTransactions = async (
+    cardId,
+    page = transactionsPage,
+    limit = transactionsPageSize,
+    ownerMeta = ownerDetails,
+  ) => {
+    if (!cardId) {
+      setTransactions([]);
+      setTransactionsTotal(0);
+      return;
+    }
+    setTransactionsLoading(true);
+    try {
+      const txRes = await axiosInstance.get(`/clients/transactions/${cardId}`, { params: { page, limit } });
+      const txData = txRes.data?.items || txRes.data || [];
+      const mapped = txData.map((tx) =>
+        enhanceTransactionWithOwner(
+          {
+            ...tx,
+            event: EVENT_LABELS[tx.event] || tx.event,
+          },
+          ownerMeta,
+        ),
+      );
+      setTransactions(mapped);
+      setTransactionsTotal(txRes.data?.total ?? txData.length);
+    } catch (txErr) {
+      console.error(txErr);
+      setTransactions([]);
+      setTransactionsTotal(0);
+    } finally {
+      setTransactionsLoading(false);
+    }
+  };
+
   useEffect(() => {
     const load = async () => {
       try {
@@ -56,9 +161,11 @@ const ClientDetails = () => {
         const clientData = res.data;
         setClient(clientData);
 
+        const ownerMeta = buildOwnerDetails(clientData);
         const firstCard = clientData.cards && clientData.cards.length ? clientData.cards[0] : null;
-        if (firstCard && firstCard.id) {
-          await fetchTransactions(firstCard.id, 1, transactionsPageSize);
+        const cardIdentifier = getCardTransactionsId(firstCard);
+        if (cardIdentifier) {
+          await fetchTransactions(cardIdentifier, 1, transactionsPageSize, ownerMeta);
           setTransactionsPage(1);
         } else {
           setTransactions([]);
@@ -72,40 +179,16 @@ const ClientDetails = () => {
     };
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
-  const fetchTransactions = async (cardId, page = transactionsPage, limit = transactionsPageSize) => {
-    if (!cardId) {
-      setTransactions([]);
-      setTransactionsTotal(0);
-      return;
-    }
-    setTransactionsLoading(true);
-    try {
-      const txRes = await axiosInstance.get(`/clients/transactions/${cardId}`, { params: { page, limit } });
-      const txData = txRes.data?.items || txRes.data || [];
-      const mapped = txData.map((tx) => ({
-        ...tx,
-        event: EVENT_LABELS[tx.event] || tx.event,
-      }));
-      setTransactions(mapped);
-      setTransactionsTotal(txRes.data?.total ?? txData.length);
-    } catch (txErr) {
-      console.error(txErr);
-      setTransactions([]);
-      setTransactionsTotal(0);
-    } finally {
-      setTransactionsLoading(false);
-    }
-  };
+  }, [id, transactionsPageSize]);
 
   const handlePageSizeChange = async (value) => {
     const numeric = Number(value) || transactionsPageSize;
     setTransactionsPageSize(numeric);
     setTransactionsPage(1);
     const firstCard = client?.cards && client.cards.length ? client.cards[0] : null;
-    if (firstCard?.id) {
-      await fetchTransactions(firstCard.id, 1, numeric);
+    const cardIdentifier = getCardTransactionsId(firstCard);
+    if (cardIdentifier) {
+      await fetchTransactions(cardIdentifier, 1, numeric, ownerDetails);
     }
   };
 
@@ -114,8 +197,9 @@ const ClientDetails = () => {
     if (nextPage < 1 || nextPage > totalPages || nextPage === transactionsPage) return;
     setTransactionsPage(nextPage);
     const firstCard = client?.cards && client.cards.length ? client.cards[0] : null;
-    if (firstCard?.id) {
-      await fetchTransactions(firstCard.id, nextPage, transactionsPageSize);
+    const cardIdentifier = getCardTransactionsId(firstCard);
+    if (cardIdentifier) {
+      await fetchTransactions(cardIdentifier, nextPage, transactionsPageSize, ownerDetails);
     }
   };
 

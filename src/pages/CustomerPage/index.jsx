@@ -53,6 +53,13 @@ const CustomerPage = () => {
   const [adjustModalOpen, setAdjustModalOpen] = useState(false);
   const [adjustValue, setAdjustValue] = useState('');
   const [adjustProcessing, setAdjustProcessing] = useState(false);
+
+  const [transactions, setTransactions] = useState([]);
+  const [transactionsLoading, setTransactionsLoading] = useState(false);
+  const [transactionsTimezone, setTransactionsTimezone] = useState('');
+  const [transactionsTotal, setTransactionsTotal] = useState(0);
+  const [transactionsPage, setTransactionsPage] = useState(1);
+  const [transactionsPageSize, setTransactionsPageSize] = useState(5);
   const totalPages = Math.max(1, Math.ceil(transactionsTotal / transactionsPageSize) || 1);
 
   const handlePageSizeChange = async (value) => {
@@ -71,12 +78,6 @@ const CustomerPage = () => {
       await fetchTransactions(card.cardUuid, nextPage, transactionsPageSize);
     }
   };
-  const [transactions, setTransactions] = useState([]);
-  const [transactionsLoading, setTransactionsLoading] = useState(false);
-  const [transactionsTimezone, setTransactionsTimezone] = useState('');
-  const [transactionsTotal, setTransactionsTotal] = useState(0);
-  const [transactionsPage, setTransactionsPage] = useState(1);
-  const [transactionsPageSize, setTransactionsPageSize] = useState(5);
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const hasLoadedRef = useRef(false);
