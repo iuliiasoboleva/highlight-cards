@@ -127,6 +127,25 @@ const CustomerPage = () => {
     }
   };
 
+  const fetchTransactions = async (cardUuid) => {
+    if (!cardUuid) {
+      setTransactions([]);
+      setTransactionsLoading(false);
+      return;
+    }
+
+    setTransactionsLoading(true);
+    try {
+      const res = await axiosInstance.get(`/clients/transactions/${cardUuid}`);
+      setTransactions(res.data || []);
+    } catch (error) {
+      console.error('Ошибка загрузки истории операций:', error);
+      setTransactions([]);
+    } finally {
+      setTransactionsLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!card?.cardUuid) {
       setCardDetails(null);
@@ -138,7 +157,6 @@ const CustomerPage = () => {
     let cancelled = false;
     setCardDetails(null);
     setCardDetailsLoading(true);
-    setTransactionsLoading(true);
 
     axiosInstance
       .get(`/cards/${card.cardUuid}`)
@@ -156,28 +174,12 @@ const CustomerPage = () => {
         }
       });
 
-    axiosInstance
-      .get(`/clients/transactions/${card.cardUuid}`)
-      .then((res) => {
-        if (!cancelled) {
-          setTransactions(res.data || []);
-        }
-      })
-      .catch((error) => {
-        console.error('Ошибка загрузки истории операций:', error);
-        if (!cancelled) {
-          setTransactions([]);
-        }
-      })
-      .finally(() => {
-        if (!cancelled) {
-          setTransactionsLoading(false);
-        }
-      });
+    fetchTransactions(card.cardUuid);
 
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [card?.cardUuid]);
 
   if (loading) {
@@ -479,6 +481,7 @@ const CustomerPage = () => {
       setCertificateConfirm({ open: false, amount: 0 });
       setCardDetails((prev) => (prev ? { ...prev, balanceMoney: newBalance } : prev));
       await reloadClient();
+      await fetchTransactions(card?.cardUuid);
     } catch (error) {
       const detail = error.response?.data?.detail || error.message || 'Ошибка при списании сертификата';
       toast.error(detail);
