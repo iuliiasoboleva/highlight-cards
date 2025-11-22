@@ -97,11 +97,16 @@ const getCardTransactionsId = (card) => {
 
 const enhanceTransactionWithOwner = (transaction, owner) => {
   const safeOwner = owner || { name: '', phone: '', email: '' };
+  const managerName = toCleanString(transaction.userName) || PLACEHOLDER;
+  const ownerName = safeOwner.name || '';
+  const ownerPhone = safeOwner.phone || transaction.phone || '';
+  const ownerEmail = safeOwner.email || transaction.email || '';
   return {
     ...transaction,
-    userName: transaction.userName || safeOwner.name || PLACEHOLDER,
-    phone: transaction.phone || safeOwner.phone || PLACEHOLDER,
-    email: transaction.email || safeOwner.email || PLACEHOLDER,
+    userName: ownerName || managerName,
+    phone: ownerPhone ? ownerPhone : PLACEHOLDER,
+    email: ownerEmail ? ownerEmail : PLACEHOLDER,
+    manager: managerName,
   };
 };
 

@@ -39,13 +39,10 @@ export const clientHeaders = [
   { key: 'phone', title: 'Телефон' },
   { key: 'email', title: 'Email' },
   { key: 'device', title: 'Устройство' },
-  { key: 'template', title: 'Шаблон' },
   { key: 'event', title: 'Событие' },
   { key: 'quantity', title: 'Количество' },
   { key: 'balance', title: 'Баланс' },
-  { key: 'sum', title: 'Сумма транзакций' },
   { key: 'manager', title: 'Менеджер' },
-  { key: 'company', title: 'Компания' },
   { key: 'source', title: 'Источник операции' },
   { key: 'comment', title: 'Комментарий' },
 ];
