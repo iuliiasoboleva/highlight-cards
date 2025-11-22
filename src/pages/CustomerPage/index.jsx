@@ -7,6 +7,7 @@ import LoaderCentered from '../../components/LoaderCentered';
 import { useToast } from '../../components/Toast';
 import CustomInput from '../../customs/CustomInput';
 import CustomMainButton from '../../customs/CustomMainButton';
+import CustomModal from '../../customs/CustomModal';
 import {
   Actions,
   Container,
@@ -46,6 +47,7 @@ const CustomerPage = () => {
   const [cashbackToSpend, setCashbackToSpend] = useState('');
   const [certificateWriteoff, setCertificateWriteoff] = useState('');
   const [certificateProcessing, setCertificateProcessing] = useState(false);
+  const [certificateConfirm, setCertificateConfirm] = useState({ open: false, amount: 0 });
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const hasLoadedRef = useRef(false);
@@ -397,27 +399,26 @@ const CustomerPage = () => {
     setCertificateWriteoff(String(certificateBalance));
   };
 
-  const handleCertificateRedeem = async () => {
-    if (!isCertificateCard) {
-      return;
-    }
-
+  const openCertificateConfirm = () => {
+    if (!isCertificateCard) return;
     const amountToSpend = normalizeMoney(certificateWriteoff);
-
     if (!amountToSpend) {
       toast.error('Введите сумму для списания');
       return;
     }
-
     if (amountToSpend > certificateBalance) {
       toast.error('Недостаточно средств сертификата');
       return;
     }
+    setCertificateConfirm({ open: true, amount: amountToSpend });
+  };
 
-    if (!window.confirm(`Списать ${amountToSpend} ₽ с подарочного сертификата?`)) {
+  const handleCertificateRedeem = async () => {
+    if (!isCertificateCard || !certificateConfirm.open) {
       return;
     }
 
+    const amountToSpend = certificateConfirm.amount;
     setCertificateProcessing(true);
     try {
       const newBalance = Math.max(0, certificateBalance - amountToSpend);
@@ -433,6 +434,7 @@ const CustomerPage = () => {
 
       toast.success(`Списано ${amountToSpend} ₽, остаток ${newBalance} ₽`);
       setCertificateWriteoff('');
+      setCertificateConfirm({ open: false, amount: 0 });
       setCardDetails((prev) => (prev ? { ...prev, balanceMoney: newBalance } : prev));
       await reloadClient();
     } catch (error) {
@@ -441,6 +443,11 @@ const CustomerPage = () => {
     } finally {
       setCertificateProcessing(false);
     }
+  };
+
+  const handleCertificateModalClose = () => {
+    if (certificateProcessing) return;
+    setCertificateConfirm({ open: false, amount: 0 });
   };
 
   const renderCashbackControls = () => {
@@ -592,7 +599,7 @@ const CustomerPage = () => {
                 Весь баланс
               </SecondaryButton>
               <CustomMainButton
-                onClick={handleCertificateRedeem}
+                onClick={openCertificateConfirm}
                 disabled={
                   certificateProcessing || !hasBalance || normalizeMoney(certificateWriteoff) <= 0
                 }
@@ -831,6 +838,41 @@ const CustomerPage = () => {
       </Row>
 
       {hintText && <Hint>{hintText}</Hint>}
+
+      <CustomModal
+        open={certificateConfirm.open}
+        onClose={handleCertificateModalClose}
+        closeOnOverlayClick={!certificateProcessing}
+        title="Подтверждение списания"
+        aria-label="Подтверждение списания сертификата"
+        actions={
+          <>
+            <CustomModal.SecondaryButton
+              type="button"
+              onClick={handleCertificateModalClose}
+              disabled={certificateProcessing}
+            >
+              Отмена
+            </CustomModal.SecondaryButton>
+            <CustomModal.PrimaryButton
+              type="button"
+              onClick={handleCertificateRedeem}
+              disabled={certificateProcessing}
+            >
+              {certificateProcessing ? 'Списываю...' : `Списать ${certificateConfirm.amount} ₽`}
+            </CustomModal.PrimaryButton>
+          </>
+        }
+      >
+        <p>
+          Списать <strong>{certificateConfirm.amount} ₽</strong> с подарочного сертификата?
+          После списания останется{' '}
+          <strong>{Math.max(0, certificateBalance - certificateConfirm.amount)} ₽</strong>.
+        </p>
+        <p style={{ marginTop: 8, color: '#7f8c8d', fontSize: 14 }}>
+          Операция фиксируется только после подтверждения. Проверьте сумму перед продолжением.
+        </p>
+      </CustomModal>
     </Container>
   );
 };
