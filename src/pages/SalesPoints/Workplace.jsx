@@ -36,10 +36,10 @@ const Workplace = () => {
       const response = await axiosInstance.get(`/clients/card/${trimmedCard}`);
       const foundClient = response.data;
 
-      if (foundClient?.id) {
-        navigate(`/clients/${foundClient.id}`);
+      if (foundClient?.cards?.length) {
+        navigate(`/customer/card/${trimmedCard}`);
       } else {
-        toast.error('Клиент с таким номером карты не найден');
+        toast.error('Карта не найдена');
       }
     } catch (error) {
       toast.error('Клиент с таким номером карты не найден');
