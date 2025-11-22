@@ -43,6 +43,4 @@ export const clientHeaders = [
   { key: 'quantity', title: 'Количество' },
   { key: 'balance', title: 'Баланс' },
   { key: 'manager', title: 'Менеджер' },
-  { key: 'source', title: 'Источник операции' },
-  { key: 'comment', title: 'Комментарий' },
 ];
