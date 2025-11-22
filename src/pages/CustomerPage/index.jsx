@@ -52,6 +52,7 @@ const CustomerPage = () => {
   const [certificateConfirm, setCertificateConfirm] = useState({ open: false, amount: 0 });
   const [transactions, setTransactions] = useState([]);
   const [transactionsLoading, setTransactionsLoading] = useState(false);
+  const [transactionsTimezone, setTransactionsTimezone] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const hasLoadedRef = useRef(false);
@@ -135,12 +136,18 @@ const CustomerPage = () => {
     }
 
     setTransactionsLoading(true);
+    setTransactionsTimezone('');
     try {
       const res = await axiosInstance.get(`/clients/transactions/${cardUuid}`);
-      setTransactions(res.data || []);
+      const list = res.data || [];
+      setTransactions(list);
+      if (list.length && list[0].timezone) {
+        setTransactionsTimezone(list[0].timezone);
+      }
     } catch (error) {
       console.error('Ошибка загрузки истории операций:', error);
       setTransactions([]);
+      setTransactionsTimezone('');
     } finally {
       setTransactionsLoading(false);
     }
@@ -671,7 +678,10 @@ const CustomerPage = () => {
         <TransactionsTable>
           <thead>
             <tr>
-              <th>Дата</th>
+              <th>
+                Дата/время
+                {transactionsTimezone && ` (${transactionsTimezone})`}
+              </th>
               <th>Операция</th>
               <th>Кол-во / сумма</th>
               <th>Баланс</th>
