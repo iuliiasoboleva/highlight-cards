@@ -50,6 +50,9 @@ const CustomerPage = () => {
   const [certificateWriteoff, setCertificateWriteoff] = useState('');
   const [certificateProcessing, setCertificateProcessing] = useState(false);
   const [certificateConfirm, setCertificateConfirm] = useState({ open: false, amount: 0 });
+  const [adjustModalOpen, setAdjustModalOpen] = useState(false);
+  const [adjustValue, setAdjustValue] = useState('');
+  const [adjustProcessing, setAdjustProcessing] = useState(false);
   const [transactions, setTransactions] = useState([]);
   const [transactionsLoading, setTransactionsLoading] = useState(false);
   const [transactionsTimezone, setTransactionsTimezone] = useState('');
@@ -213,6 +216,7 @@ const CustomerPage = () => {
     cashback_accrued: 'Начисление кешбэка',
     cashback_spent: 'Списание кешбэка',
     certificate_spend: 'Списание сертификата',
+    certificate_adjustment: 'Корректировка',
   };
   const getEventLabel = (event) => EVENT_LABELS[event] || event || 'Операция';
   const formatTransactionAmount = (tx) => {
@@ -502,6 +506,46 @@ const CustomerPage = () => {
     setCertificateConfirm({ open: false, amount: 0 });
   };
 
+  const handleAdjustmentSubmit = async () => {
+    if (!isCertificateCard) return;
+    const targetValue = normalizeMoney(adjustValue);
+    if (targetValue < 0) {
+      toast.error('Введите корректное значение баланса');
+      return;
+    }
+
+    setAdjustProcessing(true);
+    try {
+      await axiosInstance.post('/clients/card-action', {
+        card_number: cardNumber,
+        updates: {
+          certificate_info: {
+            ...certificateInfo,
+            amount: targetValue,
+          },
+        },
+        meta: { certificate_action: 'adjustment' },
+      });
+
+      toast.success(`Баланс скорректирован до ${targetValue} ₽`);
+      setCardDetails((prev) => (prev ? { ...prev, balanceMoney: targetValue } : prev));
+      setAdjustModalOpen(false);
+      setAdjustValue('');
+      await reloadClient();
+      await fetchTransactions(card?.cardUuid);
+    } catch (error) {
+      const detail = error.response?.data?.detail || error.message || 'Ошибка при корректировке';
+      toast.error(detail);
+    } finally {
+      setAdjustProcessing(false);
+    }
+  };
+
+  const handleAdjustmentClose = () => {
+    if (adjustProcessing) return;
+    setAdjustModalOpen(false);
+  };
+
   const renderCashbackControls = () => {
     if (!isCashbackCard) {
       return null;
@@ -652,7 +696,7 @@ const CustomerPage = () => {
               disabled={certificateProcessing || !hasBalance}
             />
           </div>
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
             <SecondaryButton
               type="button"
               onClick={handleFillCertificateBalance}
@@ -668,6 +712,15 @@ const CustomerPage = () => {
             >
               {certificateProcessing ? 'Обработка...' : 'Списать'}
             </CustomMainButton>
+            <SecondaryButton
+              type="button"
+              onClick={() => {
+                setAdjustValue(String(certificateBalance));
+                setAdjustModalOpen(true);
+              }}
+            >
+              Корректировка
+            </SecondaryButton>
           </div>
         </StampControls>
         {renderTransactionsHistory({ embedded: true })}
@@ -698,6 +751,7 @@ const CustomerPage = () => {
                   <th>Операция</th>
                   <th>Кол-во / сумма</th>
                   <th>Баланс</th>
+                  <th>Ответственный</th>
                 </tr>
               </thead>
               <tbody>
@@ -707,6 +761,7 @@ const CustomerPage = () => {
                     <td>{getEventLabel(tx.event)}</td>
                     <td>{formatTransactionAmount(tx)}</td>
                     <td>{tx.balance || '—'}</td>
+                    <td>{tx.userName || '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -734,6 +789,7 @@ const CustomerPage = () => {
                 <th>Операция</th>
                 <th>Кол-во / сумма</th>
                 <th>Баланс</th>
+                <th>Ответственный</th>
               </tr>
             </thead>
             <tbody>
@@ -743,6 +799,7 @@ const CustomerPage = () => {
                   <td>{getEventLabel(tx.event)}</td>
                   <td>{formatTransactionAmount(tx)}</td>
                   <td>{tx.balance || '—'}</td>
+                  <td>{tx.userName || '—'}</td>
                 </tr>
               ))}
             </tbody>
@@ -1004,6 +1061,44 @@ const CustomerPage = () => {
         <p style={{ marginTop: 8, color: '#7f8c8d', fontSize: 14 }}>
           Операция фиксируется только после подтверждения. Проверьте сумму перед продолжением.
         </p>
+      </CustomModal>
+
+      <CustomModal
+        open={adjustModalOpen}
+        onClose={handleAdjustmentClose}
+        closeOnOverlayClick={!adjustProcessing}
+        title="Корректировка баланса"
+        aria-label="Корректировка баланса сертификата"
+        actions={
+          <>
+            <CustomModal.SecondaryButton
+              type="button"
+              onClick={handleAdjustmentClose}
+              disabled={adjustProcessing}
+            >
+              Отмена
+            </CustomModal.SecondaryButton>
+            <CustomModal.PrimaryButton
+              type="button"
+              onClick={handleAdjustmentSubmit}
+              disabled={adjustProcessing}
+            >
+              {adjustProcessing ? 'Сохраняю...' : 'Сохранить'}
+            </CustomModal.PrimaryButton>
+          </>
+        }
+      >
+        <p style={{ marginTop: 0, marginBottom: 12, color: '#7f8c8d' }}>
+          Укажите фактический остаток по сертификату. Значение заменит текущий баланс.
+        </p>
+        <CustomInput
+          type="number"
+          min="0"
+          value={adjustValue}
+          onChange={(e) => setAdjustValue(e.target.value)}
+          placeholder={`Текущий баланс: ${certificateBalance} ₽`}
+          disabled={adjustProcessing}
+        />
       </CustomModal>
     </Container>
   );
