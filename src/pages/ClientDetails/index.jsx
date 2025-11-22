@@ -26,12 +26,27 @@ import {
   Title,
 } from './styles.jsx';
 
+const PAGE_SIZE_OPTIONS = [3, 5, 10, 20, 50];
+const EVENT_LABELS = {
+  stamp_add: 'Начисление штампов',
+  reward_given: 'Добавление награды',
+  reward_received: 'Получение награды',
+  cashback_accrued: 'Начисление кешбэка',
+  cashback_spent: 'Списание кешбэка',
+  certificate_spend: 'Списание сертификата',
+  certificate_adjustment: 'Корректировка',
+};
+
 const ClientDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [client, setClient] = useState(null);
   const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState([]);
+  const [transactionsLoading, setTransactionsLoading] = useState(false);
+  const [transactionsTotal, setTransactionsTotal] = useState(0);
+  const [transactionsPage, setTransactionsPage] = useState(1);
+  const [transactionsPageSize, setTransactionsPageSize] = useState(5);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
@@ -43,13 +58,11 @@ const ClientDetails = () => {
 
         const firstCard = clientData.cards && clientData.cards.length ? clientData.cards[0] : null;
         if (firstCard && firstCard.id) {
-          try {
-            const txRes = await axiosInstance.get(`/clients/transactions/${firstCard.id}`);
-            const txData = txRes.data?.items || txRes.data || [];
-            setTransactions(txData);
-          } catch (txErr) {
-            console.error(txErr);
-          }
+          await fetchTransactions(firstCard.id, 1, transactionsPageSize);
+          setTransactionsPage(1);
+        } else {
+          setTransactions([]);
+          setTransactionsTotal(0);
         }
       } catch (e) {
         console.error(e);
@@ -58,7 +71,118 @@ const ClientDetails = () => {
       }
     };
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  const fetchTransactions = async (cardId, page = transactionsPage, limit = transactionsPageSize) => {
+    if (!cardId) {
+      setTransactions([]);
+      setTransactionsTotal(0);
+      return;
+    }
+    setTransactionsLoading(true);
+    try {
+      const txRes = await axiosInstance.get(`/clients/transactions/${cardId}`, { params: { page, limit } });
+      const txData = txRes.data?.items || txRes.data || [];
+      const mapped = txData.map((tx) => ({
+        ...tx,
+        event: EVENT_LABELS[tx.event] || tx.event,
+      }));
+      setTransactions(mapped);
+      setTransactionsTotal(txRes.data?.total ?? txData.length);
+    } catch (txErr) {
+      console.error(txErr);
+      setTransactions([]);
+      setTransactionsTotal(0);
+    } finally {
+      setTransactionsLoading(false);
+    }
+  };
+
+  const handlePageSizeChange = async (value) => {
+    const numeric = Number(value) || transactionsPageSize;
+    setTransactionsPageSize(numeric);
+    setTransactionsPage(1);
+    const firstCard = client?.cards && client.cards.length ? client.cards[0] : null;
+    if (firstCard?.id) {
+      await fetchTransactions(firstCard.id, 1, numeric);
+    }
+  };
+
+  const handlePageChange = async (nextPage) => {
+    const totalPages = Math.max(1, Math.ceil(transactionsTotal / transactionsPageSize) || 1);
+    if (nextPage < 1 || nextPage > totalPages || nextPage === transactionsPage) return;
+    setTransactionsPage(nextPage);
+    const firstCard = client?.cards && client.cards.length ? client.cards[0] : null;
+    if (firstCard?.id) {
+      await fetchTransactions(firstCard.id, nextPage, transactionsPageSize);
+    }
+  };
+
+  const renderTxControls = () => {
+    const totalPages = Math.max(1, Math.ceil(transactionsTotal / transactionsPageSize) || 1);
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '12px',
+          marginTop: '12px',
+        }}
+      >
+        <label style={{ fontSize: 14, color: '#7f8c8d', display: 'flex', alignItems: 'center', gap: 6 }}>
+          Показать:
+          <select
+            value={transactionsPageSize}
+            onChange={(e) => handlePageSizeChange(e.target.value)}
+            style={{ padding: '6px 8px', borderRadius: 6, border: '1px solid #dcdcdc' }}
+          >
+            {PAGE_SIZE_OPTIONS.map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <button
+            type="button"
+            onClick={() => handlePageChange(transactionsPage - 1)}
+            disabled={transactionsPage <= 1 || transactionsLoading}
+            style={{
+              padding: '6px 10px',
+              borderRadius: 6,
+              border: '1px solid #dcdcdc',
+              background: transactionsPage <= 1 || transactionsLoading ? '#f1f1f1' : '#fff',
+              cursor: transactionsPage <= 1 || transactionsLoading ? 'not-allowed' : 'pointer',
+            }}
+          >
+            Назад
+          </button>
+          <span style={{ fontSize: 13, color: '#7f8c8d' }}>
+            Стр. {Math.min(transactionsPage, totalPages)} из {totalPages}
+          </span>
+          <button
+            type="button"
+            onClick={() => handlePageChange(transactionsPage + 1)}
+            disabled={transactionsPage >= totalPages || transactionsLoading}
+            style={{
+              padding: '6px 10px',
+              borderRadius: 6,
+              border: '1px solid #dcdcdc',
+              background: transactionsPage >= totalPages || transactionsLoading ? '#f1f1f1' : '#fff',
+              cursor: transactionsPage >= totalPages || transactionsLoading ? 'not-allowed' : 'pointer',
+            }}
+          >
+            Вперёд
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   const handleDeleteClient = async () => {
     try {
@@ -166,7 +290,8 @@ const ClientDetails = () => {
 
       <div>
         <TableName>Последние транзакции по карте</TableName>
-        <CustomTable columns={clientHeaders} rows={transactions} />
+        <CustomTable columns={clientHeaders} rows={transactions} loading={transactionsLoading} />
+        {renderTxControls()}
       </div>
 
       <div style={{ marginTop: '32px', textAlign: 'center' }}>
