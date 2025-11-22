@@ -91,7 +91,7 @@ const Home = () => {
     return (series || []).map((p) => ({
       date: p.date,
       newClients: toNum(p.newClients ?? p.new ?? p.new_count ?? 0),
-      cardsIssued: toNum(p.visits ?? p.total ?? p.count ?? 0),
+      cardsIssued: toNum(p.cardsIssued ?? p.newClients ?? p.new ?? p.new_count ?? 0),
     }));
   }, [series]);
 
