@@ -613,94 +613,144 @@ const CustomerPage = () => {
     }
 
     if (isCertificateCard) {
-      const hasBalance = certificateBalance > 0;
-      return (
-        <SectionCard>
-          <SectionTitle>Подарочный сертификат</SectionTitle>
-          <p style={{ margin: 0, lineHeight: 1.5 }}>
-            Доступный баланс: <strong>{certificateBalance} ₽</strong>. Списание суммы фиксируется через форму
-            ниже после оплаты на кассе.
-          </p>
-          <StampControls style={{ marginTop: '16px' }}>
-            <div>
-              <div style={{ fontSize: '14px', color: '#7f8c8d', marginBottom: '8px' }}>
-                Сумма к списанию, ₽
-              </div>
-              <CustomInput
-                type="number"
-                min="0"
-                value={certificateWriteoff}
-                onChange={(e) => {
-                  let raw = e.target.value;
-                  if (raw.length > 1 && raw.startsWith('0')) {
-                    raw = raw.replace(/^0+/, '') || '0';
-                    e.target.value = raw;
-                  }
-                  setCertificateWriteoff(raw);
-                }}
-                placeholder={`Доступно: ${certificateBalance} ₽`}
-                disabled={certificateProcessing || !hasBalance}
-              />
+    const hasBalance = certificateBalance > 0;
+    return (
+      <SectionCard>
+        <SectionTitle>Подарочный сертификат</SectionTitle>
+        <InfoGrid style={{ marginBottom: 16 }}>
+          <InfoItem>
+            <InfoLabel>Баланс сертификата</InfoLabel>
+            <InfoValue>{certificateBalance} ₽</InfoValue>
+          </InfoItem>
+          <InfoItem>
+            <InfoLabel>Срок действия карты</InfoLabel>
+            <InfoValue $color={expirationInfo.color}>{expirationInfo.text}</InfoValue>
+          </InfoItem>
+          <InfoItem style={{ gridColumn: '1 / -1' }}>
+            <InfoLabel>Дата выпуска карты</InfoLabel>
+            <InfoValue>{card.cardCreatedAt || '—'}</InfoValue>
+          </InfoItem>
+        </InfoGrid>
+        <StampControls style={{ marginTop: 8 }}>
+          <div>
+            <div style={{ fontSize: '14px', color: '#7f8c8d', marginBottom: '8px' }}>
+              Сумма к списанию, ₽
             </div>
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-              <SecondaryButton
-                type="button"
-                onClick={handleFillCertificateBalance}
-                disabled={certificateProcessing || !hasBalance}
-              >
-                Весь баланс
-              </SecondaryButton>
-              <CustomMainButton
-                onClick={openCertificateConfirm}
-                disabled={
-                  certificateProcessing || !hasBalance || normalizeMoney(certificateWriteoff) <= 0
+            <CustomInput
+              type="number"
+              min="0"
+              value={certificateWriteoff}
+              onChange={(e) => {
+                let raw = e.target.value;
+                if (raw.length > 1 && raw.startsWith('0')) {
+                  raw = raw.replace(/^0+/, '') || '0';
+                  e.target.value = raw;
                 }
-              >
-                {certificateProcessing ? 'Обработка...' : 'Списать'}
-              </CustomMainButton>
-            </div>
-          </StampControls>
-        </SectionCard>
-      );
+                setCertificateWriteoff(raw);
+              }}
+              placeholder={`Доступно: ${certificateBalance} ₽`}
+              disabled={certificateProcessing || !hasBalance}
+            />
+          </div>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <SecondaryButton
+              type="button"
+              onClick={handleFillCertificateBalance}
+              disabled={certificateProcessing || !hasBalance}
+            >
+              Весь баланс
+            </SecondaryButton>
+            <CustomMainButton
+              onClick={openCertificateConfirm}
+              disabled={
+                certificateProcessing || !hasBalance || normalizeMoney(certificateWriteoff) <= 0
+              }
+            >
+              {certificateProcessing ? 'Обработка...' : 'Списать'}
+            </CustomMainButton>
+          </div>
+        </StampControls>
+        {renderTransactionsHistory({ embedded: true })}
+      </SectionCard>
+    );
     }
 
     return null;
   };
 
-  const renderTransactionsHistory = () => (
-    <SectionCard>
-      <SectionTitle>История операций</SectionTitle>
-      {transactionsLoading ? (
-        <LoaderCentered />
-      ) : transactions.length === 0 ? (
-        <TransactionsEmpty>Пока нет операций по этой карте</TransactionsEmpty>
-      ) : (
-        <TransactionsTable>
-          <thead>
-            <tr>
-              <th>
-                Дата/время
-                {transactionsTimezone && ` (${transactionsTimezone})`}
-              </th>
-              <th>Операция</th>
-              <th>Кол-во / сумма</th>
-              <th>Баланс</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.map((tx) => (
-              <tr key={tx.id}>
-                <td>{tx.dateTime || '—'}</td>
-                <td>{getEventLabel(tx.event)}</td>
-                <td>{formatTransactionAmount(tx)}</td>
-                <td>{tx.balance || '—'}</td>
+  const renderTransactionsHistory = ({ embedded = false } = {}) => {
+    if (embedded) {
+      return (
+        <div style={{ marginTop: 24 }}>
+          <h3 style={{ margin: '0 0 12px', fontSize: 18, color: '#34495e' }}>История операций</h3>
+          {transactionsLoading ? (
+            <LoaderCentered />
+          ) : transactions.length === 0 ? (
+            <TransactionsEmpty>Пока нет операций по этой карте</TransactionsEmpty>
+          ) : (
+            <TransactionsTable>
+              <thead>
+                <tr>
+                  <th>
+                    Дата/время
+                    {transactionsTimezone && ` (${transactionsTimezone})`}
+                  </th>
+                  <th>Операция</th>
+                  <th>Кол-во / сумма</th>
+                  <th>Баланс</th>
+                </tr>
+              </thead>
+              <tbody>
+                {transactions.map((tx) => (
+                  <tr key={tx.id}>
+                    <td>{tx.dateTime || '—'}</td>
+                    <td>{getEventLabel(tx.event)}</td>
+                    <td>{formatTransactionAmount(tx)}</td>
+                    <td>{tx.balance || '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </TransactionsTable>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <SectionCard>
+        <SectionTitle>История операций</SectionTitle>
+        {transactionsLoading ? (
+          <LoaderCentered />
+        ) : transactions.length === 0 ? (
+          <TransactionsEmpty>Пока нет операций по этой карте</TransactionsEmpty>
+        ) : (
+          <TransactionsTable>
+            <thead>
+              <tr>
+                <th>
+                  Дата/время
+                  {transactionsTimezone && ` (${transactionsTimezone})`}
+                </th>
+                <th>Операция</th>
+                <th>Кол-во / сумма</th>
+                <th>Баланс</th>
               </tr>
-            ))}
-          </tbody>
-        </TransactionsTable>
-      )}
-    </SectionCard>
-  );
+            </thead>
+            <tbody>
+              {transactions.map((tx) => (
+                <tr key={tx.id}>
+                  <td>{tx.dateTime || '—'}</td>
+                  <td>{getEventLabel(tx.event)}</td>
+                  <td>{formatTransactionAmount(tx)}</td>
+                  <td>{tx.balance || '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </TransactionsTable>
+        )}
+      </SectionCard>
+    );
+  };
 
   const getCardHint = () => {
     if (isStampCard) {
@@ -777,23 +827,17 @@ const CustomerPage = () => {
       show: isDiscountCard,
     },
     {
-      key: 'certificate_balance',
-      label: 'Баланс сертификата',
-      value: `${certificateBalance} ₽`,
-      show: isCertificateCard,
-    },
-    {
       key: 'card_expiration',
       label: 'Срок действия карты',
       value: expirationInfo.text,
       color: expirationInfo.color,
-      show: true,
+      show: !isCertificateCard,
     },
     {
       key: 'card_created',
       label: 'Дата выпуска карты',
       value: card.cardCreatedAt || '—',
-      show: true,
+      show: !isCertificateCard,
     },
   ].filter((item) => item.show);
 
@@ -899,7 +943,7 @@ const CustomerPage = () => {
 
       {renderCashbackControls()}
       {renderInfoNotice()}
-      {renderTransactionsHistory()}
+      {!isCertificateCard && renderTransactionsHistory()}
 
       <InfoGrid>
         {infoItems.map((item) => (
