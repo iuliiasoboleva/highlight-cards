@@ -79,8 +79,9 @@ const DefaultCardInfo = () => {
           axiosInstance.get(`/clients/transactions/${card.id}`),
           axiosInstance.get(`/cards/${card.id}/stats`)
         ]);
-        
-        const mappedRows = txRes.data.map((tr) => ({
+
+        const txList = txRes.data?.items || txRes.data || [];
+        const mappedRows = txList.map((tr) => ({
           ...tr,
           userName: tr.user_name || tr.userName,
           dateTime: tr.date_time || tr.dateTime || tr.created_at,

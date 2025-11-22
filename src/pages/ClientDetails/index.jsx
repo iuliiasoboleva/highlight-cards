@@ -45,7 +45,8 @@ const ClientDetails = () => {
         if (firstCard && firstCard.id) {
           try {
             const txRes = await axiosInstance.get(`/clients/transactions/${firstCard.id}`);
-            setTransactions(txRes.data || []);
+            const txData = txRes.data?.items || txRes.data || [];
+            setTransactions(txData);
           } catch (txErr) {
             console.error(txErr);
           }

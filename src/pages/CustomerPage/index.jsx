@@ -53,9 +53,30 @@ const CustomerPage = () => {
   const [adjustModalOpen, setAdjustModalOpen] = useState(false);
   const [adjustValue, setAdjustValue] = useState('');
   const [adjustProcessing, setAdjustProcessing] = useState(false);
+  const totalPages = Math.max(1, Math.ceil(transactionsTotal / transactionsPageSize) || 1);
+
+  const handlePageSizeChange = async (value) => {
+    const numeric = Number(value) || transactionsPageSize;
+    setTransactionsPageSize(numeric);
+    setTransactionsPage(1);
+    if (card?.cardUuid) {
+      await fetchTransactions(card.cardUuid, 1, numeric);
+    }
+  };
+
+  const handlePageChange = async (nextPage) => {
+    if (nextPage < 1 || nextPage > totalPages || nextPage === transactionsPage) return;
+    setTransactionsPage(nextPage);
+    if (card?.cardUuid) {
+      await fetchTransactions(card.cardUuid, nextPage, transactionsPageSize);
+    }
+  };
   const [transactions, setTransactions] = useState([]);
   const [transactionsLoading, setTransactionsLoading] = useState(false);
   const [transactionsTimezone, setTransactionsTimezone] = useState('');
+  const [transactionsTotal, setTransactionsTotal] = useState(0);
+  const [transactionsPage, setTransactionsPage] = useState(1);
+  const [transactionsPageSize, setTransactionsPageSize] = useState(5);
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const hasLoadedRef = useRef(false);
@@ -131,19 +152,22 @@ const CustomerPage = () => {
     }
   };
 
-  const fetchTransactions = async (cardUuid) => {
+  const fetchTransactions = async (cardUuid, page = transactionsPage, limit = transactionsPageSize) => {
     if (!cardUuid) {
       setTransactions([]);
       setTransactionsLoading(false);
+      setTransactionsTimezone('');
+      setTransactionsTotal(0);
       return;
     }
 
     setTransactionsLoading(true);
     setTransactionsTimezone('');
     try {
-      const res = await axiosInstance.get(`/clients/transactions/${cardUuid}`);
-      const list = res.data || [];
+      const res = await axiosInstance.get(`/clients/transactions/${cardUuid}`, { params: { page, limit } });
+      const list = res.data?.items || res.data || [];
       setTransactions(list);
+      setTransactionsTotal(res.data?.total ?? list.length);
       if (list.length && list[0].timezone) {
         setTransactionsTimezone(list[0].timezone);
       }
@@ -151,6 +175,7 @@ const CustomerPage = () => {
       console.error('Ошибка загрузки истории операций:', error);
       setTransactions([]);
       setTransactionsTimezone('');
+      setTransactionsTotal(0);
     } finally {
       setTransactionsLoading(false);
     }
@@ -184,7 +209,8 @@ const CustomerPage = () => {
         }
       });
 
-    fetchTransactions(card.cardUuid);
+    fetchTransactions(card.cardUuid, 1, transactionsPageSize);
+    setTransactionsPage(1);
 
     return () => {
       cancelled = true;
@@ -209,6 +235,7 @@ const CustomerPage = () => {
   const isCertificateCard = cardType === 'certificate';
   const currentCashbackBalance = card.cashbackBalance || 0;
   const stampEntityName = isSubscriptionCard ? 'посещений' : 'штампов';
+  const PAGE_SIZE_OPTIONS = [3, 5, 10, 20, 50];
   const EVENT_LABELS = {
     stamp_add: 'Начисление штампов',
     reward_given: 'Добавление награды',
@@ -492,7 +519,7 @@ const CustomerPage = () => {
       setCertificateConfirm({ open: false, amount: 0 });
       setCardDetails((prev) => (prev ? { ...prev, balanceMoney: newBalance } : prev));
       await reloadClient();
-      await fetchTransactions(card?.cardUuid);
+      await fetchTransactions(card?.cardUuid, transactionsPage, transactionsPageSize);
     } catch (error) {
       const detail = error.response?.data?.detail || error.message || 'Ошибка при списании сертификата';
       toast.error(detail);
@@ -532,7 +559,8 @@ const CustomerPage = () => {
       setAdjustModalOpen(false);
       setAdjustValue('');
       await reloadClient();
-      await fetchTransactions(card?.cardUuid);
+      setTransactionsPage(1);
+      await fetchTransactions(card?.cardUuid, 1, transactionsPageSize);
     } catch (error) {
       const detail = error.response?.data?.detail || error.message || 'Ошибка при корректировке';
       toast.error(detail);
@@ -731,6 +759,53 @@ const CustomerPage = () => {
     return null;
   };
 
+  const renderTransactionsControls = () => (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: '12px',
+        marginTop: '16px',
+      }}
+    >
+      <label style={{ fontSize: 14, color: '#7f8c8d', display: 'flex', alignItems: 'center', gap: 6 }}>
+        Показать:
+        <select
+          value={transactionsPageSize}
+          onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+          style={{ padding: '6px 8px', borderRadius: 6, border: '1px solid #dcdcdc' }}
+        >
+          {PAGE_SIZE_OPTIONS.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
+        </select>
+      </label>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <SecondaryButton
+          type="button"
+          onClick={() => handlePageChange(transactionsPage - 1)}
+          disabled={transactionsPage <= 1 || transactionsLoading}
+        >
+          Назад
+        </SecondaryButton>
+        <span style={{ fontSize: 13, color: '#7f8c8d' }}>
+          Стр. {Math.min(transactionsPage, totalPages)} из {totalPages}
+        </span>
+        <SecondaryButton
+          type="button"
+          onClick={() => handlePageChange(transactionsPage + 1)}
+          disabled={transactionsPage >= totalPages || transactionsLoading}
+        >
+          Вперёд
+        </SecondaryButton>
+      </div>
+    </div>
+  );
+
   const renderTransactionsHistory = ({ embedded = false } = {}) => {
     if (embedded) {
       return (
@@ -765,8 +840,9 @@ const CustomerPage = () => {
                   </tr>
                 ))}
               </tbody>
-            </TransactionsTable>
+          </TransactionsTable>
           )}
+          {renderTransactionsControls()}
         </div>
       );
     }
@@ -805,6 +881,7 @@ const CustomerPage = () => {
             </tbody>
           </TransactionsTable>
         )}
+        {renderTransactionsControls()}
       </SectionCard>
     );
   };
