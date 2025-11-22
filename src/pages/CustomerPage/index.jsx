@@ -26,6 +26,7 @@ import {
   SectionCard,
   SectionTitle,
   StampControls,
+  SecondaryButton,
   Title,
 } from './styles';
 
@@ -43,6 +44,8 @@ const CustomerPage = () => {
   const [purchaseAmount, setPurchaseAmount] = useState('');
   const [customCashback, setCustomCashback] = useState('');
   const [cashbackToSpend, setCashbackToSpend] = useState('');
+  const [certificateWriteoff, setCertificateWriteoff] = useState('');
+  const [certificateProcessing, setCertificateProcessing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const hasLoadedRef = useRef(false);
@@ -166,6 +169,44 @@ const CustomerPage = () => {
   const isCertificateCard = cardType === 'certificate';
   const currentCashbackBalance = card.cashbackBalance || 0;
   const stampEntityName = isSubscriptionCard ? 'посещений' : 'штампов';
+  const certificateInfo = card.certificateInfo || {};
+  const certificateBalanceValue =
+    (certificateInfo && certificateInfo.amount !== undefined ? certificateInfo.amount : undefined) ??
+    card.certificateBalance ??
+    cardDetails?.balanceMoney;
+  const parsedCertificateBalance = Number(certificateBalanceValue);
+  const certificateBalance = Number.isFinite(parsedCertificateBalance)
+    ? Math.max(0, parsedCertificateBalance)
+    : 0;
+
+  const getExpirationMeta = (value) => {
+    const raw = (value || '').trim();
+    if (!raw || raw === '00.00.0000' || raw === '0000-00-00') {
+      return { text: 'Бессрочно', color: '#2c3e50' };
+    }
+    const normalized = raw.replace(/[\\/]/g, '.');
+    const parts = normalized.split('.');
+    if (parts.length === 3) {
+      const [dayStr, monthStr, yearStr] = parts;
+      const day = Number(dayStr);
+      const month = Number(monthStr);
+      const year = Number(yearStr);
+      if (!Number.isNaN(day) && !Number.isNaN(month) && !Number.isNaN(year)) {
+        const expiryDate = new Date(year, month - 1, day, 23, 59, 59, 999);
+        if (!Number.isNaN(expiryDate.getTime())) {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          if (expiryDate < today) {
+            return { text: `Истёк ${normalized}`, color: '#e03131' };
+          }
+          return { text: `Действует до ${normalized}`, color: '#2f9e44' };
+        }
+      }
+    }
+    return { text: raw, color: '#2c3e50' };
+  };
+
+  const expirationInfo = getExpirationMeta(card.cardExpirationDate);
 
   const normalizeMoney = (value) => {
     if (value === null || value === undefined || value === '') {
@@ -349,6 +390,59 @@ const CustomerPage = () => {
     }
   };
 
+  const handleFillCertificateBalance = () => {
+    if (!isCertificateCard || certificateBalance <= 0) {
+      return;
+    }
+    setCertificateWriteoff(String(certificateBalance));
+  };
+
+  const handleCertificateRedeem = async () => {
+    if (!isCertificateCard) {
+      return;
+    }
+
+    const amountToSpend = normalizeMoney(certificateWriteoff);
+
+    if (!amountToSpend) {
+      toast.error('Введите сумму для списания');
+      return;
+    }
+
+    if (amountToSpend > certificateBalance) {
+      toast.error('Недостаточно средств сертификата');
+      return;
+    }
+
+    if (!window.confirm(`Списать ${amountToSpend} ₽ с подарочного сертификата?`)) {
+      return;
+    }
+
+    setCertificateProcessing(true);
+    try {
+      const newBalance = Math.max(0, certificateBalance - amountToSpend);
+      await axiosInstance.post('/clients/card-action', {
+        card_number: cardNumber,
+        updates: {
+          certificate_info: {
+            ...certificateInfo,
+            amount: newBalance,
+          },
+        },
+      });
+
+      toast.success(`Списано ${amountToSpend} ₽, остаток ${newBalance} ₽`);
+      setCertificateWriteoff('');
+      setCardDetails((prev) => (prev ? { ...prev, balanceMoney: newBalance } : prev));
+      await reloadClient();
+    } catch (error) {
+      const detail = error.response?.data?.detail || error.message || 'Ошибка при списании сертификата';
+      toast.error(detail);
+    } finally {
+      setCertificateProcessing(false);
+    }
+  };
+
   const renderCashbackControls = () => {
     if (!isCashbackCard) {
       return null;
@@ -460,14 +554,53 @@ const CustomerPage = () => {
     }
 
     if (isCertificateCard) {
-      const balance = cardDetails?.balanceMoney;
+      const hasBalance = certificateBalance > 0;
       return (
         <SectionCard>
           <SectionTitle>Подарочный сертификат</SectionTitle>
           <p style={{ margin: 0, lineHeight: 1.5 }}>
-            Доступный баланс: {balance ? `${balance} ₽` : 'не задан'}. Списание суммы происходит на
-            кассе, фиксируйте остаток после обслуживания.
+            Доступный баланс: <strong>{certificateBalance} ₽</strong>. Списание суммы фиксируется через форму
+            ниже после оплаты на кассе.
           </p>
+          <StampControls style={{ marginTop: '16px' }}>
+            <div>
+              <div style={{ fontSize: '14px', color: '#7f8c8d', marginBottom: '8px' }}>
+                Сумма к списанию, ₽
+              </div>
+              <CustomInput
+                type="number"
+                min="0"
+                value={certificateWriteoff}
+                onChange={(e) => {
+                  let raw = e.target.value;
+                  if (raw.length > 1 && raw.startsWith('0')) {
+                    raw = raw.replace(/^0+/, '') || '0';
+                    e.target.value = raw;
+                  }
+                  setCertificateWriteoff(raw);
+                }}
+                placeholder={`Доступно: ${certificateBalance} ₽`}
+                disabled={certificateProcessing || !hasBalance}
+              />
+            </div>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              <SecondaryButton
+                type="button"
+                onClick={handleFillCertificateBalance}
+                disabled={certificateProcessing || !hasBalance}
+              >
+                Весь баланс
+              </SecondaryButton>
+              <CustomMainButton
+                onClick={handleCertificateRedeem}
+                disabled={
+                  certificateProcessing || !hasBalance || normalizeMoney(certificateWriteoff) <= 0
+                }
+              >
+                {certificateProcessing ? 'Обработка...' : 'Списать'}
+              </CustomMainButton>
+            </div>
+          </StampControls>
         </SectionCard>
       );
     }
@@ -550,9 +683,16 @@ const CustomerPage = () => {
       show: isDiscountCard,
     },
     {
+      key: 'certificate_balance',
+      label: 'Баланс сертификата',
+      value: `${certificateBalance} ₽`,
+      show: isCertificateCard,
+    },
+    {
       key: 'card_expiration',
       label: 'Срок действия карты',
-      value: card.cardExpirationDate || 'Без срока',
+      value: expirationInfo.text,
+      color: expirationInfo.color,
       show: true,
     },
     {
@@ -670,7 +810,7 @@ const CustomerPage = () => {
         {infoItems.map((item) => (
           <InfoItem key={item.key}>
             <InfoLabel>{item.label}</InfoLabel>
-            <InfoValue>{item.value}</InfoValue>
+            <InfoValue $color={item.color}>{item.value}</InfoValue>
           </InfoItem>
         ))}
       </InfoGrid>

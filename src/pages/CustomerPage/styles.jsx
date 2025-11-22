@@ -153,7 +153,7 @@ export const InfoLabel = styled.span`
 
 export const InfoValue = styled.span`
   font-weight: 500;
-  color: #2c3e50;
+  color: ${(p) => p.$color || '#2c3e50'};
 `;
 
 export const Row = styled.div`
@@ -184,4 +184,25 @@ export const Hint = styled.p`
   color: #95a5a6;
   text-align: center;
   font-size: 14px;
+`;
+
+export const SecondaryButton = styled.button`
+  padding: 10px 18px;
+  background: #ecf0f1;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  color: #2c3e50;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: #dee2e6;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 `;
