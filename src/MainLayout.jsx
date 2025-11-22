@@ -265,11 +265,12 @@ const MainLayout = () => {
 
     if (matchClientDetails) {
       const base = `/clients/${id}`;
-      return [
-        { to: `${base}`, label: 'Профиль' },
-        { to: `${base}/push`, label: 'Отправить push' },
-        { to: `${base}/edit`, label: 'Персональная информация' },
-      ];
+      const items = [{ to: `${base}`, label: 'Профиль' }];
+      if (!isEmployee) {
+        items.push({ to: `${base}/push`, label: 'Отправить push' });
+      }
+      items.push({ to: `${base}/edit`, label: 'Персональная информация' });
+      return items;
     }
 
     return [];

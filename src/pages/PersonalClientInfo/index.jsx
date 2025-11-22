@@ -28,10 +28,11 @@ const PersonalClientInfo = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
   const clientsRaw = useSelector((state) => state.clients);
   const clients = Array.isArray(clientsRaw?.list) ? clientsRaw.list : [];
   const clientFromStore = clients.find((c) => String(c.id) === id);
+  const currentRole = useSelector((state) => state.user?.role);
+  const canDelete = currentRole !== 'employee';
 
   const [client, setClient] = useState(clientFromStore || null);
   const [loading, setLoading] = useState(!clientFromStore);
@@ -201,14 +202,16 @@ const PersonalClientInfo = () => {
             <PrimaryButton type="button" onClick={handleSave}>
               Сохранить
             </PrimaryButton>
-            <SecondaryButton type="button" onClick={() => setShowDeleteModal(true)}>
-              Удалить
-            </SecondaryButton>
+            {canDelete && (
+              <SecondaryButton type="button" onClick={() => setShowDeleteModal(true)}>
+                Удалить
+              </SecondaryButton>
+            )}
           </Actions>
         </FormCard>
       </Container>
 
-      {showDeleteModal && (
+      {showDeleteModal && canDelete && (
         <DeleteClientModal
           fullName={`${formData.name} ${formData.surname}`}
           onConfirm={handleDelete}
