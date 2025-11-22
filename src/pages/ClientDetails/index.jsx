@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import axiosInstance from '../../axiosInstance';
 import CustomTable from '../../components/CustomTable';
@@ -113,6 +114,7 @@ const enhanceTransactionWithOwner = (transaction, owner) => {
 const ClientDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const currentUserRole = useSelector((state) => state.user?.role);
   const [client, setClient] = useState(null);
   const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState([]);
@@ -384,21 +386,23 @@ const ClientDetails = () => {
       </div>
 
       <div style={{ marginTop: '32px', textAlign: 'center' }}>
-        <button
-          onClick={() => setShowDeleteModal(true)}
-          style={{
-            background: '#e03131',
-            color: '#fff',
-            border: 'none',
-            padding: '12px 24px',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: '600',
-            cursor: 'pointer',
-          }}
-        >
-          Удалить клиента
-        </button>
+        {currentUserRole !== 'employee' && (
+          <button
+            onClick={() => setShowDeleteModal(true)}
+            style={{
+              background: '#e03131',
+              color: '#fff',
+              border: 'none',
+              padding: '12px 24px',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: 'pointer',
+            }}
+          >
+            Удалить клиента
+          </button>
+        )}
       </div>
 
       <DeleteClientModal
