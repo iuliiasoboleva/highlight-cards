@@ -229,9 +229,9 @@ export function buildReceiverDefaults() {
   return {
     name: 'ООО "ЛОЯЛ КЛАБ"',
     inn: '9715518580',
-    kpp: '770301001',
+    kpp: '771501001',
     bank_name: 'ООО "Банк Точка"',
-    checking_account: '40702810520000230757',
+    checking_account: '40702810520000256427',
     correspondent_account: '30101810745374525104',
     bik: '044525104',
     signatory: 'Генеральный директор Яковлева Регина Ринатовна',
