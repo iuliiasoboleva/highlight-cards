@@ -5,8 +5,8 @@ import { Company, FooterCol, FooterLink, FooterWrap, Inn, Phone, Separator } fro
 const Footer = () => (
   <FooterWrap>
     <FooterCol>
-      <Company>ООО "ПРО М8"</Company>
-      <Inn>ИНН 7743406170</Inn>
+      <Company>ООО "ЛОЯЛ КЛАБ"</Company>
+      <Inn>ИНН 9715518580</Inn>
     </FooterCol>
 
     <FooterCol>
