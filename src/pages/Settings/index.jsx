@@ -543,7 +543,7 @@ const Settings = () => {
                 onSuccess: () => {
                   toast.success('Оплата прошла успешно!');
                   dispatch(fetchSubscription(orgId));
-                  dispatch(fetchPayments(orgId));
+                  dispatch(fetchPayments({ orgId }));
                 },
                 onFail: (reason) => {
                   if (reason === 'User has cancelled') {
@@ -555,7 +555,7 @@ const Settings = () => {
                   if (paymentResult.success) {
                     toast.success('Оплата прошла успешно!');
                     dispatch(fetchSubscription(orgId));
-                    dispatch(fetchPayments(orgId));
+                    dispatch(fetchPayments({ orgId }));
                   }
                 }
               });
