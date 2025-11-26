@@ -546,6 +546,9 @@ const Settings = () => {
                   dispatch(fetchPayments(orgId));
                 },
                 onFail: (reason) => {
+                  if (reason === 'User has cancelled') {
+                    return;
+                  }
                   toast.error(`Ошибка оплаты: ${reason || 'Неизвестная ошибка'}`);
                 },
                 onComplete: (paymentResult) => {
