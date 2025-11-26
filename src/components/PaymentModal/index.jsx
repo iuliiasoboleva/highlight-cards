@@ -1,79 +1,128 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 
 import CustomModal from '../../customs/CustomModal';
 
-const loadYooScript = () =>
+const loadCloudPaymentsScript = () =>
   new Promise((resolve, reject) => {
-    if (document.getElementById('yookassa-checkout-js')) return resolve();
+    if (document.getElementById('cloudpayments-widget-js')) return resolve();
     const s = document.createElement('script');
-    s.src = 'https://yookassa.ru/checkout-widget/v1/checkout-widget.js';
+    s.src = 'https://widget.cloudpayments.ru/bundles/cloudpayments.js';
     s.async = true;
-    s.id = 'yookassa-checkout-js';
+    s.id = 'cloudpayments-widget-js';
     s.onload = () => resolve();
     s.onerror = reject;
     document.body.appendChild(s);
   });
 
-const PaymentModal = ({ open, onClose, confirmationToken }) => {
-  const containerRef = useRef(null);
-  const widgetRef = useRef(null);
+const PaymentModal = ({ 
+  open, 
+  onClose, 
+  widgetConfig,
+  onSuccess,
+  onFail 
+}) => {
+  const widgetOpenedRef = useRef(false);
+
+  const openWidget = useCallback(() => {
+    if (!widgetConfig || widgetOpenedRef.current) return;
+    
+    widgetOpenedRef.current = true;
+    
+    const widget = new window.cp.CloudPayments();
+    
+    widget.pay('charge', {
+      publicId: widgetConfig.publicId,
+      description: widgetConfig.description,
+      amount: widgetConfig.amount,
+      currency: widgetConfig.currency || 'RUB',
+      accountId: widgetConfig.accountId,
+      invoiceId: widgetConfig.invoiceId,
+      email: widgetConfig.email,
+      skin: widgetConfig.skin || 'mini',
+      data: widgetConfig.data,
+      requireEmail: false,
+      autoClose: 3,
+    }, {
+      onSuccess: (options) => {
+        widgetOpenedRef.current = false;
+        if (onSuccess) onSuccess(options);
+        onClose();
+      },
+      onFail: (reason, options) => {
+        widgetOpenedRef.current = false;
+        if (onFail) onFail(reason, options);
+      },
+      onComplete: (paymentResult, options) => {
+        widgetOpenedRef.current = false;
+        if (paymentResult.success && onSuccess) {
+          onSuccess(options);
+        }
+      }
+    });
+  }, [widgetConfig, onSuccess, onFail, onClose]);
 
   useEffect(() => {
-    if (!open || !confirmationToken) return;
+    if (!open || !widgetConfig) return;
 
-    let cancelled = false;
-
-    loadYooScript()
+    loadCloudPaymentsScript()
       .then(() => {
-        if (cancelled) return;
-        // eslint-disable-next-line no-undef
-        widgetRef.current = new window.YooMoneyCheckoutWidget({
-          confirmation_token: confirmationToken,
-          return_url: window.location.href,
-          customization: {
-            modal: true,
-          },
-          error_callback: (error) => {
-            console.error('YooKassa widget error', error);
-          },
-        });
-        const id = 'yookassa-widget-container';
-        if (containerRef.current && !containerRef.current.id) {
-          containerRef.current.id = id;
-        }
-        setTimeout(() => {
-          try {
-            widgetRef.current.render(containerRef.current?.id || id);
-          } catch (e) {
-            console.error('Widget render error', e);
-          }
-        }, 0);
+        openWidget();
       })
-      .catch((e) => console.error('Failed to load YooKassa widget', e));
+      .catch((e) => console.error('Failed to load CloudPayments widget', e));
 
     return () => {
-      cancelled = true;
-      try {
-        widgetRef.current?.destroy();
-        widgetRef.current = null;
-      } catch (_) {}
+      widgetOpenedRef.current = false;
     };
-  }, [open, confirmationToken]);
+  }, [open, widgetConfig, openWidget]);
+
+  useEffect(() => {
+    if (!open) {
+      widgetOpenedRef.current = false;
+    }
+  }, [open]);
 
   return (
     <CustomModal
       open={open}
       onClose={onClose}
       title="Оплата"
-      maxWidth={860}
+      maxWidth={500}
       actions={
         <>
           <CustomModal.SecondaryButton onClick={onClose}>Закрыть</CustomModal.SecondaryButton>
+          {widgetConfig && (
+            <CustomModal.PrimaryButton onClick={openWidget}>
+              Открыть форму оплаты
+            </CustomModal.PrimaryButton>
+          )}
         </>
       }
     >
-      <div style={{ height: 640 }}>
-        <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
+      <div style={{ 
+        padding: '20px', 
+        textAlign: 'center',
+        minHeight: 100,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 16
+      }}>
+        {widgetConfig ? (
+          <>
+            <p style={{ margin: 0, fontSize: 16 }}>
+              Сумма к оплате: <strong>{widgetConfig.amount?.toLocaleString('ru-RU')} ₽</strong>
+            </p>
+            <p style={{ margin: 0, fontSize: 14, color: '#666' }}>
+              {widgetConfig.description}
+            </p>
+            <p style={{ margin: '10px 0 0', fontSize: 13, color: '#888' }}>
+              Нажмите кнопку ниже, чтобы открыть форму оплаты
+            </p>
+          </>
+        ) : (
+          <p>Загрузка...</p>
+        )}
       </div>
     </CustomModal>
   );

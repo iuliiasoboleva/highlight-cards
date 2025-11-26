@@ -500,33 +500,64 @@ const Settings = () => {
         onClose={() => setShowModal(false)}
         onConfirm={async () => {
           try {
-            const idk = Math.random().toString(36).slice(2) + Date.now();
-            const res = await axiosInstance.post(
-              '/payments/yookassa/create',
-              {
-                amount: finalTotal,
-                description: `Оплата тарифа ${plan?.name}${promoApplied ? ` (промокод ${promoCode})` : ''}`,
-                return_url: window.location.origin + '/settings',
-                use_embedded: false,
-                metadata: {
-                  organization_id: orgId,
-                  user_id: userId,
-                  months,
-                  plan: plan?.name,
-                  promo_code: promoApplied ? promoCode : null,
-                  points: planKey === 'network' ? points : null,
-                },
-              },
-              { headers: { 'Idempotence-Key': idk } },
-            );
-            const data = res.data;
+            const res = await axiosInstance.post('/payments/cloudpayments/widget-config', {
+              amount: finalTotal,
+              description: `Оплата тарифа ${plan?.name}${promoApplied ? ` (промокод ${promoCode})` : ''}`,
+              organization_id: orgId,
+              user_id: userId,
+              months,
+              plan: plan?.name,
+              points: planKey === 'network' ? points : null,
+            });
+            const config = res.data;
             setShowModal(false);
 
-            if (data.payment_url) {
-              window.open(data.payment_url, '_blank', 'noopener,noreferrer');
-              toast.success('Страница оплаты открыта в новом окне');
+            if (config && config.publicId) {
+              const loadScript = () =>
+                new Promise((resolve, reject) => {
+                  if (document.getElementById('cloudpayments-widget-js')) return resolve();
+                  const s = document.createElement('script');
+                  s.src = 'https://widget.cloudpayments.ru/bundles/cloudpayments.js';
+                  s.async = true;
+                  s.id = 'cloudpayments-widget-js';
+                  s.onload = () => resolve();
+                  s.onerror = reject;
+                  document.body.appendChild(s);
+                });
+
+              await loadScript();
+
+              const widget = new window.cp.CloudPayments();
+              widget.pay('charge', {
+                publicId: config.publicId,
+                description: config.description,
+                amount: config.amount,
+                currency: config.currency || 'RUB',
+                accountId: config.accountId,
+                email: config.email,
+                skin: 'mini',
+                data: config.data,
+                requireEmail: false,
+                autoClose: 3,
+              }, {
+                onSuccess: () => {
+                  toast.success('Оплата прошла успешно!');
+                  dispatch(fetchSubscription(orgId));
+                  dispatch(fetchPayments(orgId));
+                },
+                onFail: (reason) => {
+                  toast.error(`Ошибка оплаты: ${reason || 'Неизвестная ошибка'}`);
+                },
+                onComplete: (paymentResult) => {
+                  if (paymentResult.success) {
+                    toast.success('Оплата прошла успешно!');
+                    dispatch(fetchSubscription(orgId));
+                    dispatch(fetchPayments(orgId));
+                  }
+                }
+              });
             } else {
-              toast.error('Не удалось получить ссылку на оплату');
+              toast.error('Не удалось получить конфигурацию оплаты');
             }
           } catch (e) {
             const message = e.response?.data?.detail || e.message || 'Не удалось создать платёж';
