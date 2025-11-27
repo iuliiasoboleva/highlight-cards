@@ -74,14 +74,6 @@ export async function generateInvoicePdf({ receiver, payer, invoice }) {
     return null;
   };
 
-  const stampDataUrl = await tryLoadFirstAvailable([
-    'Печать.png',
-    'печать.png',
-    'images/Печать.png',
-    'images/печать.png',
-    'stamp.png',
-    'images/stamp.png',
-  ]);
   const signatureDataUrl = await tryLoadFirstAvailable([
     'Подпись.png',
     'подпись.png',
@@ -99,11 +91,10 @@ export async function generateInvoicePdf({ receiver, payer, invoice }) {
   ]);
 
   const bottomImagesBlock = [];
-  if (stampDataUrl || signatureDataUrl) {
+  if (signatureDataUrl) {
     bottomImagesBlock.push({
       columns: [
-        signatureDataUrl ? { image: signatureDataUrl, width: 160, alignment: 'left' } : {},
-        stampDataUrl ? { image: stampDataUrl, width: 140, alignment: 'right' } : {},
+        signatureDataUrl ? { image: signatureDataUrl, width: 240, alignment: 'left' } : {},
       ],
       margin: [0, 24, 0, 8],
     });
@@ -200,16 +191,9 @@ export async function generateInvoicePdf({ receiver, payer, invoice }) {
           [
             {
               stack: [
-                {
-                  columns: [
-                    signatureDataUrl
-                      ? { image: signatureDataUrl, width: 170, margin: [0, 6, 12, 0] }
-                      : { text: '', margin: [0, 40, 12, 0] },
-                    stampDataUrl
-                      ? { image: stampDataUrl, width: 140, margin: [0, 0, 0, 0] }
-                      : { text: '' },
-                  ],
-                },
+                signatureDataUrl
+                  ? { image: signatureDataUrl, width: 240, margin: [0, 6, 0, 0] }
+                  : { text: '', margin: [0, 40, 0, 0] },
                 { text: `${receiver.signatory || ''}`, margin: [0, 8, 0, 4] },
               ],
             },

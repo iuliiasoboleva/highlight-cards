@@ -24,10 +24,12 @@ const initialState = {
 const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
   const [form, setForm] = useState(initialState);
   const [loading, setLoading] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     if (!open || !organizationId) return;
     setLoading(true);
+    setIsGenerating(false);
     axiosInstance
       .get('/billing/payer', { params: { organization_id: organizationId } })
       .then((res) => {
@@ -43,7 +45,7 @@ const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
   const disabled = useMemo(() => {
     const innStr = String(form.inn || '').trim();
     const innOk = /^(?:\d{10}|\d{12})$/.test(innStr);
-    const isIp = innStr.length === 12; // у ИП КПП отсутствует
+    const isIp = innStr.length === 12;
     const bikOk = /^\d{9}$/.test(String(form.bik || ''));
     const rsOk = /^\d{20}$/.test(String(form.checking_account || ''));
     const kppOk = isIp ? true : /^\d{9}$/.test(String(form.kpp || ''));
@@ -56,7 +58,7 @@ const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
       form.postal_address &&
       phoneOk &&
       form.signatory &&
-      kppOk; // КПП обязателен только для юр. лиц
+      kppOk;
     return !(innOk && bikOk && rsOk && requiredFilled);
   }, [form]);
 
@@ -104,21 +106,80 @@ const InvoicePayerModal = ({ open, onClose, organizationId, onSaved }) => {
 
   const handleCreate = async () => {
     setLoading(true);
+    setIsGenerating(true);
     try {
       await axiosInstance.post('/billing/payer', form, {
         params: { organization_id: organizationId },
       });
       onSaved?.(form);
-      onClose?.();
     } finally {
       setLoading(false);
     }
   };
 
+  const handleClose = () => {
+    setIsGenerating(false);
+    onClose?.();
+  };
+
+  if (isGenerating) {
+    return (
+      <CustomModal
+        open={open}
+        onClose={handleClose}
+        title="Формирование счёта"
+        maxWidth={420}
+        actions={
+          <button
+            onClick={handleClose}
+            style={{
+              backgroundColor: '#c9363f',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '12px 32px',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: 'pointer',
+              minWidth: '120px',
+            }}
+          >
+            ОК
+          </button>
+        }
+      >
+        <div style={{ textAlign: 'center', padding: '20px 0' }}>
+          <div
+            style={{
+              width: '60px',
+              height: '60px',
+              borderRadius: '50%',
+              background: '#c9363f',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px',
+              fontSize: '24px',
+              color: 'white',
+            }}
+          >
+            📄
+          </div>
+          <p style={{ margin: '0 0 10px', fontWeight: '500', fontSize: '16px' }}>
+            Ваш счёт формируется
+          </p>
+          <p style={{ margin: 0, color: '#666', fontSize: '14px', lineHeight: '1.5' }}>
+            Как только он будет сформирован,<br />произойдёт автоматическое скачивание
+          </p>
+        </div>
+      </CustomModal>
+    );
+  }
+
   return (
     <CustomModal
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       title="Данные плательщика"
       maxWidth={640}
       actions={
