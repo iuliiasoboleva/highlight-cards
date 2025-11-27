@@ -507,7 +507,7 @@ const Settings = () => {
               user_id: userId,
               months,
               plan: plan?.name,
-              points: planKey === 'network' ? points : null,
+              points: planKey !== 'free' ? points : null,
             });
             const config = res.data;
             setShowModal(false);
