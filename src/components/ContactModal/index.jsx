@@ -3,14 +3,16 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { useSelector } from 'react-redux';
 
+import axiosInstance from '../../axiosInstance';
 import CustomInput from '../../customs/CustomInput';
 import CustomModal from '../../customs/CustomModal';
 import InnSuggestInput from '../InnSuggestInput';
 import { useToast } from '../Toast';
 
-const ContactModal = ({ isOpen, onClose }) => {
+const ContactModal = ({ isOpen, onClose, pointsRequested }) => {
   const { addToast } = useToast();
-  const user = useSelector((state) => state.auth.user);
+  const user = useSelector((state) => state.user);
+  const authUser = useSelector((state) => state.auth.user);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -21,17 +23,44 @@ const ContactModal = ({ isOpen, onClose }) => {
   const [companyName, setCompanyName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [orgDataLoaded, setOrgDataLoaded] = useState(false);
 
-  // Заполняем данные пользователя при открытии модалки
+  const currentUser = user || authUser;
+  
   useEffect(() => {
-    if (isOpen && user) {
+    const loadOrgData = async () => {
+      if (!isOpen || !currentUser?.organization_id) return;
+      
       setFormData({
-        name: user.name || '',
-        phone: user.phone || '',
-        inn: user.inn || '',
+        name: currentUser.name || '',
+        phone: currentUser.phone || '',
+        inn: '',
       });
-    }
-  }, [isOpen, user]);
+      setCompanyName('');
+      setSelectedCompany(null);
+      setOrgDataLoaded(false);
+      
+      try {
+        const res = await axiosInstance.get(`/organizations/${currentUser.organization_id}`);
+        const org = res.data;
+        
+        if (org) {
+          if (org.inn) {
+            setFormData(prev => ({ ...prev, inn: org.inn }));
+            setSelectedCompany({ data: { inn: org.inn, name: org.name } });
+          }
+          if (org.name) {
+            setCompanyName(org.name);
+          }
+          setOrgDataLoaded(true);
+        }
+      } catch (e) {
+        console.error('Ошибка загрузки данных организации:', e);
+      }
+    };
+    
+    loadOrgData();
+  }, [isOpen, currentUser]);
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
@@ -50,27 +79,27 @@ const ContactModal = ({ isOpen, onClose }) => {
   };
 
   const handleSubmit = async () => {
-    if (!formData.name || !formData.phone || !formData.inn || !selectedCompany) {
-      addToast(
-        'Пожалуйста, заполните все обязательные поля и выберите компанию из списка',
-        'error',
-      );
+    if (!formData.name || !formData.phone) {
+      addToast('Пожалуйста, заполните имя и телефон', 'error');
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      // Имитация отправки формы
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Здесь будет реальный запрос к API
-      // await axiosInstance.post('/contact-form', formData);
+      await axiosInstance.post('/contact/request', {
+        name: formData.name,
+        phone: formData.phone,
+        inn: formData.inn,
+        company_name: companyName,
+        organization_id: currentUser?.organization_id,
+        user_id: currentUser?.id,
+        points_requested: pointsRequested,
+      });
 
       setIsSuccess(true);
       setIsSubmitting(false);
 
-      // Автоматически закрываем модалку через 3 секунды
       setTimeout(() => {
         handleClose();
       }, 3000);
@@ -86,6 +115,7 @@ const ContactModal = ({ isOpen, onClose }) => {
     setFormData({ name: '', phone: '', inn: '' });
     setSelectedCompany(null);
     setCompanyName('');
+    setOrgDataLoaded(false);
     onClose();
   };
 
@@ -170,45 +200,111 @@ const ContactModal = ({ isOpen, onClose }) => {
             />
           </div>
 
-          <div style={{ marginBottom: '24px' }}>
-            <InnSuggestInput
-              label="ИНН *"
-              placeholder="Введите ИНН"
-              value={formData.inn}
-              onChange={(value) => handleInputChange('inn', value)}
-              onSelect={handleCompanySelect}
-            />
-          </div>
+          {orgDataLoaded && formData.inn ? (
+            <>
+              <div style={{ marginBottom: '20px' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    marginBottom: '6px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: '#374151',
+                  }}
+                >
+                  ИНН
+                </label>
+                <input
+                  type="text"
+                  value={formData.inn}
+                  readOnly
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    border: '1px solid #d5d5dd',
+                    borderRadius: '6px',
+                    height: '40px',
+                    fontSize: '14px',
+                    backgroundColor: '#f9fafb',
+                    color: '#6b7280',
+                  }}
+                />
+              </div>
+              
+              {companyName && (
+                <div style={{ marginBottom: '24px' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      marginBottom: '6px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: '#374151',
+                    }}
+                  >
+                    Наименование организации
+                  </label>
+                  <input
+                    type="text"
+                    value={companyName}
+                    readOnly
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #d5d5dd',
+                      borderRadius: '6px',
+                      height: '40px',
+                      fontSize: '14px',
+                      backgroundColor: '#f9fafb',
+                      color: '#6b7280',
+                    }}
+                  />
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <div style={{ marginBottom: '24px' }}>
+                <InnSuggestInput
+                  label="ИНН"
+                  placeholder="Введите ИНН (необязательно)"
+                  value={formData.inn}
+                  onChange={(value) => handleInputChange('inn', value)}
+                  onSelect={handleCompanySelect}
+                />
+              </div>
 
-          {companyName && (
-            <div style={{ marginBottom: '24px' }}>
-              <label
-                style={{
-                  display: 'block',
-                  marginBottom: '6px',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#374151',
-                }}
-              >
-                Наименование организации
-              </label>
-              <input
-                type="text"
-                value={companyName}
-                readOnly
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  border: '1px solid #d5d5dd',
-                  borderRadius: '6px',
-                  height: '40px',
-                  fontSize: '14px',
-                  backgroundColor: '#f9fafb',
-                  color: '#6b7280',
-                }}
-              />
-            </div>
+              {companyName && (
+                <div style={{ marginBottom: '24px' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      marginBottom: '6px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: '#374151',
+                    }}
+                  >
+                    Наименование организации
+                  </label>
+                  <input
+                    type="text"
+                    value={companyName}
+                    readOnly
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #d5d5dd',
+                      borderRadius: '6px',
+                      height: '40px',
+                      fontSize: '14px',
+                      backgroundColor: '#f9fafb',
+                      color: '#6b7280',
+                    }}
+                  />
+                </div>
+              )}
+            </>
           )}
 
           <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
@@ -222,13 +318,7 @@ const ContactModal = ({ isOpen, onClose }) => {
 
             <CustomModal.PrimaryButton
               onClick={handleSubmit}
-              disabled={
-                isSubmitting ||
-                !formData.name ||
-                !formData.phone ||
-                !formData.inn ||
-                !selectedCompany
-              }
+              disabled={isSubmitting || !formData.name || !formData.phone}
               style={{ flex: 1 }}
             >
               {isSubmitting ? 'Отправка...' : 'Отправить'}

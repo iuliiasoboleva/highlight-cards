@@ -583,7 +583,7 @@ const Settings = () => {
         onConfirm={handleTopUpConfirm}
       />
 
-      <ContactModal isOpen={contactOpen} onClose={() => setContactOpen(false)} />
+      <ContactModal isOpen={contactOpen} onClose={() => setContactOpen(false)} pointsRequested={points} />
 
       <InvoicePayerModal
         open={invoiceOpen}
