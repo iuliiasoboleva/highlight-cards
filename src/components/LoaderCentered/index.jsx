@@ -5,7 +5,7 @@ import { LoaderWrapper, SpinnerIcon } from './styles';
 const LoaderCentered = () => {
   return (
     <LoaderWrapper>
-      <SpinnerIcon strokeWidth={1.4} role="status" aria-label="Загрузка" />
+      <SpinnerIcon role="status" aria-label="Загрузка" />
     </LoaderWrapper>
   );
 };
