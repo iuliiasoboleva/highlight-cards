@@ -90,6 +90,15 @@ export const Card = styled.button`
         transform: none;
       }
     `}
+
+  ${({ $disabled }) =>
+    !$disabled &&
+    css`
+      &:hover {
+        border-color: #bf4756;
+        box-shadow: 0 4px 12px rgba(191, 71, 86, 0.15);
+      }
+    `}
 `;
 
 export const LogoBox = styled.div`
