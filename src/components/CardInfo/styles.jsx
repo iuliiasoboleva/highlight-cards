@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 export const CardInfo = styled.div`
   position: absolute;
@@ -49,17 +49,19 @@ export const CardInfoHeader = styled.div`
 
 export const CardInfoFooter = styled.div`
   display: grid;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   column-gap: 4px;
   row-gap: 4px;
   width: 100%;
   padding: 0 12px;
+  overflow: hidden;
 `;
 
 export const CardInfoRow = styled.div`
   display: flex;
   flex-direction: column;
   min-width: 0;
+  overflow: hidden;
 `;
 
 export const CardInfoRowLabel = styled.div`
@@ -268,19 +270,10 @@ export const CardInfoRowValue = styled.span`
   font-weight: 400;
   line-height: 24px;
   min-width: 0;
-
-  ${({ $allowWrap }) =>
-    $allowWrap
-      ? css`
-          white-space: normal;
-          overflow: visible;
-          text-overflow: unset;
-        `
-      : css`
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        `}
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const CardNumber = styled.div`
