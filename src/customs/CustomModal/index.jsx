@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 import { X } from 'lucide-react';
 
@@ -45,7 +46,7 @@ const CustomModal = ({
     if (closeOnOverlayClick) onClose?.();
   };
 
-  return (
+  const modalContent = (
     <Overlay onClick={handleOverlayClick} aria-hidden>
       <Dialog
         role="dialog"
@@ -67,6 +68,8 @@ const CustomModal = ({
       </Dialog>
     </Overlay>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 CustomModal.PrimaryButton = PrimaryButton;
