@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import axiosInstance from '../../axiosInstance';
@@ -11,7 +12,7 @@ const Overlay = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 10001;
 `;
 
 const Modal = styled.div`
@@ -191,8 +192,7 @@ const EndpointList = styled.div`
 `;
 
 const RKeeperModal = ({ onClose }) => {
-  const user = useSelector((state) => state.user.user);
-  const organizationId = user?.organization_id;
+  const organizationId = useSelector((state) => state.user.organization_id);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -201,7 +201,10 @@ const RKeeperModal = ({ onClose }) => {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (!organizationId) return;
+    if (!organizationId) {
+      setLoading(false);
+      return;
+    }
 
     const fetchIntegration = async () => {
       try {
@@ -289,16 +292,17 @@ const RKeeperModal = ({ onClose }) => {
   const apiBaseUrl = BASE_URL.replace('/api', '');
 
   if (loading) {
-    return (
+    return createPortal(
       <Overlay onClick={onClose}>
         <Modal onClick={(e) => e.stopPropagation()}>
           <Title>Загрузка...</Title>
         </Modal>
-      </Overlay>
+      </Overlay>,
+      document.body
     );
   }
 
-  return (
+  return createPortal(
     <Overlay onClick={onClose}>
       <Modal onClick={(e) => e.stopPropagation()}>
         <Title>Интеграция с R_keeper</Title>
@@ -402,7 +406,8 @@ const RKeeperModal = ({ onClose }) => {
           </>
         )}
       </Modal>
-    </Overlay>
+    </Overlay>,
+    document.body
   );
 };
 
