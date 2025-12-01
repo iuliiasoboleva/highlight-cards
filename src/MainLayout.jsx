@@ -225,6 +225,7 @@ const MainLayout = () => {
         { to: `${base}/clients`, label: 'Клиенты' },
         { to: `${base}/push`, label: 'Отправить push' },
         { to: `${base}/stats`, label: 'Статистика' },
+        { to: `${base}/integrations`, label: 'Интеграции' },
       ];
     }
 

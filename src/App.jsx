@@ -31,6 +31,7 @@ import {
 } from './pages/Admin';
 import AuthRedirectGuard from './pages/AuthRedirectGuard';
 import CardDetails from './pages/CardDetails';
+import CardIntegrations from './pages/CardIntegrations';
 import CardStats from './pages/CardStats';
 import Cards from './pages/Cards';
 import ClientDetails from './pages/ClientDetails';
@@ -150,6 +151,7 @@ const App = () => {
                   <Route path="clients" element={<Clients />} />
                   <Route path="push" element={restrictForEmployee(<MailingsPush />)} />
                   <Route path="stats" element={<CardStats />} />
+                  <Route path="integrations" element={<CardIntegrations />} />
                 </Route>
 
                 <Route

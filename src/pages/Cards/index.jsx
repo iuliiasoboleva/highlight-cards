@@ -120,9 +120,6 @@ const Cards = () => {
             left: '50%',
             transform: 'translate(-50%, -50%)',
             zIndex: 9999,
-            background: 'rgba(255, 255, 255, 0.9)',
-            padding: '20px',
-            borderRadius: '8px',
           }}
         >
           <LoaderCentered />
