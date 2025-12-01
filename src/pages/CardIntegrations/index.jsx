@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { Check, X, RefreshCw, Copy, ExternalLink } from 'lucide-react';
+import { Check, RefreshCw, Copy } from 'lucide-react';
 import axiosInstance from '../../axiosInstance';
 import BASE_URL from '../../config';
+import CustomModal from '../../customs/CustomModal';
+import CustomInput from '../../customs/CustomInput';
+import CustomMainButton from '../../customs/CustomMainButton';
 
 import rkeeperIcon from '../../assets/rkeeper.png';
 import yclientsIcon from '../../assets/yclients.png';
@@ -70,7 +72,7 @@ const Logo = styled.img`
   object-fit: contain;
 `;
 
-const CardInfo = styled.div`
+const CardInfoBlock = styled.div`
   flex: 1;
 `;
 
@@ -121,10 +123,10 @@ const Button = styled.button`
   ${({ $primary }) =>
     $primary
       ? `
-    background: #bf4756;
+    background: #1f1e1f;
     color: #fff;
     border: none;
-    &:hover { background: #a33d4a; }
+    &:hover { background: #333; }
   `
       : `
     background: #fff;
@@ -139,68 +141,22 @@ const Button = styled.button`
   }
 `;
 
-const Overlay = styled.div`
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+const ModalContent = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10001;
+  flex-direction: column;
+  gap: 20px;
 `;
 
-const Modal = styled.div`
-  background: #fff;
-  border-radius: 16px;
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
-  padding: 24px;
-`;
-
-const ModalTitle = styled.h2`
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0 0 8px;
-  color: #1f1e1f;
-`;
-
-const ModalSubtitle = styled.p`
-  font-size: 14px;
-  color: #6b7280;
-  margin: 0 0 24px;
-`;
-
-const Section = styled.div`
-  margin-bottom: 20px;
+const FieldGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `;
 
 const Label = styled.label`
-  display: block;
   font-size: 14px;
   font-weight: 500;
   color: #374151;
-  margin-bottom: 8px;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 12px 16px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 14px;
-  box-sizing: border-box;
-
-  &:focus {
-    outline: none;
-    border-color: #bf4756;
-  }
-
-  &:read-only {
-    background: #f9fafb;
-    cursor: default;
-  }
 `;
 
 const ApiKeyBox = styled.div`
@@ -221,74 +177,79 @@ const IconBtn = styled.button`
   &:hover {
     background: #e5e7eb;
   }
-`;
-
-const InfoBox = styled.div`
-  background: #f0f9ff;
-  border: 1px solid #bae6fd;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 20px;
-`;
-
-const InfoTitle = styled.div`
-  font-weight: 600;
-  color: #0369a1;
-  margin-bottom: 8px;
-`;
-
-const InfoText = styled.div`
-  font-size: 13px;
-  color: #0c4a6e;
-  line-height: 1.6;
-
-  code {
-    background: #e0f2fe;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-family: monospace;
-    font-size: 12px;
-  }
-
-  div {
-    margin-bottom: 6px;
-  }
-`;
-
-const ButtonRow = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 24px;
-`;
-
-const ModalButton = styled.button`
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s;
-
-  ${({ $primary }) =>
-    $primary
-      ? `
-    background: #bf4756;
-    color: #fff;
-    border: none;
-    &:hover { background: #a33d4a; }
-  `
-      : `
-    background: #fff;
-    color: #374151;
-    border: 1px solid #e5e7eb;
-    &:hover { background: #f9fafb; }
-  `}
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
+`;
+
+const InfoBox = styled.div`
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+`;
+
+const InfoTitle = styled.div`
+  font-weight: 600;
+  color: #1f1e1f;
+  margin-bottom: 12px;
+`;
+
+const InfoText = styled.div`
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.8;
+
+  code {
+    background: #e5e7eb;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 12px;
+    color: #1f1e1f;
+  }
+
+  div {
+    margin-bottom: 4px;
+  }
+`;
+
+const ActionButtons = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  width: 100%;
+`;
+
+const SecondaryButton = styled.button`
+  flex: 1;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  background: #fff;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  transition: all 0.15s;
+
+  &:hover {
+    background: #f9fafb;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+const ConfirmText = styled.p`
+  font-size: 15px;
+  color: #4b5563;
+  margin: 0;
+  line-height: 1.5;
 `;
 
 const INTEGRATIONS = [
@@ -330,6 +291,7 @@ const CardIntegrations = () => {
   const [saving, setSaving] = useState(false);
   const [integration, setIntegration] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [restaurantCode, setRestaurantCode] = useState('');
   const [copied, setCopied] = useState(false);
 
@@ -402,9 +364,12 @@ const CardIntegrations = () => {
     }
   };
 
-  const handleRegenerateKey = async () => {
-    if (!window.confirm('Вы уверены? Старый API-ключ перестанет работать.')) return;
+  const handleRegenerateKey = () => {
+    setShowConfirm(true);
+  };
 
+  const confirmRegenerateKey = async () => {
+    setShowConfirm(false);
     setSaving(true);
     try {
       const res = await axiosInstance.post(`/rkeeper/integration/${organizationId}/regenerate-key`);
@@ -427,20 +392,32 @@ const CardIntegrations = () => {
   const apiBaseUrl = BASE_URL.replace('/api', '');
 
   const renderModal = () => {
-    if (!showModal) return null;
+    const modalTitle = integration ? 'Настройки R_keeper' : 'Подключить R_keeper';
 
-    return createPortal(
-      <Overlay onClick={() => setShowModal(false)}>
-        <Modal onClick={(e) => e.stopPropagation()}>
-          <ModalTitle>
-            {integration ? 'Настройки R_keeper' : 'Подключить R_keeper'}
-          </ModalTitle>
-          <ModalSubtitle>
-            {integration
-              ? 'Управление интеграцией с кассовой системой'
-              : 'Подключите кассы r_keeper для автоматического начисления баллов'}
-          </ModalSubtitle>
+    const modalActions = !integration ? (
+      <CustomMainButton onClick={handleCreate} disabled={saving} style={{ width: '100%' }}>
+        {saving ? 'Создание...' : 'Активировать интеграцию'}
+      </CustomMainButton>
+    ) : (
+      <ActionButtons>
+        <SecondaryButton onClick={handleToggleActive} disabled={saving}>
+          {integration.is_active ? 'Отключить' : 'Включить'}
+        </SecondaryButton>
+        <CustomMainButton onClick={handleUpdate} disabled={saving} style={{ flex: 1 }}>
+          {saving ? 'Сохранение...' : 'Сохранить'}
+        </CustomMainButton>
+      </ActionButtons>
+    );
 
+    return (
+      <CustomModal
+        open={showModal}
+        onClose={() => setShowModal(false)}
+        title={modalTitle}
+        actions={modalActions}
+        maxWidth={550}
+      >
+        <ModalContent>
           {!integration ? (
             <>
               <InfoBox>
@@ -451,26 +428,18 @@ const CardIntegrations = () => {
                 </InfoText>
               </InfoBox>
 
-              <Section>
+              <FieldGroup>
                 <Label>Код ресторана (опционально)</Label>
-                <Input
-                  type="text"
+                <CustomInput
                   value={restaurantCode}
                   onChange={(e) => setRestaurantCode(e.target.value)}
-                  placeholder="REST001"
+                  placeholder="Например: KAFE001"
                 />
-              </Section>
-
-              <ButtonRow>
-                <ModalButton onClick={() => setShowModal(false)}>Отмена</ModalButton>
-                <ModalButton $primary onClick={handleCreate} disabled={saving}>
-                  {saving ? 'Создание...' : 'Активировать'}
-                </ModalButton>
-              </ButtonRow>
+              </FieldGroup>
             </>
           ) : (
             <>
-              <Section>
+              <FieldGroup>
                 <Label>
                   Статус:{' '}
                   <StatusBadge $active={integration.is_active}>
@@ -483,12 +452,12 @@ const CardIntegrations = () => {
                     )}
                   </StatusBadge>
                 </Label>
-              </Section>
+              </FieldGroup>
 
-              <Section>
+              <FieldGroup>
                 <Label>API-ключ</Label>
                 <ApiKeyBox>
-                  <Input type="text" value={integration.api_key} readOnly style={{ flex: 1 }} />
+                  <CustomInput value={integration.api_key} readOnly style={{ flex: 1 }} />
                   <IconBtn onClick={handleCopyKey} title="Копировать">
                     {copied ? <Check size={18} color="#10b981" /> : <Copy size={18} />}
                   </IconBtn>
@@ -496,17 +465,16 @@ const CardIntegrations = () => {
                     <RefreshCw size={18} />
                   </IconBtn>
                 </ApiKeyBox>
-              </Section>
+              </FieldGroup>
 
-              <Section>
+              <FieldGroup>
                 <Label>Код ресторана</Label>
-                <Input
-                  type="text"
+                <CustomInput
                   value={restaurantCode}
                   onChange={(e) => setRestaurantCode(e.target.value)}
-                  placeholder="REST001"
+                  placeholder="Например: KAFE001"
                 />
-              </Section>
+              </FieldGroup>
 
               <InfoBox>
                 <InfoTitle>Настройка r_keeper</InfoTitle>
@@ -528,21 +496,10 @@ const CardIntegrations = () => {
                   </div>
                 </InfoText>
               </InfoBox>
-
-              <ButtonRow>
-                <ModalButton onClick={handleToggleActive} disabled={saving}>
-                  {integration.is_active ? 'Отключить' : 'Включить'}
-                </ModalButton>
-                <ModalButton onClick={() => setShowModal(false)}>Закрыть</ModalButton>
-                <ModalButton $primary onClick={handleUpdate} disabled={saving}>
-                  {saving ? 'Сохранение...' : 'Сохранить'}
-                </ModalButton>
-              </ButtonRow>
             </>
           )}
-        </Modal>
-      </Overlay>,
-      document.body
+        </ModalContent>
+      </CustomModal>
     );
   };
 
@@ -571,10 +528,10 @@ const CardIntegrations = () => {
             <Card key={item.key} $active={isActive} $disabled={!item.enabled}>
               <CardHeader>
                 <Logo src={item.logo} alt={item.name} />
-                <CardInfo>
+                <CardInfoBlock>
                   <CardName>{item.name}</CardName>
                   <CardDescription>{item.description}</CardDescription>
-                </CardInfo>
+                </CardInfoBlock>
                 {isActive && (
                   <StatusBadge $active>
                     <Check size={12} /> Активна
@@ -599,6 +556,27 @@ const CardIntegrations = () => {
       </Grid>
 
       {renderModal()}
+
+      <CustomModal
+        open={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        title="Подтверждение"
+        maxWidth={400}
+        actions={
+          <ActionButtons>
+            <SecondaryButton onClick={() => setShowConfirm(false)}>
+              Отмена
+            </SecondaryButton>
+            <CustomMainButton onClick={confirmRegenerateKey} style={{ flex: 1 }}>
+              Подтвердить
+            </CustomMainButton>
+          </ActionButtons>
+        }
+      >
+        <ConfirmText>
+          Вы уверены? Старый API-ключ перестанет работать.
+        </ConfirmText>
+      </CustomModal>
     </Page>
   );
 };
