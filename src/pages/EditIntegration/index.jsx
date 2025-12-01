@@ -2,6 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import axiosInstance from '../../axiosInstance';
 import EditLayout from '../../components/EditLayout';
 import TitleWithHelp from '../../components/TitleWithHelp';
 import {
@@ -21,6 +22,7 @@ const EditIntegration = () => {
 
   const currentCard = useSelector((state) => state.cards.currentCard);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [pendingIntegration, setPendingIntegration] = React.useState(null);
 
   const isCreatingNewCard = !id || id === 'new' || id === 'fixed';
   const integration = currentCard?.integration || null;
@@ -29,11 +31,33 @@ const EditIntegration = () => {
     dispatch(updateCurrentCardField({ path: 'integration', value: key }));
   };
 
+  const handlePendingIntegration = (data) => {
+    setPendingIntegration(data);
+  };
+
+  const createIntegrationForCard = async (cardId) => {
+    if (!pendingIntegration || pendingIntegration.type !== 'r_keeper') return;
+    
+    try {
+      await axiosInstance.post('/rkeeper/integration', {
+        card_id: cardId,
+        restaurant_code: pendingIntegration.restaurant_code,
+      });
+    } catch (err) {
+      console.error('Ошибка при создании интеграции:', err);
+    }
+  };
+
   const handleActivate = async () => {
     setIsLoading(true);
     try {
       if (isCreatingNewCard) {
         const createdCard = await dispatch(createCard()).unwrap();
+        
+        if (pendingIntegration) {
+          await createIntegrationForCard(createdCard.id);
+        }
+        
         dispatch(setCurrentCard(createdCard));
         dispatch(updateCurrentCardField({ path: 'typeReady', value: true }));
         dispatch(updateCurrentCardField({ path: 'designReady', value: true }));
@@ -52,7 +76,6 @@ const EditIntegration = () => {
         navigate(`/cards/${savedCard.id}/info`, { state: { skipLeaveGuard: true } });
         return;
       }
-      dispatch(updateCurrentCardField({ path: 'active', value: true }));
     } catch (e) {
       console.error('Ошибка при активации карты', e);
       setIsLoading(false);
@@ -79,7 +102,13 @@ const EditIntegration = () => {
         </TopRow>
         <Divider />
       </div>
-      <IntegrationPicker value={integration} onChange={handlePick} />
+      <IntegrationPicker 
+        value={integration} 
+        onChange={handlePick} 
+        isCreatingCard={isCreatingNewCard}
+        onPendingIntegration={handlePendingIntegration}
+        pendingIntegration={pendingIntegration}
+      />
 
       <CreateButton onClick={handleActivate} disabled={isLoading}>
         {isLoading

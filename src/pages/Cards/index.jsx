@@ -66,15 +66,15 @@ const Cards = () => {
 
     const savedOrder = JSON.parse(localStorage.getItem('cards_order') || '[]');
     if (savedOrder.length) {
-      const ordered = [
-        cards[0],
-        ...savedOrder
-          .map((id) => cards.find((c) => c.id === id))
-          .filter(Boolean)
-          .filter((c) => c.id !== 'fixed'),
-      ];
-      if (ordered.length === cards.length - 1) {
-        dispatch(reorderCards([cards[0], ...ordered]));
+      const fixed = cards.find((c) => c.id === 'fixed') || cards[0];
+      const orderedCards = savedOrder
+        .map((id) => cards.find((c) => c.id === id))
+        .filter(Boolean)
+        .filter((c) => c.id !== 'fixed');
+      
+      const realCards = cards.filter((c) => c.id !== 'fixed');
+      if (orderedCards.length === realCards.length) {
+        dispatch(reorderCards([fixed, ...orderedCards]));
         hasAppliedOrderRef.current = true;
       }
     }

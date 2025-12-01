@@ -593,10 +593,16 @@ export const cardsSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(deleteCardAsync.fulfilled, (state, action) => {
-        state.cards = state.cards.filter((c) => c.id !== action.payload);
+        const deletedId = action.payload;
+        state.cards = state.cards.filter((c) => c.id !== deletedId);
         if (!state.cards.some((c) => c.id === 'fixed')) {
           state.cards.unshift(fixedCard);
         }
+        try {
+          const savedOrder = JSON.parse(localStorage.getItem('cards_order') || '[]');
+          const newOrder = savedOrder.filter((id) => id !== deletedId);
+          localStorage.setItem('cards_order', JSON.stringify(newOrder));
+        } catch {}
       })
       .addCase(copyCardAsync.fulfilled, (state, action) => {
         const newCard = mapCardFromAPI(action.payload);

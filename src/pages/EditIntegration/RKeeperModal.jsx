@@ -191,17 +191,17 @@ const EndpointList = styled.div`
   }
 `;
 
-const RKeeperModal = ({ onClose }) => {
+const RKeeperModal = ({ onClose, isCreatingCard, onPendingIntegration }) => {
   const organizationId = useSelector((state) => state.user.organization_id);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!isCreatingCard);
   const [saving, setSaving] = useState(false);
   const [integration, setIntegration] = useState(null);
   const [restaurantCode, setRestaurantCode] = useState('');
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (!organizationId) {
+    if (isCreatingCard || !organizationId) {
       setLoading(false);
       return;
     }
@@ -221,7 +221,14 @@ const RKeeperModal = ({ onClose }) => {
     };
 
     fetchIntegration();
-  }, [organizationId]);
+  }, [organizationId, isCreatingCard]);
+
+  const handleSavePending = () => {
+    if (onPendingIntegration) {
+      onPendingIntegration({ type: 'r_keeper', restaurant_code: restaurantCode || null });
+    }
+    onClose();
+  };
 
   const handleCreate = async () => {
     setSaving(true);
@@ -296,6 +303,45 @@ const RKeeperModal = ({ onClose }) => {
       <Overlay onClick={onClose}>
         <Modal onClick={(e) => e.stopPropagation()}>
           <Title>Загрузка...</Title>
+        </Modal>
+      </Overlay>,
+      document.body
+    );
+  }
+
+  if (isCreatingCard) {
+    return createPortal(
+      <Overlay onClick={onClose}>
+        <Modal onClick={(e) => e.stopPropagation()}>
+          <Title>Интеграция с R_keeper</Title>
+          <Subtitle>
+            Подключите вашу кассовую систему r_keeper для автоматического начисления и списания баллов
+          </Subtitle>
+
+          <InfoBox>
+            <InfoTitle>Как это работает?</InfoTitle>
+            <InfoText>
+              После создания карты интеграция будет активирована автоматически. Вы получите API-ключ, 
+              который нужно указать в настройках r_keeper.
+            </InfoText>
+          </InfoBox>
+
+          <Section>
+            <Label>Код ресторана (опционально)</Label>
+            <Input
+              type="text"
+              value={restaurantCode}
+              onChange={(e) => setRestaurantCode(e.target.value)}
+              placeholder="Например: REST001"
+            />
+          </Section>
+
+          <ButtonRow>
+            <Button onClick={onClose}>Отмена</Button>
+            <Button $primary onClick={handleSavePending}>
+              Сохранить настройки
+            </Button>
+          </ButtonRow>
         </Modal>
       </Overlay>,
       document.body

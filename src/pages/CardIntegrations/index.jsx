@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { Check, RefreshCw, Copy } from 'lucide-react';
 import axiosInstance from '../../axiosInstance';
@@ -285,7 +284,6 @@ const INTEGRATIONS = [
 
 const CardIntegrations = () => {
   const { id: cardId } = useParams();
-  const organizationId = useSelector((state) => state.user.organization_id);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -296,14 +294,14 @@ const CardIntegrations = () => {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (!organizationId) {
+    if (!cardId) {
       setLoading(false);
       return;
     }
 
     const fetchIntegration = async () => {
       try {
-        const res = await axiosInstance.get(`/rkeeper/integration/${organizationId}`);
+        const res = await axiosInstance.get(`/rkeeper/integration/card/${cardId}`);
         setIntegration(res.data);
         setRestaurantCode(res.data.restaurant_code || '');
       } catch (err) {
@@ -316,13 +314,12 @@ const CardIntegrations = () => {
     };
 
     fetchIntegration();
-  }, [organizationId]);
+  }, [cardId]);
 
   const handleCreate = async () => {
     setSaving(true);
     try {
       const res = await axiosInstance.post('/rkeeper/integration', {
-        organization_id: organizationId,
         card_id: cardId,
         restaurant_code: restaurantCode || null,
       });
@@ -338,9 +335,8 @@ const CardIntegrations = () => {
   const handleUpdate = async () => {
     setSaving(true);
     try {
-      const res = await axiosInstance.put(`/rkeeper/integration/${organizationId}`, {
+      const res = await axiosInstance.put(`/rkeeper/integration/card/${cardId}`, {
         restaurant_code: restaurantCode || null,
-        card_id: cardId,
       });
       setIntegration(res.data);
     } catch (err) {
@@ -353,7 +349,7 @@ const CardIntegrations = () => {
   const handleToggleActive = async () => {
     setSaving(true);
     try {
-      const res = await axiosInstance.put(`/rkeeper/integration/${organizationId}`, {
+      const res = await axiosInstance.put(`/rkeeper/integration/card/${cardId}`, {
         is_active: !integration.is_active,
       });
       setIntegration(res.data);
@@ -372,7 +368,7 @@ const CardIntegrations = () => {
     setShowConfirm(false);
     setSaving(true);
     try {
-      const res = await axiosInstance.post(`/rkeeper/integration/${organizationId}/regenerate-key`);
+      const res = await axiosInstance.post(`/rkeeper/integration/card/${cardId}/regenerate-key`);
       setIntegration(res.data);
     } catch (err) {
       alert(err.response?.data?.detail || 'Ошибка');
