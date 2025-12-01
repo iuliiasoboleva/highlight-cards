@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { Check, RefreshCw, Copy } from 'lucide-react';
 import axiosInstance from '../../axiosInstance';
-import BASE_URL from '../../config';
 import CustomModal from '../../customs/CustomModal';
 import CustomInput from '../../customs/CustomInput';
 import CustomMainButton from '../../customs/CustomMainButton';
@@ -385,7 +384,7 @@ const CardIntegrations = () => {
     }
   };
 
-  const apiBaseUrl = BASE_URL.replace('/api', '');
+  const apiBaseUrl = window.location.origin;
 
   const renderModal = () => {
     const modalTitle = integration ? 'Настройки R_keeper' : 'Подключить R_keeper';
@@ -473,23 +472,45 @@ const CardIntegrations = () => {
               </FieldGroup>
 
               <InfoBox>
-                <InfoTitle>Настройка r_keeper</InfoTitle>
+                <InfoTitle>Как настроить интеграцию с r_keeper</InfoTitle>
                 <InfoText>
-                  <div>
-                    <strong>URL сервера:</strong> <code>{apiBaseUrl}</code>
+                  <div style={{ marginBottom: '16px' }}>
+                    <strong>Шаг 1:</strong> Откройте менеджерскую станцию r_keeper и перейдите в раздел <em>Сервис → Дисконтные карты → FarCards-Http</em>
+                  </div>
+                  <div style={{ marginBottom: '16px' }}>
+                    <strong>Шаг 2:</strong> Укажите параметры подключения:
+                    <ul style={{ margin: '8px 0', paddingLeft: '20px' }}>
+                      <li><strong>Адрес сервера:</strong> <code>{apiBaseUrl}</code></li>
+                      <li><strong>Порт:</strong> <code>443</code></li>
+                      <li><strong>Использовать HTTPS:</strong> Да</li>
+                    </ul>
+                  </div>
+                  <div style={{ marginBottom: '16px' }}>
+                    <strong>Шаг 3:</strong> В настройках авторизации укажите заголовок:
+                    <div style={{ background: '#f3f4f6', padding: '8px 12px', borderRadius: '6px', marginTop: '4px', fontFamily: 'monospace', fontSize: '13px' }}>
+                      X-API-Key: {integration.api_key}
+                    </div>
+                  </div>
+                  <div style={{ marginBottom: '16px' }}>
+                    <strong>Шаг 4:</strong> Настройте эндпоинты:
+                    <ul style={{ margin: '8px 0', paddingLeft: '20px' }}>
+                      <li><strong>Информация о карте:</strong> <code>POST {apiBaseUrl}/rkeeper/card/info</code></li>
+                      <li><strong>Начисление/списание баллов:</strong> <code>POST {apiBaseUrl}/rkeeper/transaction</code></li>
+                      <li><strong>Проверка баланса:</strong> <code>POST {apiBaseUrl}/rkeeper/balance</code></li>
+                    </ul>
                   </div>
                   <div>
-                    <strong>Заголовок:</strong> <code>X-API-Key: {integration.api_key}</code>
+                    <strong>Шаг 5:</strong> Сохраните настройки и перезапустите кассовую станцию для применения изменений.
                   </div>
-                  <div>
-                    <strong>Информация о карте:</strong> <code>POST /rkeeper/card/info</code>
-                  </div>
-                  <div>
-                    <strong>Транзакции:</strong> <code>POST /rkeeper/transaction</code>
-                  </div>
-                  <div>
-                    <strong>Баланс:</strong> <code>POST /rkeeper/balance</code>
-                  </div>
+                </InfoText>
+              </InfoBox>
+              
+              <InfoBox style={{ background: '#fef3c7', borderColor: '#f59e0b' }}>
+                <InfoTitle style={{ color: '#b45309' }}>Как это работает?</InfoTitle>
+                <InfoText style={{ color: '#92400e' }}>
+                  При оплате заказа касса автоматически отправит запрос с номером карты клиента. 
+                  Система начислит или спишет баллы согласно настройкам карты лояльности. 
+                  Клиент может назвать номер карты или показать QR-код из кошелька.
                 </InfoText>
               </InfoBox>
             </>
