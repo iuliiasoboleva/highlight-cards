@@ -50,6 +50,7 @@ const IntegrationPicker = ({ value, onChange, className, isCreatingCard, onPendi
     
     if (item.key === 'r_keeper') {
       setShowRKeeperModal(true);
+      return;
     }
     
     onChange(item.key);
@@ -59,6 +60,9 @@ const IntegrationPicker = ({ value, onChange, className, isCreatingCard, onPendi
     setLocalPending(data);
     if (onPendingIntegration) {
       onPendingIntegration(data);
+    }
+    if (data?.type) {
+      onChange(data.type);
     }
   };
 
